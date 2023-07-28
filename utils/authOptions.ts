@@ -4,7 +4,7 @@ import GithubProvider from 'next-auth/providers/github'
 import EmailProvider from 'next-auth/providers/email'
 
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import prisma from '@/lib/dbConnection'
+import prisma from '@/utils/dbConnection'
 
 export const authOptions: NextAuthOptions = {
   // @ts-ignore
@@ -31,4 +31,15 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async session({ session, user }) {
+      session.user = {
+        ...session.user,
+        // @ts-ignore
+        id: user?.id,
+      }
+
+      return session
+    },
+  },
 }
