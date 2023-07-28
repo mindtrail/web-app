@@ -1,0 +1,103 @@
+'use client'
+
+import { useState } from 'react'
+import { useChat, type Message } from 'ai/react'
+
+import { cn } from '@/lib/utils'
+import { ChatList } from '@/components/chat/chat-list'
+import { ChatPanel } from '@/components/chat/chat-panel'
+import { EmptyScreen } from '@/components/chat/empty-screen'
+import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
+import { useLocalStorage } from '@/lib/hooks/use-local-storage'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+
+const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
+const EPXRESS_SERVER = 'http://localhost:3003/api'
+const CHAT_ENDPOINT = '/chat'
+
+export interface ChatProps extends React.ComponentProps<'div'> {
+  initialMessages?: Message[]
+  id?: string
+}
+
+export function Chat({ id, initialMessages, className }: ChatProps) {
+  const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
+  const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
+  const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
+
+  const { messages, append, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
+    api: EPXRESS_SERVER + CHAT_ENDPOINT,
+    initialMessages,
+    id,
+    body: {
+      id,
+      previewToken,
+    },
+  })
+
+  return (
+    <>
+      <div className={cn('pb-[200px] pt-4 md:pt-10 w-full', className)}>
+        {messages.length ? (
+          <>
+            <ChatList messages={messages} />
+            <ChatScrollAnchor trackVisibility={isLoading} />
+          </>
+        ) : (
+          <EmptyScreen setInput={setInput} />
+        )}
+      </div>
+      <ChatPanel
+        isLoading={isLoading}
+        stop={stop}
+        handleSubmit={handleSubmit}
+        reload={reload}
+        messages={messages}
+        input={input}
+        setInput={setInput}
+      />
+
+      <Dialog open={previewTokenDialog} onOpenChange={setPreviewTokenDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter your OpenAI Key</DialogTitle>
+            <DialogDescription>
+              If you have not obtained your OpenAI API key, you can do so by{' '}
+              <a href='https://platform.openai.com/signup/' className='underline'>
+                signing up
+              </a>{' '}
+              on the OpenAI website. This is only necessary for preview environments so that the
+              open source community can test the app. The token will be saved to your browser&apos;s
+              local storage under the name <code className='font-mono'>ai-token</code>.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            value={previewTokenInput}
+            placeholder='OpenAI API key'
+            onChange={(e) => setPreviewTokenInput(e.target.value)}
+          />
+          <DialogFooter className='items-center'>
+            <Button
+              onClick={() => {
+                setPreviewToken(previewTokenInput)
+                setPreviewTokenDialog(false)
+              }}
+            >
+              Save Token
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
