@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
@@ -13,8 +12,309 @@ datasource db {
   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
 }
 
-model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  picture       String?
+  hasOptInEmail Boolean? @default(false) @map("has_opt_in_email")
+
+  datastores    Datastore[]
+  datasources   AppDatasource[]
+  subscriptions Subscription[]  @relation("user")
+  usage         Usage?
+  conversations Conversation[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Usage {
+  id String @id @default(cuid())
+
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nbAgentQueries        Int @default(0) @map("nb_agent_queries")
+  nbDatastoreQueries    Int @default(0) @map("nb_datastore_queries")
+  nbUploadedBytes       Int @default(0) @map("nb_uploaded_bytes")
+  nbDataProcessingBytes Int @default(0) @map("nb_data_processing_bytes")
+  nbModelTokens         Int @default(0) @map("nb_tokens")
+}
+
+model Datastore {
+  id String @id @default(cuid())
+
+  name        String
+  description String?
+  type        DatastoreType
+  datasources AppDatasource[]
+  visibility  DatastoreVisibility @default(private)
+  tool        Tool[]
+
+  config Json?
+
+  ownerId String? @map("owner_id")
+  owner   User?   @relation(fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+}
+
+
+// Naming the model Datasource conflicts with prisma
+// https://github.com/prisma/prisma/issues/12332
+model AppDatasource {
+  id     String           @id @default(cuid())
+  type   DatasourceType
+  name   String
+  status DatasourceStatus @default(unsynched)
+
+  config Json?
+
+  datastoreId String?    @map("datastore_id")
+  datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
+
+  ownerId String? @map("owner_id")
+  owner   User?   @relation(fields: [ownerId], references: [id])
+
+  nbChunks Int? @default(0) @map("nb_chunks")
+  textSize Int? @default(0) @map("text_size")
+
+  hash String?
+
+  nbSynch   Int?      @default(0) @map("nb_synch")
+  lastSynch DateTime? @map("last_synch")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+
+}
+
+model Conversation {
+  id        String  @id @default(cuid())
+  visitorId String? @map("visitor_id")
+  userId    String? @map("user_id")
+  user      User?   @relation(fields: [userId], references: [id])
+
+  agentId  String?   @map("agent_id")
+  messages Message[]
+
+  channel ConversationChannel @default(dashboard)
+
+  metadata Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([visitorId], type: Hash)
+}
+
+
+model Message {
+  id             String        @id @default(cuid())
+  text           String
+  from           MessageFrom
+  conversationId String?       @map("conversation_id")
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sources        Json?
+
+  read Boolean? @default(false)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+}
+
+
+model Tool {
+  id   String   @id @default(cuid())
+  type ToolType
+
+  agentId String? @map("agent_id")
+
+  datastoreId String?    @map("datastore_id")
+  datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  active      Boolean  @default(false)
+  name        String
+  description String?
+  image       String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  prices      Price[]
+}
+
+model Price {
+  id                String         @id @default(cuid())
+  productId         String         @map("product_id")
+  active            Boolean        @default(false)
+  currency          String
+  interval          PriceInterval?
+  unitAmount        Int?           @map("unit_amount")
+  interval_count    Int?
+  trial_period_days Int?
+  type              PriceType?
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+  product           Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subscriptions     Subscription[]
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  plan                 SubscriptionPlan?  @default(level_1)
+  priceId              String
+  customerId           String             @map("customer_id")
+  status               SubscriptionStatus
+  start_date           DateTime?
+  ended_at             DateTime?
+  trial_end            DateTime?
+  trial_start          DateTime?
+  cancel_at            DateTime?
+  cancel_at_period_end Boolean?
+  canceled_at          DateTime?
+  metadata             Json?
+  coupon               String?
+
+  price Price @relation(fields: [priceId], references: [id])
+
+  user   User?   @relation(name: "user", fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+
+enum DatastoreVisibility {
+  public
+  private
+}
+
+enum DatasourceStatus {
+  unsynched
+  pending
+  running
+  synched
+  error
+  usage_limit_reached
+}
+
+enum DatasourceType {
+  web_page
+  web_site
+  text
+  file
+  google_drive_file
+  google_drive_folder
+  notion
+}
+
+enum DatastoreType {
+  qdrant
+}
+
+enum ToolType {
+  datastore
+}
+
+enum SubscriptionPlan {
+  level_0
+  level_1
+  level_2
+  level_3
+}
+
+enum PriceType {
+  recurring
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  incomplete
+  incomplete_expired
+  past_due
+  trialing
+  unpaid
+}
+
+enum PriceInterval {
+  day
+  month
+  week
+  year
+}
+
+enum PromptType {
+  raw
+  customer_support
+}
+
+enum MessageFrom {
+  agent
+  human
+}
+
+enum ConversationChannel {
+  dashboard
+  website
+  slack
+  crisp
+}
+
+enum ModelName {
+  gpt_3_5_turbo
+  gpt_3_5_turbo_16k
+  gpt_4
+  gpt_4_32k
+}
+
