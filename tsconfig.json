@@ -9,7 +9,7 @@
       "@/components/*": ["components/*"],
       "@/pages/*": ["pages/*"],
       "@/app/*": ["app/*"],
-      "@/utils/*": ["utils/*"],
+      "@/lib/*": ["lib/*"],
       "@/styles/*": ["styles/*"]
     },
     "strict": true,

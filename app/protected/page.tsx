@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
-import { authOptions } from '@/utils/authOptions'
+import { authOptions } from 'lib/authOptions'
 import SignOut from '@/components/sign-out'
 
 export default async function Home() {

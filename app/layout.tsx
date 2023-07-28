@@ -1,9 +1,9 @@
-// These styles apply to every route in the application
 import '@/styles/globals.css'
+
 import { Metadata } from 'next'
 import { Toaster } from 'react-hot-toast'
 
-import AuthProvider from '@/app/context/authProvider'
+import { Providers } from '@/app/context/providers'
 
 const title = 'Next.js Prisma Postgres Auth Starter'
 const description =
@@ -18,10 +18,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='en'>
       <body>
-        <AuthProvider>
+        <Providers>
           <Toaster />
           {children}
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   )
