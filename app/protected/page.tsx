@@ -1,16 +1,24 @@
-'use client'
-
-import SignOut from '@/components/sign-out'
-import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth/next'
 
-export default function Home() {
-  const { data: session } = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect('/api/auth/signin?callbackUrl=/protected')
-    },
-  })
+import { authOptions } from '@/lib/authOptions'
+import SignOut from '@/components/sign-out'
+
+export default async function Home() {
+  const session = await getServerSession(authOptions)
+  console.log(session)
+
+  if (!session) {
+    redirect(`/api/auth/signin?callbackUrl=/protected`)
+  }
+
+  // Example used on the client
+  // const { data: session } = useSession({
+  //   required: true,
+  //   onUnauthenticated() {
+  //     redirect('/api/auth/signin?callbackUrl=/protected')
+  //   },
+  // })
 
   console.log(123, session)
   return (
