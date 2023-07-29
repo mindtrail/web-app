@@ -52,6 +52,7 @@ export function LeftSidebar() {
 
   return (
     <Sidebar>
+      {/* @TODO: update the UI of the fallback to resemble filepond */}
       <React.Suspense fallback={<div className='file-upload' />}>
         <FilePond
           allowMultiple={true}
@@ -68,9 +69,7 @@ export function LeftSidebar() {
       <React.Suspense fallback={<div className='flex-1 overflow-auto' />}>
         <SidebarList userId={'123'} />
       </React.Suspense>
-      <SidebarFooter>
-        <ThemeToggle />
-      </SidebarFooter>
+      <SidebarFooter>{/* <ThemeToggle /> */}</SidebarFooter>
     </Sidebar>
   )
 }

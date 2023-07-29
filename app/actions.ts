@@ -7,7 +7,7 @@ import { kv } from '@vercel/kv'
 // import { auth } from '@/auth'
 import { type Chat } from '@/lib/types'
 
-export async function getChats(userId?: string | null) {
+export async function getChats(userId?: string | null): Promise<Chat[]> {
   // @TODO: decouple nextjs from kv
   return []
 
