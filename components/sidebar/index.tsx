@@ -33,7 +33,7 @@ const ACCEPTED_FILE_TYPES = [
   'text/markdown',
 ]
 
-const UPLOAD_ENDPOINT = 'http://localhost:3003/api/upload'
+const UPLOAD_ENDPOINT = 'http://localhost:3000/api/upload'
 const MAX_NR_OF_FILES = 30
 const UPLOAD_LABEL = 'Drag and drop files or <span class="filepond--label-action">Browse</span>'
 
