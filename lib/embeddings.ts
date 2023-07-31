@@ -1,6 +1,5 @@
 import { Document } from 'langchain/document'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import fetch from 'node-fetch'
 
 export const createEmbeddings = (chunks: Document[]): Promise<number[][]> => {
   const openAIEmb = new OpenAIEmbeddings()
