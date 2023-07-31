@@ -4,38 +4,16 @@ import { JSONLoader, JSONLinesLoader } from 'langchain/document_loaders/fs/json'
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { SRTLoader } from 'langchain/document_loaders/fs/srt'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
-import { EPubLoader } from 'langchain/document_loaders/fs/epub'
-
 import { Document } from 'langchain/document'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
+// import { EPubLoader } from 'langchain/document_loaders/fs/epub'
 
-type LoaderType = {
-  object:
-    | typeof CSVLoader
-    | typeof DocxLoader
-    | typeof JSONLoader
-    | typeof JSONLinesLoader
-    | typeof PDFLoader
-    | typeof SRTLoader
-    | typeof TextLoader
-}
-type FILE_LOADER_PAIR = {
-  [key: string]:
-    | typeof CSVLoader
-    | typeof DocxLoader
-    | typeof EPubLoader
-    | typeof JSONLoader
-    | typeof JSONLinesLoader
-    | typeof PDFLoader
-    | typeof SRTLoader
-    | typeof TextLoader
-  // | typeof UnstructuredLoader
-}
+import { FILE_LOADER_PAIR } from '@/types/fileLoader'
 
 const LOADER: FILE_LOADER_PAIR = {
   'text/csv': CSVLoader,
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': DocxLoader,
-  'application/epub+zip': EPubLoader,
+  // 'application/epub+zip': EPubLoader,
   'text/markdown': TextLoader,
   'text/plain': TextLoader,
   'application/pdf': PDFLoader,
@@ -45,16 +23,11 @@ const LOADER: FILE_LOADER_PAIR = {
   'application/octet-stream': TextLoader,
 }
 
-type MULTER_FILE = Express.Multer.File
-
-export const getDocumentChunks = async (file: MULTER_FILE): Promise<Document[]> => {
-  const { mimetype, originalname } = file
-
-  const blob = await getBlobFromBuffer(file)
-  console.log('BLOB', blob)
+export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => {
+  const { name, type } = fileBlob
 
   try {
-    const fileLoader = getFileLoader(blob, mimetype)
+    const fileLoader = getFileLoader(fileBlob, type)
 
     if (!fileLoader) {
       throw new Error('Unsupported file type')
@@ -76,7 +49,7 @@ export const getDocumentChunks = async (file: MULTER_FILE): Promise<Document[]> 
     }
 
     const chunks = (await textSplitter.splitDocuments(loadedFile)).map((chunk) => {
-      chunk.metadata.fileName = originalname
+      chunk.metadata.fileName = name
       return chunk
     })
 
@@ -95,39 +68,30 @@ const getFileLoader = (filepath: Blob, type: string) => {
   }
 
   // @TODO: Read content twice for PDFs and EPUBs
-  const options = {
-    // splitChapters: false,
-    // splitPages: false,
-  }
+  // const options = { splitChapters: false, splitPages: false }
 
   // @ts-ignore
   return new FileLoader(filepath)
 }
 
-async function getBlobFromBuffer(file: Express.Multer.File): Promise<Blob> {
-  const fileBuffer = file.buffer
-  const blob = new Blob([fileBuffer], { type: file.mimetype })
-  return blob
-}
-
-const UNSTRUCTURED_API_FILETYPES = [
-  '.txt',
-  '.text',
-  '.pdf',
-  '.docx',
-  '.doc',
-  '.jpg',
-  '.jpeg',
-  '.eml',
-  '.html',
-  '.htm',
-  '.md',
-  '.pptx',
-  '.ppt',
-  '.msg',
-  '.rtf',
-  '.xlsx',
-  '.xls',
-  '.odt',
-  '.epub',
-]
+// const UNSTRUCTURED_API_FILETYPES = [
+//   '.txt',
+//   '.text',
+//   '.pdf',
+//   '.docx',
+//   '.doc',
+//   '.jpg',
+//   '.jpeg',
+//   '.eml',
+//   '.html',
+//   '.htm',
+//   '.md',
+//   '.pptx',
+//   '.ppt',
+//   '.msg',
+//   '.rtf',
+//   '.xlsx',
+//   '.xls',
+//   '.odt',
+//   '.epub',
+// ]
