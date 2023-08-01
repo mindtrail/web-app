@@ -22,7 +22,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
-const EPXRESS_SERVER = 'http://localhost:3003/api'
+const EPXRESS_SERVER = 'http://localhost:3000/api'
 const CHAT_ENDPOINT = '/chat'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
