@@ -14,13 +14,6 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
   on_disk_payload: true,
 }
 
-type QdrantSearchResponse = Schemas['ScoredPoint'] & {
-  payload: {
-    metadata: object
-    content: string
-  }
-}
-
 // @TODO: - create the UI and functionality for this
 const DATASTORE_NAME = ''
 
@@ -39,6 +32,17 @@ export const createAndStoreVectors = async (docs: Document[], userId: string) =>
   return vectorStore
 }
 
+export const searchSimilarText = async (message: string, collectionName: string) => {
+  const vectorStore = await QdrantVectorStore.fromExistingCollection(new OpenAIEmbeddings(), {
+    collectionName,
+  })
+
+  const response = await vectorStore.similaritySearch(message, 5)
+  console.log(response)
+
+  return response
+}
+
 let qdrantClient: QdrantClient
 // Create a singleton instance of the QdrantClient
 
@@ -53,19 +57,6 @@ const getQdrantConnection = () => {
     apiKey: process.env.QDRANT_API_KEY,
   })
   return qdrantClient
-}
-
-const createCollection = async (name: string) => {
-  const qdrantClient = getQdrantConnection()
-
-  // @Todo - create unique collection name per user
-  const collectionName = name
-
-  try {
-    const result = await qdrantClient.createCollection(collectionName, { ...COLLECTION_CONFIG })
-    console.log('Collection created:', result)
-    return result
-  } catch (err) {}
 }
 
 export const updatePayload = async (
@@ -83,33 +74,6 @@ export const updatePayload = async (
   console.log('Points:', points)
 
   const currentCollection = await qdrantClient.getCollection(collectionName)
-}
-
-export const searchDB = async (searchQuery: string, limit: number = 5) => {
-  if (!searchQuery) {
-    return ''
-  }
-
-  const openAIEmb = new OpenAIEmbeddings()
-  const embeddings = await openAIEmb.embedDocuments([searchQuery])
-  const collectionName = TEST_COLLECTION
-
-  const qdrantClient = getQdrantConnection()
-  const results = await qdrantClient.search(collectionName, {
-    vector: embeddings[0],
-    limit,
-  })
-
-  const result: Document[] = (results as QdrantSearchResponse[]).map((res) => {
-    console.log(res.score)
-
-    return new Document({
-      metadata: res.payload.metadata,
-      pageContent: res.payload.content,
-    })
-  })
-
-  return result
 }
 
 export const getCollections = async () => {
