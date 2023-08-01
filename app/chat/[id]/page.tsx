@@ -1,9 +1,9 @@
 import { type Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
+import { Session } from 'next-auth'
 
 import { authOptions } from 'lib/authOptions'
-
 import { getChat } from '@/app/actions'
 import { Chat } from '@/components/chat'
 
@@ -16,34 +16,42 @@ export interface ChatPageProps {
   }
 }
 
-export async function generateMetadata({ params }: ChatPageProps): Promise<Metadata> {
-  const session = await getServerSession(authOptions)
+interface UserWithId {
+  id: string | null
+}
+type ExtSession = Session & { user: UserWithId | null }
 
-  if (!session?.user) {
+export async function generateMetadata({ params }: ChatPageProps): Promise<Metadata> {
+  const session = (await getServerSession(authOptions)) as ExtSession
+
+  if (!session?.user?.id) {
     return {}
   }
 
-  const chat = await getChat(params.id, session.user.id)
+  const userId = session.user.id
+
+  const chat = await getChat(params.id, userId)
   return {
     title: chat?.title.slice(0, 50) ?? 'Chat',
   }
 }
 
 export default async function ChatPage({ params }: ChatPageProps) {
-  const session = await getServerSession(authOptions)
+  const session = (await getServerSession(authOptions)) as ExtSession
   console.log(session)
 
-  if (!session) {
+  if (!session?.user?.id) {
     redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
   }
 
-  const chat = await getChat(params.id, session.user.id)
+  const userId = session.user.id
+  const chat = await getChat(params.id, userId)
 
   if (!chat) {
     notFound()
   }
 
-  if (chat?.userId !== session?.user?.id) {
+  if (chat?.userId !== userId) {
     notFound()
   }
 
