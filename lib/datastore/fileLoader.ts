@@ -8,6 +8,8 @@ import { Document } from 'langchain/document'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 // import { EPubLoader } from 'langchain/document_loaders/fs/epub'
 
+import { removeStopwords } from 'stopword'
+
 import { FILE_LOADER_PAIR } from '@/types/fileLoader'
 
 const LOADER: FILE_LOADER_PAIR = {
@@ -24,7 +26,7 @@ const LOADER: FILE_LOADER_PAIR = {
 }
 
 export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => {
-  const { name, type } = fileBlob
+  const { name: fileName, type } = fileBlob
 
   try {
     const fileLoader = getFileLoader(fileBlob, type)
@@ -33,25 +35,35 @@ export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => 
       throw new Error('Unsupported file type')
     }
 
-    let loadedFile
-    loadedFile = await fileLoader.load()
-
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1500,
-      chunkOverlap: 150,
-    })
-
-    // @TODO: For PDFs and EPUBs, read the content twice, once with page splitting and once without
-    // Create the chunks from the non-split content, and add the page numbers to the metadata from the page-split version
-
+    const loadedFile = await fileLoader.load()
     if (!loadedFile) {
       throw new Error('Error loading file')
     }
 
-    const chunks = (await textSplitter.splitDocuments(loadedFile)).map((chunk) => {
-      chunk.metadata.fileName = name
-      return chunk
+    // @TODO: For PDFs and EPUBs, read the content twice, once with page splitting and once without
+    // Create the chunks from the non-split content, and add the page numbers to the metadata from the page-split version
+
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1500,
+      chunkOverlap: 150,
+      separators: ['\n\n', '\n', '?', '!', '...', '.'],
     })
+
+    const chunkHeaderOptions = {
+      chunkHeader: `File ${fileName} `,
+    }
+
+    const chunks = (await textSplitter.splitDocuments(loadedFile, chunkHeaderOptions)).map(
+      ({ pageContent, metadata }) => {
+        return {
+          metadata: {
+            ...metadata,
+            fileName,
+          },
+          pageContent: pageContent.replace(/\s+/g, ' ').trim(),
+        }
+      },
+    )
 
     return chunks
   } catch (error) {
