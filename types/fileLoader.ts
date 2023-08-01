@@ -16,3 +16,7 @@ export type FILE_LOADER_PAIR = {
     | typeof SRTLoader
     | typeof TextLoader
 }
+
+export type PDF_LOADER_OPTIONS = {
+  splitPages?: boolean
+}
