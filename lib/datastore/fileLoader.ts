@@ -33,8 +33,9 @@ export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => 
       throw new Error('Unsupported file type')
     }
 
-    const loadedFile = await fileLoader.load()
-    if (!loadedFile) {
+    const loadedDoc = await fileLoader.load()
+
+    if (!loadedDoc) {
       throw new Error('Error loading file')
     }
 
@@ -44,21 +45,24 @@ export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => 
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1500,
       chunkOverlap: 150,
-      separators: ['\n\n', '\n', '?', '!', '...', '.'],
+      separators: ['\n\n', '\n', '?', '!', '...', '.', ' '],
     })
 
     const chunkHeaderOptions = {
       chunkHeader: `File ${fileName} `,
     }
 
-    const chunks = (await textSplitter.splitDocuments(loadedFile, chunkHeaderOptions)).map(
+    const chunks = (await textSplitter.splitDocuments(loadedDoc, chunkHeaderOptions)).map(
       ({ pageContent, metadata }) => {
         return {
           metadata: {
             ...metadata,
             fileName,
           },
-          pageContent: pageContent.replace(/\s+/g, ' ').trim(),
+          pageContent: pageContent
+            .replace(/(?<!\n)\n(?!\n)/g, ' ')
+            .replace(/ +/g, ' ')
+            .trim(),
         }
       },
     )
