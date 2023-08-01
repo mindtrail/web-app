@@ -19,9 +19,8 @@ export const uploadFile = async (fileBlob: Blob) => {
     return
   }
 
-  const result = await createAndStoreVectors(docs)
+  await createAndStoreVectors(docs)
 
-  console.log(result)
   return docs
 }
 
