@@ -1,11 +1,16 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
+import { getNanoId } from '@/lib/utils'
+import { Chat } from '@/components/chat'
+
 export default function Home() {
+  const id = getNanoId()
   return (
     <div className='flex h-screen'>
       <div className='w-screen h-screen flex flex-col justify-center items-center'>
         <div className='flex-col space-x-3'>
+          <Chat id={id} />
+
           <h2>Homescreen</h2>
           <br />
           <Link

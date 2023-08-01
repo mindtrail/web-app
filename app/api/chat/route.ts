@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { AIMessage, HumanMessage } from 'langchain/schema'
-import { StreamingTextResponse, LangChainStream } from 'ai'
+
+import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
 import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/datastore'
@@ -19,17 +20,15 @@ export async function POST(req: Request, res: NextResponse) {
   // @ts-ignore - userId is not in the session type but I added it
   const userId = session.user?.id
 
-  const textMessage = req.body
-  if (!textMessage) {
+  const { messages } = await req.json()
+
+  console.log('messages', messages)
+  if (!messages) {
     return new Response('No message provided', {
       status: 400,
     })
   }
-  // @ts-ignore
-  const payload = JSON.parse(textMessage) // this will be a string
 
-  console.log(payload)
-  const { messages } = payload
   const lastMessage = messages[messages.length - 1].content
 
   console.time('searchDB')
@@ -56,15 +55,10 @@ export async function POST(req: Request, res: NextResponse) {
     modelName: 'gpt-3.5-turbo',
   })
 
-  type Message = {
-    role: string
-    content: string
-  }
-
   chat
     .call(
-      (messages as Message[]).map((m) =>
-        m.role == 'user' ? new HumanMessage(m.content) : new AIMessage(m.content),
+      (messages as Message[]).map(({ role, content }) =>
+        role == 'user' ? new HumanMessage(content) : new AIMessage(content),
       ),
       {},
       [handlers],
