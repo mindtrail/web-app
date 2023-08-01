@@ -1,12 +1,8 @@
-import { Document } from 'langchain/document'
-import { QdrantVectorStore } from 'langchain/vectorstores/qdrant'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-
 import { getDocumentChunks } from '@/lib/datastore/fileLoader'
 import { createAndStoreVectors } from '@/lib/datastore/qdrant'
 import { uploadToS3 } from '@/lib/datastore/s3'
 
-const TEST_COLLECTION = 'test-collection'
+export { searchSimilarText } from '@/lib/datastore/qdrant'
 
 export const uploadFile = async (fileBlob: Blob, userId: string) => {
   uploadToS3(fileBlob, userId)
@@ -22,15 +18,4 @@ export const uploadFile = async (fileBlob: Blob, userId: string) => {
   await createAndStoreVectors(docs, userId)
 
   return docs
-}
-
-export const searchSimilarText = async (message: string, collection: string = TEST_COLLECTION) => {
-  const vectorStore = await QdrantVectorStore.fromExistingCollection(new OpenAIEmbeddings(), {
-    collectionName: collection,
-  })
-
-  const response = await vectorStore.similaritySearch(message, 5)
-  console.log(response)
-
-  return response
 }
