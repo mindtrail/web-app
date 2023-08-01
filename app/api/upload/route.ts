@@ -24,14 +24,16 @@ export async function POST(req: Request) {
 
     if (isFile) {
       const blob = value as Blob
-      const response = uploadFile(blob)
+      const response = await uploadFile(blob)
 
       if (!response) {
         console.log('blob', blob)
         return NextResponse.json({ error: 'File type not supported' })
       }
 
-      return NextResponse.json({ ok: true })
+      console.log('response', response)
+
+      return NextResponse.json({ response })
     }
   }
 
