@@ -13,7 +13,7 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 import { Sidebar } from '@/components/sidebar/sidebar'
 import { SidebarList } from '@/components/sidebar/sidebar-list'
 import { SidebarFooter } from '@/components/sidebar/sidebar-footer'
-import { ThemeToggle } from '@/components/theme-toggle'
+// import { ThemeToggle } from '@/components/theme-toggle'
 
 // Register the plugins
 registerPlugin(FilePondPluginImagePreview)
