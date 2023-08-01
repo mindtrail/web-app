@@ -10,6 +10,8 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 
 import { FILE_LOADER_PAIR } from '@/types/fileLoader'
 
+const PDF_FILE = 'application/pdf'
+
 const LOADER: FILE_LOADER_PAIR = {
   'text/csv': CSVLoader,
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': DocxLoader,
@@ -38,9 +40,6 @@ export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => 
     if (!loadedDoc) {
       throw new Error('Error loading file')
     }
-
-    // @TODO: For PDFs and EPUBs, read the content twice, once with page splitting and once without
-    // Create the chunks from the non-split content, and add the page numbers to the metadata from the page-split version
 
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1500,
@@ -82,6 +81,8 @@ const getFileLoader = (filepath: Blob, type: string) => {
   }
 
   // @TODO: Read content twice for PDFs and EPUBs
+  // Create the chunks from the non-split content.
+  // But add the page numbers to the metadata from the page-split version
   // const options = { splitChapters: false, splitPages: false }
 
   // @ts-ignore
