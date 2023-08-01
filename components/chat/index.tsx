@@ -22,8 +22,6 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
-const EPXRESS_SERVER = 'http://localhost:3000/api'
-const CHAT_ENDPOINT = '/chat'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
@@ -36,7 +34,6 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
 
   const { messages, append, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
-    api: EPXRESS_SERVER + CHAT_ENDPOINT,
     initialMessages,
     id,
     body: {
