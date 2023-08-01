@@ -14,6 +14,9 @@ export async function POST(req: Request) {
     })
   }
 
+  // @ts-ignore - userId is not in the session type but I added it
+  const userId = session.user?.id
+
   const data = await req.formData()
 
   // map through all the entries
@@ -24,7 +27,7 @@ export async function POST(req: Request) {
 
     if (isFile) {
       const blob = value as Blob
-      const response = await uploadFile(blob)
+      const response = await uploadFile(blob, userId)
 
       if (!response) {
         console.log('blob', blob)

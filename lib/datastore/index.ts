@@ -8,8 +8,8 @@ import { uploadToS3 } from '@/lib/datastore/s3'
 
 const TEST_COLLECTION = 'test-collection'
 
-export const uploadFile = async (fileBlob: Blob) => {
-  uploadToS3(fileBlob)
+export const uploadFile = async (fileBlob: Blob, userId: string) => {
+  uploadToS3(fileBlob, userId)
   // @TODO: return file upload success, and run the rest of the process in the background
 
   const docs = await getDocumentChunks(fileBlob)
@@ -19,7 +19,7 @@ export const uploadFile = async (fileBlob: Blob) => {
     return
   }
 
-  await createAndStoreVectors(docs)
+  await createAndStoreVectors(docs, userId)
 
   return docs
 }

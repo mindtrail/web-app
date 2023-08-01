@@ -21,19 +21,19 @@ type QdrantSearchResponse = Schemas['ScoredPoint'] & {
   }
 }
 
-const TEST_COLLECTION = 'test-collection'
+// @TODO: - create the UI and functionality for this
+const DATASTORE_NAME = ''
 
-// The env variables are taken by QdrantVectorStore from the .env file
-const QDRANT_OPTIONS: QdrantLibArgs = {
-  collectionName: TEST_COLLECTION,
-  collectionConfig: COLLECTION_CONFIG,
-}
+export const createAndStoreVectors = async (docs: Document[], userId: string) => {
+  const qdrantOptions = {
+    collectionConfig: COLLECTION_CONFIG,
+    collectionName: `${DATASTORE_NAME}${userId}`,
+  }
 
-export const createAndStoreVectors = async (docs: Document[]) => {
   const vectorStore = await QdrantVectorStore.fromDocuments(
     docs,
     new OpenAIEmbeddings(),
-    QDRANT_OPTIONS,
+    qdrantOptions,
   )
 
   return vectorStore

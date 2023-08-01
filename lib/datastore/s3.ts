@@ -4,9 +4,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-// @TODO: make this dynamic
-const USER_NAME = 'test-user'
-
 const s3Client = new S3Client({
   region: 'eu-central-1',
   endpoint: 'https://s3.eu-central-1.amazonaws.com',
@@ -16,9 +13,9 @@ const s3Client = new S3Client({
   },
 })
 
-export async function uploadToS3(fileBlob: Blob) {
+export async function uploadToS3(fileBlob: Blob, userId: string) {
   const { name } = fileBlob
-  const key = `dataset1/${USER_NAME}-${name}-${Date.now().toString()}`
+  const key = `dataset1/${userId}/${name}-${Date.now().toString()}`
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer())
 
