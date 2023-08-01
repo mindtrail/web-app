@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 
 import { Metadata } from 'next'
 import { Toaster } from 'react-hot-toast'
+import { Analytics } from '@vercel/analytics/react'
 
 import { Providers } from '@/app/context/providers'
 import { LeftSidebar } from '@/components/sidebar'
@@ -37,6 +38,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           </div>
           <TailwindIndicator />
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
