@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from 'lib/authOptions'
-import { cn } from '@/lib/utils'
 
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
@@ -12,7 +11,6 @@ export async function Header() {
   const session = await getServerSession(authOptions)
 
   const user = session?.user
-  console.log(user)
 
   return (
     <header
