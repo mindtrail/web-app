@@ -21,7 +21,8 @@ export async function Header() {
       from-background/10 via-background/50 to-background/80 backdrop-blur-xl'
     >
       <div className='flex w-full max-w-6xl px-6 items-center justify-between'>
-        <Link href='/'>Indie Chat</Link>
+        {user ? <Link href='/chat'>Dashboard</Link> : <Link href='/'>Indie Chat</Link>}
+
         <div className='flex gap-2 items-center'>
           <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#demo'>
             Demo
@@ -34,7 +35,11 @@ export async function Header() {
           </Link>
         </div>
         <div className='flex space-x-2'>
-          {user ? <UserMenu user={user} /> : <LoginButton text='Sign In' className='-ml-2' />}
+          {user ? (
+            <UserMenu user={user} />
+          ) : (
+            <LoginButton text='Sign In' className='-ml-2 select-none' />
+          )}
         </div>
       </div>
     </header>
