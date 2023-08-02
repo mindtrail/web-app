@@ -1,11 +1,17 @@
+'use client'
+
 import * as React from 'react'
 import Link from 'next/link'
-import { Session } from 'next-auth'
+import { useSession } from 'next-auth/react'
+
+import { authOptions } from 'lib/authOptions'
 
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
 
-export async function Header({ session }: { session: Session | null }) {
+export function Header() {
+  const { data: session } = useSession()
+
   const user = session?.user
 
   return (
