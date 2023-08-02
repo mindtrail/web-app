@@ -1,15 +1,11 @@
 import * as React from 'react'
 import Link from 'next/link'
-import { getServerSession } from 'next-auth/next'
-
-import { authOptions } from 'lib/authOptions'
+import { Session } from 'next-auth'
 
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
 
-export async function Header() {
-  const session = await getServerSession(authOptions)
-
+export async function Header({ session }: { session: Session | null }) {
   const user = session?.user
 
   return (
