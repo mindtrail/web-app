@@ -4,7 +4,7 @@ import { Metadata } from 'next'
 import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 
-import { Providers } from '@/app/context/providers'
+import { Providers } from 'context/providers'
 import { Header } from '@/components/header'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 
@@ -31,6 +31,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <Providers>
           <Toaster />
           <div className='flex flex-col flex-1 w-full'>
+            {/* @ts-ignore Server Component */}
             <Header />
             <main className='flex flex-col flex-1 w-full items-center bg-muted/50'>
               <div className='flex flex-col flex-1 w-full max-w-6xl'>{children}</div>
