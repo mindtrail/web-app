@@ -5,7 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 
 import { Providers } from '@/app/context/providers'
-import { LeftSidebar } from '@/components/sidebar'
+import { Header } from '@/components/header'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 export const metadata: Metadata = {
@@ -27,13 +27,13 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body>
+      <body className='flex flex-col min-h-screen'>
         <Providers>
           <Toaster />
-          <div className='flex flex-col min-h-screen sm:flex-row'>
-            <LeftSidebar />
-            <main className='flex flex-col flex-1 relative items-center bg-muted/50 px-4'>
-              {children}
+          <div className='flex flex-col flex-1 w-full'>
+            <Header />
+            <main className='flex flex-col flex-1 w-full items-center bg-muted/50'>
+              <div className='flex flex-col flex-1 w-full max-w-6xl'>{children}</div>
             </main>
           </div>
           <TailwindIndicator />
