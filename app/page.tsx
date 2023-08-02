@@ -6,9 +6,9 @@ import { Chat } from '@/components/chat'
 export default function Home() {
   const id = getNanoId()
   return (
-    <div className='flex flex-col flex-1 w-full justify-center items-center'>
+    <div className='flex flex-col flex-1 w-full justify-center items-center px-6'>
       <div className='flex-col space-x-3'>
-        <h2>Homescreen</h2>
+        <h2 className='text-xl'>Indie Chat</h2>
         <br />
         <Link
           href='/protected'
@@ -17,9 +17,8 @@ export default function Home() {
         >
           Protected Page
         </Link>
-
-        <Chat id={id} />
       </div>
+      <Chat id={id} />
     </div>
   )
 }

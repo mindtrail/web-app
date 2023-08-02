@@ -20,15 +20,21 @@ export async function Header() {
       items-center justify-center bg-gradient-to-b border-b
       from-background/10 via-background/50 to-background/80 backdrop-blur-xl'
     >
-      <div className='flex w-full max-w-6xl px-4 items-center justify-between'>
+      <div className='flex w-full max-w-6xl px-6 items-center justify-between'>
         <Link href='/'>Indie Chat</Link>
-        <div className='flex gap-4'>
-          <Link href='#demo'>Demo</Link>
-          <Link href='#features'>Features</Link>
-          <Link href='#pricing'>Pricing</Link>
+        <div className='flex gap-2 items-center'>
+          <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#demo'>
+            Demo
+          </Link>
+          <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#features'>
+            Features
+          </Link>
+          <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#pricing'>
+            Pricing
+          </Link>
         </div>
         <div className='flex space-x-2'>
-          {user ? <UserMenu user={user} /> : <LoginButton text='Login' className='-ml-2' />}
+          {user ? <UserMenu user={user} /> : <LoginButton text='Sign In' className='-ml-2' />}
         </div>
       </div>
     </header>
