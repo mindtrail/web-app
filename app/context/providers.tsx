@@ -6,7 +6,7 @@ import { SessionProvider } from 'next-auth/react'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 
-export function Providers({ children, ...props }: ThemeProviderProps) {
+export function Providers({ children }: ThemeProviderProps) {
   return (
     <NextThemesProvider>
       <TooltipProvider>
