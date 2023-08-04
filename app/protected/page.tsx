@@ -10,6 +10,7 @@ export default async function Home() {
   if (!session) {
     redirect(`/api/auth/signin?callbackUrl=/protected`)
   }
+  console.log('session server --- ', session)
 
   // console.log('session', session)
 

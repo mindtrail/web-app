@@ -4,10 +4,9 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 
-import { authOptions } from 'lib/authOptions'
-
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
+import LoadingDots from '@/components/loading-dots'
 
 export function Header() {
   const { data: session } = useSession()
