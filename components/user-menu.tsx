@@ -25,10 +25,10 @@ function getUserInitials(name: string) {
 
 export function UserMenu({ user }: UserMenuProps) {
   return (
-    <div className='flex items-center justify-between'>
+    <div className='flex items-center justify-end w-52 absolute'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='pl-0'>
+          <Button variant='ghost' className='pr-2 pl-0'>
             {user?.image ? (
               <Image
                 className='w-6 h-6 transition-opacity duration-300 rounded-full
@@ -51,7 +51,7 @@ export function UserMenu({ user }: UserMenuProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent sideOffset={8} className='w-[200px]'>
-          <DropdownMenuItem className='flex-col items-start'>
+          <DropdownMenuItem className='flex-col items-start' disabled>
             <div className='text-xs font-medium'>{user?.name}</div>
             <div className='text-xs text-zinc-500'>{user?.email}</div>
           </DropdownMenuItem>

@@ -1,9 +1,8 @@
-import { getNanoId } from '@/lib/utils'
 import { Chat } from '@/components/chat'
 import { Header } from '@/components/header'
+// import { getNanoId } from '@/lib/utils'
 
 export default function Home() {
-  const id = getNanoId()
   return (
     <div className='flex flex-col flex-1 w-full items-center bg-muted/50'>
       <Header />
