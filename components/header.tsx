@@ -19,10 +19,11 @@ export function Header() {
       items-center justify-center bg-gradient-to-b border-b
       from-background/10 via-background/50 to-background/80 backdrop-blur-xl'
     >
-      <div className='flex w-full max-w-6xl px-6 items-center justify-between'>
-        {user ? <Link href='/chat'>Dashboard</Link> : <Link href='/'>Indie Chat</Link>}
-
-        <div className='flex gap-2 items-center'>
+      <div className='flex w-full max-w-6xl px-4 md:px-6 items-center justify-between'>
+        <div className='flex w-40'>
+          {user ? <Link href='/chat'>Dashboard</Link> : <Link href='/'>Indie Chat</Link>}
+        </div>
+        <div className='hidden gap-2 items-center sm:flex'>
           <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#demo'>
             Demo
           </Link>
@@ -33,7 +34,7 @@ export function Header() {
             Pricing
           </Link>
         </div>
-        <div className='flex space-x-2'>
+        <div className='flex justify-end items-center w-40 relative'>
           {user ? (
             <UserMenu user={user} />
           ) : (
