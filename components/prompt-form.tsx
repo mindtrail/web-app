@@ -27,14 +27,14 @@ export function PromptForm({ onSubmit, input, setInput, isLoading }: PromptProps
 
   return (
     <form onSubmit={onSubmit} ref={formRef}>
-      <div className='relative flex w-full grow flex-col overflow-hidden bg-background px-8 sm:rounded-md sm:border sm:px-12'>
+      <div className='relative flex w-full grow flex-col overflow-hidden bg-background px-8 sm:rounded-t-md sm:border sm:px-12'>
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
               href='/'
               className={cn(
                 buttonVariants({ size: 'sm', variant: 'outline' }),
-                'absolute left-0 top-4 h-8 w-8 rounded-full bg-background p-0 sm:left-4'
+                'absolute left-0 top-4 h-8 w-8 rounded-full bg-background p-0 sm:left-4',
               )}
             >
               <IconPlus />

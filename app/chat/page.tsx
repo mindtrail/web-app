@@ -40,6 +40,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
 
   const userId = session.user.id
 
-  return <div>Chat Page</div>
-  // return <Chat id={chat.id} initialMessages={chat.messages} />
+  // return <div>Chat Page</div>
+  return <Chat id={'123'} initialMessages={[]} />
 }
