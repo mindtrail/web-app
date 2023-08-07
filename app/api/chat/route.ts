@@ -8,8 +8,26 @@ import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/datastore'
 
+let openAIChat: ChatOpenAI
+
+const getOpenAIConnection = () => {
+  if (openAIChat) {
+    return openAIChat
+  }
+
+  openAIChat = new ChatOpenAI({
+    streaming: true,
+    temperature: 0,
+    modelName: 'gpt-3.5-turbo',
+  })
+
+  return openAIChat
+}
+
 export async function POST(req: Request, res: NextResponse) {
+  console.time('session')
   const session = await getServerSession(authOptions)
+  console.timeEnd('session')
 
   if (!session?.user) {
     console.log('Unauthorized')
@@ -18,42 +36,40 @@ export async function POST(req: Request, res: NextResponse) {
     })
   }
   // @ts-ignore - userId is not in the session type but I added it
-  const userId = session.user?.id
+  // const userId = session.user?.id
 
   const { messages } = await req.json()
 
-  console.log('messages', messages)
+  // console.log('messages', messages)
   if (!messages) {
     return new Response('No message provided', {
       status: 400,
     })
   }
 
-  const lastMessage = messages[messages.length - 1].content
+  // const lastMessage = messages[messages.length - 1].content
 
-  console.time('searchDB')
-  const kbData = await searchSimilarText(lastMessage, userId)
-  console.timeEnd('searchDB')
+  // console.time('searchDB')
+  // const kbData = await searchSimilarText(lastMessage, userId)
+  // console.timeEnd('searchDB')
 
   // console.log('kbData', kbData)
-  const sources = kbData.map((item) => {
-    const metadata = item?.metadata
-    const file = metadata.fileName
-    const page = metadata?.loc?.pageNumber
+  // const sources = kbData.map((item) => {
+  //   const metadata = item?.metadata
+  //   const file = metadata.fileName
+  //   const page = metadata?.loc?.pageNumber
 
-    return {
-      file,
-      page,
-    }
-  })
+  //   return {
+  //     file,
+  //     page,
+  //   }
+  // })
 
   const { stream, handlers } = LangChainStream()
 
-  const chat = new ChatOpenAI({
-    streaming: true,
-    temperature: 0,
-    modelName: 'gpt-3.5-turbo',
-  })
+  console.time('ai')
+  const chat = getOpenAIConnection()
+  console.timeEnd('ai')
 
   chat
     .call(

@@ -7,14 +7,13 @@ import { ChatList } from '@/components/chat/chat-list'
 import { ChatPanel } from '@/components/chat/chat-panel'
 import { EmptyScreen } from '@/components/chat/empty-screen'
 import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
+import { ChatProps } from '@/components/chat'
 
-export interface ChatProps extends React.ComponentProps<'div'> {
-  initialMessages?: Message[]
-  id?: string
-}
+const DEMO_API = '/api/demo-chat'
 
 export function ChatDemo({ id, initialMessages, className }: ChatProps) {
   const { messages, append, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
+    api: DEMO_API,
     initialMessages,
     id,
     body: {
@@ -26,13 +25,14 @@ export function ChatDemo({ id, initialMessages, className }: ChatProps) {
     <>
       <div
         className={cn(
-          'h-[600px] w-full relative pt-4 sm:rounded-lg border shadow-lg bg-background',
+          'h-[600px] w-full max-w-4xl relative pt-4 sm:rounded-lg border shadow-lg bg-background',
           className,
         )}
       >
         {messages.length ? (
           <div className='max-h-[460px] overflow-auto pt-2'>
             <ChatList messages={messages} />
+            <ChatScrollAnchor trackVisibility={isLoading} />
           </div>
         ) : (
           // @ts-ignore

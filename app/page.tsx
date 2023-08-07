@@ -7,13 +7,13 @@ export default function Home() {
       <Header />
       <div className='flex flex-col flex-1 w-full max-w-6xl'>
         <div className='flex flex-col flex-1 w-full items-center sm:px-6 cursor-default'>
-          <section className='flex flex-col w-full h-64 py-12 gap-2 items-center'>
+          <section className='flex flex-col w-full py-24 gap-2 items-center'>
             <h1 className='text-xl'>Indie Chat</h1>
             <h2 className='text-lg text-gray-500'>
               An AI-Powered chatbot for your docs and website.
             </h2>
           </section>
-          <section className='flex w-full'>
+          <section className='flex w-full justify-center'>
             <ChatDemo />
           </section>
           <section className='pt-12 flex w-full justify-around'>
