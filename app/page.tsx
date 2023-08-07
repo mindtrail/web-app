@@ -16,23 +16,6 @@ export default function Home() {
           <section className='flex w-full justify-center'>
             <ChatDemo />
           </section>
-          <section className='pt-12 flex w-full justify-around'>
-            <div>
-              <h3 className='text-lg'>Features</h3>
-              <ul className='text-sm text-gray-500'>
-                <li>Feature 1</li>
-                <li>Feature 2</li>
-                <li>Feature 3</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className='text-lg'>Pricing</h3>
-              <p className='text-sm text-gray-500'>Free</p>
-              <p className='text-sm text-gray-500'>Hooby</p>
-              <p className='text-sm text-gray-500'>Pro</p>
-              <p className='text-sm text-gray-500'>Enterprise</p>
-            </div>
-          </section>
         </div>
       </div>
     </div>
