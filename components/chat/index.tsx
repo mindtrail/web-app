@@ -51,6 +51,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
             <ChatScrollAnchor trackVisibility={isLoading} />
           </>
         ) : (
+          // @ts-ignore
           <EmptyScreen setInput={setInput} />
         )}
       </div>

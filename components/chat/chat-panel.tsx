@@ -10,21 +10,22 @@ export interface ChatPanelProps
   extends Pick<
     UseChatHelpers,
     'isLoading' | 'reload' | 'messages' | 'stop' | 'input' | 'setInput' | 'handleSubmit'
-  > {}
+  > {
+  demo?: boolean
+}
 
-export function ChatPanel({
-  isLoading,
-  stop,
-  handleSubmit,
-  reload,
-  input,
-  setInput,
-  messages,
-}: ChatPanelProps) {
+export function ChatPanel(props: ChatPanelProps) {
+  const { demo, isLoading, stop, handleSubmit, reload, input, setInput, messages } = props
+
+  const positionStyles = demo ? '' : 'fixed'
+
   return (
-    <div className='fixed flex inset-x-0 bottom-0 bg-gradient-to-b from-muted/10 from-10% to-muted/30 to-50%'>
-      <ButtonScrollToBottom />
-      <div className='spacer hidden md:flex md:w-[250px] lg:w-[300px]' />
+    <div
+      className={`${positionStyles} flex inset-x-0 bottom-0 bg-gradient-to-b
+      from-muted/10 from-10% to-muted/30 to-50%`}
+    >
+      {demo ? null : <ButtonScrollToBottom />}
+      {demo ? null : <div className='spacer hidden md:flex md:w-[250px] lg:w-[300px]' />}
 
       <div className='flex-1 mx-auto sm:max-w-2xl sm:px-4'>
         <div className='flex h-10 items-center justify-center'>
@@ -42,14 +43,13 @@ export function ChatPanel({
             )
           )}
         </div>
-        <div className='space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4'>
+        <div className='space-y-4 px-4 py-2  sm:rounded-t-xl'>
           <PromptForm
             onSubmit={handleSubmit}
             input={input}
             setInput={setInput}
             isLoading={isLoading}
           />
-          <FooterText className='hidden sm:block' />
         </div>
       </div>
     </div>
