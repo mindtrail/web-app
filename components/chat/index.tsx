@@ -1,7 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useChat, type Message } from 'ai/react'
+
+import { FilePond, registerPlugin } from 'react-filepond'
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 
 import { cn } from '@/lib/utils'
 import { ChatList } from '@/components/chat/chat-list'
@@ -23,6 +27,28 @@ import { Input } from '../ui/input'
 
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
 
+// Register the plugins
+registerPlugin(FilePondPluginImagePreview)
+registerPlugin(FilePondPluginFileValidateType)
+
+const ACCEPTED_FILE_TYPES = [
+  'application/epub+zip',
+  'application/json',
+  'application/octet-stream',
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/x-ndjson',
+  'application/x-subrip',
+  'application/octet-stream',
+  'text/csv',
+  'text/plain',
+  'text/markdown',
+]
+
+const UPLOAD_ENDPOINT = '/api/upload'
+const MAX_NR_OF_FILES = 30
+const UPLOAD_LABEL = 'Drag and drop files or <span class="filepond--label-action">Browse</span>'
+
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
   id?: string
@@ -33,7 +59,20 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
 
-  const { messages, append, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
+  const [dataStore, setDataStore] = useState(null)
+  const [files, setFiles] = useState([])
+
+  const handleInit = () => {
+    console.log('FilePond instance has initialised')
+  }
+
+  const handleUpdateFiles = (fileItems: any) => {
+    console.log(fileItems)
+    // Set current file objects to state
+    setFiles(fileItems.map(async (fileItem: any) => fileItem.file))
+  }
+
+  const { messages, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
     initialMessages,
     id,
     body: {
@@ -41,20 +80,43 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       previewToken,
     },
   })
+  const rederPlaceholder = () => <div className='file-upload'>File Pond</div>
+
+  const renderUpperContent = () => {
+    if (!dataStore) {
+      return (
+        <Suspense fallback={rederPlaceholder()}>
+          <FilePond
+            allowMultiple={true}
+            credits={false}
+            files={files}
+            labelIdle={UPLOAD_LABEL}
+            maxFiles={MAX_NR_OF_FILES}
+            oninit={handleInit}
+            onupdatefiles={handleUpdateFiles}
+            server={UPLOAD_ENDPOINT}
+            acceptedFileTypes={ACCEPTED_FILE_TYPES}
+          ></FilePond>
+        </Suspense>
+      )
+    }
+
+    if (messages.length) {
+      return (
+        <>
+          <ChatList messages={messages} />
+          <ChatScrollAnchor trackVisibility={isLoading} />
+        </>
+      )
+    }
+
+    // @ts-ignore
+    return <EmptyChat setInput={setInput} />
+  }
 
   return (
     <>
-      <div className={cn('pb-[200px] pt-4 md:pt-10 w-full', className)}>
-        {messages.length ? (
-          <>
-            <ChatList messages={messages} />
-            <ChatScrollAnchor trackVisibility={isLoading} />
-          </>
-        ) : (
-          // @ts-ignore
-          <EmptyChat setInput={setInput} />
-        )}
-      </div>
+      <div className={cn('pb-[200px] pt-4 md:pt-10 w-full', className)}>{renderUpperContent()}</div>
       <ChatPanel
         isLoading={isLoading}
         stop={stop}
