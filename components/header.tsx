@@ -6,7 +6,6 @@ import { useSession } from 'next-auth/react'
 
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
-import LoadingDots from '@/components/loading-dots'
 
 export function Header() {
   const { data: session } = useSession()
@@ -24,17 +23,7 @@ export function Header() {
           <Link href='/'>Indie Chat</Link>
         </div>
         {user && <Link href='/chat'>Dashboard</Link>}
-        {/* <div className='hidden gap-2 items-center sm:flex'>
-          <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#demo'>
-            Demo
-          </Link>
-          <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#features'>
-            Features
-          </Link>
-          <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#pricing'>
-            Pricing
-          </Link>
-        </div> */}
+
         <div className='flex justify-end items-center w-40 relative'>
           {user ? (
             <UserMenu user={user} />
