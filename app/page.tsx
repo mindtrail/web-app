@@ -1,6 +1,5 @@
-import { Chat } from '@/components/chat'
 import { Header } from '@/components/header'
-// import { getNanoId } from '@/lib/utils'
+import { ChatDemo } from '@/components/chat/demo'
 
 export default function Home() {
   return (
@@ -11,16 +10,11 @@ export default function Home() {
           <section className='flex flex-col w-full h-64 py-12 gap-2 items-center'>
             <h1 className='text-xl'>Indie Chat</h1>
             <h2 className='text-lg text-gray-500'>
-              An AI-h2owered chatbot for your docs and website.
+              An AI-Powered chatbot for your docs and website.
             </h2>
           </section>
-          <section>
-            <h3 className='text-lg'>Demo</h3>
-            <p className='text-sm text-gray-500'>
-              This is a demo of the Indie Chat app. You can use the chatbot to ask questions about
-              Indie Chat.
-            </p>
-            {/* <Chat id={id} /> */}
+          <section className='flex w-full'>
+            <ChatDemo />
           </section>
           <section>
             <h3 className='text-lg'>Features</h3>
