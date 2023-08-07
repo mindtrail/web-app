@@ -21,9 +21,10 @@ export function Header() {
     >
       <div className='flex w-full max-w-6xl px-4 md:px-6 items-center justify-between'>
         <div className='flex w-40'>
-          {user ? <Link href='/chat'>Dashboard</Link> : <Link href='/'>Indie Chat</Link>}
+          <Link href='/'>Indie Chat</Link>
         </div>
-        <div className='hidden gap-2 items-center sm:flex'>
+        {user && <Link href='/chat'>Dashboard</Link>}
+        {/* <div className='hidden gap-2 items-center sm:flex'>
           <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#demo'>
             Demo
           </Link>
@@ -33,12 +34,14 @@ export function Header() {
           <Link className='hover:bg-slate-50 px-2 py-1 rounded-md' href='#pricing'>
             Pricing
           </Link>
-        </div>
+        </div> */}
         <div className='flex justify-end items-center w-40 relative'>
           {user ? (
             <UserMenu user={user} />
           ) : (
-            <LoginButton text='Sign In' className='-ml-2 select-none' />
+            <>
+              <LoginButton text='Sign In' className='-ml-2 select-none' />
+            </>
           )}
         </div>
       </div>
