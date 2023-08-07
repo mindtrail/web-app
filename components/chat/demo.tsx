@@ -5,7 +5,7 @@ import { useChat, type Message } from 'ai/react'
 import { cn } from '@/lib/utils'
 import { ChatList } from '@/components/chat/chat-list'
 import { ChatPanel } from '@/components/chat/chat-panel'
-import { EmptyScreen } from '@/components/chat/empty-screen'
+import { EmptyChat } from '@/components/chat/empty-chat'
 import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
 import { ChatProps } from '@/components/chat'
 
@@ -36,7 +36,7 @@ export function ChatDemo({ id, initialMessages, className }: ChatProps) {
           </div>
         ) : (
           // @ts-ignore
-          <EmptyScreen setInput={setInput} demo />
+          <EmptyChat setInput={setInput} title='Demo - Welcome to the AI Chatbot!' />
         )}
         <div className='absolute bottom-[-0.5rem] w-full'>
           <ChatPanel

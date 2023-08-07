@@ -6,7 +6,7 @@ import { useChat, type Message } from 'ai/react'
 import { cn } from '@/lib/utils'
 import { ChatList } from '@/components/chat/chat-list'
 import { ChatPanel } from '@/components/chat/chat-panel'
-import { EmptyScreen } from '@/components/chat/empty-screen'
+import { EmptyChat } from '@/components/chat/empty-chat'
 import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
 import { useLocalStorage } from '@/lib/hooks/use-local-storage'
 import {
@@ -52,7 +52,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
           </>
         ) : (
           // @ts-ignore
-          <EmptyScreen setInput={setInput} />
+          <EmptyChat setInput={setInput} />
         )}
       </div>
       <ChatPanel

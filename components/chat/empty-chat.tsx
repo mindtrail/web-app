@@ -24,17 +24,18 @@ const InfoMessage = {
   demo: '',
 }
 
-interface EmptyScreen {
+interface EmptyChat {
   setInput: Pick<UseChatHelpers, 'setInput'>
   exampleMessages?: []
-  demo?: boolean
+  demo?: boolean,
+  title?: string
 }
 
-export function EmptyScreen({ setInput, exampleMessages, demo }: EmptyScreen) {
+export function EmptyChat({ setInput, exampleMessages, title }: EmptyChat) {
   const messagesToDisplay = exampleMessages?.length ? exampleMessages : demoMessages
   return (
     <div className='mx-auto max-w-2xl p-8 sm:rounded-lg'>
-      <h1 className='mb-2 text-lg font-semibold'>Demo - Welcome to the AI Chatbot!</h1>
+      <h1 className='mb-2 text-lg font-semibold'>{title}</h1>
       <p className='leading-normal text-muted-foreground'>
         You can start a conversation here or try the following examples:
       </p>
