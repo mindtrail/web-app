@@ -1,5 +1,5 @@
 import { Header } from '@/components/header'
-import { ChatDemo } from '@/components/chat/demo'
+import { ChatDemo } from '@/components/chat/chat-demo'
 
 export default function Home() {
   return (
