@@ -1,4 +1,5 @@
 import { type Message } from 'ai'
+import { Session } from 'next-auth'
 
 export interface Chat extends Record<string, any> {
   id: string
@@ -16,3 +17,9 @@ export type ServerActionResult<Result> = Promise<
       error: string
     }
 >
+
+interface UserWithId {
+  id: string | null
+}
+
+export type ExtendedSession = Session & { user: UserWithId | null }
