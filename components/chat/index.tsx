@@ -1,11 +1,15 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { useState } from 'react'
 import { useChat, type Message } from 'ai/react'
 
 import { FilePond, registerPlugin } from 'react-filepond'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
+
+// Import FilePond styles
+import 'filepond/dist/filepond.min.css'
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 
 import { cn } from '@/lib/utils'
 import { ChatList } from '@/components/chat/chat-list'
@@ -21,6 +25,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import LoadingDots from '@/components/loading-dots'
+import { IconSpinner } from '@/components/ui/icons'
 
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
@@ -61,9 +67,11 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
 
   const [dataStore, setDataStore] = useState(null)
   const [files, setFiles] = useState([])
+  const [isInitializing, setIsInitializing] = useState(true)
 
   const handleInit = () => {
     console.log('FilePond instance has initialised')
+    setIsInitializing(false)
   }
 
   const handleUpdateFiles = (fileItems: any) => {
@@ -85,7 +93,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
   const renderUpperContent = () => {
     if (!dataStore) {
       return (
-        <Suspense fallback={rederPlaceholder()}>
+        <div className='max-w-2xl w-full h-32 relative'>
           <FilePond
             allowMultiple={true}
             credits={false}
@@ -97,7 +105,13 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
             server={UPLOAD_ENDPOINT}
             acceptedFileTypes={ACCEPTED_FILE_TYPES}
           ></FilePond>
-        </Suspense>
+          {isInitializing ? (
+            <div className='flex w-full h-[76px] bg-muted justify-center items-center absolute top-0'>
+              <IconSpinner className='mr-2 animate-spin' />{' '}
+              <span className='text-muted-foreground'>Initializing...</span>
+            </div>
+          ) : null}
+        </div>
       )
     }
 
@@ -116,7 +130,15 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
 
   return (
     <>
-      <div className={cn('pb-[200px] pt-4 md:pt-10 w-full', className)}>{renderUpperContent()}</div>
+      <div
+        className={cn(
+          'flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-8 w-full',
+          className,
+        )}
+      >
+        <h1 className='mb-2 text-lg font-semibold text-center'>Upload docs to begin</h1>
+        {renderUpperContent()}
+      </div>
       <ChatPanel
         isLoading={isLoading}
         stop={stop}
