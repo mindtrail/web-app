@@ -1,18 +1,18 @@
 'use client'
 
-import * as React from 'react'
+import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 
 import { cn } from '@/lib/utils'
 import { Button, type ButtonProps } from '@/components/ui/button'
-import { IconGitHub, IconSpinner } from '@/components/ui/icons'
+import { IconSpinner } from '@/components/ui/icons'
 
 interface LoginButtonProps extends ButtonProps {
   text?: string
 }
 
 export function LoginButton({ text, className, ...props }: LoginButtonProps) {
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   return (
     <Button
       variant='outline'
