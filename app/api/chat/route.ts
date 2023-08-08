@@ -1,11 +1,10 @@
-import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { AIMessage, HumanMessage } from 'langchain/schema'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/authOptions'
 
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
-import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/datastore'
 
 let openAIChat: ChatOpenAI
@@ -24,7 +23,7 @@ const getOpenAIConnection = () => {
   return openAIChat
 }
 
-export async function POST(req: Request, res: NextResponse) {
+export async function POST(req: Request) {
   console.time('session')
   const session = await getServerSession(authOptions)
   console.timeEnd('session')

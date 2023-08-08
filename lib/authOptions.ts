@@ -4,7 +4,7 @@ import GithubProvider from 'next-auth/providers/github'
 import EmailProvider from 'next-auth/providers/email'
 
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import prisma from 'lib/dbConnection'
+import prisma from '@/lib/dbConnection'
 
 export const authOptions: NextAuthOptions = {
   // @ts-ignore
