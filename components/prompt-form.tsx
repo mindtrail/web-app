@@ -13,9 +13,10 @@ export interface PromptProps extends Pick<UseChatHelpers, 'input' | 'setInput'> 
   // onSubmit: (value: string) => void
   isLoading: boolean
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+  notInitialised?: boolean
 }
 
-export function PromptForm({ onSubmit, input, setInput, isLoading }: PromptProps) {
+export function PromptForm({ onSubmit, input, setInput, isLoading, notInitialised }: PromptProps) {
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -57,7 +58,11 @@ export function PromptForm({ onSubmit, input, setInput, isLoading }: PromptProps
         <div className='absolute right-0 top-4 sm:right-4'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button type='submit' size='icon' disabled={isLoading || input === ''}>
+              <Button
+                type='submit'
+                size='icon'
+                disabled={isLoading || input === '' || notInitialised}
+              >
                 <IconArrowElbow />
                 <span className='sr-only'>Send message</span>
               </Button>
