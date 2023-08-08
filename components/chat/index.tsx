@@ -88,7 +88,6 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       previewToken,
     },
   })
-  const rederPlaceholder = () => <div className='file-upload'>File Pond</div>
 
   const renderUpperContent = () => {
     if (!dataStore) {
@@ -108,7 +107,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
           {isInitializing ? (
             <div className='flex w-full h-[76px] bg-muted justify-center items-center absolute top-0'>
               <IconSpinner className='mr-2 animate-spin' />{' '}
-              <span className='text-muted-foreground'>Initializing...</span>
+              <span className='text-muted-foreground'>Loading...</span>
             </div>
           ) : null}
         </div>
@@ -147,6 +146,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         messages={messages}
         input={input}
         setInput={setInput}
+        notInitialised={!dataStore}
       />
 
       <Dialog open={previewTokenDialog} onOpenChange={setPreviewTokenDialog}>

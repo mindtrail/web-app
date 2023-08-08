@@ -12,10 +12,12 @@ export interface ChatPanelProps
     'isLoading' | 'reload' | 'messages' | 'stop' | 'input' | 'setInput' | 'handleSubmit'
   > {
   demo?: boolean
+  notInitialised?: boolean
 }
 
 export function ChatPanel(props: ChatPanelProps) {
-  const { demo, isLoading, stop, handleSubmit, reload, input, setInput, messages } = props
+  const { demo, isLoading, stop, handleSubmit, reload, input, setInput, messages, notInitialised } =
+    props
 
   const positionStyles = demo ? '' : 'fixed'
 
@@ -25,7 +27,7 @@ export function ChatPanel(props: ChatPanelProps) {
       from-muted/10 from-10% to-muted/30 to-50%`}
     >
       {demo ? null : <ButtonScrollToBottom />}
-      {demo ? null : <div className='spacer hidden md:flex md:w-[250px] lg:w-[300px]' />}
+      {/* {demo ? null : <div className='spacer hidden md:flex md:w-[250px] lg:w-[300px]' />} */}
 
       <div className='flex-1 mx-auto sm:max-w-2xl sm:px-4'>
         <div className='flex h-10 items-center justify-center'>
@@ -49,6 +51,7 @@ export function ChatPanel(props: ChatPanelProps) {
             input={input}
             setInput={setInput}
             isLoading={isLoading}
+            notInitialised={notInitialised}
           />
         </div>
       </div>
