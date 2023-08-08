@@ -12,8 +12,6 @@ interface HeaderProps {
 }
 
 export function Header({ session }: HeaderProps) {
-  console.log(2222)
-
   const user = session?.user
 
   return (

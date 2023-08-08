@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 import { Header } from '@/components/header'
 
-import { authOptions } from 'lib/authOptions'
+import { authOptions } from '@/lib/authOptions'
 import { Chat } from '@/components/chat'
 
 export interface ChatPageProps {

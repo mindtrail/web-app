@@ -9,6 +9,7 @@ import { ExtendedSession } from '@/lib/types'
 import { Header } from '@/components/header'
 import { Chat } from '@/components/chat'
 import { Datastore } from '@/components/datastore'
+import { getDatastoreList } from '@/lib/datastore'
 
 export interface DashboardProps {
   params: {
@@ -31,17 +32,20 @@ export async function generateMetadata({ params }: DashboardProps): Promise<Meta
 }
 
 export default async function Dashboard({ params }: DashboardProps) {
-  console.log(1111)
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
     redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
   }
 
+  const userId = session?.user?.id
+
+  const datastoreList = await getDatastoreList(userId)
+
   return (
     <>
       <Header session={session} />
-      <Chat id={'123'} />
+      {!datastoreList.length && <Datastore />}
     </>
   )
 }
