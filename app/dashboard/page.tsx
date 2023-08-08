@@ -39,7 +39,6 @@ export default async function Dashboard({ params }: DashboardProps) {
   }
 
   const userId = session?.user?.id
-
   const datastoreList = await getDatastoreList(userId)
 
   return (
