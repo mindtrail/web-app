@@ -1,14 +1,18 @@
-'use client'
-
 import * as React from 'react'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
 
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
 
-export function Header() {
-  const { data: session } = useSession()
+import { ExtendedSession } from '@/lib/types'
+
+interface HeaderProps {
+  session: ExtendedSession
+}
+
+export function Header({ session }: HeaderProps) {
+  console.log(2222)
 
   const user = session?.user
 
@@ -22,7 +26,7 @@ export function Header() {
         <div className='flex w-40'>
           <Link href='/'>Indie Chat</Link>
         </div>
-        {user && <Link href='/chat'>Dashboard</Link>}
+        {user && <Link href='/dashboard'>Dashboard</Link>}
 
         <div className='flex justify-end items-center w-40 relative'>
           {user ? (

@@ -18,7 +18,7 @@ export function LoginButton({ text, className, ...props }: LoginButtonProps) {
       variant='outline'
       onClick={() => {
         setIsLoading(true)
-        signIn(undefined, { callbackUrl: '/chat' })
+        signIn(undefined, { callbackUrl: '/dashboard' })
       }}
       disabled={isLoading}
       className={cn(className)}

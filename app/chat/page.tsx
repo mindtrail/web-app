@@ -1,7 +1,8 @@
 import { type Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
+import { Header } from '@/components/header'
 
 import { authOptions } from 'lib/authOptions'
 import { Chat } from '@/components/chat'
@@ -41,5 +42,10 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const userId = session.user.id
 
   // return <div>Chat Page</div>
-  return <Chat id={'123'} />
+  return (
+    <>
+      <Header session={session} />
+      <Chat id={'123'} />
+    </>
+  )
 }

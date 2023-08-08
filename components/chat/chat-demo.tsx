@@ -12,7 +12,7 @@ import { ChatProps } from '@/components/chat'
 const DEMO_API = '/api/demo-chat'
 
 export function ChatDemo({ id, initialMessages, className }: ChatProps) {
-  const { messages, append, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
+  const { messages, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
     api: DEMO_API,
     initialMessages,
     id,

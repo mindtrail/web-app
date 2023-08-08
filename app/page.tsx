@@ -1,10 +1,17 @@
+import { getServerSession } from 'next-auth/next'
+
+import { authOptions } from '@/lib/authOptions'
+import { ExtendedSession } from '@/lib/types'
+
 import { Header } from '@/components/header'
 import { ChatDemo } from '@/components/chat/chat-demo'
 
-export default function Home() {
+export default async function Home() {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+
   return (
     <div className='flex flex-col flex-1 w-full items-center bg-muted/50'>
-      <Header />
+      <Header session={session} />
       <div className='flex flex-col flex-1 w-full max-w-6xl'>
         <div className='flex flex-col flex-1 w-full items-center sm:px-6 cursor-default'>
           <section className='flex flex-col w-full py-24 gap-2 items-center'>
