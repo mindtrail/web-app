@@ -19,7 +19,6 @@ export async function uploadToS3(fileBlob: Blob, userId: string) {
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer())
 
-  console.log('buffer', buffer)
   const command = new PutObjectCommand({
     Bucket: 'indie-chat',
     Key: key,
@@ -27,8 +26,9 @@ export async function uploadToS3(fileBlob: Blob, userId: string) {
   })
 
   try {
+    console.time('s3')
     const response = await s3Client.send(command)
-    console.log('s3', response)
+    console.timeEnd('s3')
     return response
   } catch (error) {
     console.error('Error uploading to S3', error)

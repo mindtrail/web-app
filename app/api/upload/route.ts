@@ -3,18 +3,18 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadFile } from '@/lib/datastore'
+import { ExtendedSession } from '@/lib/types'
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions)
+  const session = (await getServerSession(authOptions)) as ExtendedSession
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
   }
 
-  // @ts-ignore - userId is not in the session type but I added it
   const userId = session.user?.id
 
   const data = await req.formData()
@@ -34,8 +34,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'File type not supported' })
       }
 
-      console.log('response', response)
-
+      // console.log('response', response)
       return NextResponse.json({ response })
     }
   }

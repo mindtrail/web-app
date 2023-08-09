@@ -80,9 +80,9 @@ CREATE TABLE "User" (
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
     "picture" TEXT,
-    "has_opt_in_email" BOOLEAN DEFAULT false,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "hasOptInEmail" BOOLEAN DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -90,12 +90,12 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Usage" (
     "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "nb_agent_queries" INTEGER NOT NULL DEFAULT 0,
-    "nb_datastore_queries" INTEGER NOT NULL DEFAULT 0,
-    "nb_uploaded_bytes" INTEGER NOT NULL DEFAULT 0,
-    "nb_data_processing_bytes" INTEGER NOT NULL DEFAULT 0,
-    "nb_tokens" INTEGER NOT NULL DEFAULT 0,
+    "userId" TEXT NOT NULL,
+    "nbAgentQueries" INTEGER NOT NULL DEFAULT 0,
+    "nbDatastoreQueries" INTEGER NOT NULL DEFAULT 0,
+    "nbUploadedBytes" INTEGER NOT NULL DEFAULT 0,
+    "nbDataProcessingBytes" INTEGER NOT NULL DEFAULT 0,
+    "nbModelTokens" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "Usage_pkey" PRIMARY KEY ("id")
 );
@@ -108,9 +108,9 @@ CREATE TABLE "Datastore" (
     "type" "DatastoreType" NOT NULL,
     "visibility" "DatastoreVisibility" NOT NULL DEFAULT 'private',
     "config" JSONB,
-    "owner_id" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "ownerId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Datastore_pkey" PRIMARY KEY ("id")
 );
@@ -122,15 +122,15 @@ CREATE TABLE "AppDatasource" (
     "name" TEXT NOT NULL,
     "status" "DatasourceStatus" NOT NULL DEFAULT 'unsynched',
     "config" JSONB,
-    "datastore_id" TEXT,
-    "owner_id" TEXT,
-    "nb_chunks" INTEGER DEFAULT 0,
-    "text_size" INTEGER DEFAULT 0,
+    "datastoreId" TEXT,
+    "ownerId" TEXT,
+    "nbChunks" INTEGER DEFAULT 0,
+    "textSize" INTEGER DEFAULT 0,
     "hash" TEXT,
-    "nb_synch" INTEGER DEFAULT 0,
-    "last_synch" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "nbSynch" INTEGER DEFAULT 0,
+    "lastSynch" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "AppDatasource_pkey" PRIMARY KEY ("id")
 );
@@ -138,13 +138,13 @@ CREATE TABLE "AppDatasource" (
 -- CreateTable
 CREATE TABLE "Conversation" (
     "id" TEXT NOT NULL,
-    "visitor_id" TEXT,
-    "user_id" TEXT,
-    "agent_id" TEXT,
+    "visitorId" TEXT,
+    "userId" TEXT,
+    "agentId" TEXT,
     "channel" "ConversationChannel" NOT NULL DEFAULT 'dashboard',
     "metadata" JSONB,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Conversation_pkey" PRIMARY KEY ("id")
 );
@@ -154,11 +154,11 @@ CREATE TABLE "Message" (
     "id" TEXT NOT NULL,
     "text" TEXT NOT NULL,
     "from" "MessageFrom" NOT NULL,
-    "conversation_id" TEXT,
+    "conversationId" TEXT,
     "sources" JSONB,
     "read" BOOLEAN DEFAULT false,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
 );
@@ -167,10 +167,10 @@ CREATE TABLE "Message" (
 CREATE TABLE "Tool" (
     "id" TEXT NOT NULL,
     "type" "ToolType" NOT NULL,
-    "agent_id" TEXT,
-    "datastore_id" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "agentId" TEXT,
+    "datastoreId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Tool_pkey" PRIMARY KEY ("id")
 );
@@ -183,8 +183,8 @@ CREATE TABLE "Product" (
     "description" TEXT,
     "image" TEXT,
     "metadata" JSONB,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -192,16 +192,16 @@ CREATE TABLE "Product" (
 -- CreateTable
 CREATE TABLE "Price" (
     "id" TEXT NOT NULL,
-    "product_id" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT false,
     "currency" TEXT NOT NULL,
     "interval" "PriceInterval",
-    "unit_amount" INTEGER,
+    "unitAmount" INTEGER,
     "interval_count" INTEGER,
     "trial_period_days" INTEGER,
     "type" "PriceType",
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Price_pkey" PRIMARY KEY ("id")
 );
@@ -211,7 +211,7 @@ CREATE TABLE "Subscription" (
     "id" TEXT NOT NULL,
     "plan" "SubscriptionPlan" DEFAULT 'level_1',
     "priceId" TEXT NOT NULL,
-    "customer_id" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "status" "SubscriptionStatus" NOT NULL,
     "start_date" TIMESTAMP(3),
     "ended_at" TIMESTAMP(3),
@@ -222,9 +222,9 @@ CREATE TABLE "Subscription" (
     "canceled_at" TIMESTAMP(3),
     "metadata" JSONB,
     "coupon" TEXT,
-    "user_id" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "userId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Subscription_pkey" PRIMARY KEY ("id")
 );
@@ -245,13 +245,13 @@ CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationTok
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Usage_user_id_key" ON "Usage"("user_id");
+CREATE UNIQUE INDEX "Usage_userId_key" ON "Usage"("userId");
 
 -- CreateIndex
-CREATE INDEX "Conversation_visitor_id_idx" ON "Conversation" USING HASH ("visitor_id");
+CREATE INDEX "Conversation_visitorId_idx" ON "Conversation" USING HASH ("visitorId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Subscription_user_id_key" ON "Subscription"("user_id");
+CREATE UNIQUE INDEX "Subscription_userId_key" ON "Subscription"("userId");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -260,31 +260,31 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Usage" ADD CONSTRAINT "Usage_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Usage" ADD CONSTRAINT "Usage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Datastore" ADD CONSTRAINT "Datastore_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Datastore" ADD CONSTRAINT "Datastore_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AppDatasource" ADD CONSTRAINT "AppDatasource_datastore_id_fkey" FOREIGN KEY ("datastore_id") REFERENCES "Datastore"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "AppDatasource" ADD CONSTRAINT "AppDatasource_datastoreId_fkey" FOREIGN KEY ("datastoreId") REFERENCES "Datastore"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AppDatasource" ADD CONSTRAINT "AppDatasource_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "AppDatasource" ADD CONSTRAINT "AppDatasource_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Conversation" ADD CONSTRAINT "Conversation_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Conversation" ADD CONSTRAINT "Conversation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "Message_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "Conversation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Message" ADD CONSTRAINT "Message_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "Conversation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Tool" ADD CONSTRAINT "Tool_datastore_id_fkey" FOREIGN KEY ("datastore_id") REFERENCES "Datastore"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Tool" ADD CONSTRAINT "Tool_datastoreId_fkey" FOREIGN KEY ("datastoreId") REFERENCES "Datastore"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Price" ADD CONSTRAINT "Price_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Price" ADD CONSTRAINT "Price_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_priceId_fkey" FOREIGN KEY ("priceId") REFERENCES "Price"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

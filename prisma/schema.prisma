@@ -58,7 +58,7 @@ model User {
   sessions      Session[]
 
   picture       String?
-  hasOptInEmail Boolean? @default(false) @map("has_opt_in_email")
+  hasOptInEmail Boolean? @default(false)
 
   datastores    Datastore[]
   datasources   AppDatasource[]
@@ -66,21 +66,21 @@ model User {
   usage         Usage?
   conversations Conversation[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Usage {
   id String @id @default(cuid())
 
-  userId String @unique @map("user_id")
+  userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  nbAgentQueries        Int @default(0) @map("nb_agent_queries")
-  nbDatastoreQueries    Int @default(0) @map("nb_datastore_queries")
-  nbUploadedBytes       Int @default(0) @map("nb_uploaded_bytes")
-  nbDataProcessingBytes Int @default(0) @map("nb_data_processing_bytes")
-  nbModelTokens         Int @default(0) @map("nb_tokens")
+  nbAgentQueries        Int @default(0)
+  nbDatastoreQueries    Int @default(0)
+  nbUploadedBytes       Int @default(0)
+  nbDataProcessingBytes Int @default(0)
+  nbModelTokens         Int @default(0)
 }
 
 model Datastore {
@@ -95,11 +95,11 @@ model Datastore {
 
   config Json?
 
-  ownerId String? @map("owner_id")
+  ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
 }
 
@@ -114,39 +114,39 @@ model AppDatasource {
 
   config Json?
 
-  datastoreId String?    @map("datastore_id")
+  datastoreId String?
   datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
 
-  ownerId String? @map("owner_id")
+  ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
 
-  nbChunks Int? @default(0) @map("nb_chunks")
-  textSize Int? @default(0) @map("text_size")
+  nbChunks Int? @default(0)
+  textSize Int? @default(0)
 
   hash String?
 
-  nbSynch   Int?      @default(0) @map("nb_synch")
-  lastSynch DateTime? @map("last_synch")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  nbSynch   Int?      @default(0)
+  lastSynch DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
 
 }
 
 model Conversation {
   id        String  @id @default(cuid())
-  visitorId String? @map("visitor_id")
-  userId    String? @map("user_id")
+  visitorId String?
+  userId    String?
   user      User?   @relation(fields: [userId], references: [id])
 
-  agentId  String?   @map("agent_id")
+  agentId  String?  
   messages Message[]
 
   channel ConversationChannel @default(dashboard)
 
   metadata Json?
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([visitorId], type: Hash)
 }
@@ -156,14 +156,14 @@ model Message {
   id             String        @id @default(cuid())
   text           String
   from           MessageFrom
-  conversationId String?       @map("conversation_id")
+  conversationId String?
   conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sources        Json?
 
   read Boolean? @default(false)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 
@@ -171,13 +171,13 @@ model Tool {
   id   String   @id @default(cuid())
   type ToolType
 
-  agentId String? @map("agent_id")
+  agentId String?
 
-  datastoreId String?    @map("datastore_id")
+  datastoreId String?
   datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Product {
@@ -187,23 +187,23 @@ model Product {
   description String?
   image       String?
   metadata    Json?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   prices      Price[]
 }
 
 model Price {
   id                String         @id @default(cuid())
-  productId         String         @map("product_id")
+  productId         String
   active            Boolean        @default(false)
   currency          String
   interval          PriceInterval?
-  unitAmount        Int?           @map("unit_amount")
+  unitAmount        Int?
   interval_count    Int?
   trial_period_days Int?
   type              PriceType?
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @updatedAt @map("updated_at")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
   product           Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
   subscriptions     Subscription[]
 }
@@ -212,7 +212,7 @@ model Subscription {
   id                   String             @id @default(cuid())
   plan                 SubscriptionPlan?  @default(level_1)
   priceId              String
-  customerId           String             @map("customer_id")
+  customerId           String
   status               SubscriptionStatus
   start_date           DateTime?
   ended_at             DateTime?
@@ -227,10 +227,10 @@ model Subscription {
   price Price @relation(fields: [priceId], references: [id])
 
   user   User?   @relation(name: "user", fields: [userId], references: [id], onDelete: Cascade)
-  userId String? @unique @map("user_id")
+  userId String? @unique
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 
