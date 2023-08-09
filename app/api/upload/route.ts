@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { uploadFile } from '@/lib/dataStore'
+import { uploadFile } from '@/lib/data-store'
 import { ExtendedSession } from '@/lib/types'
 
 export async function POST(req: Request) {
