@@ -35,8 +35,9 @@ export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => 
       throw new Error('Unsupported file type')
     }
 
+    console.time('loadFile')
     const loadedDoc = await fileLoader.load()
-
+    console.timeEnd('loadFile')
     if (!loadedDoc) {
       throw new Error('Error loading file')
     }
@@ -51,6 +52,7 @@ export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => 
       chunkHeader: `File ${fileName} `,
     }
 
+    console.time('splitDocuments')
     const chunks = (await textSplitter.splitDocuments(loadedDoc, chunkHeaderOptions)).map(
       ({ pageContent, metadata }) => {
         return {
@@ -65,6 +67,7 @@ export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => 
         }
       },
     )
+    console.timeEnd('splitDocuments')
 
     return chunks
   } catch (error) {

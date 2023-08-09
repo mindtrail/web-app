@@ -2,14 +2,15 @@ import { useState } from 'react'
 import { type Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
+import { Datastore } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
 
 import { Header } from '@/components/header'
 import { Chat } from '@/components/chat'
-import { Datastore } from '@/components/datastore'
-import { getDatastoreList } from '@/lib/datastore'
+import { CreateDataStore } from '@/components/datastore'
+import { getDatastoreList, createDataStore, deleteAllDataStoresForUser } from '@/lib/datastore'
 
 export interface DashboardProps {
   params: {
@@ -24,8 +25,7 @@ export async function generateMetadata({ params }: DashboardProps): Promise<Meta
     return {}
   }
 
-  const userId = session.user.id
-
+  // const userId = session.user.id
   return {
     title: 'Chat',
   }
@@ -38,13 +38,23 @@ export default async function Dashboard({ params }: DashboardProps) {
     redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
   }
 
+  // await deleteAllDataStoresForUser(session?.user?.id)
+
   const userId = session?.user?.id
-  const datastoreList = await getDatastoreList(userId)
+  let datastoreList = await getDatastoreList(userId)
+
+  if (!datastoreList.length) {
+    const dsName = `DataStore - ${new Date().toLocaleString()}`
+    const newDs = await createDataStore(userId, dsName)
+    datastoreList = [newDs] as [Datastore]
+  }
+
+  // const initializingDS = datastoreList.length === 1 && datastoreList[0]. === 'initializing'
 
   return (
     <>
       <Header session={session} />
-      {!datastoreList.length && <Datastore />}
+      {!datastoreList.length && <CreateDataStore />}
     </>
   )
 }

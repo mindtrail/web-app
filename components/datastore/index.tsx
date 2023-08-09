@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-
+import { useState, MouseEventHandler } from 'react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 
 import { IconSpinner } from '@/components/ui/icons'
+import { Button, type ButtonProps } from '@/components/ui/button'
 
 import {
   ACCEPTED_FILE_TYPES,
@@ -23,9 +23,9 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 registerPlugin(FilePondPluginImagePreview)
 registerPlugin(FilePondPluginFileValidateType)
 
-interface DatastoreProps extends React.ComponentProps<'div'> {}
+interface DataStoreProps extends React.ComponentProps<'div'> {}
 
-export function Datastore(props: DatastoreProps) {
+export function CreateDataStore(props: DataStoreProps) {
   const [files, setFiles] = useState([])
   const [isInitializing, setIsInitializing] = useState(true)
 
@@ -42,13 +42,15 @@ export function Datastore(props: DatastoreProps) {
     console.log('Upload finished', files)
   }
 
+  const handleClick: MouseEventHandler<HTMLButtonElement> = () => {}
+
   return (
-    <div className='flex flex-col flex-1 max-w-2xl w-full pt-4 px-6 md:pt-12 md:px-8 gap-8'>
-      <div className='flex flex-col items-center gap-2'>
+    <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
+      <div className='flex flex-col  max-w-2xl items-center gap-2'>
         <h1 className='mb-2 text-lg font-semibold text-center'>Create Chatbot</h1>
         <p>Step 1</p>
       </div>
-      <div className='max-w-2xl w-full relative '>
+      <div className='max-w-md w-full flex-1 relative'>
         <FilePond
           allowMultiple={true}
           credits={false}
@@ -68,6 +70,9 @@ export function Datastore(props: DatastoreProps) {
           </div>
         ) : null}
       </div>
+      <Button variant='default' size='wide' onClick={handleClick}>
+        Continue
+      </Button>
     </div>
   )
 }

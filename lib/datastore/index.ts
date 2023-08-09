@@ -2,6 +2,7 @@ import { getDocumentChunks } from '@/lib/datastore/fileLoader'
 import { createAndStoreVectors } from '@/lib/datastore/qdrant'
 import { uploadToS3 } from '@/lib/datastore/s3'
 import prisma from '@/lib/dbConnection'
+import { DatastoreType } from '@prisma/client'
 
 export { searchSimilarText } from '@/lib/datastore/qdrant'
 
@@ -16,8 +17,6 @@ export const uploadFile = async (fileBlob: Blob, userId: string) => {
     return
   }
 
-  await createAndStoreVectors(docs, userId)
-
   return docs
 }
 
@@ -28,4 +27,28 @@ export const getDatastoreList = async (userId: string) => {
   })
 
   return datastoreList
+}
+
+export const createDataStore = async (userId: string, name: string) => {
+  const type = DatastoreType.qdrant
+
+  const datastore = await prisma.datastore.create({
+    data: {
+      name,
+      type,
+      ownerId: userId,
+    },
+  })
+
+  return datastore
+}
+
+export const deleteAllDataStoresForUser = async (userId: string) => {
+  const datastore = await prisma.datastore.deleteMany({
+    where: {
+      ownerId: userId,
+    },
+  })
+  console.log('datastore', datastore)
+  return datastore
 }

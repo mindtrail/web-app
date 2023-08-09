@@ -6,6 +6,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "dotenv -e .env.local -- prisma migrate dev",
     "prisma:migrate:prod": "dotenv -e .env.local -- prisma migrate deploy",
+    "prisma:migrate:reset": "dotenv -e .env.local -- prisma migrate reset --force",
     "start": "next start",
     "lint": "next lint"
   },
