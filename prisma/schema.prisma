@@ -60,8 +60,8 @@ model User {
   picture       String?
   hasOptInEmail Boolean? @default(false)
 
-  datastores    Datastore[]
-  datasources   AppDatasource[]
+  dataStores    Datatore[]
+  dataSources   AppDataSource[]
   subscriptions Subscription[]  @relation("user")
   usage         Usage?
   conversations Conversation[]
@@ -77,20 +77,20 @@ model Usage {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   nbAgentQueries        Int @default(0)
-  nbDatastoreQueries    Int @default(0)
+  nbDataStoreQueries    Int @default(0)
   nbUploadedBytes       Int @default(0)
   nbDataProcessingBytes Int @default(0)
   nbModelTokens         Int @default(0)
 }
 
-model Datastore {
+model Datatore {
   id String @id @default(cuid())
 
   name        String
   description String?
-  type        DatastoreType
-  datasources AppDatasource[]
-  visibility  DatastoreVisibility @default(private)
+  type        DataStoreType
+  dataSources AppDataSource[]
+  visibility  DataStoreVisibility @default(private)
   tool        Tool[]
 
   config Json?
@@ -104,18 +104,18 @@ model Datastore {
 }
 
 
-// Naming the model Datasource conflicts with prisma
+// Naming the model DataSource conflicts with prisma
 // https://github.com/prisma/prisma/issues/12332
-model AppDatasource {
+model AppDataSource {
   id     String           @id @default(cuid())
-  type   DatasourceType
+  type   DataSourceType
   name   String
-  status DatasourceStatus @default(unsynched)
+  status DataSourceStatus @default(unsynched)
 
   config Json?
 
-  datastoreId String?
-  datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
+  dataStoreId String?
+  dataStore   Datatore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
 
   ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
@@ -138,7 +138,7 @@ model Conversation {
   userId    String?
   user      User?   @relation(fields: [userId], references: [id])
 
-  agentId  String?  
+  agentId  String?
   messages Message[]
 
   channel ConversationChannel @default(dashboard)
@@ -173,8 +173,8 @@ model Tool {
 
   agentId String?
 
-  datastoreId String?
-  datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
+  dataStoreId String?
+  dataStore   Datatore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -234,12 +234,12 @@ model Subscription {
 }
 
 
-enum DatastoreVisibility {
+enum DataStoreVisibility {
   public
   private
 }
 
-enum DatasourceStatus {
+enum DataSourceStatus {
   unsynched
   pending
   running
@@ -248,7 +248,7 @@ enum DatasourceStatus {
   usage_limit_reached
 }
 
-enum DatasourceType {
+enum DataSourceType {
   web_page
   web_site
   text
@@ -258,12 +258,12 @@ enum DatasourceType {
   notion
 }
 
-enum DatastoreType {
+enum DataStoreType {
   qdrant
 }
 
 enum ToolType {
-  datastore
+  dataStore
 }
 
 enum SubscriptionPlan {
