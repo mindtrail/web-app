@@ -20,7 +20,7 @@ export const uploadFile = async (fileBlob: Blob, userId: string) => {
   return docs
 }
 
-export const getDatastoreList = async (userId: string) => {
+export const getDataStoreList = async (userId: string) => {
   // Fetch data using Prisma based on the user
   const datastoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
