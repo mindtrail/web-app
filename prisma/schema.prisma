@@ -91,7 +91,6 @@ model Datatore {
   type        DataStoreType
   dataSources AppDataSource[]
   visibility  DataStoreVisibility @default(private)
-  tool        Tool[]
 
   config Json?
 
@@ -166,19 +165,6 @@ model Message {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
-
-model Tool {
-  id   String   @id @default(cuid())
-  type ToolType
-
-  agentId String?
-
-  dataStoreId String?
-  dataStore   Datatore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-}
 
 model Product {
   id          String   @id @default(cuid())
@@ -260,10 +246,6 @@ enum DataSourceType {
 
 enum DataStoreType {
   qdrant
-}
-
-enum ToolType {
-  dataStore
 }
 
 enum SubscriptionPlan {
