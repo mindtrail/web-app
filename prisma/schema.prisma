@@ -33,6 +33,7 @@ model Account {
   updatedAt          DateTime  @updatedAt
 
   @@unique([provider, providerAccountId])
+  @@map("Accounts")
 }
 
 model Session {
@@ -45,6 +46,8 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   expires      DateTime
+
+  @@map("Sessions")
 }
 
 model VerificationToken {
@@ -53,6 +56,7 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("VerificationTokens")
 }
 
 model User {
@@ -68,7 +72,7 @@ model User {
   picture       String?
   hasOptInEmail Boolean? @default(false)
 
-  dataStores    Datatore[]
+  dataStores    DataStore[]
   dataSources   AppDataSource[]
   subscriptions Subscription[]  @relation("user")
   usage         Usage?
@@ -76,6 +80,8 @@ model User {
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@map("Users")
 }
 
 model Usage {
@@ -91,7 +97,7 @@ model Usage {
   nbModelTokens         Int @default(0)
 }
 
-model Datatore {
+model DataStore {
   id String @id @default(cuid())
 
   name        String
@@ -108,8 +114,8 @@ model Datatore {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
+  @@map("DataStores")
 }
-
 
 // Naming the model DataSource conflicts with prisma
 // https://github.com/prisma/prisma/issues/12332
@@ -122,7 +128,7 @@ model AppDataSource {
   config Json?
 
   dataStoreId String?
-  dataStore   Datatore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
+  dataStore   DataStore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
 
   ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
@@ -137,6 +143,7 @@ model AppDataSource {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
 
+  @@map("AppDataSources")
 }
 
 model Conversation {
@@ -156,6 +163,7 @@ model Conversation {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@index([visitorId], type: Hash)
+  @@map("Conversations")
 }
 
 
@@ -171,8 +179,9 @@ model Message {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-}
 
+  @@map("Messages")
+}
 
 model Product {
   id          String   @id @default(cuid())
@@ -184,6 +193,8 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   prices      Price[]
+
+  @@map("Products")
 }
 
 model Price {
@@ -200,6 +211,8 @@ model Price {
   updatedAt         DateTime       @updatedAt
   product           Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
   subscriptions     Subscription[]
+
+  @@map("Prices")
 }
 
 model Subscription {
@@ -225,6 +238,8 @@ model Subscription {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("Subscriptions")
 }
 
 

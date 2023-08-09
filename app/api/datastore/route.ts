@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
 
-import { getDatastoreList } from '@/lib/datastore'
+import { getDatastoreList } from '@/lib/dataStore'
 
 export async function GET() {
   console.time('session')
