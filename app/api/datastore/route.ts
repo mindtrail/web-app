@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
 
-import { getDatastoreList } from '@/lib/dataStore'
+import { getDataStoreList } from '@/lib/dataStore'
 
 export async function GET() {
   console.time('session')
@@ -18,7 +18,7 @@ export async function GET() {
   }
 
   const userId = session.user?.id
-  const datastoreList = await getDatastoreList(userId)
+  const datastoreList = await getDataStoreList(userId)
 
   return NextResponse.json({ datastoreList })
 }
