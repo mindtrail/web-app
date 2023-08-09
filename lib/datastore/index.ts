@@ -1,10 +1,10 @@
-import { getDocumentChunks } from '@/lib/datastore/fileLoader'
-import { createAndStoreVectors } from '@/lib/datastore/qdrant'
-import { uploadToS3 } from '@/lib/datastore/s3'
+import { getDocumentChunks } from '@/lib/dataStore/fileLoader'
+import { createAndStoreVectors } from '@/lib/dataStore/qdrant'
+import { uploadToS3 } from '@/lib/dataStore/s3'
 import prisma from '@/lib/dbConnection'
-import { DatastoreType } from '@prisma/client'
+import { DataStoreType } from '@prisma/client'
 
-export { searchSimilarText } from '@/lib/datastore/qdrant'
+export { searchSimilarText } from '@/lib/dataStore/qdrant'
 
 export const uploadFile = async (fileBlob: Blob, userId: string) => {
   uploadToS3(fileBlob, userId)
@@ -22,7 +22,7 @@ export const uploadFile = async (fileBlob: Blob, userId: string) => {
 
 export const getDatastoreList = async (userId: string) => {
   // Fetch data using Prisma based on the user
-  const datastoreList = await prisma.datastore.findMany({
+  const datastoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
   })
 
@@ -30,9 +30,9 @@ export const getDatastoreList = async (userId: string) => {
 }
 
 export const createDataStore = async (userId: string, name: string) => {
-  const type = DatastoreType.qdrant
+  const type = DataStoreType.qdrant
 
-  const datastore = await prisma.datastore.create({
+  const datastore = await prisma.dataStore.create({
     // @ts-ignore - Prisma types are not recognizing the connect field
     data: {
       name,
@@ -49,7 +49,7 @@ export const createDataStore = async (userId: string, name: string) => {
 }
 
 export const deleteAllDataStoresForUser = async (userId: string) => {
-  const datastore = await prisma.datastore.deleteMany({
+  const datastore = await prisma.dataStore.deleteMany({
     where: {
       ownerId: userId,
     },

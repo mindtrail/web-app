@@ -10,8 +10,8 @@ import { ExtendedSession } from '@/lib/types'
 import { Header } from '@/components/header'
 import { Chat } from '@/components/chat'
 import { CreateDataStore } from '@/components/datastore'
-import { getDatastoreList, createDataStore, deleteAllDataStoresForUser } from '@/lib/datastore'
-import { getDatasourceList } from '@/lib/datastore/datasource'
+import { getDatastoreList, createDataStore, deleteAllDataStoresForUser } from '@/lib/dataStore'
+import { getDatasourceList } from '@/lib/dataStore/dataSource'
 
 export interface DashboardProps {
   params: {

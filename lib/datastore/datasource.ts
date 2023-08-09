@@ -1,11 +1,11 @@
 import prisma from '@/lib/dbConnection'
-import { DatastoreType } from '@prisma/client'
+import { DataStoreType } from '@prisma/client'
 
-export const getDatasourceList = async (userId: string, datastoreId: string) => {
-  const datasourceList = await prisma.appDatasource.findMany({
+export const getDataSourceList = async (userId: string, datastoreId: string) => {
+  const datasourceList = await prisma.appDataSource.findMany({
     where: {
       ownerId: userId,
-      datastoreId: datastoreId,
+      dataStoreId: datastoreId,
      },
   })
 }
