@@ -22,17 +22,17 @@ export const uploadFile = async (fileBlob: Blob, userId: string) => {
 
 export const getDataStoreList = async (userId: string) => {
   // Fetch data using Prisma based on the user
-  const datastoreList = await prisma.dataStore.findMany({
+  const dataStoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
   })
 
-  return datastoreList
+  return dataStoreList
 }
 
 export const createDataStore = async (userId: string, name: string) => {
   const type = DataStoreType.qdrant
 
-  const datastore = await prisma.dataStore.create({
+  const dataStore = await prisma.dataStore.create({
     // @ts-ignore - Prisma types are not recognizing the connect field
     data: {
       name,
@@ -45,15 +45,15 @@ export const createDataStore = async (userId: string, name: string) => {
     },
   })
 
-  return datastore
+  return dataStore
 }
 
 export const deleteAllDataStoresForUser = async (userId: string) => {
-  const datastore = await prisma.dataStore.deleteMany({
+  const dataStore = await prisma.dataStore.deleteMany({
     where: {
       ownerId: userId,
     },
   })
-  console.log('datastore', datastore)
-  return datastore
+  console.log('dataStore', dataStore)
+  return dataStore
 }
