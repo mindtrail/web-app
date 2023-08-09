@@ -33,10 +33,15 @@ export const createDataStore = async (userId: string, name: string) => {
   const type = DatastoreType.qdrant
 
   const datastore = await prisma.datastore.create({
+    // @ts-ignore - Prisma types are not recognizing the connect field
     data: {
       name,
       type,
-      ownerId: userId,
+      owner: {
+        connect: {
+          id: userId,
+        },
+      },
     },
   })
 
