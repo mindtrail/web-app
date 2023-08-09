@@ -14,7 +14,10 @@ datasource db {
 
 model Account {
   id                 String  @id @default(cuid())
+
   userId             String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   type               String
   provider           String
   providerAccountId  String
@@ -26,17 +29,22 @@ model Account {
   id_token           String?  @db.Text
   session_state      String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
+
   userId       String
-  expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionToken String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  expires      DateTime
 }
 
 model VerificationToken {
@@ -66,8 +74,8 @@ model User {
   usage         Usage?
   conversations Conversation[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Usage {
