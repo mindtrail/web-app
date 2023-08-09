@@ -1,10 +1,10 @@
-import { getDocumentChunks } from '@/lib/dataStore/fileLoader'
-import { createAndStoreVectors } from '@/lib/dataStore/qdrant'
-import { uploadToS3 } from '@/lib/dataStore/s3'
+import { getDocumentChunks } from '@/lib/data-store/fileLoader'
+import { createAndStoreVectors } from '@/lib/data-store/qdrant'
+import { uploadToS3 } from '@/lib/data-store/s3'
 import prisma from '@/lib/dbConnection'
 import { DataStoreType } from '@prisma/client'
 
-export { searchSimilarText } from '@/lib/dataStore/qdrant'
+export { searchSimilarText } from '@/lib/data-store/qdrant'
 
 export const uploadFile = async (fileBlob: Blob, userId: string) => {
   uploadToS3(fileBlob, userId)
