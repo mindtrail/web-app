@@ -24,7 +24,7 @@ export async function uploadToS3(props: UploadToS3Props) {
   const { fileBlob, userId, dataStoreId, dataSourceId } = props
 
   const { name } = fileBlob
-  const key = `dataset1/${userId}/${name}-${Date.now().toString()}`
+  const key = `dataset1/${userId}/${dataStoreId}/${dataSourceId}-${name}`
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer())
 
