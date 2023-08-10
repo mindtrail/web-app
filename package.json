@@ -35,7 +35,6 @@
     "epub2": "^3.0.1",
     "filepond": "^4.30.4",
     "filepond-plugin-file-validate-type": "^1.2.8",
-    "filepond-plugin-image-preview": "^4.6.11",
     "fs": "0.0.1-security",
     "html-to-text": "^9.0.5",
     "langchain": "^0.0.120",
