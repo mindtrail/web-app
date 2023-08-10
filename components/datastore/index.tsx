@@ -18,14 +18,18 @@ import {
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+import { error } from 'console'
+import { FilePondFile } from 'filepond'
 
 // Register the plugins
 registerPlugin(FilePondPluginImagePreview)
 registerPlugin(FilePondPluginFileValidateType)
 
-interface DataStoreProps extends React.ComponentProps<'div'> {}
+interface DataStoreProps extends React.ComponentProps<'div'> {
+  dataStoreId: string
+}
 
-export function CreateDataStore(props: DataStoreProps) {
+export function CreateDataStore({ dataStoreId }: DataStoreProps) {
   const [files, setFiles] = useState([])
   const [isInitializing, setIsInitializing] = useState(true)
 
@@ -38,8 +42,16 @@ export function CreateDataStore(props: DataStoreProps) {
     console.log('FilePond instance has initialised')
     setIsInitializing(false)
   }
-  const handleUploadFinish = () => {
-    console.log('Upload finished', files)
+  const handleUploadFinish = (error: any, file: any) => {
+    console.log('Upload finished', error, file)
+  }
+
+  const handleError = (error: any, file: any, status: any) => {
+    console.log(error, file, status)
+  }
+
+  const setMetadata = (error: any, file: FilePondFile) => {
+    file.setMetadata('dataStoreId', dataStoreId)
   }
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = () => {}
@@ -52,12 +64,15 @@ export function CreateDataStore(props: DataStoreProps) {
       </div>
       <div className='max-w-md w-full flex-1 relative'>
         <FilePond
+          name='dataSource'
           allowMultiple={true}
           credits={false}
           files={files}
+          onerror={handleError}
           labelIdle={UPLOAD_LABEL}
           maxFiles={MAX_NR_OF_FILES}
           oninit={handleInit}
+          onaddfile={setMetadata}
           onupdatefiles={handleUpdateFiles}
           onprocessfile={handleUploadFinish}
           server={UPLOAD_ENDPOINT}

@@ -13,7 +13,13 @@ const s3Client = new S3Client({
   },
 })
 
-export async function uploadToS3(fileBlob: Blob, userId: string) {
+interface UploadToS3Props {
+  fileBlob: Blob
+  userId: string
+  dataStoreId: string
+}
+
+export async function uploadToS3({ fileBlob, userId, dataStoreId }: UploadToS3Props) {
   const { name } = fileBlob
   const key = `dataset1/${userId}/${name}-${Date.now().toString()}`
 
@@ -23,6 +29,10 @@ export async function uploadToS3(fileBlob: Blob, userId: string) {
     Bucket: 'indie-chat',
     Key: key,
     Body: buffer,
+    Metadata: {
+      dataStoreId,
+      userId,
+    },
   })
 
   try {
@@ -32,5 +42,6 @@ export async function uploadToS3(fileBlob: Blob, userId: string) {
     return response
   } catch (error) {
     console.error('Error uploading to S3', error)
+    return null
   }
 }

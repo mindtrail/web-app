@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/authOptions'
 
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
-import { searchSimilarText } from '@/lib/data-store'
+import { searchSimilarText } from '@/lib/dataStore'
 
 let openAIChat: ChatOpenAI
 
