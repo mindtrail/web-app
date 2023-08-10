@@ -18,7 +18,12 @@ export async function POST(req: Request) {
     })
   }
 
-  console.log(req)
+  if (!req.headers.get('content-type')?.startsWith('multipart/form-data')) {
+    return new Response('Bad Request', {
+      status: 400,
+    })
+  }
+
   let dataStoreId = '12345'
   let fileBlob: Blob | null = null
 

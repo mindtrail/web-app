@@ -22,40 +22,48 @@ const rejectStyles = 'border-red-400 bg-neutral-300 cursor-not-allowed text-neut
 const acceptStyles = 'border-green-600 bg-green-50'
 
 export function CreateDataStore({ dataStoreId }: DataStoreProps) {
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState<File[]>([])
 
-  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
+  const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
-    onDrop: async (acceptedFiles) => {
+    onDrop: async (acceptedFiles: File[]) => {
       if (!acceptedFiles.length) {
         return
       }
-
-      const formData = new FormData()
-      acceptedFiles.forEach((file) => {
-        formData.append('file', file)
-      })
-
-      await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-
-      console.log(acceptedFiles, typeof acceptedFiles[0])
+      setFiles(files.concat(acceptedFiles))
       // setFiles(acceptedFiles.map(file => Object.assign(file, {
       // preview: URL.createObjectURL(file)
       // })));
     },
   })
 
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks
-    // files.forEach((file: File) => URL.revokeObjectURL(file.preview))
-  }, [files])
+  console.log(files)
+
+  // useEffect(() => {
+  //   // Make sure to revoke the data uris to avoid memory leaks
+  //   // files.forEach((file: File) => URL.revokeObjectURL(file.preview))
+  // }, [files])
 
   const fileList = files.map((file: File) => <div key={file.name}>{file.name}</div>)
 
-  const handleClick: MouseEventHandler<HTMLButtonElement> = () => {}
+  const handleSubmit: MouseEventHandler<HTMLButtonElement> = async () => {
+    const formData = new FormData()
+
+    files.forEach((file) => {
+      formData.append('file', file)
+    })
+
+    try {
+      const res = await fetch(UPLOAD_ENDPOINT, {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await res.json()
+      console.log(data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
@@ -87,7 +95,7 @@ export function CreateDataStore({ dataStoreId }: DataStoreProps) {
         </div>
         {fileList}
       </div>
-      <Button variant='default' size='wide' onClick={handleClick}>
+      <Button variant='default' size='wide' onClick={handleSubmit}>
         Continue
       </Button>
     </div>
