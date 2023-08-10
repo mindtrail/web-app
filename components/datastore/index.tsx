@@ -1,25 +1,17 @@
 'use client'
 
-import { useState, MouseEventHandler } from 'react'
-import { FilePond, registerPlugin } from 'react-filepond'
-import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
+import { useState, useEffect, MouseEventHandler } from 'react'
+import { useDropzone } from 'react-dropzone'
 
 import { IconSpinner } from '@/components/ui/icons'
 import { Button, type ButtonProps } from '@/components/ui/button'
 
 import {
-  ACCEPTED_FILE_TYPES,
+  ACCEPTED_FILE_REACT_DROPZONE,
   MAX_NR_OF_FILES,
   UPLOAD_ENDPOINT,
   UPLOAD_LABEL,
 } from '@/components/datastore/constants'
-
-// Import FilePond styles
-import 'filepond/dist/filepond.min.css'
-import { FilePondFile } from 'filepond'
-
-// Register the plugins
-registerPlugin(FilePondPluginFileValidateType)
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   dataStoreId: string
@@ -29,26 +21,21 @@ export function CreateDataStore({ dataStoreId }: DataStoreProps) {
   const [files, setFiles] = useState([])
   const [isInitializing, setIsInitializing] = useState(true)
 
-  const handleUpdateFiles = (fileItems: any) => {
-    console.log(fileItems)
-    // Set current file objects to state
-    setFiles(fileItems.map(async (fileItem: any) => fileItem.file))
-  }
-  const handleInit = () => {
-    console.log('FilePond instance has initialised')
-    setIsInitializing(false)
-  }
-  const handleUploadFinish = (error: any, file: any) => {
-    console.log('Upload finished', error, file)
-  }
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: ACCEPTED_FILE_REACT_DROPZONE,
+    // onDrop: acceptedFiles => {
+    //   setFiles(acceptedFiles.map(file => Object.assign(file, {
+    //     preview: URL.createObjectURL(file)
+    //   })));
+    // }
+  })
 
-  const handleError = (error: any, file: any, status: any) => {
-    console.log(error, file, status)
-  }
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks
+    // files.forEach((file: File) => URL.revokeObjectURL(file.preview))
+  }, [files])
 
-  const setMetadata = (error: any, file: FilePondFile) => {
-    file.setMetadata('dataStoreId', dataStoreId)
-  }
+  const fileList = files.map((file: File) => <div key={file.name}>{file.name}</div>)
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = () => {}
 
@@ -58,28 +45,23 @@ export function CreateDataStore({ dataStoreId }: DataStoreProps) {
         <h1 className='mb-2 text-lg font-semibold text-center'>Create Chatbot</h1>
         <p>Step 1</p>
       </div>
-      <div className='max-w-md w-full flex-1 relative'>
-        <FilePond
-          name='dataSource'
-          allowMultiple={true}
-          credits={false}
-          files={files}
-          onerror={handleError}
-          labelIdle={UPLOAD_LABEL}
-          maxFiles={MAX_NR_OF_FILES}
-          oninit={handleInit}
-          onaddfile={setMetadata}
-          onupdatefiles={handleUpdateFiles}
-          onprocessfile={handleUploadFinish}
-          server={UPLOAD_ENDPOINT}
-          acceptedFileTypes={ACCEPTED_FILE_TYPES}
-        ></FilePond>
-        {isInitializing ? (
-          <div className='flex w-full h-[76px] bg-muted justify-center items-center absolute top-0'>
-            <IconSpinner className='mr-2 animate-spin' />{' '}
-            <span className='text-muted-foreground'>Loading...</span>
-          </div>
-        ) : null}
+      <div className='max-w-lg w-full flex-1 relative flex flex-col gap-8'>
+        <div
+          {...getRootProps()}
+          className='flex flex-col w-full py-6 rounded-xl justify-center
+          border border-neutral-300 bg-neutral-50 items-center gap-4 text-neutral-600
+          select-none cursor-default'
+        >
+          <input {...getInputProps()} />
+          <p>
+            Drag and drop or <span className='underline text-neutral-500'>Click</span> to select
+            files
+          </p>
+          <p className='text-sm text-neutral-500'>
+            <span>Supported file types:</span> .pdf, .docx, .txt, .md, .json, .jsonl, .csv
+          </p>
+        </div>
+        {fileList}
       </div>
       <Button variant='default' size='wide' onClick={handleClick}>
         Continue
