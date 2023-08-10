@@ -18,11 +18,14 @@ export async function POST(req: Request) {
     })
   }
 
-  let dataStoreId = ''
+  console.log(req)
+  let dataStoreId = '12345'
   let fileBlob: Blob | null = null
 
   const userId = session.user?.id
   const formData = await req.formData()
+
+  console.log('formData', formData)
 
   for (const value of Array.from(formData.values())) {
     // FormDataEntryValue can either be type `Blob` or `string`.
@@ -36,8 +39,8 @@ export async function POST(req: Request) {
     }
   }
 
-  if (!dataStoreId || !fileBlob) {
-    console.log('No dataStoreId')
+  if (!fileBlob) {
+    console.log('No FileBlob')
     return null
   }
 
@@ -58,11 +61,12 @@ export async function POST(req: Request) {
     textSize,
   }
 
-  const dataSource = await createDataSource(dataSourcePayload)
-  console.log(dataSource)
+  // const dataSource = await createDataSource(dataSourcePayload)
+  // console.log(dataSource)
+  const dataSourceId = '23456'
 
   // Upload file to S3
-  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId: dataSource.id })
+  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
   // @TODO: return file upload success, and run the rest of the process in the background
   s3Upload.then((res) => {
     console.log('res', res)
