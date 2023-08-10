@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, MouseEventHandler } from 'react'
+import { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 import { IconSpinner } from '@/components/ui/icons'
@@ -23,15 +23,29 @@ const acceptStyles = 'border-green-600 bg-green-50'
 
 export function CreateDataStore({ dataStoreId }: DataStoreProps) {
   const [files, setFiles] = useState([])
-  const [isInitializing, setIsInitializing] = useState(true)
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
-    // onDrop: acceptedFiles => {
-    //   setFiles(acceptedFiles.map(file => Object.assign(file, {
-    //     preview: URL.createObjectURL(file)
-    //   })));
-    // }
+    onDrop: async (acceptedFiles) => {
+      if (!acceptedFiles.length) {
+        return
+      }
+
+      const formData = new FormData()
+      acceptedFiles.forEach((file) => {
+        formData.append('file', file)
+      })
+
+      await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      console.log(acceptedFiles, typeof acceptedFiles[0])
+      // setFiles(acceptedFiles.map(file => Object.assign(file, {
+      // preview: URL.createObjectURL(file)
+      // })));
+    },
   })
 
   useEffect(() => {
@@ -63,8 +77,7 @@ export function CreateDataStore({ dataStoreId }: DataStoreProps) {
           ) : (
             <>
               <p>
-                Drag and drop or <span className='underline text-neutral-500'>Click</span> to select
-                files
+                Drop files or <span className='underline text-neutral-500'>Click</span> to browse
               </p>
               <p className='text-sm text-neutral-500'>
                 <span>Supported file types:</span> .pdf, .docx, .txt, .md, .json, .jsonl, .csv
