@@ -3,12 +3,10 @@
 import * as React from 'react'
 import { useState } from 'react'
 import { FilePond, registerPlugin } from 'react-filepond'
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 
 import { Sidebar } from '@/components/sidebar/sidebar'
 import { SidebarList } from '@/components/sidebar/sidebar-list'
@@ -16,7 +14,6 @@ import { SidebarFooter } from '@/components/sidebar/sidebar-footer'
 // import { ThemeToggle } from '@/components/theme-toggle'
 
 // Register the plugins
-registerPlugin(FilePondPluginImagePreview)
 registerPlugin(FilePondPluginFileValidateType)
 
 const ACCEPTED_FILE_TYPES = [

@@ -2,7 +2,6 @@
 
 import { useState, MouseEventHandler } from 'react'
 import { FilePond, registerPlugin } from 'react-filepond'
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 
 import { IconSpinner } from '@/components/ui/icons'
@@ -17,12 +16,9 @@ import {
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
-import { error } from 'console'
 import { FilePondFile } from 'filepond'
 
 // Register the plugins
-registerPlugin(FilePondPluginImagePreview)
 registerPlugin(FilePondPluginFileValidateType)
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
