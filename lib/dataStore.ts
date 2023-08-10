@@ -30,13 +30,6 @@ export const uploadFile = async (formData: FormData, userId: string) => {
 
   const { name: fileName = '' } = fileBlob
 
-  // Upload file to S3
-  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId })
-  // @TODO: return file upload success, and run the rest of the process in the background
-  s3Upload.then((res) => {
-    console.log('res', res)
-  })
-
   // Return nr of chunks & character count
   const docs = await getDocumentChunks(fileBlob)
 
@@ -50,6 +43,15 @@ export const uploadFile = async (formData: FormData, userId: string) => {
   }
 
   const dataSource = await createDataSource(dataSourcePayload)
+
+  console.log(dataSource)
+  
+  // Upload file to S3
+  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId: dataSource.id })
+  // @TODO: return file upload success, and run the rest of the process in the background
+  s3Upload.then((res) => {
+    console.log('res', res)
+  })
 
   if (!docs.length) {
     console.log('No docs')

@@ -19,12 +19,27 @@ type DataSourcePayload = Pick<
 
 export const createDataSource = async (props: DataSourcePayload) => {
   const { name, dataStoreId, ownerId, type, nbChunks, textSize } = props
-  // const dataSource = await prisma.appDataSource.create({
-  //   data: {
-  //     name,
-  //     dataStoreId: dataStoreId,
-  //     ownerId: ownerId,
-  //   },
-  // })
-  // return dataSource
+
+  const dataSource = await prisma.appDataSource.create({
+    data: {
+      name,
+      type,
+      nbChunks,
+      textSize,
+      owner: {
+        connect: {
+          // @ts-ignore - ownerId is already checked before calling this function
+          id: ownerId,
+        },
+      },
+      dataStore: {
+        connect: {
+          // @ts-ignore - dataStoreId is already checked before calling this function
+          id: dataStoreId,
+        },
+      },
+    },
+  })
+
+  return dataSource
 }
