@@ -133,10 +133,10 @@ model AppDataSource {
   ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
 
-  nbChunks Int? @default(0)
-  textSize Int? @default(0)
+  nbChunks  Int? @default(0)
+  textSize  Int? @default(0)
 
-  hash String?
+  hash      String?
 
   nbSynch   Int?      @default(0)
   lastSynch DateTime?

@@ -8,10 +8,9 @@ import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
 
 import { Header } from '@/components/header'
-import { Chat } from '@/components/chat'
 import { CreateDataStore } from '@/components/datastore'
-import { getDataStoreList, createDataStore, deleteAllDataStoresForUser } from '@/lib/data-store'
-import { getDataSourceList } from '@/lib/data-store/dataSource'
+import { getDataStoreList, createDataStore, deleteAllDataStoresForUser } from '@/lib/dataStore'
+import { getDataSourceList } from '@/lib/dataSource'
 
 export interface DashboardProps {
   params: {
@@ -50,17 +49,20 @@ export default async function Dashboard({ params }: DashboardProps) {
     datastoreList = [newDs] as [DataStore]
   }
 
+  let dataStoreIsInitializing = false
+  let dataStoreId = ''
+  // Initial state where one has only an empty dataStore
   if (datastoreList.length === 1) {
-    const dsId = datastoreList[0].id
-    const dataSourceList = await getDataSourceList(userId, dsId)
-  }
+    dataStoreId = datastoreList[0].id
+    const dataSourceList = await getDataSourceList(userId, dataStoreId)
 
-  // const initializingDS = datastoreList.length === 1 && datastoreList[0]. === 'initializing'
+    dataStoreIsInitializing = !dataSourceList.length
+  }
 
   return (
     <>
       <Header session={session} />
-      {!datastoreList.length && <CreateDataStore />}
+      {dataStoreIsInitializing && <CreateDataStore dataStoreId={dataStoreId} />}
     </>
   )
 }

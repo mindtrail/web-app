@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { uploadFile } from '@/lib/data-store'
+import { uploadFile } from '@/lib/dataStore'
 import { ExtendedSession } from '@/lib/types'
 
 export async function POST(req: Request) {
@@ -17,27 +17,17 @@ export async function POST(req: Request) {
 
   const userId = session.user?.id
 
-  const data = await req.formData()
+  const formData = await req.formData()
 
-  // map through all the entries
-  for (const value of Array.from(data.values())) {
-    // FormDataEntryValue can either be type `Blob` or `string`.
-    // If its type is object then it's a Blob
-    const isFile = typeof value == 'object'
+  console.log('formData', formData)
+  const response = await uploadFile(formData, userId)
 
-    if (isFile) {
-      const blob = value as Blob
-      const response = await uploadFile(blob, userId)
-
-      if (!response) {
-        console.log('blob', blob)
-        return NextResponse.json({ error: 'File type not supported' })
-      }
-
-      // console.log('response', response)
-      return NextResponse.json({ response })
-    }
+  if (!response) {
+    return NextResponse.json({ error: 'File type not supported' })
   }
+
+  // console.log('response', response)
+  return NextResponse.json({ response })
 
   // return the response after all the entries have been processed.
   return NextResponse.json({ success: true })
