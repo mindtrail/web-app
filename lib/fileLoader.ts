@@ -25,7 +25,7 @@ const LOADER: FILE_LOADER_PAIR = {
   'application/octet-stream': TextLoader,
 }
 
-export const getDocumentChunks = async (fileBlob: Blob): Promise<Document[]> => {
+export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document[]> => {
   const { name: fileName, type } = fileBlob
 
   try {

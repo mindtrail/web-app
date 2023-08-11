@@ -76,12 +76,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-/* the background color of the filepond drop area */
-.filepond--panel-root {
-  /* background-color: var(--muted) !important; */
-}
-
-.filepond--root {
-  max-height: 650px !important;
-}

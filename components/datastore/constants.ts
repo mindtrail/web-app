@@ -24,6 +24,8 @@ export const ACCEPTED_FILE_REACT_DROPZONE = {
 }
 
 export const UPLOAD_ENDPOINT = '/api/upload'
+export const METADATA_ENDPOINT = '/api/upload/metadata'
+
 export const MAX_NR_OF_FILES = 30
 export const UPLOAD_LABEL =
   'Drag and drop files or <span class="filepond--label-action">Browse</span>'

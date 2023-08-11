@@ -10,6 +10,7 @@ import {
   ACCEPTED_FILE_REACT_DROPZONE,
   MAX_NR_OF_FILES,
   UPLOAD_ENDPOINT,
+  METADATA_ENDPOINT,
   UPLOAD_LABEL,
 } from '@/components/datastore/constants'
 
@@ -30,14 +31,33 @@ export function CreateDataStore({ dataStoreId }: DataStoreProps) {
       if (!acceptedFiles.length) {
         return
       }
+
+      const formData = new FormData()
+
+      acceptedFiles.forEach((file) => {
+        formData.append('file', file)
+      })
+
+      const res = await fetch(METADATA_ENDPOINT, {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok')
+          }
+          return response.json()
+        })
+        .then((data) => {
+          console.log(data)
+        })
+        .catch((error) => {
+          console.error('There was a problem with the fetch operation:', error.message)
+        })
+
       setFiles(files.concat(acceptedFiles))
-      // setFiles(acceptedFiles.map(file => Object.assign(file, {
-      // preview: URL.createObjectURL(file)
-      // })));
     },
   })
-
-  console.log(files)
 
   // useEffect(() => {
   //   // Make sure to revoke the data uris to avoid memory leaks
