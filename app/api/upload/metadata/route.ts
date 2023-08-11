@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { DataSourceType } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
-import { uploadToS3 } from '@/lib/s3'
-import { createDataSource } from '@/lib/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
 import { ExtendedSession } from '@/lib/types'
 
@@ -17,8 +14,7 @@ export async function POST(req: Request) {
       status: 401,
     })
   }
-
-  console.log()
+  console.log(111, req)
 
   if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
     return new Response('Bad Request', {
@@ -26,7 +22,6 @@ export async function POST(req: Request) {
     })
   }
 
-  let dataStoreId = '12345'
   let fileBlob: Blob | null = null
 
   const userId = session.user?.id
@@ -39,10 +34,6 @@ export async function POST(req: Request) {
     // If its type is object then it's a Blob
     if (typeof value == 'object') {
       fileBlob = value
-    }
-    // If its type is string then it's the dataStoreId
-    if (typeof value == 'string') {
-      dataStoreId = JSON.parse(value)?.dataStoreId
     }
   }
 
@@ -58,26 +49,6 @@ export async function POST(req: Request) {
 
   const nbChunks = docs.length
   const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
-
-  const dataSourcePayload = {
-    name: fileName,
-    dataStoreId,
-    ownerId: userId,
-    type: DataSourceType.file,
-    nbChunks,
-    textSize,
-  }
-
-  // const dataSource = await createDataSource(dataSourcePayload)
-  // console.log(dataSource)
-  const dataSourceId = '23456'
-
-  // Upload file to S3
-  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
-  // @TODO: return file upload success, and run the rest of the process in the background
-  s3Upload.then((res) => {
-    console.log('res', res)
-  })
 
   if (!docs.length) {
     return NextResponse.json({ error: 'File type not supported' })
