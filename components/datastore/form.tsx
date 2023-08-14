@@ -22,15 +22,13 @@ import {
   ACCEPTED_FILE_REACT_DROPZONE,
   DROPZONE_STYLES,
   MAX_NR_OF_FILES,
-  MAX_FILE_SIZE,
-  UPLOAD_ENDPOINT,
-  METADATA_ENDPOINT,
-  UPLOAD_LABEL,
   filterFilesBySize,
   getFileRejectionsMaxFiles,
+  getFilesMetadata,
 } from '@/components/datastore/utils'
 
 import { formatDate } from '@/lib/utils'
+import { IconSpinner } from '@/components/ui/icons'
 
 const dataStoreFormSchema = z.object({
   dataStoreName: z
@@ -68,6 +66,9 @@ export function DataStoreForm({ onSubmit }: FormProps) {
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
 
   const [dropzoneUsed, setDropzoneUsed] = useState(false)
+
+  const [charCount, setCharCount] = useState(0)
+  const [charCountLoading, setCharCountLoading] = useState(false)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -108,6 +109,20 @@ export function DataStoreForm({ onSubmit }: FormProps) {
         // Update your rejected files list state (assuming you have a state for this)
         setRejectedFiles(rejectedFiles)
       }
+
+      setCharCountLoading(true)
+
+      try {
+        const filesMetadata = await getFilesMetadata(validFiles)
+        console.log(1111, filesMetadata)
+        // @ts-ignore
+        const totalChars = filesMetadata.reduce((acc, curr) => acc + curr.charCount, 0)
+        setCharCount((prevChars) => prevChars + totalChars)
+        setCharCountLoading(false)
+        console.log(filesMetadata)
+      } catch (error) {
+        console.log(error)
+      }
     },
   })
 
@@ -120,16 +135,16 @@ export function DataStoreForm({ onSubmit }: FormProps) {
     }
   }, [files, form, dropzoneUsed])
 
-  useEffect(() => {
-    if (rejectedFiles.length > 0) {
-      const timer = setTimeout(() => {
-        setRejectedFiles([]) // Clear the rejectedFiles after 5 seconds
-      }, 5000)
+  // useEffect(() => {
+  //   if (rejectedFiles.length > 0) {
+  //     const timer = setTimeout(() => {
+  //       setRejectedFiles([]) // Clear the rejectedFiles after 5 seconds
+  //     }, 5000)
 
-      // Clear timeout if component is unmounted
-      return () => clearTimeout(timer)
-    }
-  }, [rejectedFiles])
+  //     // Clear timeout if component is unmounted
+  //     return () => clearTimeout(timer)
+  //   }
+  // }, [rejectedFiles])
 
   const dropzoneInteractionClasses = useMemo(() => {
     if (isDragReject) {
@@ -201,7 +216,11 @@ export function DataStoreForm({ onSubmit }: FormProps) {
             </FormItem>
           )}
         />
-        <div>{files.length > 0 && `${files.length} of ${MAX_NR_OF_FILES} uploaded`}</div>
+        <div className='flex gap-2'>
+          {files.length > 0 && `${files.length} of ${MAX_NR_OF_FILES} uploaded`}
+          {charCountLoading ? <IconSpinner className='mr-2 animate-spin' /> : null}
+          {charCount > 0 && !charCountLoading && ` - ${charCount} characters`}
+        </div>
         <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2'>
           {acceptedFileList}
         </div>

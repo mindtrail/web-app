@@ -82,3 +82,24 @@ export function getFileRejectionsMaxFiles(excessFiles: File[]) {
       } as FileRejection),
   )
 }
+
+export async function getFilesMetadata(files: File[]) {
+  const promises = files.map((file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    return fetch(METADATA_ENDPOINT, {
+      method: 'POST',
+      body: formData,
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch metadata for file ${file.name}`)
+      }
+      return response.json()
+    })
+  })
+
+  const filesMetadata = await Promise.all(promises)
+  console.log(filesMetadata)
+  return filesMetadata
+}
