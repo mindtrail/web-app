@@ -51,8 +51,9 @@ export async function POST(req: Request) {
   // Will send the
 
   try {
-    const newDS = createDataStore(userId, dataStoreName)
-    console.log('newDS', newDS)
+    const dataStore = await createDataStore(userId, dataStoreName)
+    console.log('newDS', dataStore)
+    return NextResponse.json({ dataStore })
   } catch (error) {
     console.error(error)
     return new Response('Error creating datastore', {
