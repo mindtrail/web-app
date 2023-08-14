@@ -3,20 +3,17 @@
 import * as React from 'react'
 import { useState } from 'react'
 import { FilePond, registerPlugin } from 'react-filepond'
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 
 import { Sidebar } from '@/components/sidebar/sidebar'
 import { SidebarList } from '@/components/sidebar/sidebar-list'
 import { SidebarFooter } from '@/components/sidebar/sidebar-footer'
-import { ThemeToggle } from '@/components/theme-toggle'
+// import { ThemeToggle } from '@/components/theme-toggle'
 
 // Register the plugins
-registerPlugin(FilePondPluginImagePreview)
 registerPlugin(FilePondPluginFileValidateType)
 
 const ACCEPTED_FILE_TYPES = [
@@ -33,7 +30,7 @@ const ACCEPTED_FILE_TYPES = [
   'text/markdown',
 ]
 
-const UPLOAD_ENDPOINT = 'http://localhost:3000/api/upload'
+const UPLOAD_ENDPOINT = '/api/upload'
 const MAX_NR_OF_FILES = 30
 const UPLOAD_LABEL = 'Drag and drop files or <span class="filepond--label-action">Browse</span>'
 
