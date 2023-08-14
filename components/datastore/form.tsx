@@ -79,8 +79,6 @@ export function DataStoreForm({ onSubmit }: FormProps) {
 
   const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
-    // maxFiles: MAX_NR_OF_FILES,
-    // maxSize: MAX_FILE_SIZE,
     onDrop: async (acceptedFiles: File[]) => {
       if (!acceptedFiles.length) {
         return
@@ -116,7 +114,7 @@ export function DataStoreForm({ onSubmit }: FormProps) {
         const filesMetadata = await getFilesMetadata(validFiles)
         console.log(1111, filesMetadata)
         // @ts-ignore
-        const totalChars = filesMetadata.reduce((acc, curr) => acc + curr.charCount, 0)
+        const totalChars = filesMetadata.reduce((acc, charCount) => acc + charCount, 0)
         setCharCount((prevChars) => prevChars + totalChars)
         setCharCountLoading(false)
         console.log(filesMetadata)
