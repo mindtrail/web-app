@@ -11,7 +11,7 @@ import {
   UPLOAD_ENDPOINT,
   METADATA_ENDPOINT,
   DATASTORE_ENDPOINT,
-} from '@/components/datastore/constants'
+} from '@/components/datastore/utils'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   userId: string
