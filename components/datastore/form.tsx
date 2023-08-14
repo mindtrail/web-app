@@ -31,7 +31,7 @@ import {
 import { formatDate } from '@/lib/utils'
 
 const dataStoreFormSchema = z.object({
-  dataStore: z
+  dataStoreName: z
     .string()
     .min(4, {
       message: 'Name must be at least 4 characters.',
@@ -44,15 +44,19 @@ const dataStoreFormSchema = z.object({
   }),
 })
 
-type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
+export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<DataStoreFormValues> = {
-  dataStore: `Knowledge Base - ${formatDate(new Date())}`,
+  dataStoreName: `Knowledge Base - ${formatDate(new Date())}`,
   files: [],
 }
 
-export function DataStoreForm() {
+type FormProps = {
+  onSubmit: (data: DataStoreFormValues) => void
+}
+
+export function DataStoreForm({ onSubmit }: FormProps) {
   const [files, setFiles] = useState<File[]>([])
   const [hasInteracted, setHasInteracted] = useState(false)
 
@@ -81,26 +85,6 @@ export function DataStoreForm() {
   } = form
 
   console.log(errors)
-  //   const {
-  //     refineCore: { onFinish, formLoading },
-  //     register,
-  //     handleSubmit,
-  //     formState: { errors },
-  //     setValue,
-  // } = useForm();
-
-  function onSubmit(data: DataStoreFormValues) {
-    // if (!acceptedFiles.length) {
-    //   form.setError("files", {
-    //     type: "manual",
-    //     message: "You must upload at least one file.",
-    //   });
-    // } else {
-    //   console.log(data, acceptedFiles);
-    // }
-
-    console.log(data)
-  }
 
   useEffect(() => {
     if (hasInteracted) {
@@ -117,10 +101,10 @@ export function DataStoreForm() {
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
           control={control}
-          name='dataStore'
+          name='dataStoreName'
           render={({ field }) => (
             <FormItem className='relative'>
-              <FormLabel>Knowledge Base Name</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder='shadcn' {...field} />
               </FormControl>
@@ -171,7 +155,7 @@ export function DataStoreForm() {
         />
         <div className='max-w-lg w-full flex-1 relative flex flex-col gap-8'>{fileList}</div>
         <Button type='submit' size='lg'>
-          Submit
+          Create
         </Button>
       </form>
     </Form>

@@ -23,6 +23,7 @@ export const ACCEPTED_FILE_REACT_DROPZONE = {
   'text/markdown': ['.md'],
 }
 
+export const DATASTORE_ENDPOINT = '/api/datastore'
 export const UPLOAD_ENDPOINT = '/api/upload'
 export const METADATA_ENDPOINT = '/api/upload/metadata'
 
