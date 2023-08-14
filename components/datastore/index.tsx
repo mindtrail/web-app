@@ -89,10 +89,6 @@ export function CreateDataStore({ dataStoreId }: DataStoreProps) {
       <div className='max-w-lg w-full'>
         <DataStoreForm />
       </div>
-
-      <Button variant='default' size='wide' onClick={handleSubmit}>
-        Continue
-      </Button>
     </div>
   )
 }
