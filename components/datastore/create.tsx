@@ -3,13 +3,14 @@
 import { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-import { DataStoreForm } from '@/components/datastore/form'
+import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
 import { TypographyH2 } from '@/components/typography/h2'
 
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
   UPLOAD_ENDPOINT,
   METADATA_ENDPOINT,
+  DATASTORE_ENDPOINT,
 } from '@/components/datastore/constants'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
@@ -17,49 +18,36 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 }
 
 export function CreateDataStore({ userId }: DataStoreProps) {
-  const [files, setFiles] = useState<File[]>([])
+  const onSubmit = async (data: DataStoreFormValues) => {
+    console.log(1234, data)
+    const { dataStoreName, files } = data
 
-  const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
-    accept: ACCEPTED_FILE_REACT_DROPZONE,
-    onDrop: async (acceptedFiles: File[]) => {
-      if (!acceptedFiles.length) {
-        return
-      }
-
-      const formData = new FormData()
-
-      acceptedFiles.forEach((file) => {
-        formData.append('file', file)
-      })
-
-      const res = await fetch(METADATA_ENDPOINT, {
+    try {
+      const res = await fetch(DATASTORE_ENDPOINT, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          dataStoreName,
+        }),
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok')
-          }
-          return response.json()
-        })
-        .then((data) => {
-          console.log(data)
-        })
-        .catch((error) => {
-          console.error('There was a problem with the fetch operation:', error.message)
-        })
+      const data = await res.json()
 
-      setFiles(files.concat(acceptedFiles))
-    },
-  })
+      console.log(data)
+    } catch (err) {
+      console.log(err)
+    }
 
-  const handleSubmit: MouseEventHandler<HTMLButtonElement> = async () => {
+    return
     const formData = new FormData()
 
     files.forEach((file) => {
       formData.append('file', file)
     })
 
+    // @TODO: Create DataStore
     // const dsName = `DataStore - ${new Date().toLocaleString()}`
     // const newDs = await createDataStore(userId, dsName)
 
@@ -81,7 +69,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
         <TypographyH2>Create Knowledge Base</TypographyH2>
       </div>
       <div className='max-w-lg w-full'>
-        <DataStoreForm />
+        <DataStoreForm onSubmit={onSubmit} />
       </div>
     </div>
   )
