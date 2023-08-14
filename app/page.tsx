@@ -1,25 +1,28 @@
-import Link from 'next/link'
+import { getServerSession } from 'next-auth/next'
 
-import { getNanoId } from '@/lib/utils'
-import { Chat } from '@/components/chat'
+import { authOptions } from '@/lib/authOptions'
+import { ExtendedSession } from '@/lib/types'
 
-export default function Home() {
-  const id = getNanoId()
+import { Header } from '@/components/header'
+import { ChatDemo } from '@/components/chat/chat-demo'
+
+export default async function Home() {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+
   return (
-    <div className='flex h-screen'>
-      <div className='w-screen h-screen flex flex-col justify-center items-center'>
-        <div className='flex-col space-x-3'>
-          <Chat id={id} />
-
-          <h2>Homescreen</h2>
-          <br />
-          <Link
-            href='/protected'
-            prefetch={false} // workaround until https://github.com/vercel/vercel/pull/8978 is deployed
-            className='text-stone-400 underline hover:text-stone-200 transition-all'
-          >
-            Protected Page
-          </Link>
+    <div className='flex flex-col flex-1 w-full items-center bg-muted/50'>
+      <Header session={session} />
+      <div className='flex flex-col flex-1 w-full max-w-6xl'>
+        <div className='flex flex-col flex-1 w-full items-center sm:px-6 cursor-default'>
+          <section className='flex flex-col w-full py-24 gap-2 items-center'>
+            <h1 className='text-xl'>Indie Chat</h1>
+            <h2 className='text-lg text-gray-500'>
+              An AI-Powered chatbot for your docs and website.
+            </h2>
+          </section>
+          <section className='flex w-full justify-center'>
+            <ChatDemo />
+          </section>
         </div>
       </div>
     </div>

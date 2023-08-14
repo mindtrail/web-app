@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
-import { authOptions } from 'lib/authOptions'
+import { authOptions } from '@/lib/authOptions'
 import SignOut from '@/components/sign-out'
 
 export default async function Home() {
@@ -10,6 +10,7 @@ export default async function Home() {
   if (!session) {
     redirect(`/api/auth/signin?callbackUrl=/protected`)
   }
+  console.log('session server --- ', session)
 
   // console.log('session', session)
 

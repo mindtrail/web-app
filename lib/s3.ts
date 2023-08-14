@@ -13,24 +13,39 @@ const s3Client = new S3Client({
   },
 })
 
-export async function uploadToS3(fileBlob: Blob, userId: string) {
+interface UploadToS3Props {
+  fileBlob: Blob
+  userId: string
+  dataStoreId: string
+  dataSourceId: string
+}
+
+export async function uploadToS3(props: UploadToS3Props) {
+  const { fileBlob, userId, dataStoreId, dataSourceId } = props
+
   const { name } = fileBlob
-  const key = `dataset1/${userId}/${name}-${Date.now().toString()}`
+  const key = `dataset1/${userId}/${dataStoreId}/${dataSourceId}-${name}`
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer())
 
-  console.log('buffer', buffer)
   const command = new PutObjectCommand({
     Bucket: 'indie-chat',
     Key: key,
     Body: buffer,
+    Metadata: {
+      dataSourceId,
+      dataStoreId,
+      userId,
+    },
   })
 
   try {
+    console.time('s3')
     const response = await s3Client.send(command)
-    console.log('s3', response)
+    console.timeEnd('s3')
     return response
   } catch (error) {
     console.error('Error uploading to S3', error)
+    return null
   }
 }

@@ -2,10 +2,12 @@ import '@/styles/globals.css'
 
 import { Metadata } from 'next'
 import { Toaster } from 'react-hot-toast'
+import { Analytics } from '@vercel/analytics/react'
 
 import { Providers } from '@/app/context/providers'
-import { LeftSidebar } from '@/components/sidebar'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: {
@@ -23,20 +25,16 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body>
+      <body className='flex flex-col min-h-screen'>
         <Providers>
           <Toaster />
-          <div className='flex flex-col min-h-screen sm:flex-row'>
-            <LeftSidebar />
-            <main className='flex flex-col flex-1 relative items-center bg-muted/50 px-4'>
-              {children}
-            </main>
-          </div>
+          <main className='flex flex-col flex-1 w-full'>{children}</main>
           <TailwindIndicator />
         </Providers>
+        <Analytics />
       </body>
     </html>
   )

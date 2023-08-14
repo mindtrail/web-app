@@ -14,7 +14,10 @@ datasource db {
 
 model Account {
   id                 String  @id @default(cuid())
+
   userId             String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   type               String
   provider           String
   providerAccountId  String
@@ -26,17 +29,25 @@ model Account {
   id_token           String?  @db.Text
   session_state      String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@unique([provider, providerAccountId])
+  @@map("Accounts")
 }
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
+
   userId       String
-  expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionToken String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  expires      DateTime
+
+  @@map("Sessions")
 }
 
 model VerificationToken {
@@ -45,6 +56,7 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("VerificationTokens")
 }
 
 model User {
@@ -58,97 +70,100 @@ model User {
   sessions      Session[]
 
   picture       String?
-  hasOptInEmail Boolean? @default(false) @map("has_opt_in_email")
+  hasOptInEmail Boolean? @default(false)
 
-  datastores    Datastore[]
-  datasources   AppDatasource[]
+  dataStores    DataStore[]
+  dataSources   AppDataSource[]
   subscriptions Subscription[]  @relation("user")
   usage         Usage?
   conversations Conversation[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("Users")
 }
 
 model Usage {
   id String @id @default(cuid())
 
-  userId String @unique @map("user_id")
+  userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  nbAgentQueries        Int @default(0) @map("nb_agent_queries")
-  nbDatastoreQueries    Int @default(0) @map("nb_datastore_queries")
-  nbUploadedBytes       Int @default(0) @map("nb_uploaded_bytes")
-  nbDataProcessingBytes Int @default(0) @map("nb_data_processing_bytes")
-  nbModelTokens         Int @default(0) @map("nb_tokens")
+  nbAgentQueries        Int @default(0)
+  nbDataStoreQueries    Int @default(0)
+  nbUploadedBytes       Int @default(0)
+  nbDataProcessingBytes Int @default(0)
+  nbModelTokens         Int @default(0)
 }
 
-model Datastore {
+model DataStore {
   id String @id @default(cuid())
 
   name        String
   description String?
-  type        DatastoreType
-  datasources AppDatasource[]
-  visibility  DatastoreVisibility @default(private)
-  tool        Tool[]
+  type        DataStoreType
+  dataSources AppDataSource[]
+  visibility  DataStoreVisibility @default(private)
 
   config Json?
 
-  ownerId String? @map("owner_id")
+  ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
+  @@map("DataStores")
 }
 
-
-// Naming the model Datasource conflicts with prisma
+// Naming the model DataSource conflicts with prisma
 // https://github.com/prisma/prisma/issues/12332
-model AppDatasource {
+model AppDataSource {
   id     String           @id @default(cuid())
-  type   DatasourceType
+  type   DataSourceType
   name   String
-  status DatasourceStatus @default(unsynched)
+  status DataSourceStatus @default(unsynched)
 
   config Json?
 
-  datastoreId String?    @map("datastore_id")
-  datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
+  dataStoreId String?
+  dataStore   DataStore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
 
-  ownerId String? @map("owner_id")
+  ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
 
-  nbChunks Int? @default(0) @map("nb_chunks")
-  textSize Int? @default(0) @map("text_size")
+  nbChunks  Int? @default(0)
+  textSize  Int? @default(0)
 
-  hash String?
+  hash      String?
 
-  nbSynch   Int?      @default(0) @map("nb_synch")
-  lastSynch DateTime? @map("last_synch")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  nbSynch   Int?      @default(0)
+  lastSynch DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
 
+  @@map("AppDataSources")
 }
 
 model Conversation {
   id        String  @id @default(cuid())
-  visitorId String? @map("visitor_id")
-  userId    String? @map("user_id")
+  visitorId String?
+  userId    String?
   user      User?   @relation(fields: [userId], references: [id])
 
-  agentId  String?   @map("agent_id")
+  agentId  String?
   messages Message[]
 
   channel ConversationChannel @default(dashboard)
 
   metadata Json?
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([visitorId], type: Hash)
+  @@map("Conversations")
 }
 
 
@@ -156,28 +171,16 @@ model Message {
   id             String        @id @default(cuid())
   text           String
   from           MessageFrom
-  conversationId String?       @map("conversation_id")
+  conversationId String?
   conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sources        Json?
 
   read Boolean? @default(false)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-}
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-
-model Tool {
-  id   String   @id @default(cuid())
-  type ToolType
-
-  agentId String? @map("agent_id")
-
-  datastoreId String?    @map("datastore_id")
-  datastore   Datastore? @relation(fields: [datastoreId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  @@map("Messages")
 }
 
 model Product {
@@ -187,32 +190,36 @@ model Product {
   description String?
   image       String?
   metadata    Json?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   prices      Price[]
+
+  @@map("Products")
 }
 
 model Price {
   id                String         @id @default(cuid())
-  productId         String         @map("product_id")
+  productId         String
   active            Boolean        @default(false)
   currency          String
   interval          PriceInterval?
-  unitAmount        Int?           @map("unit_amount")
+  unitAmount        Int?
   interval_count    Int?
   trial_period_days Int?
   type              PriceType?
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @updatedAt @map("updated_at")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
   product           Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
   subscriptions     Subscription[]
+
+  @@map("Prices")
 }
 
 model Subscription {
   id                   String             @id @default(cuid())
   plan                 SubscriptionPlan?  @default(level_1)
   priceId              String
-  customerId           String             @map("customer_id")
+  customerId           String
   status               SubscriptionStatus
   start_date           DateTime?
   ended_at             DateTime?
@@ -227,19 +234,21 @@ model Subscription {
   price Price @relation(fields: [priceId], references: [id])
 
   user   User?   @relation(name: "user", fields: [userId], references: [id], onDelete: Cascade)
-  userId String? @unique @map("user_id")
+  userId String? @unique
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Subscriptions")
 }
 
 
-enum DatastoreVisibility {
+enum DataStoreVisibility {
   public
   private
 }
 
-enum DatasourceStatus {
+enum DataSourceStatus {
   unsynched
   pending
   running
@@ -248,7 +257,7 @@ enum DatasourceStatus {
   usage_limit_reached
 }
 
-enum DatasourceType {
+enum DataSourceType {
   web_page
   web_site
   text
@@ -258,12 +267,8 @@ enum DatasourceType {
   notion
 }
 
-enum DatastoreType {
+enum DataStoreType {
   qdrant
-}
-
-enum ToolType {
-  datastore
 }
 
 enum SubscriptionPlan {

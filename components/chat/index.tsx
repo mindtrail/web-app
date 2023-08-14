@@ -6,7 +6,7 @@ import { useChat, type Message } from 'ai/react'
 import { cn } from '@/lib/utils'
 import { ChatList } from '@/components/chat/chat-list'
 import { ChatPanel } from '@/components/chat/chat-panel'
-import { EmptyScreen } from '@/components/chat/empty-screen'
+import { EmptyChat } from '@/components/chat/empty-chat'
 import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
 import { useLocalStorage } from '@/lib/hooks/use-local-storage'
 import {
@@ -22,8 +22,6 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
-const EPXRESS_SERVER = 'http://localhost:3000/api'
-const CHAT_ENDPOINT = '/chat'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
@@ -35,8 +33,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
 
-  const { messages, append, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
-    api: EPXRESS_SERVER + CHAT_ENDPOINT,
+  const { messages, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
     initialMessages,
     id,
     body: {
@@ -47,16 +44,28 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
 
   return (
     <>
-      <div className={cn('pb-[200px] pt-4 md:pt-10 w-full', className)}>
-        {messages.length ? (
+      <div
+        className={cn(
+          'flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-8 w-full',
+          className,
+        )}
+      >
+        <div className='flex flex-col items-center gap-2'>
+          <h1 className='mb-2 text-lg font-semibold text-center'>Create Chatbot</h1>
+          <p>Step 1</p>
+        </div>
+
+        {messages?.length ? (
           <>
             <ChatList messages={messages} />
             <ChatScrollAnchor trackVisibility={isLoading} />
           </>
         ) : (
-          <EmptyScreen setInput={setInput} />
+          // @ts-ignore
+          <EmptyChat setInput={setInput} />
         )}
       </div>
+
       <ChatPanel
         isLoading={isLoading}
         stop={stop}
