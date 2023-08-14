@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useDropzone } from 'react-dropzone'
+import { useDropzone, FileRejection } from 'react-dropzone'
 import * as z from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,10 +22,13 @@ import {
   ACCEPTED_FILE_REACT_DROPZONE,
   DROPZONE_STYLES,
   MAX_NR_OF_FILES,
+  MAX_FILE_SIZE,
   UPLOAD_ENDPOINT,
   METADATA_ENDPOINT,
   UPLOAD_LABEL,
-} from '@/components/datastore/constants'
+  filterFilesBySize,
+  getFileRejectionsMaxFiles,
+} from '@/components/datastore/utils'
 
 import { formatDate } from '@/lib/utils'
 
@@ -56,9 +58,16 @@ type FormProps = {
   onSubmit: (data: DataStoreFormValues) => void
 }
 
+type FileFilter = {
+  validFiles: File[]
+  rejectedFiles: FileRejection[]
+}
+
 export function DataStoreForm({ onSubmit }: FormProps) {
   const [files, setFiles] = useState<File[]>([])
-  const [hasInteracted, setHasInteracted] = useState(false)
+  const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
+
+  const [dropzoneUsed, setDropzoneUsed] = useState(false)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -69,32 +78,68 @@ export function DataStoreForm({ onSubmit }: FormProps) {
 
   const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
+    // maxFiles: MAX_NR_OF_FILES,
+    // maxSize: MAX_FILE_SIZE,
     onDrop: async (acceptedFiles: File[]) => {
+      console.log(acceptedFiles)
+
       if (!acceptedFiles.length) {
         return
       }
-      setHasInteracted(true) // User has interacted with the dropzone
-      setFiles(files.concat(acceptedFiles))
+
+      // Filter files based on size
+      let { validFiles, rejectedFiles } = filterFilesBySize(acceptedFiles)
+
+      // Check how many files we can add based on maxFiles
+      const remainingSlots = MAX_NR_OF_FILES - files.length
+
+      if (validFiles.length > remainingSlots) {
+        const excessFiles = validFiles.slice(remainingSlots)
+        // Truncate validFiles to the remainingSlots
+        validFiles.length = remainingSlots
+        // Add the excess files to the rejectedFiles list
+        rejectedFiles = [...rejectedFiles, ...getFileRejectionsMaxFiles(excessFiles)]
+      }
+
+      // Only use the first x files and the ones that have a size smaller than the max size.
+      setDropzoneUsed(true) // User has interacted with the dropzone
+
+      setFiles((prevFiles) => [...prevFiles, ...validFiles])
+
+      if (rejectedFiles.length) {
+        // Update your rejected files list state (assuming you have a state for this)
+        setRejectedFiles(rejectedFiles)
+      }
     },
   })
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form
-
-  console.log(errors)
+  const { handleSubmit, control } = form
 
   useEffect(() => {
-    if (hasInteracted) {
+    if (dropzoneUsed) {
       form.setValue('files', files)
       form.trigger('files')
     }
-  }, [files, form, hasInteracted])
+  }, [files, form, dropzoneUsed])
 
-  // @TODO: cache this
-  const fileList = files.map((file: File) => <div key={file.name}>{file.name}</div>)
+  const dropzoneInteractionClasses = useMemo(() => {
+    if (isDragReject) {
+      return DROPZONE_STYLES.REJECT
+    }
+    if (isDragAccept) {
+      return DROPZONE_STYLES.ACCEPT
+    }
+
+    return DROPZONE_STYLES.DEFAULT
+  }, [isDragAccept, isDragReject])
+
+  const acceptedFileList = useMemo(() => {
+    return files.map((file: File) => <p key={file.name}>{file.name}</p>)
+  }, [files])
+
+  const rejectedFileList = useMemo(() => {
+    return rejectedFiles.map(({ file }: FileRejection) => <p key={file.name}>{file.name}</p>)
+  }, [rejectedFiles])
 
   return (
     <Form {...form}>
@@ -124,13 +169,7 @@ export function DataStoreForm({ onSubmit }: FormProps) {
                   className={`flex flex-col w-full h-28 rounded-xl justify-center
                   border items-center gap-4 text-neutral-600
                   select-none cursor-default transition .25s ease-in-out
-                  ${
-                    isDragReject
-                      ? DROPZONE_STYLES.REJECT
-                      : isDragAccept
-                      ? DROPZONE_STYLES.ACCEPT
-                      : DROPZONE_STYLES.DEFAULT
-                  }`}
+                  ${dropzoneInteractionClasses}`}
                 >
                   <input {...getInputProps()} />
                   {isDragReject ? (
@@ -153,7 +192,15 @@ export function DataStoreForm({ onSubmit }: FormProps) {
             </FormItem>
           )}
         />
-        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-8'>{fileList}</div>
+        <div>{files.length > 0 && `${files.length} of ${MAX_NR_OF_FILES} uploaded`}</div>
+        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2'>
+          {acceptedFileList}
+        </div>
+
+        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2 text-red-800'>
+          {rejectedFileList}
+        </div>
+
         <Button type='submit' size='lg'>
           Create
         </Button>

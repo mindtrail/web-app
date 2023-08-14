@@ -1,3 +1,5 @@
+import { FileRejection } from 'react-dropzone'
+
 export const ACCEPTED_FILE_TYPES = [
   'application/epub+zip',
   'application/json',
@@ -27,7 +29,8 @@ export const DATASTORE_ENDPOINT = '/api/datastore'
 export const UPLOAD_ENDPOINT = '/api/upload'
 export const METADATA_ENDPOINT = '/api/upload/metadata'
 
-export const MAX_NR_OF_FILES = 30
+export const MAX_NR_OF_FILES = 5
+export const MAX_FILE_SIZE = 1 * 1024 * 1024
 export const UPLOAD_LABEL =
   'Drag and drop files or <span class="filepond--label-action">Browse</span>'
 
@@ -35,4 +38,47 @@ export const DROPZONE_STYLES = {
   DEFAULT: 'border-neutral-300 bg-neutral-50',
   REJECT: 'border-red-400 bg-neutral-300 cursor-not-allowed text-neutral-800',
   ACCEPT: 'border-green-600 bg-green-50',
+}
+
+type FileFilter = {
+  validFiles: File[]
+  rejectedFiles: FileRejection[]
+}
+
+export const filterFilesBySize = (files: File[]) => {
+  return files.reduce(
+    (acc, file: File) => {
+      if (file.size <= MAX_FILE_SIZE) {
+        acc.validFiles.push(file)
+      } else {
+        const fileRejection: FileRejection = {
+          file,
+          errors: [
+            {
+              code: 'size',
+              message: `File ${file.name} is too large`,
+            },
+          ],
+        }
+        acc.rejectedFiles.push(fileRejection)
+      }
+      return acc
+    },
+    { validFiles: [], rejectedFiles: [] } as FileFilter,
+  )
+}
+
+export function getFileRejectionsMaxFiles(excessFiles: File[]) {
+  return excessFiles.map(
+    (file) =>
+      ({
+        file,
+        errors: [
+          {
+            code: 'max-nr',
+            message: `File ${file.name} is above the max files threshold`,
+          },
+        ],
+      } as FileRejection),
+  )
 }
