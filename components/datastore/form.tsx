@@ -36,8 +36,8 @@ const dataStoreFormSchema = z.object({
     .min(4, {
       message: 'Name must be at least 4 characters.',
     })
-    .max(30, {
-      message: 'Name must not be longer than 30 characters.',
+    .max(40, {
+      message: 'Name must not be longer than 40 characters.',
     }),
   files: z.array(z.any()).min(1, {
     message: 'You must upload at least one valid file.',
@@ -134,7 +134,6 @@ export function DataStoreForm() {
           render={() => (
             <FormItem className='relative'>
               <FormLabel>Upload Files</FormLabel>
-              <FormDescription>Drop files or click to browse.</FormDescription>
               <FormControl>
                 <div
                   {...getRootProps()}
@@ -171,7 +170,9 @@ export function DataStoreForm() {
           )}
         />
         <div className='max-w-lg w-full flex-1 relative flex flex-col gap-8'>{fileList}</div>
-        <Button type='submit'>Update profile</Button>
+        <Button type='submit' size='lg'>
+          Submit
+        </Button>
       </form>
     </Form>
   )
