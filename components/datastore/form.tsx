@@ -81,8 +81,6 @@ export function DataStoreForm({ onSubmit }: FormProps) {
     // maxFiles: MAX_NR_OF_FILES,
     // maxSize: MAX_FILE_SIZE,
     onDrop: async (acceptedFiles: File[]) => {
-      console.log(acceptedFiles)
-
       if (!acceptedFiles.length) {
         return
       }
@@ -121,6 +119,17 @@ export function DataStoreForm({ onSubmit }: FormProps) {
       form.trigger('files')
     }
   }, [files, form, dropzoneUsed])
+
+  useEffect(() => {
+    if (rejectedFiles.length > 0) {
+      const timer = setTimeout(() => {
+        setRejectedFiles([]) // Clear the rejectedFiles after 5 seconds
+      }, 5000)
+
+      // Clear timeout if component is unmounted
+      return () => clearTimeout(timer)
+    }
+  }, [rejectedFiles])
 
   const dropzoneInteractionClasses = useMemo(() => {
     if (isDragReject) {
