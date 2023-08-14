@@ -14,7 +14,6 @@ export async function POST(req: Request) {
       status: 401,
     })
   }
-  console.log(111, req)
 
   if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
     return new Response('Bad Request', {
@@ -26,8 +25,6 @@ export async function POST(req: Request) {
 
   const userId = session.user?.id
   const formData = await req.formData()
-
-  console.log('formData', formData)
 
   for (const value of Array.from(formData.values())) {
     // FormDataEntryValue can either be type `Blob` or `string`.
@@ -48,14 +45,14 @@ export async function POST(req: Request) {
   const docs = await getDocumentChunks(fileBlob)
 
   const nbChunks = docs.length
-  const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
+  const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
   if (!docs.length) {
     return NextResponse.json({ error: 'File type not supported' })
   }
 
   // console.log('response', response)
-  return NextResponse.json({ nbChunks, textSize, docs })
+  return NextResponse.json({ charCount, docs })
 }
 
 export async function DELETE(req: Request) {
