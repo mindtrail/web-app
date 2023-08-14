@@ -21,6 +21,7 @@ import {
 
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
+  DROPZONE_STYLES,
   MAX_NR_OF_FILES,
   UPLOAD_ENDPOINT,
   METADATA_ENDPOINT,
@@ -33,25 +34,21 @@ const dataStoreFormSchema = z.object({
   dataStore: z
     .string()
     .min(4, {
-      message: 'DataStore must be at least 4 characters.',
+      message: 'Name must be at least 4 characters.',
     })
     .max(30, {
-      message: 'DataStore must not be longer than 30 characters.',
+      message: 'Name must not be longer than 30 characters.',
     }),
   files: z.array(z.any()).min(1, {
     message: 'You must upload at least one valid file.',
   }),
 })
 
-const defaultStyles = 'border-neutral-300 bg-neutral-50'
-const rejectStyles = 'border-red-400 bg-neutral-300 cursor-not-allowed text-neutral-800'
-const acceptStyles = 'border-green-600 bg-green-50'
-
 type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<DataStoreFormValues> = {
-  dataStore: `DataStore - ${formatDate(new Date())}`,
+  dataStore: `Knowledge Base - ${formatDate(new Date())}`,
   files: [],
 }
 
@@ -123,8 +120,7 @@ export function DataStoreForm() {
           name='dataStore'
           render={({ field }) => (
             <FormItem className='relative'>
-              <FormLabel>Create a Data Store</FormLabel>
-              <FormDescription>Add your file here</FormDescription>
+              <FormLabel>Knowledge Base Name</FormLabel>
               <FormControl>
                 <Input placeholder='shadcn' {...field} />
               </FormControl>
@@ -145,7 +141,13 @@ export function DataStoreForm() {
                   className={`flex flex-col w-full h-28 rounded-xl justify-center
                   border items-center gap-4 text-neutral-600
                   select-none cursor-default transition .25s ease-in-out
-                  ${isDragReject ? rejectStyles : isDragAccept ? acceptStyles : defaultStyles}`}
+                  ${
+                    isDragReject
+                      ? DROPZONE_STYLES.REJECT
+                      : isDragAccept
+                      ? DROPZONE_STYLES.ACCEPT
+                      : DROPZONE_STYLES.DEFAULT
+                  }`}
                 >
                   <input {...getInputProps()} />
                   {isDragReject ? (

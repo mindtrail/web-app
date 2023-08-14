@@ -11,7 +11,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '@TODO:github...',
+        hostname: 'avatars.githubusercontent.com',
       },
     ],
   },
