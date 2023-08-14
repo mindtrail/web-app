@@ -13,7 +13,6 @@ export async function GET() {
   const userId = session?.user?.id
 
   if (!userId) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
@@ -32,7 +31,6 @@ export async function POST(req: Request) {
   const userId = session?.user?.id
 
   if (!userId) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
@@ -42,7 +40,6 @@ export async function POST(req: Request) {
   const { dataStoreName, userId: clientUserId } = body
 
   if (clientUserId !== userId) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
@@ -52,7 +49,6 @@ export async function POST(req: Request) {
 
   try {
     const dataStore = await createDataStore(userId, dataStoreName)
-    console.log('newDS', dataStore)
     return NextResponse.json({ dataStore })
   } catch (error) {
     console.error(error)

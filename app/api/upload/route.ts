@@ -12,7 +12,6 @@ export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })

@@ -50,7 +50,7 @@ export const deleteAllDataStoresForUser = async (userId: string) => {
       ownerId: userId,
     },
   })
-  console.log('dataStore', dataStore)
+
   return dataStore
 }
 
@@ -61,7 +61,6 @@ export const deleteDataStore = async (userId: string, dataStoreId: string) => {
       ownerId: userId,
     },
   })
-  console.log('Deleted DS', dataStore)
 
   return dataStore
 }

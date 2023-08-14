@@ -14,7 +14,6 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
   const dataStoreId = params.id
 
   if (!userId) {
-    console.log('Unauthorized')
     return new NextResponse('Unauthorized', {
       status: 401,
     })
@@ -35,14 +34,12 @@ export async function PUT(req: Request) {
   const userId = session?.user?.id
 
   if (!userId) {
-    console.log('Unauthorized')
     return new NextResponse('Unauthorized', {
       status: 401,
     })
   }
 
   const body = await req.json()
-  console.log('body', body)
 
   return NextResponse.json({})
 }
