@@ -30,7 +30,8 @@ export const UPLOAD_ENDPOINT = '/api/upload'
 export const METADATA_ENDPOINT = '/api/upload/metadata'
 
 export const MAX_NR_OF_FILES = 5
-export const MAX_FILE_SIZE = 1 * 1024 * 1024
+export const MAX_FILE_SIZE = 10 * 1024 * 1024
+export const MAX_CHARS_PER_KB = 5 * 1000 * 1000
 export const UPLOAD_LABEL =
   'Drag and drop files or <span class="filepond--label-action">Browse</span>'
 

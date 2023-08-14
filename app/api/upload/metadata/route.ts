@@ -52,7 +52,7 @@ export async function POST(req: Request) {
   }
 
   // console.log('response', response)
-  return NextResponse.json({ charCount, docs })
+  return NextResponse.json(charCount)
 }
 
 export async function DELETE(req: Request) {
