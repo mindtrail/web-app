@@ -25,7 +25,7 @@ export const createDataStore = async (userId: string, name: string) => {
 
   if (dataStoreNameExists) {
     // If it exists, append a random string or an index to make it unique
-    name = `${name}-${Math.random().toString(36).substring(2, 5)}` // appending a random 3-character string
+    name = `${name}-${Math.floor(Math.random() * 90000 + 10000)}` // appending a random 5 char nr
   }
 
   const dataStore = await prisma.dataStore.create({

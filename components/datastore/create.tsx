@@ -23,14 +23,14 @@ export function CreateDataStore({ userId }: DataStoreProps) {
     const { dataStoreName, files } = data
 
     try {
-      const res = await fetch(DATASTORE_ENDPOINT, {
+      const res = await fetch('/api/datastore', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId,
-          dataStoreName,
+          userId: 123,
+          dataStoreName: 'fsadsadsa',
         }),
       })
       const data = await res.json()
