@@ -3,27 +3,18 @@
 import { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-import { IconSpinner } from '@/components/ui/icons'
-import { Button, type ButtonProps } from '@/components/ui/button'
-
 import { DataStoreForm } from '@/components/datastore/form'
-import { TypographyH1 } from '@/components/typography/h1'
+import { TypographyH2 } from '@/components/typography/h2'
 
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
-  MAX_NR_OF_FILES,
   UPLOAD_ENDPOINT,
   METADATA_ENDPOINT,
-  UPLOAD_LABEL,
 } from '@/components/datastore/constants'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   dataStoreId: string
 }
-
-const defaultStyles = 'border-neutral-300 bg-neutral-50'
-const rejectStyles = 'border-red-400 bg-neutral-300 cursor-not-allowed text-neutral-800'
-const acceptStyles = 'border-green-600 bg-green-50'
 
 export function CreateDataStore({ dataStoreId }: DataStoreProps) {
   const [files, setFiles] = useState<File[]>([])
@@ -84,7 +75,7 @@ export function CreateDataStore({ dataStoreId }: DataStoreProps) {
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
-        <TypographyH1>Create Chatbot</TypographyH1>
+        <TypographyH2>Create Knowledge Base</TypographyH2>
       </div>
       <div className='max-w-lg w-full'>
         <DataStoreForm />

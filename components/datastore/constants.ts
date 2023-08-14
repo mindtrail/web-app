@@ -29,3 +29,9 @@ export const METADATA_ENDPOINT = '/api/upload/metadata'
 export const MAX_NR_OF_FILES = 30
 export const UPLOAD_LABEL =
   'Drag and drop files or <span class="filepond--label-action">Browse</span>'
+
+export const DROPZONE_STYLES = {
+  DEFAULT: 'border-neutral-300 bg-neutral-50',
+  REJECT: 'border-red-400 bg-neutral-300 cursor-not-allowed text-neutral-800',
+  ACCEPT: 'border-green-600 bg-green-50',
+}

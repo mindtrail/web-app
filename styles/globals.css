@@ -76,3 +76,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+::selection {
+  background: #b4d5fe !important;
+}

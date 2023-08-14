@@ -51,7 +51,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         )}
       >
         <div className='flex flex-col items-center gap-2'>
-          <h1 className='mb-2 text-lg font-semibold text-center'>Create Chatbot</h1>
+          <h1 className='mb-2 text-lg font-semibold text-center'>Create Knowledge Base</h1>
           <p>Step 1</p>
         </div>
 
