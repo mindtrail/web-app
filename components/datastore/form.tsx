@@ -1,11 +1,10 @@
-'use client'
-
-import { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone, FileRejection } from 'react-dropzone'
 import * as z from 'zod'
 
+import { FileList } from '@/components/datastore/fileList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -31,7 +30,6 @@ import {
 } from '@/components/datastore/utils'
 
 import { formatDate } from '@/lib/utils'
-import { IconSpinner } from '@/components/ui/icons'
 
 const dataStoreFormSchema = z.object({
   dataStoreName: z
@@ -57,6 +55,7 @@ const defaultValues: Partial<DataStoreFormValues> = {
 
 type FormProps = {
   onSubmit: (data: DataStoreFormValues) => void
+  // fileList: React.ReactNode
 }
 
 export function DataStoreForm({ onSubmit }: FormProps) {
@@ -131,6 +130,16 @@ export function DataStoreForm({ onSubmit }: FormProps) {
     },
   })
 
+  const handleDelete = (fileToDelete: AcceptedFile) => {
+    if (!fileToDelete) {
+      return
+    }
+    const { file, charCount = 0 } = fileToDelete
+
+    setFiles((prevFiles) => prevFiles.filter(({ file: prevFile }) => prevFile.name !== file.name))
+    setCharCount((prevChars) => prevChars - charCount)
+  }
+
   const { handleSubmit, control } = form
 
   useEffect(() => {
@@ -150,19 +159,6 @@ export function DataStoreForm({ onSubmit }: FormProps) {
 
     return DROPZONE_STYLES.DEFAULT
   }, [isDragAccept, isDragReject])
-
-  const acceptedFileList = useMemo(() => {
-    return files.map(({ file, charCount }) => (
-      <p className='flex justify-between items-center' key={file.name}>
-        {file.name}
-        <span>{charCount}</span>
-      </p>
-    ))
-  }, [files])
-
-  const rejectedFileList = useMemo(() => {
-    return rejectedFiles.map(({ file }: FileRejection) => <p key={file.name}>{file.name}</p>)
-  }, [rejectedFiles])
 
   return (
     <Form {...form}>
@@ -215,18 +211,13 @@ export function DataStoreForm({ onSubmit }: FormProps) {
             </FormItem>
           )}
         />
-        <div className='flex justify-between items-center'>
-          {files.length > 0 && `${files.length} of ${MAX_NR_OF_FILES} uploaded`}
-          {charCountLoading ? <IconSpinner className='mr-2 animate-spin' /> : null}
-          {charCount > 0 && !charCountLoading && <span>Total chars: {charCount}</span>}
-        </div>
-        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2'>
-          {acceptedFileList}
-        </div>
-
-        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2 text-red-800'>
-          {rejectedFileList}
-        </div>
+        <FileList
+          acceptedFiles={files}
+          rejectedFiles={rejectedFiles}
+          charCount={charCount}
+          charCountLoading={charCountLoading}
+          handleDelete={handleDelete}
+        />
 
         <Button type='submit' size='lg'>
           Create
