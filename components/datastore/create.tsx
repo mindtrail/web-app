@@ -17,7 +17,6 @@ export function CreateDataStore({ userId }: DataStoreProps) {
   const [processing, setProcessing] = useState(false)
 
   const onSubmit = async (data: DataStoreFormValues) => {
-    console.log(1234, data)
 
     const { dataStoreName, files } = data
     setProcessing(true)

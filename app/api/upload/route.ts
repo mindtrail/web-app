@@ -29,8 +29,6 @@ export async function POST(req: Request) {
   const userId = session.user?.id
   const formData = await req.formData()
 
-  console.log('formData', formData)
-
   for (const value of Array.from(formData.values())) {
     // FormDataEntryValue can either be type `Blob` or `string`.
     // If its type is object then it's a Blob
@@ -75,8 +73,6 @@ export async function POST(req: Request) {
   }
 
   const dataSrc = await createDataSrc(dataSrcPayload)
-  console.log('dataSrc', dataSrc)
-
   const dataSourceId = dataSrc?.id
 
   if (!dataSourceId) {
