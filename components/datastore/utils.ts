@@ -29,7 +29,7 @@ export const DATASTORE_ENDPOINT = '/api/datastore'
 export const UPLOAD_ENDPOINT = '/api/upload'
 export const METADATA_ENDPOINT = '/api/upload/metadata'
 
-export const MAX_NR_OF_FILES = 5
+export const MAX_NR_OF_FILES = 10
 export const MAX_FILE_SIZE = 10 * 1024 * 1024
 export const MAX_CHARS_PER_KB = 5 * 1000 * 1000
 export const UPLOAD_LABEL =
@@ -41,9 +41,20 @@ export const DROPZONE_STYLES = {
   ACCEPT: 'border-green-600 bg-green-50',
 }
 
-type FileFilter = {
+export type FileFilter = {
   validFiles: File[]
   rejectedFiles: FileRejection[]
+}
+
+export type AcceptedFile = {
+  file: File
+  charCount?: number
+}
+
+export type Metadata = {
+  charCount: number
+  name: string
+  type: string
 }
 
 export const filterFilesBySize = (files: File[]) => {
@@ -102,4 +113,31 @@ export async function getFilesMetadata(files: File[]) {
 
   const filesMetadata = await Promise.all(promises)
   return filesMetadata
+}
+
+export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata: Metadata[]) => {
+  const filesMetadataMap: { [key: string]: Metadata } = {}
+  filesMetadata.forEach((metadata) => {
+    filesMetadataMap[metadata.name] = metadata
+  })
+
+  // @TODO - map
+  const newFiles = prevFiles.map((item) => {
+    const { file } = item
+    const { name, type } = file
+
+    const metadata = filesMetadataMap[name]
+    console.log(metadata, type, metadata?.type)
+    // For md files or other text files, we don't have a type but in the BE I get octet-stream
+    if (metadata && (!type || type === metadata.type)) {
+      return {
+        ...item,
+        charCount: metadata.charCount,
+      }
+    }
+
+    return item
+  })
+  console.log(newFiles)
+  return newFiles
 }

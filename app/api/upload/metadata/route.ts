@@ -9,7 +9,6 @@ export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
@@ -23,9 +22,7 @@ export async function POST(req: Request) {
 
   let fileBlob: Blob | null = null
 
-  const userId = session.user?.id
   const formData = await req.formData()
-
   for (const value of Array.from(formData.values())) {
     // FormDataEntryValue can either be type `Blob` or `string`.
     // If its type is object then it's a Blob
@@ -38,16 +35,19 @@ export async function POST(req: Request) {
     console.log('No FileBlob')
     return null
   }
-  console.log('fileBlob', fileBlob)
 
   // Return nr of chunks & character count
   const docs = await getDocumentChunks(fileBlob)
-  // const nbChunks = docs.length
-  const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
-  if (!docs.length) {
-    return NextResponse.json({ error: 'File type not supported' })
+  if (docs instanceof Error) {
+    // Handle the error case
+    console.error(docs.message)
+    return new NextResponse('Unsupported file type', {
+      status: 400,
+    })
   }
+
+  const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
   const { name, type } = fileBlob
   return NextResponse.json({ charCount, name, type })

@@ -25,6 +25,9 @@ import {
   filterFilesBySize,
   getFileRejectionsMaxFiles,
   getFilesMetadata,
+  updateFilesWithMetadata,
+  AcceptedFile,
+  Metadata,
 } from '@/components/datastore/utils'
 
 import { formatDate } from '@/lib/utils'
@@ -56,22 +59,6 @@ type FormProps = {
   onSubmit: (data: DataStoreFormValues) => void
 }
 
-type AcceptedFile = {
-  file: File
-  charCount?: number
-}
-
-type FileFilter = {
-  validFiles: File[]
-  rejectedFiles: FileRejection[]
-}
-
-type Metadata = {
-  charCount: number
-  name: string
-  type: string
-}
-
 export function DataStoreForm({ onSubmit }: FormProps) {
   const [files, setFiles] = useState<AcceptedFile[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
@@ -91,7 +78,6 @@ export function DataStoreForm({ onSubmit }: FormProps) {
   const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
     validator: (file) => {
-      console.log(file, files)
       const { name, type } = file
 
       if (files.some(({ file }) => file.name === name && file.type === type)) {
@@ -145,31 +131,6 @@ export function DataStoreForm({ onSubmit }: FormProps) {
     },
   })
 
-  const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata: Metadata[]) => {
-    const filesMetadataMap: { [key: string]: Metadata } = {}
-    filesMetadata.forEach((metadata) => {
-      const { name, type } = metadata
-      filesMetadataMap[name + type] = metadata
-    })
-
-    // @TODO - map
-    const newFiles = prevFiles.map((item) => {
-      const { file } = item
-      const { name, type } = file
-
-      const metadata = filesMetadataMap[name + type]
-      if (metadata) {
-        return {
-          ...item,
-          charCount: metadata.charCount,
-        }
-      }
-
-      return item
-    })
-    console.log(newFiles)
-    return newFiles
-  }
   const { handleSubmit, control } = form
 
   useEffect(() => {
@@ -192,8 +153,9 @@ export function DataStoreForm({ onSubmit }: FormProps) {
 
   const acceptedFileList = useMemo(() => {
     return files.map(({ file, charCount }) => (
-      <p key={file.name}>
-        {file.name} - {charCount}
+      <p className='flex justify-between items-center' key={file.name}>
+        {file.name}
+        <span>{charCount}</span>
       </p>
     ))
   }, [files])
@@ -253,10 +215,10 @@ export function DataStoreForm({ onSubmit }: FormProps) {
             </FormItem>
           )}
         />
-        <div className='flex gap-2'>
+        <div className='flex justify-between items-center'>
           {files.length > 0 && `${files.length} of ${MAX_NR_OF_FILES} uploaded`}
           {charCountLoading ? <IconSpinner className='mr-2 animate-spin' /> : null}
-          {charCount > 0 && !charCountLoading && ` - ${charCount} characters`}
+          {charCount > 0 && !charCountLoading && <span>Total chars: {charCount}</span>}
         </div>
         <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2'>
           {acceptedFileList}
