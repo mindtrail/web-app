@@ -1,17 +1,13 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { FileRejection } from 'react-dropzone'
 
 import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
+import { FileList } from '@/components/datastore/fileList'
 import { TypographyH2 } from '@/components/typography/h2'
 
-import {
-  ACCEPTED_FILE_REACT_DROPZONE,
-  UPLOAD_ENDPOINT,
-  METADATA_ENDPOINT,
-  DATASTORE_ENDPOINT,
-} from '@/components/datastore/utils'
+import { UPLOAD_ENDPOINT, DATASTORE_ENDPOINT, AcceptedFile } from '@/components/datastore/utils'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   userId: string
