@@ -38,7 +38,6 @@ export async function generateMetadata({ params }: ChatPageProps): Promise<Metad
 
 export default async function ChatPage({ params }: ChatPageProps) {
   const session = (await getServerSession(authOptions)) as ExtSession
-  console.log(session)
 
   if (!session?.user?.id) {
     redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)

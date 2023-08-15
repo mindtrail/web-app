@@ -1,18 +1,17 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useDropzone } from 'react-dropzone'
+import { useDropzone, FileRejection } from 'react-dropzone'
 import * as z from 'zod'
 
+import { FileList } from '@/components/datastore/fileList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { IconSpinner } from '@/components/ui/icons'
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,43 +20,53 @@ import {
 
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
+  DROPZONE_STYLES,
   MAX_NR_OF_FILES,
-  UPLOAD_ENDPOINT,
-  METADATA_ENDPOINT,
-  UPLOAD_LABEL,
-} from '@/components/datastore/constants'
+  filterFilesBySize,
+  getFileRejectionsMaxFiles,
+  getFilesMetadata,
+  updateFilesWithMetadata,
+  AcceptedFile,
+  Metadata,
+} from '@/components/datastore/utils'
 
 import { formatDate } from '@/lib/utils'
 
 const dataStoreFormSchema = z.object({
-  dataStore: z
+  dataStoreName: z
     .string()
     .min(4, {
-      message: 'DataStore must be at least 4 characters.',
+      message: 'Name must be at least 4 characters.',
     })
-    .max(30, {
-      message: 'DataStore must not be longer than 30 characters.',
+    .max(40, {
+      message: 'Name must not be longer than 40 characters.',
     }),
   files: z.array(z.any()).min(1, {
     message: 'You must upload at least one valid file.',
   }),
 })
 
-const defaultStyles = 'border-neutral-300 bg-neutral-50'
-const rejectStyles = 'border-red-400 bg-neutral-300 cursor-not-allowed text-neutral-800'
-const acceptStyles = 'border-green-600 bg-green-50'
-
-type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
+export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<DataStoreFormValues> = {
-  dataStore: `DataStore - ${formatDate(new Date())}`,
+  dataStoreName: `Knowledge Base - ${formatDate(new Date())}`,
   files: [],
 }
 
-export function DataStoreForm() {
-  const [files, setFiles] = useState<File[]>([])
-  const [hasInteracted, setHasInteracted] = useState(false)
+type FormProps = {
+  onSubmit: (data: DataStoreFormValues) => void
+  processing: boolean
+}
+
+export function DataStoreForm({ onSubmit, processing }: FormProps) {
+  const [files, setFiles] = useState<AcceptedFile[]>([])
+  const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
+
+  const [dropzoneUsed, setDropzoneUsed] = useState(false)
+
+  const [charCount, setCharCount] = useState(0)
+  const [charCountLoading, setCharCountLoading] = useState(false)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -68,63 +77,99 @@ export function DataStoreForm() {
 
   const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
+    validator: (file) => {
+      const { name, type } = file
+
+      if (files.some(({ file }) => file.name === name && file.type === type)) {
+        return {
+          code: 'file-already-added',
+          message: 'File already added',
+        }
+      }
+
+      return null
+    },
+
     onDrop: async (acceptedFiles: File[]) => {
       if (!acceptedFiles.length) {
         return
       }
-      setHasInteracted(true) // User has interacted with the dropzone
-      setFiles(files.concat(acceptedFiles))
+
+      // Filter files based on size
+      let { validFiles, rejectedFiles } = filterFilesBySize(acceptedFiles)
+
+      // Check how many files we can add based on maxFiles
+      const remainingSlots = MAX_NR_OF_FILES - files.length
+
+      if (validFiles.length > remainingSlots) {
+        const excessFiles = validFiles.slice(remainingSlots)
+        // Truncate validFiles to the remainingSlots
+        validFiles.length = remainingSlots
+        // Add the excess files to the rejectedFiles list
+        rejectedFiles = [...rejectedFiles, ...getFileRejectionsMaxFiles(excessFiles)]
+      }
+
+      if (rejectedFiles.length) {
+        // Update your rejected files list state (assuming you have a state for this)
+        setRejectedFiles(rejectedFiles)
+      }
+
+      setFiles((prevFiles) => [...prevFiles, ...validFiles.map((file) => ({ file }))])
+      setDropzoneUsed(true) // User has interacted with the dropzone
+      setCharCountLoading(true)
+
+      try {
+        const filesMetadata = (await getFilesMetadata(validFiles)) as Metadata[]
+        const totalChars = filesMetadata.reduce((acc, { charCount }) => acc + charCount, 0)
+
+        setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, filesMetadata))
+        setCharCount((prevChars) => prevChars + totalChars)
+        setCharCountLoading(false)
+      } catch (error) {
+        console.log(error)
+      }
     },
   })
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form
+  const handleDelete = (fileToDelete: AcceptedFile) => {
+    if (!fileToDelete) {
+      return
+    }
+    const { file, charCount = 0 } = fileToDelete
 
-  console.log(errors)
-  //   const {
-  //     refineCore: { onFinish, formLoading },
-  //     register,
-  //     handleSubmit,
-  //     formState: { errors },
-  //     setValue,
-  // } = useForm();
-
-  function onSubmit(data: DataStoreFormValues) {
-    // if (!acceptedFiles.length) {
-    //   form.setError("files", {
-    //     type: "manual",
-    //     message: "You must upload at least one file.",
-    //   });
-    // } else {
-    //   console.log(data, acceptedFiles);
-    // }
-
-    console.log(data)
+    setFiles((prevFiles) => prevFiles.filter(({ file: prevFile }) => prevFile.name !== file.name))
+    setCharCount((prevChars) => prevChars - charCount)
   }
 
+  const { handleSubmit, control } = form
+
   useEffect(() => {
-    if (hasInteracted) {
+    if (dropzoneUsed) {
       form.setValue('files', files)
       form.trigger('files')
     }
-  }, [files, form, hasInteracted])
+  }, [files, form, dropzoneUsed])
 
-  // @TODO: cache this
-  const fileList = files.map((file: File) => <div key={file.name}>{file.name}</div>)
+  const dropzoneInteractionClasses = useMemo(() => {
+    if (isDragReject) {
+      return DROPZONE_STYLES.REJECT
+    }
+    if (isDragAccept) {
+      return DROPZONE_STYLES.ACCEPT
+    }
+
+    return DROPZONE_STYLES.DEFAULT
+  }, [isDragAccept, isDragReject])
 
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
           control={control}
-          name='dataStore'
+          name='dataStoreName'
           render={({ field }) => (
             <FormItem className='relative'>
-              <FormLabel>Create a Data Store</FormLabel>
-              <FormDescription>Add your file here</FormDescription>
+              <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder='shadcn' {...field} />
               </FormControl>
@@ -138,14 +183,13 @@ export function DataStoreForm() {
           render={() => (
             <FormItem className='relative'>
               <FormLabel>Upload Files</FormLabel>
-              <FormDescription>Drop files or click to browse.</FormDescription>
               <FormControl>
                 <div
                   {...getRootProps()}
                   className={`flex flex-col w-full h-28 rounded-xl justify-center
                   border items-center gap-4 text-neutral-600
                   select-none cursor-default transition .25s ease-in-out
-                  ${isDragReject ? rejectStyles : isDragAccept ? acceptStyles : defaultStyles}`}
+                  ${dropzoneInteractionClasses}`}
                 >
                   <input {...getInputProps()} />
                   {isDragReject ? (
@@ -168,8 +212,18 @@ export function DataStoreForm() {
             </FormItem>
           )}
         />
-        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-8'>{fileList}</div>
-        <Button type='submit'>Update profile</Button>
+        <FileList
+          acceptedFiles={files}
+          rejectedFiles={rejectedFiles}
+          charCount={charCount}
+          charCountLoading={charCountLoading}
+          handleDelete={handleDelete}
+        />
+
+        <Button type='submit' size='lg' disabled={processing}>
+          {processing && <IconSpinner className='mr-2' />}
+          Create
+        </Button>
       </form>
     </Form>
   )

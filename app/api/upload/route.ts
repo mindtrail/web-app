@@ -4,7 +4,7 @@ import { DataSourceType } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
-import { createDataSource } from '@/lib/dataSource'
+import { createDataSrc } from '@/lib/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
 import { ExtendedSession } from '@/lib/types'
 
@@ -12,13 +12,10 @@ export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
   }
-
-  console.log()
 
   if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
     return new Response('Bad Request', {
@@ -26,13 +23,11 @@ export async function POST(req: Request) {
     })
   }
 
-  let dataStoreId = '12345'
+  let dataStoreId = ''
   let fileBlob: Blob | null = null
 
   const userId = session.user?.id
   const formData = await req.formData()
-
-  console.log('formData', formData)
 
   for (const value of Array.from(formData.values())) {
     // FormDataEntryValue can either be type `Blob` or `string`.
@@ -42,13 +37,14 @@ export async function POST(req: Request) {
     }
     // If its type is string then it's the dataStoreId
     if (typeof value == 'string') {
-      dataStoreId = JSON.parse(value)?.dataStoreId
+      dataStoreId = value
     }
   }
 
-  if (!fileBlob) {
-    console.log('No FileBlob')
-    return null
+  if (!fileBlob || !dataStoreId) {
+    return new Response(`Missing ${!fileBlob ? 'file' : 'dataStoreId'}`, {
+      status: 400,
+    })
   }
 
   const { name: fileName = '' } = fileBlob
@@ -56,10 +52,18 @@ export async function POST(req: Request) {
   // Return nr of chunks & character count
   const docs = await getDocumentChunks(fileBlob)
 
+  if (docs instanceof Error) {
+    // Handle the error case
+    console.error(docs.message)
+    return new NextResponse('Unsupported file type', {
+      status: 400,
+    })
+  }
+
   const nbChunks = docs.length
   const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
-  const dataSourcePayload = {
+  const dataSrcPayload = {
     name: fileName,
     dataStoreId,
     ownerId: userId,
@@ -68,9 +72,14 @@ export async function POST(req: Request) {
     textSize,
   }
 
-  // const dataSource = await createDataSource(dataSourcePayload)
-  // console.log(dataSource)
-  const dataSourceId = '23456'
+  const dataSrc = await createDataSrc(dataSrcPayload)
+  const dataSourceId = dataSrc?.id
+
+  if (!dataSourceId) {
+    return new Response(`Failed to save File. Try again`, {
+      status: 400,
+    })
+  }
 
   // Upload file to S3
   const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
