@@ -56,13 +56,24 @@ type FormProps = {
   onSubmit: (data: DataStoreFormValues) => void
 }
 
+type AcceptedFile = {
+  file: File
+  charCount?: number
+}
+
 type FileFilter = {
   validFiles: File[]
   rejectedFiles: FileRejection[]
 }
 
+type Metadata = {
+  charCount: number
+  name: string
+  type: string
+}
+
 export function DataStoreForm({ onSubmit }: FormProps) {
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<AcceptedFile[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
 
   const [dropzoneUsed, setDropzoneUsed] = useState(false)
@@ -79,6 +90,20 @@ export function DataStoreForm({ onSubmit }: FormProps) {
 
   const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
+    validator: (file) => {
+      console.log(file, files)
+      const { name, type } = file
+
+      if (files.some(({ file }) => file.name === name && file.type === type)) {
+        return {
+          code: 'file-already-added',
+          message: 'File already added',
+        }
+      }
+
+      return null
+    },
+
     onDrop: async (acceptedFiles: File[]) => {
       if (!acceptedFiles.length) {
         return
@@ -98,32 +123,53 @@ export function DataStoreForm({ onSubmit }: FormProps) {
         rejectedFiles = [...rejectedFiles, ...getFileRejectionsMaxFiles(excessFiles)]
       }
 
-      // Only use the first x files and the ones that have a size smaller than the max size.
-      setDropzoneUsed(true) // User has interacted with the dropzone
-
-      setFiles((prevFiles) => [...prevFiles, ...validFiles])
-
       if (rejectedFiles.length) {
         // Update your rejected files list state (assuming you have a state for this)
         setRejectedFiles(rejectedFiles)
       }
 
+      setFiles((prevFiles) => [...prevFiles, ...validFiles.map((file) => ({ file }))])
+      setDropzoneUsed(true) // User has interacted with the dropzone
       setCharCountLoading(true)
 
       try {
-        const filesMetadata = await getFilesMetadata(validFiles)
-        console.log(1111, filesMetadata)
-        // @ts-ignore
-        const totalChars = filesMetadata.reduce((acc, charCount) => acc + charCount, 0)
+        const filesMetadata = (await getFilesMetadata(validFiles)) as Metadata[]
+        const totalChars = filesMetadata.reduce((acc, { charCount }) => acc + charCount, 0)
+
+        setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, filesMetadata))
         setCharCount((prevChars) => prevChars + totalChars)
         setCharCountLoading(false)
-        console.log(filesMetadata)
       } catch (error) {
         console.log(error)
       }
     },
   })
 
+  const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata: Metadata[]) => {
+    const filesMetadataMap: { [key: string]: Metadata } = {}
+    filesMetadata.forEach((metadata) => {
+      const { name, type } = metadata
+      filesMetadataMap[name + type] = metadata
+    })
+
+    // @TODO - map
+    const newFiles = prevFiles.map((item) => {
+      const { file } = item
+      const { name, type } = file
+
+      const metadata = filesMetadataMap[name + type]
+      if (metadata) {
+        return {
+          ...item,
+          charCount: metadata.charCount,
+        }
+      }
+
+      return item
+    })
+    console.log(newFiles)
+    return newFiles
+  }
   const { handleSubmit, control } = form
 
   useEffect(() => {
@@ -132,17 +178,6 @@ export function DataStoreForm({ onSubmit }: FormProps) {
       form.trigger('files')
     }
   }, [files, form, dropzoneUsed])
-
-  // useEffect(() => {
-  //   if (rejectedFiles.length > 0) {
-  //     const timer = setTimeout(() => {
-  //       setRejectedFiles([]) // Clear the rejectedFiles after 5 seconds
-  //     }, 5000)
-
-  //     // Clear timeout if component is unmounted
-  //     return () => clearTimeout(timer)
-  //   }
-  // }, [rejectedFiles])
 
   const dropzoneInteractionClasses = useMemo(() => {
     if (isDragReject) {
@@ -156,7 +191,11 @@ export function DataStoreForm({ onSubmit }: FormProps) {
   }, [isDragAccept, isDragReject])
 
   const acceptedFileList = useMemo(() => {
-    return files.map((file: File) => <p key={file.name}>{file.name}</p>)
+    return files.map(({ file, charCount }) => (
+      <p key={file.name}>
+        {file.name} - {charCount}
+      </p>
+    ))
   }, [files])
 
   const rejectedFileList = useMemo(() => {
