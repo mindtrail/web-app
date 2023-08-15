@@ -38,7 +38,7 @@ export function FileList(props: FileList) {
         <div className='flex gap-2'>
           <span>{charCount}</span>
           <Button
-            variant='outline'
+            variant='ghost'
             size='sm'
             className=''
             onClick={() => {
