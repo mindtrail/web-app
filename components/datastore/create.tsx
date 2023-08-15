@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
 import { FileRejection } from 'react-dropzone'
+import { useRouter } from 'next/navigation'
 
 import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
 import { FileList } from '@/components/datastore/fileList'
@@ -16,8 +17,9 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 export function CreateDataStore({ userId }: DataStoreProps) {
   const [processing, setProcessing] = useState(false)
 
-  const onSubmit = async (data: DataStoreFormValues) => {
+  const router = useRouter()
 
+  const onSubmit = async (data: DataStoreFormValues) => {
     const { dataStoreName, files } = data
     setProcessing(true)
 
@@ -58,6 +60,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
       const fileUploadResults = await Promise.all(fileUploadPromises)
       setProcessing(false)
       console.log(fileUploadResults)
+      router.refresh()
     } catch (err) {
       console.log(err)
       setProcessing(false)
@@ -92,7 +95,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
         <TypographyH2>Create Knowledge Base</TypographyH2>
       </div>
       <div className='max-w-lg w-full'>
-        <DataStoreForm onSubmit={onSubmit} processing={processing}/>
+        <DataStoreForm onSubmit={onSubmit} processing={processing} />
       </div>
     </div>
   )
