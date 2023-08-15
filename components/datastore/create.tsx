@@ -16,10 +16,11 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 export function CreateDataStore({ userId }: DataStoreProps) {
   const onSubmit = async (data: DataStoreFormValues) => {
     console.log(1234, data)
+
     const { dataStoreName, files } = data
 
     try {
-      const res = await fetch(DATASTORE_ENDPOINT, {
+      const dataStore = await fetch(DATASTORE_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +30,28 @@ export function CreateDataStore({ userId }: DataStoreProps) {
           dataStoreName,
         }),
       })
-      const data = await res.json()
+      const newDS = await dataStore.json()
+
+      console.log(newDS)
+
+      const fileUploadPromises = files.map(({ file }) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('dataStoreId', newDS.id) // Add this line
+
+        return fetch(UPLOAD_ENDPOINT, {
+          method: 'POST',
+          body: formData,
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch metadata for file ${file.name}`)
+          }
+          return response.json()
+        })
+      })
+
+      const fileUploadResults = await Promise.all(fileUploadPromises)
+      console.log(fileUploadResults)
     } catch (err) {
       console.log(err)
     }
