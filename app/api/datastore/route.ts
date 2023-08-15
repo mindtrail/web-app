@@ -20,7 +20,7 @@ export async function GET() {
 
   const datastoreList = await getDataStoreList(userId)
 
-  return NextResponse.json({ datastoreList })
+  return NextResponse.json(datastoreList)
 }
 
 export async function POST(req: Request) {
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
   try {
     const dataStore = await createDataStore(userId, dataStoreName)
-    return NextResponse.json({ dataStore })
+    return NextResponse.json(dataStore)
   } catch (error) {
     console.error(error)
     return new Response('Error creating datastore', {

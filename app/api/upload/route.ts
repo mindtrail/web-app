@@ -4,7 +4,7 @@ import { DataSourceType } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
-import { createDataSource } from '@/lib/dataSource'
+import { createDataSrc } from '@/lib/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
 import { ExtendedSession } from '@/lib/types'
 
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     })
   }
 
-  let dataStoreId = '12345'
+  let dataStoreId = ''
   let fileBlob: Blob | null = null
 
   const userId = session.user?.id
@@ -39,13 +39,14 @@ export async function POST(req: Request) {
     }
     // If its type is string then it's the dataStoreId
     if (typeof value == 'string') {
-      dataStoreId = JSON.parse(value)?.dataStoreId
+      dataStoreId = value
     }
   }
 
-  if (!fileBlob) {
-    console.log('No FileBlob')
-    return null
+  if (!fileBlob || !dataStoreId) {
+    return new Response(`Missing ${!fileBlob ? 'file' : 'dataStoreId'}`, {
+      status: 400,
+    })
   }
 
   const { name: fileName = '' } = fileBlob
@@ -64,7 +65,7 @@ export async function POST(req: Request) {
   const nbChunks = docs.length
   const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
-  const dataSourcePayload = {
+  const dataSrcPayload = {
     name: fileName,
     dataStoreId,
     ownerId: userId,
@@ -73,9 +74,16 @@ export async function POST(req: Request) {
     textSize,
   }
 
-  // const dataSource = await createDataSource(dataSourcePayload)
-  // console.log(dataSource)
-  const dataSourceId = '23456'
+  const dataSrc = await createDataSrc(dataSrcPayload)
+  console.log('dataSrc', dataSrc)
+
+  const dataSourceId = dataSrc?.id
+
+  if (!dataSourceId) {
+    return new Response(`Failed to save File. Try again`, {
+      status: 400,
+    })
+  }
 
   // Upload file to S3
   const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
