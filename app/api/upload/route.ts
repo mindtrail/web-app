@@ -53,6 +53,14 @@ export async function POST(req: Request) {
   // Return nr of chunks & character count
   const docs = await getDocumentChunks(fileBlob)
 
+  if (docs instanceof Error) {
+    // Handle the error case
+    console.error(docs.message)
+    return new NextResponse('Unsupported file type', {
+      status: 400,
+    })
+  }
+
   const nbChunks = docs.length
   const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
