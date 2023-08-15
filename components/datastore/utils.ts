@@ -101,6 +101,5 @@ export async function getFilesMetadata(files: File[]) {
   })
 
   const filesMetadata = await Promise.all(promises)
-  console.log(filesMetadata)
   return filesMetadata
 }

@@ -38,21 +38,19 @@ export async function POST(req: Request) {
     console.log('No FileBlob')
     return null
   }
-
-  const { name: fileName = '' } = fileBlob
+  console.log('fileBlob', fileBlob)
 
   // Return nr of chunks & character count
   const docs = await getDocumentChunks(fileBlob)
-
-  const nbChunks = docs.length
+  // const nbChunks = docs.length
   const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
   if (!docs.length) {
     return NextResponse.json({ error: 'File type not supported' })
   }
 
-  // console.log('response', response)
-  return NextResponse.json(charCount)
+  const { name, type } = fileBlob
+  return NextResponse.json({ charCount, name, type })
 }
 
 export async function DELETE(req: Request) {
