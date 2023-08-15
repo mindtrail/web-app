@@ -14,10 +14,13 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 }
 
 export function CreateDataStore({ userId }: DataStoreProps) {
+  const [processing, setProcessing] = useState(false)
+
   const onSubmit = async (data: DataStoreFormValues) => {
     console.log(1234, data)
 
     const { dataStoreName, files } = data
+    setProcessing(true)
 
     try {
       const dataStore = await fetch(DATASTORE_ENDPOINT, {
@@ -31,13 +34,16 @@ export function CreateDataStore({ userId }: DataStoreProps) {
         }),
       })
       const newDS = await dataStore.json()
+      const dataStoreId = newDS.id
 
-      console.log(newDS)
+      if (!dataStoreId) {
+        throw new Error('Failed to create DataStore')
+      }
 
       const fileUploadPromises = files.map(({ file }) => {
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('dataStoreId', newDS.id) // Add this line
+        formData.append('dataStoreId', dataStoreId) // Add this line
 
         return fetch(UPLOAD_ENDPOINT, {
           method: 'POST',
@@ -51,9 +57,11 @@ export function CreateDataStore({ userId }: DataStoreProps) {
       })
 
       const fileUploadResults = await Promise.all(fileUploadPromises)
+      setProcessing(false)
       console.log(fileUploadResults)
     } catch (err) {
       console.log(err)
+      setProcessing(false)
     }
 
     return
@@ -85,7 +93,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
         <TypographyH2>Create Knowledge Base</TypographyH2>
       </div>
       <div className='max-w-lg w-full'>
-        <DataStoreForm onSubmit={onSubmit} />
+        <DataStoreForm onSubmit={onSubmit} processing={processing}/>
       </div>
     </div>
   )

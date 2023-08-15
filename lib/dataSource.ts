@@ -12,12 +12,12 @@ export const getDataSourceList = async (userId: string, datastoreId: string) => 
   return dataSourceList
 }
 
-type DataSourcePayload = Pick<
+type DataSrcPayload = Pick<
   AppDataSource,
   'name' | 'dataStoreId' | 'ownerId' | 'type' | 'nbChunks' | 'textSize'
 >
 
-export const createDataSource = async (props: DataSourcePayload) => {
+export const createDataSrc = async (props: DataSrcPayload) => {
   const { name, dataStoreId, ownerId, type, nbChunks, textSize } = props
 
   const dataSource = await prisma.appDataSource.create({

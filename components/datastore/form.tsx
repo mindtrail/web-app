@@ -7,6 +7,7 @@ import * as z from 'zod'
 import { FileList } from '@/components/datastore/fileList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { IconSpinner } from '@/components/ui/icons'
 
 import {
   Form,
@@ -55,10 +56,10 @@ const defaultValues: Partial<DataStoreFormValues> = {
 
 type FormProps = {
   onSubmit: (data: DataStoreFormValues) => void
-  // fileList: React.ReactNode
+  processing: boolean
 }
 
-export function DataStoreForm({ onSubmit }: FormProps) {
+export function DataStoreForm({ onSubmit, processing }: FormProps) {
   const [files, setFiles] = useState<AcceptedFile[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
 
@@ -219,7 +220,8 @@ export function DataStoreForm({ onSubmit }: FormProps) {
           handleDelete={handleDelete}
         />
 
-        <Button type='submit' size='lg'>
+        <Button type='submit' size='lg' disabled={processing}>
+          {processing && <IconSpinner className='mr-2' />}
           Create
         </Button>
       </form>

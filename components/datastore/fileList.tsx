@@ -21,15 +21,18 @@ export function FileList(props: FileList) {
 
   const acceptedFileList = useMemo(() => {
     return acceptedFiles.map(({ file, charCount }) => (
-      <div className='flex justify-between items-center' key={file.name}>
+      <div
+        className='flex group cursor-default justify-between items-center hover:bg-slate-100'
+        key={file.name}
+      >
         {file.name}
 
-        <div className='flex gap-2'>
+        <div className='flex gap-2 items-center'>
           <span>{charCount}</span>
           <Button
             variant='ghost'
             size='sm'
-            className=''
+            className='invisible group-hover:visible'
             onClick={() => {
               handleDelete({ file, charCount })
             }}
@@ -48,9 +51,13 @@ export function FileList(props: FileList) {
   return (
     <>
       <div className='flex justify-between items-center'>
-        {acceptedFiles.length > 0 && `${acceptedFiles.length} of ${MAX_NR_OF_FILES} uploaded`}
-        {charCountLoading ? <IconSpinner className='mr-2 animate-spin' /> : null}
-        {charCount > 0 && !charCountLoading && <span>Total chars: {charCount}</span>}
+        <span className='text-ellipsis max-w-sm'>
+          {`${acceptedFiles.length} of ${MAX_NR_OF_FILES} uploaded`}
+        </span>
+
+        <span className='flex items-center'>
+          {charCountLoading ? <IconSpinner className='mr-2' /> : charCount} Chars
+        </span>
       </div>
 
       {acceptedFileList.length > 0 && (
