@@ -25,7 +25,7 @@ const LOADER: FILE_LOADER_PAIR = {
   'application/octet-stream': TextLoader,
 }
 
-export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document[]> => {
+export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document[] | Error> => {
   const { name: fileName, type } = fileBlob
 
   try {
@@ -72,7 +72,7 @@ export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document
     return chunks
   } catch (error) {
     console.error('Error loading file', error)
-    return []
+    return error as Error
   }
 }
 

@@ -9,12 +9,10 @@ export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
   }
-  console.log(111, req)
 
   if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
     return new Response('Bad Request', {
@@ -24,11 +22,7 @@ export async function POST(req: Request) {
 
   let fileBlob: Blob | null = null
 
-  const userId = session.user?.id
   const formData = await req.formData()
-
-  console.log('formData', formData)
-
   for (const value of Array.from(formData.values())) {
     // FormDataEntryValue can either be type `Blob` or `string`.
     // If its type is object then it's a Blob
@@ -42,20 +36,21 @@ export async function POST(req: Request) {
     return null
   }
 
-  const { name: fileName = '' } = fileBlob
-
   // Return nr of chunks & character count
   const docs = await getDocumentChunks(fileBlob)
 
-  const nbChunks = docs.length
-  const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
-
-  if (!docs.length) {
-    return NextResponse.json({ error: 'File type not supported' })
+  if (docs instanceof Error) {
+    // Handle the error case
+    console.error(docs.message)
+    return new NextResponse('Unsupported file type', {
+      status: 400,
+    })
   }
 
-  // console.log('response', response)
-  return NextResponse.json({ nbChunks, textSize, docs })
+  const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
+
+  const { name, type } = fileBlob
+  return NextResponse.json({ charCount, name, type })
 }
 
 export async function DELETE(req: Request) {

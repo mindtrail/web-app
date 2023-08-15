@@ -29,7 +29,6 @@ export async function POST(req: Request) {
   console.timeEnd('session')
 
   if (!session?.user) {
-    console.log('Unauthorized')
     return new Response('Unauthorized', {
       status: 401,
     })
@@ -39,7 +38,6 @@ export async function POST(req: Request) {
 
   const { messages } = await req.json()
 
-  // console.log('messages', messages)
   if (!messages) {
     return new Response('No message provided', {
       status: 400,
