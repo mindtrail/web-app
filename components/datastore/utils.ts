@@ -58,6 +58,10 @@ export type Metadata = {
   type: string
 }
 
+export type DataStoreExtended = DataStore & {
+  dataSources: AppDataSource[]
+}
+
 export const filterFilesBySize = (files: File[]) => {
   return files.reduce(
     (acc, file: File) => {
@@ -143,6 +147,14 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
   return newFiles
 }
 
-export type DataStoreExtended = DataStore & {
-  dataSources: AppDataSource[]
+export const deleteDataStore = async (dataStoreId: string) => {
+  const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to delete data store ${dataStoreId}`)
+  }
+
+  return response.json()
 }

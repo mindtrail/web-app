@@ -4,7 +4,7 @@ import { DataSourceType, DataSourceStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
-import { createDataSrc, updateDataSrc } from '@/lib/dataSource'
+import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
 import { ExtendedSession } from '@/lib/types'
 
