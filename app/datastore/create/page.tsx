@@ -8,13 +8,7 @@ import { ExtendedSession } from '@/lib/types'
 import { Header } from '@/components/header'
 import { CreateDataStore } from '@/components/datastore'
 
-export interface CreateDSProps {
-  params: {
-    id: string
-  }
-}
-
-export async function generateMetadata({ params }: CreateDSProps): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -26,11 +20,11 @@ export async function generateMetadata({ params }: CreateDSProps): Promise<Metad
   }
 }
 
-export default async function CreateDS({ params }: CreateDSProps) {
+export default async function CreateDS() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
+    redirect(`/api/auth/signin?callbackUrl=/datastore/create`)
   }
 
   const userId = session?.user?.id

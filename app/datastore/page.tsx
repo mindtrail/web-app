@@ -9,13 +9,7 @@ import { getDataStoreList } from '@/lib/db/dataStore'
 import { Header } from '@/components/header'
 import { ListDataStores } from '@/components/datastore'
 
-export interface DataStorePageProps {
-  params: {
-    id: string
-  }
-}
-
-export async function generateMetadata({ params }: DataStorePageProps): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -27,11 +21,11 @@ export async function generateMetadata({ params }: DataStorePageProps): Promise<
   }
 }
 
-export default async function DataStorePage({ params }: DataStorePageProps) {
+export default async function DataStorePage() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
+    redirect(`/api/auth/signin?callbackUrl=/datastore`)
   }
 
   const userId = session?.user?.id

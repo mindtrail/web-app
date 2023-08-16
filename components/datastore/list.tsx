@@ -10,13 +10,12 @@ interface DataStoreListProps extends React.ComponentProps<'div'> {
 }
 
 export function ListDataStores({ dataStoreList }: DataStoreListProps) {
-  console.log(1234)
   return (
     <div className='flex flex-col self-center flex-1 w-full max-w-6xl py-4 px-6 md:py-12 md:px-8'>
       <div className='flex justify-between py-4 border-b'>
         <Typography variant='h2'>Knowledge Bases</Typography>
 
-        <Link href='/datastore' className={buttonVariants({ variant: 'default' })}>
+        <Link href='/datastore/create' className={buttonVariants({ variant: 'default' })}>
           <PlusIcon className='mr-2' />
           Create
         </Link>

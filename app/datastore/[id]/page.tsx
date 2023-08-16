@@ -4,17 +4,18 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
+import { getDataStoreById } from '@/lib/db/dataStore'
 
 import { Header } from '@/components/header'
 import { CreateDataStore } from '@/components/datastore'
 
-export interface CreateDSProps {
+export interface EditDSProps {
   params: {
     id: string
   }
 }
 
-export async function generateMetadata({ params }: CreateDSProps): Promise<Metadata> {
+export async function generateMetadata({ params }: EditDSProps): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -26,19 +27,32 @@ export async function generateMetadata({ params }: CreateDSProps): Promise<Metad
   }
 }
 
-export default async function CreateDS({ params }: CreateDSProps) {
+export default async function EditDS({ params }: EditDSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
+    redirect(`/api/auth/signin?callbackUrl=/datastore/${params.id}`)
   }
 
   const userId = session?.user?.id
+  const dataStoreId = params.id
+
+  const dataStore = await getDataStoreById({ userId, dataStoreId })
+
+  if (!dataStore) {
+    redirect('/datastore?error=not-found')
+  }
 
   return (
     <>
-      <Header session={session} />
-      <CreateDataStore userId={userId} />
+      {!dataStore ? (
+        <div>Knowledge Base Not Found...</div>
+      ) : (
+        <>
+          <Header session={session} />
+          <CreateDataStore userId={userId} />
+        </>
+      )}
     </>
   )
 }
