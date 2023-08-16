@@ -58,7 +58,7 @@ export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<DataStoreFormValues> = {
-  dataStoreName: `Knowledge Base - ${formatDate(new Date())}`,
+  dataStoreName: `KB - ${formatDate(new Date())}`,
   files: [],
 }
 

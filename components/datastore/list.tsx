@@ -1,5 +1,5 @@
 import Typography from '@/components/typography'
-import { DataStoreCard } from '@/components/datastore/cardItem'
+import { DataStoreRowItem } from '@/components/datastore/rowItem'
 import { DataStoreExtended } from '@/components/datastore/utils'
 import { PlusIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
@@ -10,9 +10,10 @@ interface DataStoreListProps extends React.ComponentProps<'div'> {
 }
 
 export function ListDataStores({ dataStoreList }: DataStoreListProps) {
+  console.log(1234)
   return (
-    <div className='flex flex-col self-center flex-1 w-full max-w-6xl py-4 px-6 md:py-12 md:px-8 gap-8'>
-      <div className='flex justify-between'>
+    <div className='flex flex-col self-center flex-1 w-full max-w-6xl py-4 px-6 md:py-12 md:px-8'>
+      <div className='flex justify-between py-4 border-b'>
         <Typography variant='h2'>Knowledge Bases</Typography>
 
         <Link href='/datastore' className={buttonVariants({ variant: 'default' })}>
@@ -20,9 +21,9 @@ export function ListDataStores({ dataStoreList }: DataStoreListProps) {
           Create
         </Link>
       </div>
-      <div className='flex gap-6 flex-wrap w-full'>
+      <div className='flex flex-wrap w-full'>
         {dataStoreList.map((dataStore) => (
-          <DataStoreCard key={dataStore.id} dataStore={dataStore} />
+          <DataStoreRowItem key={dataStore.id} dataStore={dataStore} />
         ))}
       </div>
     </div>
