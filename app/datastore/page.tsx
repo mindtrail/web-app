@@ -4,10 +4,9 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
-import { getDataStoreList } from '@/lib/dataStore'
 
 import { Header } from '@/components/header'
-import { CreateDataStore, ListDataStores } from '@/components/datastore'
+import { CreateDataStore } from '@/components/datastore'
 
 export interface DashboardProps {
   params: {
@@ -35,16 +34,11 @@ export default async function Dashboard({ params }: DashboardProps) {
   }
 
   const userId = session?.user?.id
-  let dataStoreList = await getDataStoreList({ userId, includeDataSrc: true })
-
-  if (!dataStoreList?.length) {
-    redirect('/datastore')
-  }
 
   return (
     <>
       <Header session={session} />
-      <ListDataStores dataStoreList={dataStoreList} />
+      <CreateDataStore userId={userId} />
     </>
   )
 }
