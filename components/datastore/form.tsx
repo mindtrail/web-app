@@ -179,6 +179,19 @@ export function DataStoreForm({ onSubmit, processing }: FormProps) {
         />
         <FormField
           control={control}
+          name='dataStoreName'
+          render={({ field }) => (
+            <FormItem className='relative'>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder='shadcn' {...field} />
+              </FormControl>
+              <FormMessage className='absolute' />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
           name='files'
           render={() => (
             <FormItem className='relative'>
