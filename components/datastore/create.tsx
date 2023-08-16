@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { redirect } from 'next/navigation'
 
 import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
 import Typography from '@/components/typography'
@@ -14,8 +14,6 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 
 export function CreateDataStore({ userId }: DataStoreProps) {
   const [processing, setProcessing] = useState(false)
-
-  const router = useRouter()
 
   const onSubmit = async (data: DataStoreFormValues) => {
     const { dataStoreName, dataStoreDescription, files } = data
@@ -40,26 +38,24 @@ export function CreateDataStore({ userId }: DataStoreProps) {
         throw new Error('Failed to create DataStore')
       }
 
-      const fileUploadPromises = files.map(({ file }) => {
+      const fileUploadPromises = files.map(async ({ file }) => {
         const formData = new FormData()
         formData.append('file', file)
         formData.append('dataStoreId', dataStoreId) // Add this line
 
-        return fetch(UPLOAD_ENDPOINT, {
+        const response = await fetch(UPLOAD_ENDPOINT, {
           method: 'POST',
           body: formData,
-        }).then((response) => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch metadata for file ${file.name}`)
-          }
-          return response.json()
         })
+        if (!response.ok) {
+          throw new Error(`Failed to fetch metadata for file ${file.name}`)
+        }
+        return await response.json()
       })
 
-      const fileUploadResults = await Promise.all(fileUploadPromises)
-      setProcessing(false)
-      console.log(fileUploadResults)
-      router.refresh()
+      await Promise.all(fileUploadPromises)
+
+      redirect('/dashboard')
     } catch (err) {
       console.log(err)
       setProcessing(false)
