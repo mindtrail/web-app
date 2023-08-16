@@ -3,10 +3,18 @@ import prisma from '@/lib/dbConnection'
 
 export { searchSimilarText } from '@/lib/qdrant'
 
-export const getDataStoreList = async (userId: string) => {
+type DataStoreList = {
+  userId: string
+  includeDataSrc?: boolean
+}
+
+export const getDataStoreList = async ({ userId, includeDataSrc = false }: DataStoreList) => {
   // Fetch data using Prisma based on the user
   const dataStoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
+    include: {
+      dataSources: includeDataSrc,
+    },
   })
 
   return dataStoreList

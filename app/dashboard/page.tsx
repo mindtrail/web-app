@@ -35,15 +35,15 @@ export default async function Dashboard({ params }: DashboardProps) {
   }
 
   const userId = session?.user?.id
-  let datastoreList = await getDataStoreList(userId)
+  let dataStoreList = await getDataStoreList({ userId, includeDataSrc: true })
 
   return (
     <>
       <Header session={session} />
-      {!datastoreList?.length ? (
+      {!dataStoreList?.length ? (
         <CreateDataStore userId={userId} />
       ) : (
-        <ListDataStores datastoreList={datastoreList} />
+        <ListDataStores dataStoreList={dataStoreList} />
       )}
     </>
   )
