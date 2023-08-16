@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { ExtendedSession } from '@/lib/types'
+import { ExtendedSession } from '@/types/types'
 import { getDataStoreById } from '@/lib/db/dataStore'
 
 import { Header } from '@/components/header'
@@ -50,7 +50,7 @@ export default async function EditDS({ params }: EditDSProps) {
       ) : (
         <>
           <Header session={session} />
-          <CreateDataStore userId={userId} />
+          <CreateDataStore userId={userId} dataStore={dataStore} />
         </>
       )}
     </>

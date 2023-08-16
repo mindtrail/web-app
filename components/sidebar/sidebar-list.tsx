@@ -3,7 +3,7 @@ import { getChats, removeChat, shareChat } from '@/app/actions'
 import { SidebarActions } from '@/components/sidebar/sidebar-actions'
 import { SidebarItem } from '@/components/sidebar/sidebar-item'
 
-import { type Chat } from '@/lib/types'
+import { type Chat } from '@/types/types'
 
 export interface SidebarListProps {
   userId?: string
