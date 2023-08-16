@@ -1,3 +1,4 @@
+import { DataStore, AppDataSource } from '@prisma/client'
 import { FileRejection } from 'react-dropzone'
 
 export const ACCEPTED_FILE_TYPES = [
@@ -140,4 +141,8 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
   })
   console.log(newFiles)
   return newFiles
+}
+
+export type DataStoreExtended = DataStore & {
+  dataSources: AppDataSource[]
 }

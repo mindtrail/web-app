@@ -1,22 +1,21 @@
-'use client'
-
-import { DataStore } from '@prisma/client'
-import Typography from '../typography'
+import Typography from '@/components/typography'
+import { DataStoreCard } from '@/components/datastore/cardItem'
+import { DataStoreExtended } from '@/components/datastore/utils'
 
 interface DataStoreListProps extends React.ComponentProps<'div'> {
-  datastoreList: DataStore[]
+  dataStoreList: DataStoreExtended[]
 }
 
-export function ListDataStores({ datastoreList }: DataStoreListProps) {
+export function ListDataStores({ dataStoreList }: DataStoreListProps) {
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
         <Typography variant='h2'>Knowledge Bases</Typography>
-        {datastoreList.map((datastore) => (
-          <div key={datastore.id} className='flex flex-col w-full gap-2'>
-            <p>{datastore.name}</p>
-          </div>
-        ))}
+        <div className='flex gap-6 flex-wrap w-full'>
+          {dataStoreList.map((dataStore) => (
+            <DataStoreCard key={dataStore.id} dataStore={dataStore} className='w-full' />
+          ))}
+        </div>
       </div>
     </div>
   )
