@@ -20,6 +20,23 @@ export const getDataStoreList = async ({ userId, includeDataSrc = false }: DataS
   return dataStoreList
 }
 
+type DataStoreById = {
+  userId: string
+  dataStoreId: string
+}
+
+export const getDataStoreById = async ({ userId, dataStoreId }: DataStoreById) => {
+  // Fetch data using Prisma based on the user
+  const dataStoreList = await prisma.dataStore.findUnique({
+    where: { ownerId: userId, id: dataStoreId },
+    include: {
+      dataSources: true,
+    },
+  })
+
+  return dataStoreList
+}
+
 type DataStore = {
   userId: string
   name: string

@@ -37,7 +37,7 @@ export function DataStoreRowItem({ dataStore }: rowProps) {
     } catch (err) {
       console.log(err)
     }
-  }, [id])
+  }, [id, router])
 
   return (
     <div
