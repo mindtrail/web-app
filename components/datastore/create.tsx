@@ -57,7 +57,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
 
       await Promise.all(fileUploadPromises)
 
-      router.push('/dashboard')
+      router.push('/datastore')
     } catch (err) {
       console.log(err)
       setProcessing(false)

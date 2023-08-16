@@ -24,7 +24,7 @@ export function Header({ session }: HeaderProps) {
         <div className='flex w-40'>
           <Link href='/'>Indie Chat</Link>
         </div>
-        {user && <Link href='/dashboard'>Dashboard</Link>}
+        {user && <Link href='/datastore'>Knowledge Bases</Link>}
 
         <div className='flex justify-end items-center w-40 relative'>
           {user ? (

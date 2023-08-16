@@ -4,18 +4,17 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
-import { getDataStoreList } from '@/lib/dataStore'
 
 import { Header } from '@/components/header'
-import { CreateDataStore, ListDataStores } from '@/components/datastore'
+import { CreateDataStore } from '@/components/datastore'
 
-export interface DashboardProps {
+export interface CreateDSProps {
   params: {
     id: string
   }
 }
 
-export async function generateMetadata({ params }: DashboardProps): Promise<Metadata> {
+export async function generateMetadata({ params }: CreateDSProps): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -27,7 +26,7 @@ export async function generateMetadata({ params }: DashboardProps): Promise<Meta
   }
 }
 
-export default async function Dashboard({ params }: DashboardProps) {
+export default async function CreateDS({ params }: CreateDSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -35,16 +34,11 @@ export default async function Dashboard({ params }: DashboardProps) {
   }
 
   const userId = session?.user?.id
-  let dataStoreList = await getDataStoreList({ userId, includeDataSrc: true })
-
-  if (!dataStoreList?.length) {
-    redirect('/datastore')
-  }
 
   return (
     <>
       <Header session={session} />
-      <ListDataStores dataStoreList={dataStoreList} />
+      <CreateDataStore userId={userId} />
     </>
   )
 }
