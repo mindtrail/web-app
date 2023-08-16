@@ -1,12 +1,10 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
-import { FileRejection } from 'react-dropzone'
 import { useRouter } from 'next/navigation'
 
 import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
-import { FileList } from '@/components/datastore/fileList'
-import { TypographyH2 } from '@/components/typography/h2'
+import Typography from '@/components/typography'
 
 import { UPLOAD_ENDPOINT, DATASTORE_ENDPOINT, AcceptedFile } from '@/components/datastore/utils'
 
@@ -66,34 +64,12 @@ export function CreateDataStore({ userId }: DataStoreProps) {
       console.log(err)
       setProcessing(false)
     }
-
-    return
-    const formData = new FormData()
-
-    files.forEach((file) => {
-      formData.append('file', file)
-    })
-
-    // @TODO: Create DataStore
-    // const dsName = `DataStore - ${new Date().toLocaleString()}`
-    // const newDs = await createDataStore(userId, dsName)
-
-    try {
-      const res = await fetch(UPLOAD_ENDPOINT, {
-        method: 'POST',
-        body: formData,
-      })
-      const data = await res.json()
-      console.log(data)
-    } catch (err) {
-      console.log(err)
-    }
   }
 
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
-        <TypographyH2>Create Knowledge Base</TypographyH2>
+        <Typography variant='h2'>Create Knowledge Base</Typography>
       </div>
       <div className='max-w-lg w-full'>
         <DataStoreForm onSubmit={onSubmit} processing={processing} />
