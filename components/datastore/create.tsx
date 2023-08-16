@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation'
 import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
 import Typography from '@/components/typography'
 
-import { UPLOAD_ENDPOINT, DATASTORE_ENDPOINT, AcceptedFile } from '@/components/datastore/utils'
+import { UPLOAD_ENDPOINT, DATASTORE_ENDPOINT } from '@/components/datastore/constants'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   userId: string
+  dataStore?: DataStoreExtended
 }
 
 export function CreateDataStore({ userId }: DataStoreProps) {
