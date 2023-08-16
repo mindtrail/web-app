@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
 import Typography from '@/components/typography'
@@ -14,6 +14,8 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 
 export function CreateDataStore({ userId }: DataStoreProps) {
   const [processing, setProcessing] = useState(false)
+
+  const router = useRouter()
 
   const onSubmit = async (data: DataStoreFormValues) => {
     const { dataStoreName, dataStoreDescription, files } = data
@@ -55,7 +57,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
 
       await Promise.all(fileUploadPromises)
 
-      redirect('/dashboard')
+      router.push('/dashboard')
     } catch (err) {
       console.log(err)
       setProcessing(false)
