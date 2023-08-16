@@ -11,7 +11,7 @@ interface DataStoreListProps extends React.ComponentProps<'div'> {
 
 export function ListDataStores({ dataStoreList }: DataStoreListProps) {
   return (
-    <div className='flex flex-col flex-1 w-full py-4 px-6 md:py-12 md:px-8 gap-8'>
+    <div className='flex flex-col self-center flex-1 w-full max-w-6xl py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex justify-between'>
         <Typography variant='h2'>Knowledge Bases</Typography>
 
