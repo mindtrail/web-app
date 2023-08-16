@@ -18,7 +18,7 @@ export async function GET() {
     })
   }
 
-  const datastoreList = await getDataStoreList(userId)
+  const datastoreList = await getDataStoreList({ userId })
 
   return NextResponse.json(datastoreList)
 }
