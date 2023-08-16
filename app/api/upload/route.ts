@@ -84,9 +84,14 @@ export async function POST(req: Request) {
   // Upload file to S3
   const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
   // @TODO: return file upload success, and run the rest of the process in the background
-  s3Upload.then((res) => {
-    updateDataSrc({ id: dataSourceId, status: DataSourceStatus.synched })
-  })
+  s3Upload
+    .then((res) => {
+      updateDataSrc({ id: dataSourceId, status: DataSourceStatus.synched })
+    })
+    .catch((err) => {
+      updateDataSrc({ id: dataSourceId, status: DataSourceStatus.error })
+      console.error(err)
+    })
 
   return NextResponse.json({ nbChunks, textSize, docs })
 }
