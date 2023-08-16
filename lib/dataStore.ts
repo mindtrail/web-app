@@ -12,7 +12,13 @@ export const getDataStoreList = async (userId: string) => {
   return dataStoreList
 }
 
-export const createDataStore = async (userId: string, name: string) => {
+type DataStore = {
+  userId: string
+  name: string
+  description: string
+}
+
+export const createDataStore = async ({ userId, name, description }: DataStore) => {
   const type = DataStoreType.qdrant
 
   // Check if a datastore with the specified name already exists for the user
@@ -32,6 +38,7 @@ export const createDataStore = async (userId: string, name: string) => {
     // @ts-ignore - Prisma types are not recognizing the connect field
     data: {
       name,
+      description,
       type,
       owner: {
         connect: {

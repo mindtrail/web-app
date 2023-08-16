@@ -20,7 +20,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
   const router = useRouter()
 
   const onSubmit = async (data: DataStoreFormValues) => {
-    const { dataStoreName, files } = data
+    const { dataStoreName, dataStoreDescription, files } = data
     setProcessing(true)
 
     try {
@@ -32,6 +32,7 @@ export function CreateDataStore({ userId }: DataStoreProps) {
         body: JSON.stringify({
           userId,
           dataStoreName,
+          dataStoreDescription,
         }),
       })
       const newDS = await dataStore.json()
