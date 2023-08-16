@@ -1,5 +1,5 @@
 import { DataStoreType } from '@prisma/client'
-import prisma from '@/lib/dbConnection'
+import prisma from '@/lib/db/connection'
 
 export { searchSimilarText } from '@/lib/qdrant'
 

@@ -7,6 +7,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { DataStoreExtended } from '@/components/datastore/utils'
 import { Button } from '@/components/ui/button'
 import Typography from '@/components/typography'
+import { deleteDataStore } from '@/components/datastore/utils'
 
 import {
   DropdownMenu,
@@ -24,13 +25,23 @@ export function DataStoreRowItem({ dataStore }: rowProps) {
 
   const router = useRouter()
 
-  const handleClick = useCallback(() => {
+  const handleEdit = useCallback(() => {
     router.push(`/datastore/${id}`)
   }, [id, router])
 
+  const handleDelete = useCallback(async () => {
+    try {
+      const res = await deleteDataStore(id)
+      console.log(res)
+      router.refresh()
+    } catch (err) {
+      console.log(err)
+    }
+  }, [id])
+
   return (
     <div
-      onClick={handleClick}
+      onClick={handleEdit}
       className='flex w-full group border border-transparent hover:border-border hover:shadow  justify-between rounded-xl text-card-foreground cursor-pointer'
     >
       <div className='flex flex-col p-4'>
@@ -55,9 +66,17 @@ export function DataStoreRowItem({ dataStore }: rowProps) {
               <span className='sr-only'>Open menu</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' alignOffset={-5} className='w-[200px]' forceMount>
-            <DropdownMenuItem onClick={handleClick}>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+          <DropdownMenuContent
+            align='end'
+            alignOffset={-5}
+            className='w-[200px]'
+            forceMount
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+            <DropdownMenuItem disabled>Duplicate</DropdownMenuItem>
+            <DropdownMenuItem disabled>Share</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

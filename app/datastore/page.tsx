@@ -4,10 +4,10 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
-import { getDataStoreList } from '@/lib/dataStore'
+import { getDataStoreList } from '@/lib/db/dataStore'
 
 import { Header } from '@/components/header'
-import { CreateDataStore, ListDataStores } from '@/components/datastore'
+import { ListDataStores } from '@/components/datastore'
 
 export interface DataStorePageProps {
   params: {

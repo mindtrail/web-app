@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { ExtendedSession } from '@/lib/types'
 
-import { deleteDataStore, createDataStore } from '@/lib/dataStore'
+import { deleteDataStore } from '@/lib/db/dataStore'
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   console.time('session')
