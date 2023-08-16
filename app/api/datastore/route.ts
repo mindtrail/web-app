@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { dataStoreName, userId: clientUserId } = body
+  const { dataStoreName, dataStoreDescription, userId: clientUserId } = body
 
   if (clientUserId !== userId) {
     return new Response('Unauthorized', {
@@ -45,10 +45,13 @@ export async function POST(req: Request) {
     })
   }
 
-  // Will send the
-
   try {
-    const dataStore = await createDataStore(userId, dataStoreName)
+    const dataStore = await createDataStore({
+      userId,
+      name: dataStoreName,
+      description: dataStoreDescription,
+    })
+
     return NextResponse.json(dataStore)
   } catch (error) {
     console.error(error)

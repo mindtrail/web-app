@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { DataSourceType } from '@prisma/client'
+import { DataSourceType, DataSourceStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
-import { createDataSrc } from '@/lib/dataSource'
+import { createDataSrc, updateDataSrc } from '@/lib/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
 import { ExtendedSession } from '@/lib/types'
 
@@ -85,14 +85,9 @@ export async function POST(req: Request) {
   const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
   // @TODO: return file upload success, and run the rest of the process in the background
   s3Upload.then((res) => {
-    console.log('res', res)
+    updateDataSrc({ id: dataSourceId, status: DataSourceStatus.synched })
   })
 
-  if (!docs.length) {
-    return NextResponse.json({ error: 'File type not supported' })
-  }
-
-  // console.log('response', response)
   return NextResponse.json({ nbChunks, textSize, docs })
 }
 

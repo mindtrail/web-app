@@ -36,10 +36,18 @@ const dataStoreFormSchema = z.object({
   dataStoreName: z
     .string()
     .min(4, {
-      message: 'Name must be at least 4 characters.',
+      message: 'Name must be at least 5 characters.',
     })
     .max(40, {
       message: 'Name must not be longer than 40 characters.',
+    }),
+  dataStoreDescription: z
+    .string()
+    .min(4, {
+      message: 'Description must be at least 5 characters.',
+    })
+    .max(100, {
+      message: 'Description must not be longer than 100 characters.',
     }),
   files: z.array(z.any()).min(1, {
     message: 'You must upload at least one valid file.',
@@ -171,7 +179,7 @@ export function DataStoreForm({ onSubmit, processing }: FormProps) {
             <FormItem className='relative'>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder='shadcn' {...field} />
+                <Input placeholder='Knowledge Base Name' {...field} />
               </FormControl>
               <FormMessage className='absolute' />
             </FormItem>
@@ -179,12 +187,12 @@ export function DataStoreForm({ onSubmit, processing }: FormProps) {
         />
         <FormField
           control={control}
-          name='dataStoreName'
+          name='dataStoreDescription'
           render={({ field }) => (
             <FormItem className='relative'>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder='shadcn' {...field} />
+                <Input placeholder='What the KB contains' {...field} />
               </FormControl>
               <FormMessage className='absolute' />
             </FormItem>

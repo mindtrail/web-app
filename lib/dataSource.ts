@@ -1,5 +1,5 @@
 import prisma from '@/lib/dbConnection'
-import { DataSourceType, AppDataSource } from '@prisma/client'
+import { DataSourceStatus, AppDataSource } from '@prisma/client'
 
 export const getDataSourceList = async (userId: string, datastoreId: string) => {
   const dataSourceList = await prisma.appDataSource.findMany({
@@ -12,13 +12,13 @@ export const getDataSourceList = async (userId: string, datastoreId: string) => 
   return dataSourceList
 }
 
-type DataSrcPayload = Pick<
+type CreateDataSrcPayload = Pick<
   AppDataSource,
   'name' | 'dataStoreId' | 'ownerId' | 'type' | 'nbChunks' | 'textSize'
 >
 
-export const createDataSrc = async (props: DataSrcPayload) => {
-  const { name, dataStoreId, ownerId, type, nbChunks, textSize } = props
+export const createDataSrc = async (payload: CreateDataSrcPayload) => {
+  const { name, dataStoreId, ownerId, type, nbChunks, textSize } = payload
 
   const dataSource = await prisma.appDataSource.create({
     data: {
@@ -38,6 +38,26 @@ export const createDataSrc = async (props: DataSrcPayload) => {
           id: dataStoreId,
         },
       },
+    },
+  })
+
+  return dataSource
+}
+
+type updateDataSrcPayload = Partial<CreateDataSrcPayload> & {
+  id: string
+  status?: DataSourceStatus
+}
+
+export const updateDataSrc = async (payload: updateDataSrcPayload) => {
+  const { id, dataStoreId, ...rest } = payload
+
+  const dataSource = await prisma.appDataSource.update({
+    where: {
+      id,
+    },
+    data: {
+      ...rest,
     },
   })
 
