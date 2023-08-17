@@ -4,10 +4,9 @@ import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 
-import { DataStoreExtended } from '@/components/datastore/utils'
 import { Button } from '@/components/ui/button'
 import Typography from '@/components/typography'
-import { deleteDataStore } from '@/components/datastore/utils'
+import { deleteDataStoreApiCall } from '@/lib/api/dataStore'
 
 import {
   DropdownMenu,
@@ -31,7 +30,7 @@ export function DataStoreRowItem({ dataStore }: rowProps) {
 
   const handleDelete = useCallback(async () => {
     try {
-      const res = await deleteDataStore(id)
+      const res = await deleteDataStoreApiCall(id)
       console.log(res)
       router.refresh()
     } catch (err) {
