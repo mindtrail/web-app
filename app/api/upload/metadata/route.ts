@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { getDocumentChunks } from '@/lib/fileLoader'
-import { ExtendedSession } from '@/lib/types'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession

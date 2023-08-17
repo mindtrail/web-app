@@ -1,29 +1,60 @@
 import { DataStoreType } from '@prisma/client'
-import prisma from '@/lib/dbConnection'
+import prisma from '@/lib/db/connection'
 
 export { searchSimilarText } from '@/lib/qdrant'
 
-export const getDataStoreList = async (userId: string) => {
+type DataStoreList = {
+  userId: string
+  includeDataSrc?: boolean
+}
+
+export const getDataStoreList = async ({ userId, includeDataSrc = false }: DataStoreList) => {
   // Fetch data using Prisma based on the user
   const dataStoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
+    include: {
+      dataSources: includeDataSrc,
+    },
   })
 
   return dataStoreList
 }
 
-export const createDataStore = async (userId: string, name: string) => {
+type DataStoreById = {
+  userId: string
+  dataStoreId: string
+}
+
+export const getDataStoreById = async ({ userId, dataStoreId }: DataStoreById) => {
+  // Fetch data using Prisma based on the user
+  const dataStoreList = await prisma.dataStore.findUnique({
+    where: { ownerId: userId, id: dataStoreId },
+    include: {
+      dataSources: true,
+    },
+  })
+
+  return dataStoreList
+}
+
+type DataStore = {
+  userId: string
+  name: string
+  description: string
+}
+
+export const createDataStore = async ({ userId, name, description }: DataStore) => {
   const type = DataStoreType.qdrant
 
   // Check if a datastore with the specified name already exists for the user
-  const dataStoreNameExists = await prisma.dataStore.findFirst({
+  const nameExists = await prisma.dataStore.findFirst({
     where: {
       name,
       ownerId: userId,
     },
   })
 
-  if (dataStoreNameExists) {
+  if (nameExists) {
     // If it exists, append a random string or an index to make it unique
     name = `${name}-${Math.floor(Math.random() * 90000 + 10000)}` // appending a random 5 char nr
   }
@@ -32,6 +63,7 @@ export const createDataStore = async (userId: string, name: string) => {
     // @ts-ignore - Prisma types are not recognizing the connect field
     data: {
       name,
+      description,
       type,
       owner: {
         connect: {
@@ -63,4 +95,15 @@ export const deleteDataStore = async (userId: string, dataStoreId: string) => {
   })
 
   return dataStore
+}
+
+export const deleteDataSrc = async (userId: string, dataSrcId: string) => {
+  const dataSrc = await prisma.appDataSource.delete({
+    where: {
+      id: dataSrcId,
+      ownerId: userId,
+    },
+  })
+
+  return dataSrc
 }

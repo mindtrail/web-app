@@ -1,118 +1,75 @@
-import { FileRejection } from 'react-dropzone'
+import * as z from 'zod'
+import { DataSourceStatus } from '@prisma/client'
 
-export const ACCEPTED_FILE_TYPES = [
-  'application/epub+zip',
-  'application/json',
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/x-ndjson',
-  'application/x-subrip',
-  'application/octet-stream',
-  'text/csv',
-  'text/plain',
-  'text/markdown',
-]
+import { formatDate } from '@/lib/utils'
+import { MAX_FILE_SIZE, MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
-export const ACCEPTED_FILE_REACT_DROPZONE = {
-  'application/json': ['.json', '.jsonl'],
-  'application/pdf': ['.pdf'],
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-  'application/x-ndjson': ['.jsonl'],
-  'application/x-subrip': ['.srt'],
-  // 'application/octet-stream': ['', ''],
-  'text/csv': ['.csv'],
-  'text/plain': ['.txt', '.text', '.log'],
-  'text/markdown': ['.md'],
-}
-
-export const DATASTORE_ENDPOINT = '/api/datastore'
-export const UPLOAD_ENDPOINT = '/api/upload'
-export const METADATA_ENDPOINT = '/api/upload/metadata'
-
-export const MAX_NR_OF_FILES = 10
-export const MAX_FILE_SIZE = 10 * 1024 * 1024
-export const MAX_CHARS_PER_KB = 5 * 1000 * 1000
-export const UPLOAD_LABEL =
-  'Drag and drop files or <span class="filepond--label-action">Browse</span>'
-
-export const DROPZONE_STYLES = {
-  DEFAULT: 'border-neutral-300 bg-neutral-50',
-  REJECT: 'border-red-400 bg-neutral-300 cursor-not-allowed text-neutral-800',
-  ACCEPT: 'border-green-600 bg-green-50',
-}
-
-export type FileFilter = {
-  validFiles: File[]
-  rejectedFiles: FileRejection[]
-}
-
-export type AcceptedFile = {
-  file: File
-  charCount?: number
-}
-
-export type Metadata = {
-  charCount: number
-  name: string
-  type: string
-}
-
-export const filterFilesBySize = (files: File[]) => {
-  return files.reduce(
-    (acc, file: File) => {
-      if (file.size <= MAX_FILE_SIZE) {
-        acc.validFiles.push(file)
-      } else {
-        const fileRejection: FileRejection = {
-          file,
-          errors: [
-            {
-              code: 'size',
-              message: `File ${file.name} is too large`,
-            },
-          ],
-        }
-        acc.rejectedFiles.push(fileRejection)
-      }
-      return acc
-    },
-    { validFiles: [], rejectedFiles: [] } as FileFilter,
-  )
-}
-
-export function getFileRejectionsMaxFiles(excessFiles: File[]) {
-  return excessFiles.map(
-    (file) =>
-      ({
+export const getFormInitialValues = (dataStore?: DataStoreExtended): DataStoreFormValues => {
+  if (dataStore) {
+    return {
+      name: dataStore.name,
+      description: dataStore.description || '',
+      files: dataStore.dataSources.map((file) => ({
         file,
-        errors: [
-          {
-            code: 'max-nr',
-            message: `File ${file.name} is above the max files threshold`,
-          },
-        ],
-      } as FileRejection),
-  )
+        source: 'remote',
+        status: file.status,
+        charCount: file.textSize,
+      })),
+    }
+  }
+
+  return {
+    name: `KB - ${formatDate(new Date())}`,
+    description: '',
+    files: [],
+  }
 }
 
-export async function getFilesMetadata(files: File[]) {
-  const promises = files.map((file) => {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    return fetch(METADATA_ENDPOINT, {
-      method: 'POST',
-      body: formData,
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch metadata for file ${file.name}`)
-      }
-      return response.json()
+export const dataStoreFormSchema = z.object({
+  name: z
+    .string()
+    .min(4, {
+      message: 'Name must be at least 5 characters.',
     })
+    .max(40, {
+      message: 'Name must not be longer than 40 characters.',
+    }),
+  description: z
+    .string()
+    .min(4, {
+      message: 'Description must be at least 5 characters.',
+    })
+    .max(100, {
+      message: 'Description must not be longer than 100 characters.',
+    }),
+  files: z.array(z.any()).min(1, {
+    message: 'You must upload at least one valid file.',
+  }),
+})
+
+export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
+
+export const filterFiles = (files: File[], remainingSlots: number) => {
+  let count = 0
+  const acceptedFiles: AcceptedFile[] = []
+  const rejectedFiles: RejectedFile[] = []
+
+  files.forEach((file) => {
+    if (file.size <= MAX_FILE_SIZE && count < remainingSlots) {
+      acceptedFiles.push({
+        file,
+        status: DataSourceStatus.unsynched,
+      })
+      count++
+    } else {
+      rejectedFiles.push({
+        file,
+        error: file.size >= MAX_FILE_SIZE ? 'size' : 'limit',
+      })
+    }
   })
 
-  const filesMetadata = await Promise.all(promises)
-  return filesMetadata
+  return { acceptedFiles, rejectedFiles }
 }
 
 export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata: Metadata[]) => {
@@ -120,6 +77,7 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
   filesMetadata.forEach((metadata) => {
     filesMetadataMap[metadata.name] = metadata
   })
+  console.log('filesMetadataMap', filesMetadataMap)
 
   // @TODO - map
   const newFiles = prevFiles.map((item) => {
@@ -127,7 +85,6 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
     const { name, type } = file
 
     const metadata = filesMetadataMap[name]
-    console.log(metadata, type, metadata?.type)
     // For md files or other text files, we don't have a type but in the BE I get octet-stream
     if (metadata && (!type || type === metadata.type)) {
       return {
@@ -138,6 +95,6 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
 
     return item
   })
-  console.log(newFiles)
+
   return newFiles
 }
