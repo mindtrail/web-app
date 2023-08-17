@@ -7,35 +7,18 @@ import { IconSpinner } from '@/components/ui/icons'
 import { StatusIcon } from '@/components/datastore/statusIcon'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
+type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
+
 interface FormList {
   acceptedFiles: AcceptedFile[]
   rejectedFiles: RejectedFile[]
   charCount: number
   charCountLoading: boolean
-  handleFileDeleteFromUI: (file: AcceptedFile) => void
+  handleFileDelete: DeleteHandler
 }
 
-type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
-
 export function FormList(props: FormList) {
-  const { acceptedFiles, rejectedFiles, charCount, charCountLoading, handleFileDeleteFromUI } =
-    props
-
-  const handleDelete: DeleteHandler = useCallback((event, file) => {
-    console.log(event)
-    event.preventDefault()
-
-    const { status } = file
-
-    if (status === DataSourceStatus.synched) {
-      // Popup modal
-      console.log('popup modal')
-    }
-
-    if (status === DataSourceStatus.unsynched) {
-      handleFileDeleteFromUI(file)
-    }
-  }, [])
+  const { acceptedFiles, rejectedFiles, charCount, charCountLoading, handleFileDelete } = props
 
   const acceptedFormList = useMemo(() => {
     return acceptedFiles.map(({ file, charCount, status }) => (
@@ -55,14 +38,14 @@ export function FormList(props: FormList) {
             size='sm'
             className='invisible group-hover:visible'
             disabled={status !== 'unsynched' && status !== 'synched'}
-            onClick={(event) => handleDelete(event, { file, charCount, status })}
+            onClick={(event) => handleFileDelete(event, { file, charCount, status })}
           >
             <Cross1Icon />
           </Button>
         </div>
       </div>
     ))
-  }, [acceptedFiles, handleDelete])
+  }, [acceptedFiles, handleFileDelete])
 
   const rejectedFormList = useMemo(() => {
     return rejectedFiles.map(({ file }: RejectedFile) => <p key={file.name}>{file.name}</p>)
