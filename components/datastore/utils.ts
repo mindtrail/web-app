@@ -2,7 +2,7 @@ import { MAX_FILE_SIZE } from '@/components/datastore/constants'
 import * as z from 'zod'
 
 export const dataStoreFormSchema = z.object({
-  dataStoreName: z
+  name: z
     .string()
     .min(4, {
       message: 'Name must be at least 5 characters.',
@@ -10,7 +10,7 @@ export const dataStoreFormSchema = z.object({
     .max(40, {
       message: 'Name must not be longer than 40 characters.',
     }),
-  dataStoreDescription: z
+  description: z
     .string()
     .min(4, {
       message: 'Description must be at least 5 characters.',
@@ -22,7 +22,6 @@ export const dataStoreFormSchema = z.object({
     message: 'You must upload at least one valid file.',
   }),
 })
-
 
 export const filterFilesBySize = (files: File[]) => {
   return files.reduce(

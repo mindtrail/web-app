@@ -38,8 +38,8 @@ export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<DataStoreFormValues> = {
-  dataStoreName: `KB - ${formatDate(new Date())}`,
-  dataStoreDescription: '',
+  name: `KB - ${formatDate(new Date())}`,
+  description: '',
   files: [],
 }
 
@@ -50,18 +50,17 @@ type FormProps = {
 }
 
 export function DataStoreForm(props: FormProps) {
-  const { onSubmit, getFilesMetadata } = props
+  const { onSubmit, getFilesMetadata, existingDataStore } = props
 
-  const [processing, setProcessing] = useState(false)
-  // const [ds, setDS] = useState(dataStore)
+  const editingForm = !!existingDataStore
 
   const [files, setFiles] = useState<AcceptedFile[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
 
   const [dropzoneUsed, setDropzoneUsed] = useState(false)
-
   const [charCount, setCharCount] = useState(0)
   const [charCountLoading, setCharCountLoading] = useState(false)
+  const [processing, setProcessing] = useState(false)
 
   const router = useRouter()
 
@@ -72,62 +71,67 @@ export function DataStoreForm(props: FormProps) {
     shouldFocusError: false, // Prevents auto focusing on the first error, which can trigger error displays immediately.
   })
 
+  const { handleSubmit, control } = form
+
   const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
     accept: ACCEPTED_FILE_REACT_DROPZONE,
-    validator: (file) => {
-      const { name, type } = file
-
-      if (files.some(({ file }) => file.name === name && file.type === type)) {
-        return {
-          code: 'file-already-added',
-          message: 'File already added',
-        }
-      }
-
-      return null
-    },
-
-    onDrop: async (acceptedFiles: File[]) => {
-      if (!acceptedFiles.length) {
-        return
-      }
-
-      // Filter files based on size
-      let { validFiles, rejectedFiles } = filterFilesBySize(acceptedFiles)
-      // Check how many files we can add based on maxFiles
-      const remainingSlots = MAX_NR_OF_FILES - files.length
-
-      if (validFiles.length > remainingSlots) {
-        const excessFiles = validFiles.slice(remainingSlots)
-        // Truncate validFiles to the remainingSlots
-        validFiles.length = remainingSlots
-        // Add the excess files to the rejectedFiles list
-        rejectedFiles = [...rejectedFiles, ...mapFilesOverLimit(excessFiles)]
-      }
-
-      if (rejectedFiles.length) {
-        // Update your rejected files list state (assuming you have a state for this)
-        setRejectedFiles(rejectedFiles)
-      }
-
-      setFiles((prevFiles) => [...prevFiles, ...validFiles.map((file) => ({ file }))])
-      setDropzoneUsed(true) // User has interacted with the dropzone
-      setCharCountLoading(true)
-      try {
-        const metadataForFiles = (await getFilesMetadata(validFiles)) as Metadata[]
-        console.log(metadataForFiles)
-        const totalChars = metadataForFiles.reduce((acc, { charCount }) => acc + charCount, 0)
-
-        setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
-        setCharCount((prevChars) => prevChars + totalChars)
-        setCharCountLoading(false)
-      } catch (error) {
-        console.log(error)
-      }
-    },
+    validator: formValidator,
+    onDrop: handleDrop,
   })
 
-  const handleDelete = (fileToDelete: AcceptedFile) => {
+  function formValidator(file: File) {
+    const { name, type } = file
+
+    if (files.some(({ file }) => file.name === name && file.type === type)) {
+      return {
+        code: 'file-already-added',
+        message: 'File already added',
+      }
+    }
+
+    return null
+  }
+
+  async function handleDrop(acceptedFiles: File[]) {
+    if (!acceptedFiles.length) {
+      return
+    }
+
+    // Filter files based on size
+    let { validFiles, rejectedFiles } = filterFilesBySize(acceptedFiles)
+    // Check how many files we can add based on maxFiles
+    const remainingSlots = MAX_NR_OF_FILES - files.length
+
+    if (validFiles.length > remainingSlots) {
+      const excessFiles = validFiles.slice(remainingSlots)
+      // Truncate validFiles to the remainingSlots
+      validFiles.length = remainingSlots
+      // Add the excess files to the rejectedFiles list
+      rejectedFiles = [...rejectedFiles, ...mapFilesOverLimit(excessFiles)]
+    }
+
+    if (rejectedFiles.length) {
+      // Update your rejected files list state (assuming you have a state for this)
+      setRejectedFiles(rejectedFiles)
+    }
+
+    setFiles((prevFiles) => [...prevFiles, ...validFiles.map((file) => ({ file }))])
+    setDropzoneUsed(true) // User has interacted with the dropzone
+    setCharCountLoading(true)
+    try {
+      const metadataForFiles = (await getFilesMetadata(validFiles)) as Metadata[]
+      console.log(metadataForFiles)
+      const totalChars = metadataForFiles.reduce((acc, { charCount }) => acc + charCount, 0)
+
+      setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
+      setCharCount((prevChars) => prevChars + totalChars)
+      setCharCountLoading(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleFileDelete = (fileToDelete: AcceptedFile) => {
     if (!fileToDelete) {
       return
     }
@@ -148,8 +152,6 @@ export function DataStoreForm(props: FormProps) {
     router.push('/datastore')
   }
 
-  const { handleSubmit, control } = form
-
   useEffect(() => {
     if (dropzoneUsed) {
       form.setValue('files', files)
@@ -158,14 +160,11 @@ export function DataStoreForm(props: FormProps) {
   }, [files, form, dropzoneUsed])
 
   const dropzoneInteractionClasses = useMemo(() => {
-    if (isDragReject) {
-      return DROPZONE_STYLES.REJECT
-    }
-    if (isDragAccept) {
-      return DROPZONE_STYLES.ACCEPT
-    }
-
-    return DROPZONE_STYLES.DEFAULT
+    return isDragAccept
+      ? DROPZONE_STYLES.ACCEPT
+      : isDragReject
+      ? DROPZONE_STYLES.REJECT
+      : DROPZONE_STYLES.DEFAULT
   }, [isDragAccept, isDragReject])
 
   return (
@@ -173,7 +172,7 @@ export function DataStoreForm(props: FormProps) {
       <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
         <FormField
           control={control}
-          name='dataStoreName'
+          name='name'
           render={({ field }) => (
             <FormItem className='relative'>
               <FormLabel>Name</FormLabel>
@@ -186,7 +185,7 @@ export function DataStoreForm(props: FormProps) {
         />
         <FormField
           control={control}
-          name='dataStoreDescription'
+          name='description'
           render={({ field }) => (
             <FormItem className='relative'>
               <FormLabel>Description</FormLabel>
@@ -237,7 +236,7 @@ export function DataStoreForm(props: FormProps) {
           rejectedFiles={rejectedFiles}
           charCount={charCount}
           charCountLoading={charCountLoading}
-          handleDelete={handleDelete}
+          handleDelete={handleFileDelete}
         />
 
         <Button type='submit' size='lg' disabled={processing}>

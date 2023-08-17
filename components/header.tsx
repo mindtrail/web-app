@@ -5,8 +5,6 @@ import Link from 'next/link'
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
 
-import { ExtendedSession } from '@/types/types'
-
 interface HeaderProps {
   session: ExtendedSession
 }

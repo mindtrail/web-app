@@ -6,7 +6,6 @@ import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
-import { ExtendedSession } from '@/types/types'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
