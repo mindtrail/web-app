@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
-import { ExtendedSession } from '@/types/types'
 
 import { deleteDataStore } from '@/lib/db/dataStore'
 

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
-import { ExtendedSession } from '@/types/types'
 
 import { getDataStoreList, createDataStore } from '@/lib/db/dataStore'
 
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { dataStoreName, dataStoreDescription, userId: clientUserId } = body
+  const { name, description, userId: clientUserId } = body
 
   if (clientUserId !== userId) {
     return new Response('Unauthorized', {
@@ -48,8 +47,8 @@ export async function POST(req: Request) {
   try {
     const dataStore = await createDataStore({
       userId,
-      name: dataStoreName,
-      description: dataStoreDescription,
+      name,
+      description,
     })
 
     return NextResponse.json(dataStore)

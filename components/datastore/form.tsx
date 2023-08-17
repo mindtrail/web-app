@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone, FileRejection } from 'react-dropzone'
@@ -22,15 +22,16 @@ import {
   ACCEPTED_FILE_REACT_DROPZONE,
   DROPZONE_STYLES,
   MAX_NR_OF_FILES,
+} from '@/components/datastore/constants'
+
+import {
   filterFilesBySize,
-  getFileRejectionsMaxFiles,
-  getFilesMetadata,
+  getFilesOverLimit,
   updateFilesWithMetadata,
-  AcceptedFile,
-  Metadata,
 } from '@/components/datastore/utils'
 
 import { formatDate } from '@/lib/utils'
+import { getFilesMetadataApiCall } from '@/lib/api/dataStore'
 
 const dataStoreFormSchema = z.object({
   dataStoreName: z
@@ -65,16 +66,33 @@ const defaultValues: Partial<DataStoreFormValues> = {
 type FormProps = {
   onSubmit: (data: DataStoreFormValues) => void
   processing: boolean
+  files: AcceptedFile[]
+  setFiles: React.Dispatch<React.SetStateAction<AcceptedFile[]>>
+  rejectedFiles: FileRejection[]
+  setRejectedFiles: React.Dispatch<React.SetStateAction<FileRejection[]>>
+  dropzoneUsed: boolean
+  setDropzoneUsed: React.Dispatch<React.SetStateAction<boolean>>
+  charCount: number
+  setCharCount: React.Dispatch<React.SetStateAction<number>>
+  charCountLoading: boolean
+  setCharCountLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function DataStoreForm({ onSubmit, processing }: FormProps) {
-  const [files, setFiles] = useState<AcceptedFile[]>([])
-  const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
-
-  const [dropzoneUsed, setDropzoneUsed] = useState(false)
-
-  const [charCount, setCharCount] = useState(0)
-  const [charCountLoading, setCharCountLoading] = useState(false)
+export function DataStoreForm(props: FormProps) {
+  const {
+    onSubmit,
+    processing,
+    files,
+    setFiles,
+    rejectedFiles,
+    setRejectedFiles,
+    dropzoneUsed,
+    setDropzoneUsed,
+    charCount,
+    setCharCount,
+    charCountLoading,
+    setCharCountLoading,
+  } = props
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -114,7 +132,7 @@ export function DataStoreForm({ onSubmit, processing }: FormProps) {
         // Truncate validFiles to the remainingSlots
         validFiles.length = remainingSlots
         // Add the excess files to the rejectedFiles list
-        rejectedFiles = [...rejectedFiles, ...getFileRejectionsMaxFiles(excessFiles)]
+        rejectedFiles = [...rejectedFiles, ...getFilesOverLimit(excessFiles)]
       }
 
       if (rejectedFiles.length) {
@@ -127,7 +145,7 @@ export function DataStoreForm({ onSubmit, processing }: FormProps) {
       setCharCountLoading(true)
 
       try {
-        const filesMetadata = (await getFilesMetadata(validFiles)) as Metadata[]
+        const filesMetadata = (await getFilesMetadataApiCall(validFiles)) as Metadata[]
         const totalChars = filesMetadata.reduce((acc, { charCount }) => acc + charCount, 0)
 
         setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, filesMetadata))

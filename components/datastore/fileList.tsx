@@ -3,10 +3,8 @@ import { FileRejection } from 'react-dropzone'
 import { Cross1Icon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
-
-import { MAX_NR_OF_FILES, AcceptedFile } from '@/components/datastore/utils'
-
 import { IconSpinner } from '@/components/ui/icons'
+import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
 interface FileList {
   acceptedFiles: AcceptedFile[]

@@ -6,57 +6,43 @@ import { useRouter } from 'next/navigation'
 import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
 import Typography from '@/components/typography'
 
-import { UPLOAD_ENDPOINT, DATASTORE_ENDPOINT } from '@/components/datastore/constants'
+import { createDataStoreApiCall, uploadFileApiCall } from '@/lib/api/dataStore'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   userId: string
   dataStore?: DataStoreExtended
 }
 
-export function CreateDataStore({ userId }: DataStoreProps) {
+export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
   const [processing, setProcessing] = useState(false)
+  const [ds, setDS] = useState(dataStore)
+
+  const [files, setFiles] = useState<AcceptedFile[]>([])
+  const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
+
+  const [dropzoneUsed, setDropzoneUsed] = useState(false)
+
+  const [charCount, setCharCount] = useState(0)
+  const [charCountLoading, setCharCountLoading] = useState(false)
+
+  console.log(ds)
 
   const router = useRouter()
 
   const onSubmit = async (data: DataStoreFormValues) => {
-    const { dataStoreName, dataStoreDescription, files } = data
+    const { dataStoreName: name, dataStoreDescription: description, files } = data
     setProcessing(true)
 
     try {
-      const dataStore = await fetch(DATASTORE_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-          dataStoreName,
-          dataStoreDescription,
-        }),
-      })
-      const newDS = await dataStore.json()
-      const dataStoreId = newDS.id
-
-      if (!dataStoreId) {
-        throw new Error('Failed to create DataStore')
-      }
+      const dataStore = await createDataStoreApiCall({ userId, name, description })
+      const dataStoreId = dataStore.id
 
       const fileUploadPromises = files.map(async ({ file }) => {
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('dataStoreId', dataStoreId) // Add this line
-
-        const response = await fetch(UPLOAD_ENDPOINT, {
-          method: 'POST',
-          body: formData,
-        })
-        if (!response.ok) {
-          throw new Error(`Failed to fetch metadata for file ${file.name}`)
-        }
-        return await response.json()
+        return await uploadFileApiCall(file, dataStoreId)
       })
 
-      await Promise.all(fileUploadPromises)
+      const res = await Promise.all(fileUploadPromises)
+      console.log(res)
 
       router.push('/datastore')
     } catch (err) {
@@ -68,10 +54,23 @@ export function CreateDataStore({ userId }: DataStoreProps) {
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
-        <Typography variant='h2'>Create Knowledge Base</Typography>
+        <Typography variant='h2'>{ds ? 'Edit' : ' Create'} Knowledge Base</Typography>
       </div>
       <div className='max-w-lg w-full'>
-        <DataStoreForm onSubmit={onSubmit} processing={processing} />
+        <DataStoreForm
+          onSubmit={onSubmit}
+          processing={processing}
+          setFiles={setFiles}
+          setRejectedFiles={setRejectedFiles}
+          files={files}
+          rejectedFiles={rejectedFiles}
+          dropzoneUsed={dropzoneUsed}
+          setDropzoneUsed={setDropzoneUsed}
+          charCount={charCount}
+          setCharCount={setCharCount}
+          charCountLoading={charCountLoading}
+          setCharCountLoading={setCharCountLoading}
+        />
       </div>
     </div>
   )

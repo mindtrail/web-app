@@ -1,66 +1,4 @@
-import { DataStore, AppDataSource } from '@prisma/client'
-import { FileRejection } from 'react-dropzone'
-
-export const ACCEPTED_FILE_TYPES = [
-  'application/epub+zip',
-  'application/json',
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/x-ndjson',
-  'application/x-subrip',
-  'application/octet-stream',
-  'text/csv',
-  'text/plain',
-  'text/markdown',
-]
-
-export const ACCEPTED_FILE_REACT_DROPZONE = {
-  'application/json': ['.json', '.jsonl'],
-  'application/pdf': ['.pdf'],
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-  'application/x-ndjson': ['.jsonl'],
-  'application/x-subrip': ['.srt'],
-  // 'application/octet-stream': ['', ''],
-  'text/csv': ['.csv'],
-  'text/plain': ['.txt', '.text', '.log'],
-  'text/markdown': ['.md'],
-}
-
-export const DATASTORE_ENDPOINT = '/api/datastore'
-export const UPLOAD_ENDPOINT = '/api/upload'
-export const METADATA_ENDPOINT = '/api/upload/metadata'
-
-export const MAX_NR_OF_FILES = 10
-export const MAX_FILE_SIZE = 10 * 1024 * 1024
-export const MAX_CHARS_PER_KB = 5 * 1000 * 1000
-export const UPLOAD_LABEL =
-  'Drag and drop files or <span class="filepond--label-action">Browse</span>'
-
-export const DROPZONE_STYLES = {
-  DEFAULT: 'border-neutral-300 bg-neutral-50',
-  REJECT: 'border-red-400 bg-neutral-300 cursor-not-allowed text-neutral-800',
-  ACCEPT: 'border-green-600 bg-green-50',
-}
-
-export type FileFilter = {
-  validFiles: File[]
-  rejectedFiles: FileRejection[]
-}
-
-export type AcceptedFile = {
-  file: File
-  charCount?: number
-}
-
-export type Metadata = {
-  charCount: number
-  name: string
-  type: string
-}
-
-export type DataStoreExtended = DataStore & {
-  dataSources: AppDataSource[]
-}
+import { MAX_FILE_SIZE } from '@/components/datastore/constants'
 
 export const filterFilesBySize = (files: File[]) => {
   return files.reduce(
@@ -68,7 +6,7 @@ export const filterFilesBySize = (files: File[]) => {
       if (file.size <= MAX_FILE_SIZE) {
         acc.validFiles.push(file)
       } else {
-        const fileRejection: FileRejection = {
+        const fileRejection: RejectedFile = {
           file,
           errors: [
             {
@@ -85,7 +23,7 @@ export const filterFilesBySize = (files: File[]) => {
   )
 }
 
-export function getFileRejectionsMaxFiles(excessFiles: File[]) {
+export function getFilesOverLimit(excessFiles: File[]) {
   return excessFiles.map(
     (file) =>
       ({
@@ -96,28 +34,8 @@ export function getFileRejectionsMaxFiles(excessFiles: File[]) {
             message: `File ${file.name} is above the max files threshold`,
           },
         ],
-      } as FileRejection),
+      } as RejectedFile),
   )
-}
-
-export async function getFilesMetadata(files: File[]) {
-  const promises = files.map((file) => {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    return fetch(METADATA_ENDPOINT, {
-      method: 'POST',
-      body: formData,
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch metadata for file ${file.name}`)
-      }
-      return response.json()
-    })
-  })
-
-  const filesMetadata = await Promise.all(promises)
-  return filesMetadata
 }
 
 export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata: Metadata[]) => {
@@ -145,16 +63,4 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
   })
   console.log(newFiles)
   return newFiles
-}
-
-export const deleteDataStore = async (dataStoreId: string) => {
-  const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
-    method: 'DELETE',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to delete data store ${dataStoreId}`)
-  }
-
-  return response.json()
 }

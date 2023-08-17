@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { ExtendedSession } from '@/types/types'
 import { getDataStoreById } from '@/lib/db/dataStore'
 
 import { Header } from '@/components/header'
