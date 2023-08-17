@@ -14,12 +14,8 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 }
 
 export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
-  if (dataStore) {
-    console.log(dataStore)
-  }
-
   const onSubmit = async (data: DataStoreFormValues) => {
-    const { dataStoreName: name, dataStoreDescription: description, files } = data
+    const { name, description, files } = data
 
     try {
       const dataStore = await createDataStoreApiCall({ userId, name, description })
