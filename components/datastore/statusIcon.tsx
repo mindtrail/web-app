@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 
 interface StatusIcon {
   status?: DataSourceStatus
+  size?: 'sm' | 'md' | 'lg'
 }
 
 const colorMap = {
@@ -15,11 +16,15 @@ const colorMap = {
 }
 
 export function StatusIcon(props: StatusIcon) {
-  const { status } = props
+  const { status, size = 'sm' } = props
 
   const color = useMemo(() => {
     return !status ? 'bg-gray-500' : colorMap[status]
   }, [status])
 
-  return <span className={`flex h-2 w-2 rounded-full ${color}`} />
+  const sizeProp = useMemo(() => {
+    return size === 'sm' ? 'h-2 w-2' : size === 'md' ? 'h-3 w-3' : 'h-4 w-4'
+  }, [size])
+
+  return <span className={`flex rounded-full ${sizeProp} ${color}`} />
 }

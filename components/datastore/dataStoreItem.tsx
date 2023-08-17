@@ -47,7 +47,9 @@ export function DataStoreListItem({ dataStore }: itemProps) {
       <div className='flex flex-col p-4'>
         <Typography variant='h5'>{name}</Typography>
         <div className='flex gap-4'>
-          <span>{description}</span>
+          <span className='w-32 overflow-hidden whitespace-nowrap text-ellipsis'>
+            {description}
+          </span>
           {dataSources.map((file, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
               <StatusIcon status={file.status} />

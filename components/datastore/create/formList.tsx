@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
-import { FileRejection } from 'react-dropzone'
+import { useMemo, useCallback } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
+import { DataSourceStatus } from '@prisma/client'
 
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons'
@@ -9,23 +9,44 @@ import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
 interface FormList {
   acceptedFiles: AcceptedFile[]
-  rejectedFiles: FileRejection[]
+  rejectedFiles: RejectedFile[]
   charCount: number
   charCountLoading: boolean
-  handleDelete: (file: AcceptedFile) => void
+  handleFileDeleteFromUI: (file: AcceptedFile) => void
 }
 
+type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
+
 export function FormList(props: FormList) {
-  const { acceptedFiles, rejectedFiles, charCount, charCountLoading, handleDelete } = props
+  const { acceptedFiles, rejectedFiles, charCount, charCountLoading, handleFileDeleteFromUI } =
+    props
+
+  const handleDelete: DeleteHandler = useCallback((event, file) => {
+    console.log(event)
+    event.preventDefault()
+
+    const { status } = file
+
+    if (status === DataSourceStatus.synched) {
+      // Popup modal
+      console.log('popup modal')
+    }
+
+    if (status === DataSourceStatus.unsynched) {
+      handleFileDeleteFromUI(file)
+    }
+  }, [])
 
   const acceptedFormList = useMemo(() => {
-    return acceptedFiles.map(({ file, charCount }) => (
+    return acceptedFiles.map(({ file, charCount, status }) => (
       <div
-        className='flex group cursor-default justify-between items-center hover:bg-slate-100'
+        className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
         key={file.name}
       >
-        <StatusIcon />
-        {file.name}
+        <div className='flex gap-2 items-center'>
+          <StatusIcon size='md' status={status} />
+          {file.name}
+        </div>
 
         <div className='flex gap-2 items-center'>
           <span>{charCount}</span>
@@ -33,9 +54,8 @@ export function FormList(props: FormList) {
             variant='ghost'
             size='sm'
             className='invisible group-hover:visible'
-            onClick={() => {
-              handleDelete({ file, charCount })
-            }}
+            disabled={status !== 'unsynched' && status !== 'synched'}
+            onClick={(event) => handleDelete(event, { file, charCount, status })}
           >
             <Cross1Icon />
           </Button>
@@ -45,7 +65,7 @@ export function FormList(props: FormList) {
   }, [acceptedFiles, handleDelete])
 
   const rejectedFormList = useMemo(() => {
-    return rejectedFiles.map(({ file }: FileRejection) => <p key={file.name}>{file.name}</p>)
+    return rejectedFiles.map(({ file }: RejectedFile) => <p key={file.name}>{file.name}</p>)
   }, [rejectedFiles])
 
   return (

@@ -1,5 +1,5 @@
 import Typography from '@/components/typography'
-import { DataStoreListItem } from '@/components/datastore/listItem'
+import { DataStoreListItem } from '@/components/datastore/dataStoreItem'
 
 import { PlusIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
