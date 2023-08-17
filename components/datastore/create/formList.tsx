@@ -4,9 +4,10 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons'
+import { StatusIcon } from '@/components/datastore/statusIcon'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
-interface FileList {
+interface FormList {
   acceptedFiles: AcceptedFile[]
   rejectedFiles: FileRejection[]
   charCount: number
@@ -14,15 +15,16 @@ interface FileList {
   handleDelete: (file: AcceptedFile) => void
 }
 
-export function FileList(props: FileList) {
+export function FormList(props: FormList) {
   const { acceptedFiles, rejectedFiles, charCount, charCountLoading, handleDelete } = props
 
-  const acceptedFileList = useMemo(() => {
+  const acceptedFormList = useMemo(() => {
     return acceptedFiles.map(({ file, charCount }) => (
       <div
         className='flex group cursor-default justify-between items-center hover:bg-slate-100'
         key={file.name}
       >
+        <StatusIcon />
         {file.name}
 
         <div className='flex gap-2 items-center'>
@@ -42,7 +44,7 @@ export function FileList(props: FileList) {
     ))
   }, [acceptedFiles, handleDelete])
 
-  const rejectedFileList = useMemo(() => {
+  const rejectedFormList = useMemo(() => {
     return rejectedFiles.map(({ file }: FileRejection) => <p key={file.name}>{file.name}</p>)
   }, [rejectedFiles])
 
@@ -58,15 +60,15 @@ export function FileList(props: FileList) {
         </span>
       </div>
 
-      {acceptedFileList.length > 0 && (
+      {acceptedFormList.length > 0 && (
         <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2'>
-          {acceptedFileList}
+          {acceptedFormList}
         </div>
       )}
 
-      {rejectedFileList.length > 0 && (
+      {rejectedFormList.length > 0 && (
         <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2 text-red-800'>
-          {rejectedFileList}
+          {rejectedFormList}
         </div>
       )}
     </>
