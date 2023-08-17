@@ -258,12 +258,20 @@ export function DataStoreForm(props: FormProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone and will permanently delete {'file--name'}.
+              This will delete the file and the associated data. The action cannot be undone and
+              will permanently delete {'file--name'}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Delete</AlertDialogAction>
+            <Button
+              variant='destructive'
+              onClick={() => {
+                setConfirmDelete(false)
+              }}
+            >
+              Delete
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
