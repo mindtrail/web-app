@@ -49,24 +49,20 @@ export async function uploadFileApiCall(file: File, dataStoreId: string) {
   return response.json()
 }
 
-export async function getFilesMetadataApiCall(files: File[]) {
-  const promises = files.map((file) => {
-    const formData = new FormData()
-    formData.append('file', file)
+export async function getFileMetadataApiCall(file: File) {
+  const formData = new FormData()
+  formData.append('file', file)
 
-    return fetch(METADATA_ENDPOINT, {
-      method: 'POST',
-      body: formData,
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch metadata for file ${file.name}`)
-      }
-      return response.json()
-    })
+  const response = await fetch(METADATA_ENDPOINT, {
+    method: 'POST',
+    body: formData,
   })
 
-  const filesMetadata = await Promise.all(promises)
-  return filesMetadata
+  if (!response.ok) {
+    throw new Error('Failed to upload files')
+  }
+
+  return response.json()
 }
 
 export const deleteDataStoreApiCall = async (dataStoreId: string) => {
