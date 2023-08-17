@@ -11,6 +11,17 @@ import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+
+import {
   Form,
   FormControl,
   FormField,
@@ -39,6 +50,8 @@ type FormProps = {
   existingDataStore?: DataStoreExtended
 }
 
+export type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
+
 export function DataStoreForm(props: FormProps) {
   const { onSubmit, getFilesMetadata, existingDataStore } = props
 
@@ -50,11 +63,11 @@ export function DataStoreForm(props: FormProps) {
   const [files, setFiles] = useState<AcceptedFile[]>(defaultValues?.files || [])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
 
-  console.log(files)
   const [dropzoneUsed, setDropzoneUsed] = useState(false)
   const [charCount, setCharCount] = useState(0)
   const [charCountLoading, setCharCountLoading] = useState(false)
   const [processing, setProcessing] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const router = useRouter()
 
@@ -112,20 +125,29 @@ export function DataStoreForm(props: FormProps) {
     }
   }
 
-  const handleFileDeleteFromUI = (fileToDelete: AcceptedFile) => {
-    console.log(fileToDelete)
+  const handleFileDelete: DeleteHandler = (event, fileToDelete) => {
+    event.preventDefault()
 
     if (!fileToDelete) {
       return
     }
-    const { file, charCount = 0 } = fileToDelete
 
-    setFiles((prevFiles) =>
-      prevFiles.filter(({ file: prevFile }) => {
-        return prevFile.name !== file.name
-      }),
-    )
-    setCharCount((prevChars) => prevChars - charCount)
+    const { file, charCount = 0, status } = fileToDelete
+
+    if (status === DataSourceStatus.synched) {
+      setConfirmDelete(true)
+    }
+
+    if (status === DataSourceStatus.unsynched) {
+      console.log(fileToDelete)
+
+      setFiles((prevFiles) =>
+        prevFiles.filter(({ file: prevFile }) => {
+          return prevFile.name !== file.name
+        }),
+      )
+      setCharCount((prevChars) => prevChars - charCount)
+    }
   }
 
   const onFormSumbit = async (data: DataStoreFormValues) => {
@@ -152,82 +174,99 @@ export function DataStoreForm(props: FormProps) {
   }, [isDragAccept, isDragReject])
 
   return (
-    <Form {...form}>
-      <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
-        <FormField
-          control={control}
-          name='name'
-          render={({ field }) => (
-            <FormItem className='relative'>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder='Knowledge Base Name' {...field} />
-              </FormControl>
-              <FormMessage className='absolute' />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name='description'
-          render={({ field }) => (
-            <FormItem className='relative'>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input placeholder='What the KB contains' {...field} />
-              </FormControl>
-              <FormMessage className='absolute' />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name='files'
-          render={() => (
-            <FormItem className='relative'>
-              <FormLabel>Upload Files</FormLabel>
-              <FormControl>
-                <div
-                  {...getRootProps()}
-                  className={`flex flex-col w-full h-28 rounded-xl justify-center
+    <>
+      <Form {...form}>
+        <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
+          <FormField
+            control={control}
+            name='name'
+            render={({ field }) => (
+              <FormItem className='relative'>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder='Knowledge Base Name' {...field} />
+                </FormControl>
+                <FormMessage className='absolute' />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name='description'
+            render={({ field }) => (
+              <FormItem className='relative'>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Input placeholder='What the KB contains' {...field} />
+                </FormControl>
+                <FormMessage className='absolute' />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name='files'
+            render={() => (
+              <FormItem className='relative'>
+                <FormLabel>Upload Files</FormLabel>
+                <FormControl>
+                  <div
+                    {...getRootProps()}
+                    className={`flex flex-col w-full h-28 rounded-xl justify-center
                   border items-center gap-4 text-neutral-600
                   select-none cursor-default transition .25s ease-in-out
                   ${dropzoneInteractionClasses}`}
-                >
-                  <input {...getInputProps()} />
-                  {isDragReject ? (
-                    'Unsupported file type!'
-                  ) : (
-                    <>
-                      <p>
-                        Drop files or <span className='underline text-neutral-500'>Click</span> to
-                        browse
-                      </p>
-                      <p className='text-sm text-neutral-500'>
-                        <span>Supported file types:</span> .pdf, .docx, .txt, .md, .json, .jsonl,
-                        .csv
-                      </p>
-                    </>
-                  )}
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormList
-          acceptedFiles={files}
-          rejectedFiles={rejectedFiles}
-          charCount={charCount}
-          charCountLoading={charCountLoading}
-          handleFileDeleteFromUI={handleFileDeleteFromUI}
-        />
+                  >
+                    <input {...getInputProps()} />
+                    {isDragReject ? (
+                      'Unsupported file type!'
+                    ) : (
+                      <>
+                        <p>
+                          Drop files or <span className='underline text-neutral-500'>Click</span> to
+                          browse
+                        </p>
+                        <p className='text-sm text-neutral-500'>
+                          <span>Supported file types:</span> .pdf, .docx, .txt, .md, .json, .jsonl,
+                          .csv
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormList
+            acceptedFiles={files}
+            rejectedFiles={rejectedFiles}
+            charCount={charCount}
+            charCountLoading={charCountLoading}
+            handleFileDelete={handleFileDelete}
+          />
 
-        <Button type='submit' size='lg' disabled={processing}>
-          {processing && <IconSpinner className='mr-2' />}
-          {existingDataStore ? 'Edit' : 'Create'}
-        </Button>
-      </form>
-    </Form>
+          <Button type='submit' size='lg' disabled={processing}>
+            {processing && <IconSpinner className='mr-2' />}
+            {existingDataStore ? 'Edit' : 'Create'}
+          </Button>
+        </form>
+      </Form>
+
+      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete file?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone and will permanently delete {'file--name'}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
