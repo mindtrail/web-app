@@ -1,6 +1,8 @@
-import { MAX_FILE_SIZE } from '@/components/datastore/constants'
 import * as z from 'zod'
+import { DataSourceStatus } from '@prisma/client'
+
 import { formatDate } from '@/lib/utils'
+import { MAX_FILE_SIZE, MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
 export const getFormInitialValues = (dataStore?: DataStoreExtended): DataStoreFormValues => {
   if (dataStore) {
@@ -9,6 +11,8 @@ export const getFormInitialValues = (dataStore?: DataStoreExtended): DataStoreFo
       description: dataStore.description || '',
       files: dataStore.dataSources.map((file) => ({
         file,
+        source: 'remote',
+        status: file.status,
         charCount: file.textSize,
       })),
     }
@@ -45,42 +49,27 @@ export const dataStoreFormSchema = z.object({
 
 export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
-export const filterFilesBySize = (files: File[]) => {
-  return files.reduce(
-    (acc, file: File) => {
-      if (file.size <= MAX_FILE_SIZE) {
-        acc.validFiles.push(file)
-      } else {
-        const fileRejection: RejectedFile = {
-          file,
-          errors: [
-            {
-              code: 'size',
-              message: `File ${file.name} is too large`,
-            },
-          ],
-        }
-        acc.rejectedFiles.push(fileRejection)
-      }
-      return acc
-    },
-    { validFiles: [], rejectedFiles: [] } as FileFilter,
-  )
-}
+export const filterFiles = (files: File[], remainingSlots: number) => {
+  let count = 0
+  const acceptedFiles: AcceptedFile[] = []
+  const rejectedFiles: RejectedFile[] = []
 
-export function mapFilesOverLimit(excessFiles: File[]) {
-  return excessFiles.map(
-    (file) =>
-      ({
+  files.forEach((file) => {
+    if (file.size <= MAX_FILE_SIZE && count < remainingSlots) {
+      acceptedFiles.push({
         file,
-        errors: [
-          {
-            code: 'max-nr',
-            message: `File ${file.name} is above the max files threshold`,
-          },
-        ],
-      } as RejectedFile),
-  )
+        status: DataSourceStatus.unsynched,
+      })
+      count++
+    } else {
+      rejectedFiles.push({
+        file,
+        error: file.size >= MAX_FILE_SIZE ? 'size' : 'limit',
+      })
+    }
+  })
+
+  return { acceptedFiles, rejectedFiles }
 }
 
 export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata: Metadata[]) => {
@@ -88,6 +77,7 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
   filesMetadata.forEach((metadata) => {
     filesMetadataMap[metadata.name] = metadata
   })
+  console.log('filesMetadataMap', filesMetadataMap)
 
   // @TODO - map
   const newFiles = prevFiles.map((item) => {
@@ -95,7 +85,6 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
     const { name, type } = file
 
     const metadata = filesMetadataMap[name]
-    console.log(metadata, type, metadata?.type)
     // For md files or other text files, we don't have a type but in the BE I get octet-stream
     if (metadata && (!type || type === metadata.type)) {
       return {
@@ -106,6 +95,6 @@ export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata
 
     return item
   })
-  console.log(newFiles)
+
   return newFiles
 }

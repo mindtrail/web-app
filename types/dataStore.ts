@@ -1,20 +1,25 @@
 import { DataStore, AppDataSource, DataSourceStatus } from '@prisma/client'
-import { FileRejection } from 'react-dropzone'
 
 declare global {
   type DataStoreExtended = DataStore & {
     dataSources: AppDataSource[]
   }
 
-  type FileFilter = {
-    validFiles: File[]
-    rejectedFiles: FileRejection[]
-  }
-
   type AcceptedFile = {
     file: File
+    source?: 'local' | 'remote'
     status?: DataSourceStatus
     charCount?: number
+  }
+
+  type RejectedFile = {
+    file: File
+    error: 'size' | 'limit'
+  }
+
+  type FileFilter = {
+    acceptedFiles: AcceptedFile[]
+    rejectedFiles: RejectedFile[]
   }
 
   type Metadata = {
@@ -22,6 +27,4 @@ declare global {
     name: string
     type: string
   }
-
-  type RejectedFile = FileRejection
 }
