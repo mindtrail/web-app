@@ -9,6 +9,7 @@ import { FormList } from '@/components/datastore/create/formList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
+import { deleteFileApiCall } from '@/lib/api/dataStore'
 
 import {
   AlertDialog,
@@ -67,7 +68,8 @@ export function DataStoreForm(props: FormProps) {
   const [charCount, setCharCount] = useState(0)
   const [charCountLoading, setCharCountLoading] = useState(false)
   const [processing, setProcessing] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [fileToDelete, setFileToDelete] = useState<AcceptedFile | null>(null)
 
   const router = useRouter()
 
@@ -125,29 +127,52 @@ export function DataStoreForm(props: FormProps) {
     }
   }
 
-  const handleFileDelete: DeleteHandler = (event, fileToDelete) => {
-    event.preventDefault()
-
+  const confirmFileDelete = async () => {
     if (!fileToDelete) {
       return
     }
 
+    const { file } = fileToDelete
+
+    console.log(file)
+    try {
+      // @ts-ignore
+      deleteFileApiCall(file.id).then((res) => {
+        console.log(res)
+        // toast...
+      })
+    } catch (err) {
+      console.log(err)
+    }
+
+    filterOutDeletedFileAndUpdateCharCount(fileToDelete)
+  }
+
+  const handleFileDelete: DeleteHandler = (event, file) => {
+    event.preventDefault()
+
+    if (!file) {
+      return
+    }
+
+    if (file.status === DataSourceStatus.synched) {
+      setFileToDelete(file)
+      setDeleteDialogOpen(true)
+      return
+    }
+
+    filterOutDeletedFileAndUpdateCharCount(file)
+  }
+
+  const filterOutDeletedFileAndUpdateCharCount = (fileToDelete: AcceptedFile) => {
     const { file, charCount = 0, status } = fileToDelete
 
-    if (status === DataSourceStatus.synched) {
-      setConfirmDelete(true)
-    }
-
-    if (status === DataSourceStatus.unsynched) {
-      console.log(fileToDelete)
-
-      setFiles((prevFiles) =>
-        prevFiles.filter(({ file: prevFile }) => {
-          return prevFile.name !== file.name
-        }),
-      )
-      setCharCount((prevChars) => prevChars - charCount)
-    }
+    setFiles((prevFiles) =>
+      prevFiles.filter(({ file: prevFile }) => {
+        return prevFile.name !== file.name
+      }),
+    )
+    setCharCount((prevChars) => prevChars - charCount)
   }
 
   const onFormSumbit = async (data: DataStoreFormValues) => {
@@ -253,7 +278,7 @@ export function DataStoreForm(props: FormProps) {
         </form>
       </Form>
 
-      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
@@ -267,7 +292,8 @@ export function DataStoreForm(props: FormProps) {
             <Button
               variant='destructive'
               onClick={() => {
-                setConfirmDelete(false)
+                confirmFileDelete()
+                setDeleteDialogOpen(false)
               }}
             >
               Delete
