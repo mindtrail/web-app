@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/authOptions'
 import { getDataStoreList } from '@/lib/db/dataStore'
 
 import { Header } from '@/components/header'
-import { ListDataStores } from '@/components/datastore'
+import { DataStoreList } from '@/components/datastore'
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -37,7 +37,7 @@ export default async function DataStorePage() {
   return (
     <>
       <Header session={session} />
-      <ListDataStores dataStoreList={dataStoreList} />
+      <DataStoreList dataStoreList={dataStoreList} />
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { DataStore, AppDataSource } from '@prisma/client'
+import { DataStore, AppDataSource, DataSourceStatus } from '@prisma/client'
 import { FileRejection } from 'react-dropzone'
 
 declare global {
@@ -13,6 +13,7 @@ declare global {
 
   type AcceptedFile = {
     file: File
+    status?: DataSourceStatus
     charCount?: number
   }
 

@@ -1,5 +1,5 @@
-import prisma from '@/lib/db/connection'
 import { DataSourceStatus, AppDataSource } from '@prisma/client'
+import prisma from '@/lib/db/connection'
 
 export const getDataSourceList = async (userId: string, datastoreId: string) => {
   const dataSourceList = await prisma.appDataSource.findMany({

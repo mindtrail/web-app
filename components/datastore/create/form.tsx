@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useDropzone, FileRejection } from 'react-dropzone'
-import * as z from 'zod'
+import { useDropzone } from 'react-dropzone'
+import { DataSourceStatus } from '@prisma/client'
 
-import { FileList } from '@/components/datastore/fileList'
+import { FormList } from '@/components/datastore/create/formList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
@@ -19,8 +19,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-import { formatDate } from '@/lib/utils'
-
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
   DROPZONE_STYLES,
@@ -32,16 +30,9 @@ import {
   mapFilesOverLimit,
   updateFilesWithMetadata,
   dataStoreFormSchema,
+  getFormInitialValues,
+  DataStoreFormValues,
 } from '@/components/datastore/utils'
-
-export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
-
-// This can come from your database or API.
-const defaultValues: Partial<DataStoreFormValues> = {
-  name: `KB - ${formatDate(new Date())}`,
-  description: '',
-  files: [],
-}
 
 type FormProps = {
   onSubmit: (data: DataStoreFormValues) => Promise<void>
@@ -52,9 +43,13 @@ type FormProps = {
 export function DataStoreForm(props: FormProps) {
   const { onSubmit, getFilesMetadata, existingDataStore } = props
 
-  const editingForm = !!existingDataStore
+  const defaultValues: DataStoreFormValues = useMemo(
+    () => getFormInitialValues(existingDataStore),
+    [existingDataStore],
+  )
+  console.log(defaultValues)
 
-  const [files, setFiles] = useState<AcceptedFile[]>([])
+  const [files, setFiles] = useState<AcceptedFile[]>(defaultValues?.files || [])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
 
   const [dropzoneUsed, setDropzoneUsed] = useState(false)
@@ -231,7 +226,7 @@ export function DataStoreForm(props: FormProps) {
             </FormItem>
           )}
         />
-        <FileList
+        <FormList
           acceptedFiles={files}
           rejectedFiles={rejectedFiles}
           charCount={charCount}

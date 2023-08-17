@@ -7,6 +7,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Button } from '@/components/ui/button'
 import Typography from '@/components/typography'
 import { deleteDataStoreApiCall } from '@/lib/api/dataStore'
+import { StatusIcon } from '@/components/datastore/statusIcon'
 
 import {
   DropdownMenu,
@@ -15,11 +16,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-type rowProps = {
+type itemProps = {
   dataStore: DataStoreExtended
 }
 
-export function DataStoreRowItem({ dataStore }: rowProps) {
+export function DataStoreListItem({ dataStore }: itemProps) {
   const { id, name, description, dataSources } = dataStore
 
   const router = useRouter()
@@ -49,7 +50,7 @@ export function DataStoreRowItem({ dataStore }: rowProps) {
           <span>{description}</span>
           {dataSources.map((file, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
-              <span className='flex h-2 w-2 rounded-full bg-green-500' />
+              <StatusIcon status={file.status} />
               <p className='text-sm text-muted-foreground whitespace-nowrap text-ellipsis overflow-hidden max-w-[120px]'>
                 {file.name}
               </p>

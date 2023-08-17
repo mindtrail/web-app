@@ -1,5 +1,25 @@
 import { MAX_FILE_SIZE } from '@/components/datastore/constants'
 import * as z from 'zod'
+import { formatDate } from '@/lib/utils'
+
+export const getFormInitialValues = (dataStore?: DataStoreExtended): DataStoreFormValues => {
+  if (dataStore) {
+    return {
+      name: dataStore.name,
+      description: dataStore.description || '',
+      files: dataStore.dataSources.map((file) => ({
+        file,
+        charCount: file.textSize,
+      })),
+    }
+  }
+
+  return {
+    name: `KB - ${formatDate(new Date())}`,
+    description: '',
+    files: [],
+  }
+}
 
 export const dataStoreFormSchema = z.object({
   name: z
@@ -22,6 +42,8 @@ export const dataStoreFormSchema = z.object({
     message: 'You must upload at least one valid file.',
   }),
 })
+
+export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
 export const filterFilesBySize = (files: File[]) => {
   return files.reduce(

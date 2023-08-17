@@ -1,7 +1,9 @@
 'use client'
 
 import Typography from '@/components/typography'
-import { DataStoreForm, DataStoreFormValues } from '@/components/datastore/form'
+import { DataStoreForm } from '@/components/datastore/create/form'
+import { DataStoreFormValues } from '@/components/datastore/utils'
+
 import {
   createDataStoreApiCall,
   uploadFileApiCall,
