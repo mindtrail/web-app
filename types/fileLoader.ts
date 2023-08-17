@@ -5,18 +5,20 @@ import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { SRTLoader } from 'langchain/document_loaders/fs/srt'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 
-export type FILE_LOADER_PAIR = {
-  [key: string]:
-    | typeof CSVLoader
-    | typeof DocxLoader
-    // | typeof EPubLoader
-    | typeof JSONLoader
-    | typeof JSONLinesLoader
-    | typeof PDFLoader
-    | typeof SRTLoader
-    | typeof TextLoader
-}
+declare global {
+  type FILE_LOADER_PAIR = {
+    [key: string]:
+      | typeof CSVLoader
+      | typeof DocxLoader
+      // | typeof EPubLoader
+      | typeof JSONLoader
+      | typeof JSONLinesLoader
+      | typeof PDFLoader
+      | typeof SRTLoader
+      | typeof TextLoader
+  }
 
-export type PDF_LOADER_OPTIONS = {
-  splitPages?: boolean
+  type PDF_LOADER_OPTIONS = {
+    splitPages?: boolean
+  }
 }

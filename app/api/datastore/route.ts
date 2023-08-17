@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
-import { ExtendedSession } from '@/lib/types'
 
-import { getDataStoreList, createDataStore } from '@/lib/dataStore'
+import { getDataStoreList, createDataStore } from '@/lib/db/dataStore'
 
 export async function GET() {
   console.time('session')
@@ -18,7 +17,7 @@ export async function GET() {
     })
   }
 
-  const datastoreList = await getDataStoreList(userId)
+  const datastoreList = await getDataStoreList({ userId })
 
   return NextResponse.json(datastoreList)
 }
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { dataStoreName, userId: clientUserId } = body
+  const { name, description, userId: clientUserId } = body
 
   if (clientUserId !== userId) {
     return new Response('Unauthorized', {
@@ -45,10 +44,13 @@ export async function POST(req: Request) {
     })
   }
 
-  // Will send the
-
   try {
-    const dataStore = await createDataStore(userId, dataStoreName)
+    const dataStore = await createDataStore({
+      userId,
+      name,
+      description,
+    })
+
     return NextResponse.json(dataStore)
   } catch (error) {
     console.error(error)
@@ -56,6 +58,4 @@ export async function POST(req: Request) {
       status: 500,
     })
   }
-
-  return NextResponse.json({})
 }
