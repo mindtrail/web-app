@@ -1,5 +1,3 @@
-import { type } from 'os'
-
 export const DATASTORE_ENDPOINT = '/api/datastore'
 export const UPLOAD_ENDPOINT = '/api/upload'
 export const METADATA_ENDPOINT = '/api/upload/metadata'
@@ -72,6 +70,18 @@ export const deleteDataStoreApiCall = async (dataStoreId: string) => {
 
   if (!response.ok) {
     throw new Error(`Failed to delete data store ${dataStoreId}`)
+  }
+
+  return response.json()
+}
+
+export const deleteFileApiCall = async (fileId: string) => {
+  const response = await fetch(`${UPLOAD_ENDPOINT}/${fileId}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to delete file ${fileId}`)
   }
 
   return response.json()

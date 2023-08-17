@@ -96,3 +96,14 @@ export const deleteDataStore = async (userId: string, dataStoreId: string) => {
 
   return dataStore
 }
+
+export const deleteDataSrc = async (userId: string, dataSrcId: string) => {
+  const dataSrc = await prisma.appDataSource.delete({
+    where: {
+      id: dataSrcId,
+      ownerId: userId,
+    },
+  })
+
+  return dataSrc
+}
