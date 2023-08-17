@@ -8,8 +8,6 @@ import { Document } from 'langchain/document'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 // import { EPubLoader } from 'langchain/document_loaders/fs/epub'
 
-import { FILE_LOADER_PAIR } from '@/types/fileLoader'
-
 const PDF_FILE = 'application/pdf'
 
 const LOADER: FILE_LOADER_PAIR = {
