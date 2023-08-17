@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone, FileRejection } from 'react-dropzone'
@@ -18,6 +19,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
+import { formatDate } from '@/lib/utils'
+
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
   DROPZONE_STYLES,
@@ -26,73 +29,41 @@ import {
 
 import {
   filterFilesBySize,
-  getFilesOverLimit,
+  mapFilesOverLimit,
   updateFilesWithMetadata,
+  dataStoreFormSchema,
 } from '@/components/datastore/utils'
-
-import { formatDate } from '@/lib/utils'
-import { getFilesMetadataApiCall } from '@/lib/api/dataStore'
-
-const dataStoreFormSchema = z.object({
-  dataStoreName: z
-    .string()
-    .min(4, {
-      message: 'Name must be at least 5 characters.',
-    })
-    .max(40, {
-      message: 'Name must not be longer than 40 characters.',
-    }),
-  dataStoreDescription: z
-    .string()
-    .min(4, {
-      message: 'Description must be at least 5 characters.',
-    })
-    .max(100, {
-      message: 'Description must not be longer than 100 characters.',
-    }),
-  files: z.array(z.any()).min(1, {
-    message: 'You must upload at least one valid file.',
-  }),
-})
 
 export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<DataStoreFormValues> = {
   dataStoreName: `KB - ${formatDate(new Date())}`,
+  dataStoreDescription: '',
   files: [],
 }
 
 type FormProps = {
-  onSubmit: (data: DataStoreFormValues) => void
-  processing: boolean
-  files: AcceptedFile[]
-  setFiles: React.Dispatch<React.SetStateAction<AcceptedFile[]>>
-  rejectedFiles: FileRejection[]
-  setRejectedFiles: React.Dispatch<React.SetStateAction<FileRejection[]>>
-  dropzoneUsed: boolean
-  setDropzoneUsed: React.Dispatch<React.SetStateAction<boolean>>
-  charCount: number
-  setCharCount: React.Dispatch<React.SetStateAction<number>>
-  charCountLoading: boolean
-  setCharCountLoading: React.Dispatch<React.SetStateAction<boolean>>
+  onSubmit: (data: DataStoreFormValues) => Promise<void>
+  getFilesMetadata: (files: File[]) => Promise<Metadata[]>
+  existingDataStore?: DataStoreExtended
 }
 
 export function DataStoreForm(props: FormProps) {
-  const {
-    onSubmit,
-    processing,
-    files,
-    setFiles,
-    rejectedFiles,
-    setRejectedFiles,
-    dropzoneUsed,
-    setDropzoneUsed,
-    charCount,
-    setCharCount,
-    charCountLoading,
-    setCharCountLoading,
-  } = props
+  const { onSubmit, getFilesMetadata } = props
+
+  const [processing, setProcessing] = useState(false)
+  // const [ds, setDS] = useState(dataStore)
+
+  const [files, setFiles] = useState<AcceptedFile[]>([])
+  const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
+
+  const [dropzoneUsed, setDropzoneUsed] = useState(false)
+
+  const [charCount, setCharCount] = useState(0)
+  const [charCountLoading, setCharCountLoading] = useState(false)
+
+  const router = useRouter()
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -123,7 +94,6 @@ export function DataStoreForm(props: FormProps) {
 
       // Filter files based on size
       let { validFiles, rejectedFiles } = filterFilesBySize(acceptedFiles)
-
       // Check how many files we can add based on maxFiles
       const remainingSlots = MAX_NR_OF_FILES - files.length
 
@@ -132,7 +102,7 @@ export function DataStoreForm(props: FormProps) {
         // Truncate validFiles to the remainingSlots
         validFiles.length = remainingSlots
         // Add the excess files to the rejectedFiles list
-        rejectedFiles = [...rejectedFiles, ...getFilesOverLimit(excessFiles)]
+        rejectedFiles = [...rejectedFiles, ...mapFilesOverLimit(excessFiles)]
       }
 
       if (rejectedFiles.length) {
@@ -143,12 +113,12 @@ export function DataStoreForm(props: FormProps) {
       setFiles((prevFiles) => [...prevFiles, ...validFiles.map((file) => ({ file }))])
       setDropzoneUsed(true) // User has interacted with the dropzone
       setCharCountLoading(true)
-
       try {
-        const filesMetadata = (await getFilesMetadataApiCall(validFiles)) as Metadata[]
-        const totalChars = filesMetadata.reduce((acc, { charCount }) => acc + charCount, 0)
+        const metadataForFiles = (await getFilesMetadata(validFiles)) as Metadata[]
+        console.log(metadataForFiles)
+        const totalChars = metadataForFiles.reduce((acc, { charCount }) => acc + charCount, 0)
 
-        setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, filesMetadata))
+        setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
         setCharCount((prevChars) => prevChars + totalChars)
         setCharCountLoading(false)
       } catch (error) {
@@ -163,8 +133,19 @@ export function DataStoreForm(props: FormProps) {
     }
     const { file, charCount = 0 } = fileToDelete
 
-    setFiles((prevFiles) => prevFiles.filter(({ file: prevFile }) => prevFile.name !== file.name))
+    setFiles((prevFiles) =>
+      prevFiles.filter(({ file: prevFile }) => {
+        return prevFile.name !== file.name
+      }),
+    )
     setCharCount((prevChars) => prevChars - charCount)
+  }
+
+  const onFormSumbit = async (data: DataStoreFormValues) => {
+    setProcessing(true)
+    await onSubmit(data)
+    setProcessing(false)
+    router.push('/datastore')
   }
 
   const { handleSubmit, control } = form
@@ -189,7 +170,7 @@ export function DataStoreForm(props: FormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+      <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
         <FormField
           control={control}
           name='dataStoreName'
