@@ -273,7 +273,7 @@ export function DataStoreForm(props: FormProps) {
 
           <Button type='submit' size='lg' disabled={processing}>
             {processing && <IconSpinner className='mr-2' />}
-            {existingDataStore ? 'Edit' : 'Create'}
+            {existingDataStore ? 'Save Changes' : 'Create'}
           </Button>
         </form>
       </Form>
