@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { toast } from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -50,7 +49,7 @@ export function ClearHistory({ clearChats }: ClearHistoryProps) {
                 const result = await clearChats()
 
                 if (result && 'error' in result) {
-                  toast.error(result.error)
+                  // toast.error(result.error)
                   return
                 }
 
