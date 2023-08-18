@@ -5,11 +5,12 @@ import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
 import { DataSourceStatus } from '@prisma/client'
 
-import { FormList } from '@/components/datastore/create/formList'
+import { FormList } from '@/components/datastore/create/formFileList'
+import { deleteFileApiCall } from '@/lib/api/dataStore'
+import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
-import { deleteFileApiCall } from '@/lib/api/dataStore'
 
 import {
   AlertDialog,
@@ -60,6 +61,8 @@ export function DataStoreForm(props: FormProps) {
     () => getFormInitialValues(existingDataStore),
     [existingDataStore],
   )
+
+  const { toast } = useToast()
 
   const [files, setFiles] = useState<AcceptedFile[]>(defaultValues?.files || [])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
@@ -132,16 +135,25 @@ export function DataStoreForm(props: FormProps) {
       return
     }
 
+    // UPdate file...
     const { file } = fileToDelete
 
     console.log(file)
     try {
       // @ts-ignore
       deleteFileApiCall(file.id).then((res) => {
+        toast({
+          title: 'File deleted',
+          description: `${file.name} has been deleted`,
+        })
         console.log(res)
-        // toast...
       })
     } catch (err) {
+      toast({
+        title: 'Error',
+        variant: 'destructive',
+        description: `Something went wrong while deleting ${file.name}`,
+      })
       console.log(err)
     }
 

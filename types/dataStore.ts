@@ -6,7 +6,7 @@ declare global {
   }
 
   type AcceptedFile = {
-    file: File
+    file: File | DataStoreExtended
     source?: 'local' | 'remote'
     status?: DataSourceStatus
     charCount?: number
