@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
-import { AppDataSource, DataSourceStatus } from '@prisma/client'
+import { DataSrc, DataSrcStatus } from '@prisma/client'
 
 import { FormList } from '@/components/datastore/create/formFileList'
 import { deleteFileApiCall } from '@/lib/api/dataStore'
@@ -14,7 +14,6 @@ import { IconSpinner } from '@/components/ui/icons'
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -136,7 +135,7 @@ export function DataStoreForm(props: FormProps) {
     }
 
     try {
-      const { id, name } = fileToDelete.file as AppDataSource
+      const { id, name } = fileToDelete.file as DataSrc
       deleteFileApiCall(id).then((res) => {
         toast({
           title: 'File deleted',
@@ -163,7 +162,7 @@ export function DataStoreForm(props: FormProps) {
       return
     }
 
-    if (file.status === DataSourceStatus.synched) {
+    if (file.status === DataSrcStatus.synched) {
       setFileToDelete(file)
       setDeleteDialogOpen(true)
       return
@@ -292,7 +291,7 @@ export function DataStoreForm(props: FormProps) {
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
               This will delete the file and the associated data. The action cannot be undone and
-              will permanently delete {'file--name'}.
+              will permanently delete <b>{fileToDelete?.file?.name}</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

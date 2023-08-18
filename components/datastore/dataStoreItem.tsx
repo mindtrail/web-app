@@ -1,12 +1,6 @@
-'use client'
-
-import { useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-
 import { Button } from '@/components/ui/button'
 import Typography from '@/components/typography'
-import { deleteDataStoreApiCall } from '@/lib/api/dataStore'
 import { StatusIcon } from '@/components/datastore/statusIcon'
 
 import {
@@ -18,30 +12,17 @@ import {
 
 type itemProps = {
   dataStore: DataStoreExtended
+  handleEdit: (id: string) => void
+  handleDelete: (id: string, name: string) => void
 }
 
-export function DataStoreListItem({ dataStore }: itemProps) {
-  const { id, name, description, dataSources } = dataStore
-
-  const router = useRouter()
-
-  const handleEdit = useCallback(() => {
-    router.push(`/datastore/${id}`)
-  }, [id, router])
-
-  const handleDelete = useCallback(async () => {
-    try {
-      const res = await deleteDataStoreApiCall(id)
-      console.log(res)
-      router.refresh()
-    } catch (err) {
-      console.log(err)
-    }
-  }, [id, router])
+export function DataStoreListItem(props: itemProps) {
+  const { dataStore, handleEdit, handleDelete } = props
+  const { id, name, description, dataSrcs } = dataStore
 
   return (
     <div
-      onClick={handleEdit}
+      onClick={() => handleEdit(id)}
       className='flex w-full group border border-transparent hover:border-border hover:shadow  justify-between rounded-xl text-card-foreground cursor-pointer'
     >
       <div className='flex flex-col p-4'>
@@ -50,7 +31,7 @@ export function DataStoreListItem({ dataStore }: itemProps) {
           <span className='w-32 overflow-hidden whitespace-nowrap text-ellipsis'>
             {description}
           </span>
-          {dataSources.map((file, index) => (
+          {dataSrcs.map((file, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
               <StatusIcon status={file.status} />
               <p className='text-sm text-muted-foreground whitespace-nowrap text-ellipsis overflow-hidden max-w-[120px]'>
@@ -75,10 +56,10 @@ export function DataStoreListItem({ dataStore }: itemProps) {
             forceMount
             onClick={(e) => e.stopPropagation()}
           >
-            <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
             <DropdownMenuItem disabled>Duplicate</DropdownMenuItem>
             <DropdownMenuItem disabled>Share</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete(id, name)}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

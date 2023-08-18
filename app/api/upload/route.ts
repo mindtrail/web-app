@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { DataSourceType, DataSourceStatus } from '@prisma/client'
+import { DataSrcType, DataSrcStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     name: fileName,
     dataStoreId,
     ownerId: userId,
-    type: DataSourceType.file,
+    type: DataSrcType.file,
     nbChunks,
     textSize,
   }
@@ -85,10 +85,10 @@ export async function POST(req: Request) {
   // @TODO: return file upload success, and run the rest of the process in the background
   s3Upload
     .then((res) => {
-      updateDataSrc({ id: dataSourceId, status: DataSourceStatus.synched })
+      updateDataSrc({ id: dataSourceId, status: DataSrcStatus.synched })
     })
     .catch((err) => {
-      updateDataSrc({ id: dataSourceId, status: DataSourceStatus.error })
+      updateDataSrc({ id: dataSourceId, status: DataSrcStatus.error })
       console.error(err)
     })
 
