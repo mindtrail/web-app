@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
-import { DataSourceStatus } from '@prisma/client'
+import { AppDataSource, DataSourceStatus } from '@prisma/client'
 
 import { FormList } from '@/components/datastore/create/formFileList'
 import { deleteFileApiCall } from '@/lib/api/dataStore'
@@ -135,16 +135,12 @@ export function DataStoreForm(props: FormProps) {
       return
     }
 
-    // UPdate file...
-    const { file } = fileToDelete
-
-    console.log(file)
     try {
-      // @ts-ignore
-      deleteFileApiCall(file.id).then((res) => {
+      const { id, name } = fileToDelete.file as AppDataSource
+      deleteFileApiCall(id).then((res) => {
         toast({
           title: 'File deleted',
-          description: `${file.name} has been deleted`,
+          description: `${name} has been deleted`,
         })
         console.log(res)
       })
@@ -152,7 +148,7 @@ export function DataStoreForm(props: FormProps) {
       toast({
         title: 'Error',
         variant: 'destructive',
-        description: `Something went wrong while deleting ${file.name}`,
+        description: `Something went wrong while deleting ${name}`,
       })
       console.log(err)
     }
