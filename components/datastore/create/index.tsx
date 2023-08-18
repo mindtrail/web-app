@@ -35,7 +35,10 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
   }
 
   const getFilesMetadata = async (files: AcceptedFile[]) => {
-    const metadataPromises = files.map(async ({ file }) => await getFileMetadataApiCall(file))
+    const metadataPromises = files.map(async ({ file }) => {
+      const droppedFile = file as File
+      return await getFileMetadataApiCall(droppedFile)
+    })
     return await Promise.all(metadataPromises)
   }
 
