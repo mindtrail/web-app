@@ -133,7 +133,7 @@ export function SidebarActions({ chat, removeChat, shareChat }: SidebarActionsPr
                   const result = await shareChat(chat)
 
                   if (result && 'error' in result) {
-                    toast.error(result.error)
+                    // toast.error(result.error)
                     return
                   }
 
@@ -175,14 +175,14 @@ export function SidebarActions({ chat, removeChat, shareChat }: SidebarActionsPr
                   })
 
                   if (result && 'error' in result) {
-                    toast.error(result.error)
+                    // toast.error(result.error)
                     return
                   }
 
                   setDeleteDialogOpen(false)
                   router.refresh()
                   router.push('/')
-                  toast.success('Chat deleted')
+                  // toast.success('Chat deleted')
                 })
               }}
             >
