@@ -13,7 +13,7 @@ export const getDataStoreList = async ({ userId, includeDataSrc = false }: DataS
   const dataStoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
     include: {
-      dataSources: includeDataSrc,
+      dataSrcs: includeDataSrc,
     },
   })
 
@@ -30,7 +30,7 @@ export const getDataStoreById = async ({ userId, dataStoreId }: DataStoreById) =
   const dataStoreList = await prisma.dataStore.findUnique({
     where: { ownerId: userId, id: dataStoreId },
     include: {
-      dataSources: true,
+      dataSrcs: true,
     },
   })
 
@@ -98,7 +98,7 @@ export const deleteDataStore = async (userId: string, dataStoreId: string) => {
 }
 
 export const deleteDataSrc = async (userId: string, dataSrcId: string) => {
-  const dataSrc = await prisma.appDataSource.delete({
+  const dataSrc = await prisma.dataSrc.delete({
     where: {
       id: dataSrcId,
       ownerId: userId,

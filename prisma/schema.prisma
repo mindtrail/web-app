@@ -73,7 +73,7 @@ model User {
   hasOptInEmail Boolean? @default(false)
 
   dataStores    DataStore[]
-  dataSources   AppDataSource[]
+  dataSrcs      DataSrc[]
   subscriptions Subscription[]  @relation("user")
   usage         Usage?
   conversations Conversation[]
@@ -103,7 +103,7 @@ model DataStore {
   name        String
   description String?
   type        DataStoreType
-  dataSources AppDataSource[]
+  dataSrcs    DataSrc[]
   visibility  DataStoreVisibility @default(private)
 
   config Json?
@@ -117,21 +117,21 @@ model DataStore {
   @@map("DataStores")
 }
 
-// Naming the model DataSource conflicts with prisma
+// Naming the model DataSrc conflicts with prisma
 // https://github.com/prisma/prisma/issues/12332
-model AppDataSource {
+model DataSrc {
   id     String           @id @default(cuid())
-  type   DataSourceType
+  type   DataSrcType
   name   String
-  status DataSourceStatus @default(unsynched)
+  status DataSrcStatus @default(unsynched)
 
   config Json?
 
   dataStoreId String?
   dataStore   DataStore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
 
-  ownerId String?
-  owner   User?   @relation(fields: [ownerId], references: [id])
+  ownerId     String?
+  owner       User?   @relation(fields: [ownerId], references: [id])
 
   nbChunks  Int? @default(0)
   textSize  Int? @default(0)
@@ -143,7 +143,7 @@ model AppDataSource {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
 
-  @@map("AppDataSources")
+  @@map("DataSrcs")
 }
 
 model Conversation {
@@ -248,7 +248,7 @@ enum DataStoreVisibility {
   private
 }
 
-enum DataSourceStatus {
+enum DataSrcStatus {
   unsynched
   pending
   running
@@ -257,7 +257,7 @@ enum DataSourceStatus {
   usage_limit_reached
 }
 
-enum DataSourceType {
+enum DataSrcType {
   web_page
   web_site
   text

@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { DataSourceStatus } from '@prisma/client'
+import { DataSrcStatus } from '@prisma/client'
 
 import { formatDate } from '@/lib/utils'
 import { MAX_FILE_SIZE, MAX_NR_OF_FILES } from '@/components/datastore/constants'
@@ -9,7 +9,7 @@ export const getFormInitialValues = (dataStore?: DataStoreExtended): DataStoreFo
     return {
       name: dataStore.name,
       description: dataStore.description || '',
-      files: dataStore.dataSources.map((file) => ({
+      files: dataStore.dataSrcs.map((file) => ({
         file,
         source: 'remote',
         status: file.status,
@@ -58,7 +58,7 @@ export const filterFiles = (files: File[], remainingSlots: number) => {
     if (file.size <= MAX_FILE_SIZE && count < remainingSlots) {
       acceptedFiles.push({
         file,
-        status: DataSourceStatus.unsynched,
+        status: DataSrcStatus.unsynched,
       })
       count++
     } else {
