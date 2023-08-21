@@ -21,21 +21,24 @@ export function FormList(props: FormList) {
   const { acceptedFiles, rejectedFiles, charCount, charCountLoading, handleFileDeleteFromUI } =
     props
 
-  const handleDelete: DeleteHandler = useCallback((event, file) => {
-    console.log(event)
-    event.preventDefault()
+  const handleDelete: DeleteHandler = useCallback(
+    (event, file) => {
+      console.log(event)
+      event.preventDefault()
 
-    const { status } = file
+      const { status } = file
 
-    if (status === DataSourceStatus.synched) {
-      // Popup modal
-      console.log('popup modal')
-    }
+      if (status === DataSourceStatus.synched) {
+        // Popup modal
+        console.log('popup modal')
+      }
 
-    if (status === DataSourceStatus.unsynched) {
-      handleFileDeleteFromUI(file)
-    }
-  }, [])
+      if (status === DataSourceStatus.unsynched) {
+        handleFileDeleteFromUI(file)
+      }
+    },
+    [handleFileDeleteFromUI],
+  )
 
   const acceptedFormList = useMemo(() => {
     return acceptedFiles.map(({ file, charCount, status }) => (
