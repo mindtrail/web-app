@@ -30,10 +30,6 @@ export default async function DataStorePage() {
   const userId = session?.user?.id
   let dataStoreList = await getDataStoreList({ userId, includeDataSrc: true })
 
-  if (!dataStoreList?.length) {
-    redirect('/datastore')
-  }
-
   return (
     <>
       <Header session={session} />
