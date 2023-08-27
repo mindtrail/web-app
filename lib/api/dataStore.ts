@@ -2,31 +2,38 @@ export const DATASTORE_ENDPOINT = '/api/datastore'
 export const UPLOAD_ENDPOINT = '/api/upload'
 export const METADATA_ENDPOINT = '/api/upload/metadata'
 
-type CreateDataStore = {
-  userId: string
-  name: string
-  description: string
-}
-
-export async function createDataStoreApiCall({ userId, name, description }: CreateDataStore) {
+export async function createDataStoreApiCall(data: CreateDataStore) {
   const response = await fetch(DATASTORE_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      userId,
-      name,
-      description,
-    }),
+    body: JSON.stringify(data),
   })
-  const dataStore = await response.json()
 
-  if (!dataStore) {
+  const newDataStore = await response.json()
+  if (!newDataStore) {
     throw new Error('Failed to create DataStore')
   }
 
-  return dataStore
+  return newDataStore
+}
+
+export async function updateDataStoreApiCall(dataStoreId: string, data: Partial<CreateDataStore>) {
+  const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+
+  const updatedDataStore = await response.json()
+  if (!updatedDataStore) {
+    throw new Error('Failed to update DataStore')
+  }
+
+  return updatedDataStore
 }
 
 export async function uploadFileApiCall(file: File, dataStoreId: string) {

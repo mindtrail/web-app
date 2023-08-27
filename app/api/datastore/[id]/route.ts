@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataStore } from '@/lib/db/dataStore'
+import { deleteDataStoreDbOp, updateDataStoreDbOp } from '@/lib/db/dataStore'
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+type EditRouteParams = { params: { id: string } }
+
+export async function DELETE(req: Request, { params }: EditRouteParams) {
   console.time('session')
   const session = (await getServerSession(authOptions)) as ExtendedSession
   console.timeEnd('session')
@@ -18,19 +20,20 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     })
   }
   try {
-    const datastoreList = await deleteDataStore(userId, dataStoreId)
+    const datastoreList = await deleteDataStoreDbOp(userId, dataStoreId)
     return NextResponse.json({ datastoreList })
   } catch (error) {
     return new NextResponse('DataStore not found', { status: 404 })
   }
 }
 
-export async function PUT(req: Request) {
+export async function PATCH(req: Request, { params }: EditRouteParams) {
   console.time('session')
   const session = (await getServerSession(authOptions)) as ExtendedSession
   console.timeEnd('session')
 
   const userId = session?.user?.id
+  const dataStoreId = params.id
 
   if (!userId) {
     return new NextResponse('Unauthorized', {
@@ -38,7 +41,27 @@ export async function PUT(req: Request) {
     })
   }
 
-  const body = await req.json()
+  const body = (await req.json()) as Partial<CreateDataStore>
+  const { userId: clientUserId, ...rest } = body
 
-  return NextResponse.json({})
+  if (clientUserId !== userId) {
+    return new Response('Unauthorized', {
+      status: 401,
+    })
+  }
+
+  try {
+    const dataStore = await updateDataStoreDbOp({
+      dataStoreId,
+      userId,
+      ...rest,
+    })
+
+    return NextResponse.json(dataStore)
+  } catch (error) {
+    console.error(error)
+    return new Response('Error creating datastore', {
+      status: 500,
+    })
+  }
 }

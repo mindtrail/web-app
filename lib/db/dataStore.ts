@@ -8,7 +8,12 @@ type DataStoreList = {
   includeDataSrc?: boolean
 }
 
-export const getDataStoreList = async ({ userId, includeDataSrc = false }: DataStoreList) => {
+type DataStoreById = {
+  userId: string
+  dataStoreId: string
+}
+
+export const getDataStoreListDbOp = async ({ userId, includeDataSrc = false }: DataStoreList) => {
   // Fetch data using Prisma based on the user
   const dataStoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
@@ -18,11 +23,6 @@ export const getDataStoreList = async ({ userId, includeDataSrc = false }: DataS
   })
 
   return dataStoreList
-}
-
-type DataStoreById = {
-  userId: string
-  dataStoreId: string
 }
 
 export const getDataStoreById = async ({ userId, dataStoreId }: DataStoreById) => {
@@ -37,13 +37,7 @@ export const getDataStoreById = async ({ userId, dataStoreId }: DataStoreById) =
   return dataStoreList
 }
 
-type DataStore = {
-  userId: string
-  name: string
-  description: string
-}
-
-export const createDataStore = async ({ userId, name, description }: DataStore) => {
+export const createDataStoreDbOp = async ({ userId, name, description }: CreateDataStore) => {
   const type = DataStoreType.qdrant
 
   // Check if a datastore with the specified name already exists for the user
@@ -76,6 +70,21 @@ export const createDataStore = async ({ userId, name, description }: DataStore) 
   return dataStore
 }
 
+export const updateDataStoreDbOp = async ({ dataStoreId, userId, ...rest }: UpdateDataStore) => {
+  const dataStore = await prisma.dataStore.update({
+    where: {
+      id: dataStoreId,
+      ownerId: userId,
+    },
+    data: {
+      ...rest,
+    },
+  })
+
+  console.log('UPDATE --- ', rest, dataStore)
+  return dataStore
+}
+
 export const deleteAllDataStoresForUser = async (userId: string) => {
   const dataStore = await prisma.dataStore.deleteMany({
     where: {
@@ -86,7 +95,7 @@ export const deleteAllDataStoresForUser = async (userId: string) => {
   return dataStore
 }
 
-export const deleteDataStore = async (userId: string, dataStoreId: string) => {
+export const deleteDataStoreDbOp = async (userId: string, dataStoreId: string) => {
   const dataStore = await prisma.dataStore.delete({
     where: {
       id: dataStoreId,
@@ -97,7 +106,7 @@ export const deleteDataStore = async (userId: string, dataStoreId: string) => {
   return dataStore
 }
 
-export const deleteDataSrc = async (userId: string, dataSrcId: string) => {
+export const deleteDataSrcDbOp = async (userId: string, dataSrcId: string) => {
   const dataSrc = await prisma.dataSrc.delete({
     where: {
       id: dataSrcId,
