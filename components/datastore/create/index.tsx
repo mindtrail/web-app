@@ -1,5 +1,7 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import Typography from '@/components/typography'
 import { DataStoreForm } from '@/components/datastore/create/form'
 import { DataStoreFormValues } from '@/components/datastore/utils'
@@ -16,23 +18,37 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 }
 
 export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
+  const router = useRouter()
+
   const onSubmit = async (data: DataStoreFormValues) => {
-    const { name, description, files } = data
-
     try {
-      const dataStore = await createDataStoreApiCall({ userId, name, description })
-      const dataStoreId = dataStore.id
+      const dataStore = await createDataStore(data)
+      router.push('/datastore')
 
-      const fileUploadPromises = files.map(async ({ file }) => {
-        return await uploadFileApiCall(file, dataStoreId)
-      })
-
-      const res = await Promise.all(fileUploadPromises)
-      console.log(res)
+      return dataStore
     } catch (err) {
       console.log(err)
     }
   }
+
+  const createDataStore = async (data: DataStoreFormValues) => {
+    const { name, description, files } = data
+
+    const dataStore = await createDataStoreApiCall({ userId, name, description })
+    const uploadedFiles = await uploadFiles(files, dataStore.id)
+
+    return { dataStore, files: uploadedFiles }
+  }
+
+  const uploadFiles = async (files: AcceptedFile[], dataStoreId: string) => {
+    const fileUploadPromises = files.map(async ({ file }) => {
+      return await uploadFileApiCall(file as File, dataStoreId)
+    })
+    const res = await Promise.all(fileUploadPromises)
+    return res
+  }
+
+  const editDataStore = async (data: DataStoreFormValues) => {}
 
   const getFilesMetadata = async (files: AcceptedFile[]) => {
     const metadataPromises = files.map(async ({ file }) => {
