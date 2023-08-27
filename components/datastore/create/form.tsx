@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
@@ -54,6 +55,8 @@ type FormProps = {
 export type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
 
 export function DataStoreForm(props: FormProps) {
+  const router = useRouter()
+
   const { onSubmit, getFilesMetadata, existingDataStore } = props
 
   const defaultValues: DataStoreFormValues = useMemo(
@@ -72,8 +75,6 @@ export function DataStoreForm(props: FormProps) {
   const [processing, setProcessing] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [fileToDelete, setFileToDelete] = useState<AcceptedFile | null>(null)
-
-  const router = useRouter()
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -118,7 +119,6 @@ export function DataStoreForm(props: FormProps) {
     setDropzoneUsed(true) // User has interacted with the dropzone
     try {
       const metadataForFiles = (await getFilesMetadata(acceptedFiles)) as Metadata[]
-      console.log(metadataForFiles)
       const totalChars = metadataForFiles.reduce((acc, { charCount }) => acc + charCount, 0)
 
       setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
@@ -183,11 +183,25 @@ export function DataStoreForm(props: FormProps) {
   }
 
   const onFormSumbit = async (data: DataStoreFormValues) => {
+    const { name, description, files } = data
+
+    // Edit Flow & No changes made
+    if (
+      existingDataStore &&
+      name === defaultValues.name &&
+      description === defaultValues.description &&
+      files.length === defaultValues.files.length &&
+      files.every(({ status }) => status !== DataSrcStatus.unsynched)
+    ) {
+      console.log('No changes made')
+      router.push('/datastore')
+      return
+    }
+
     console.log('submitting')
     setProcessing(true)
     await onSubmit(data)
     setProcessing(false)
-    router.push('/datastore')
   }
 
   useEffect(() => {
