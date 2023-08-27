@@ -7,9 +7,7 @@ import { deleteDataStoreDbOp, updateDataStoreDbOp } from '@/lib/db/dataStore'
 type EditRouteParams = { params: { id: string } }
 
 export async function DELETE(req: Request, { params }: EditRouteParams) {
-  console.time('session')
   const session = (await getServerSession(authOptions)) as ExtendedSession
-  console.timeEnd('session')
 
   const userId = session?.user?.id
   const dataStoreId = params.id
@@ -28,9 +26,7 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
 }
 
 export async function PATCH(req: Request, { params }: EditRouteParams) {
-  console.time('session')
   const session = (await getServerSession(authOptions)) as ExtendedSession
-  console.timeEnd('session')
 
   const userId = session?.user?.id
   const dataStoreId = params.id

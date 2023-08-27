@@ -24,9 +24,7 @@ const getOpenAIConnection = () => {
 }
 
 export async function POST(req: Request) {
-  console.time('session')
   const session = await getServerSession(authOptions)
-  console.timeEnd('session')
 
   if (!session?.user) {
     return new Response('Unauthorized', {

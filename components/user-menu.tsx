@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import Image from 'next/image'
 import { type Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
@@ -24,6 +25,8 @@ function getUserInitials(name: string) {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+  const inDevelopment = useMemo(() => process.env.NODE_ENV === 'development', [])
+
   return (
     <div className='flex items-center justify-end w-52 absolute'>
       <DropdownMenu>
@@ -38,6 +41,7 @@ export function UserMenu({ user }: UserMenuProps) {
                 alt={user.name ?? 'Avatar'}
                 width={32}
                 height={32}
+                unoptimized={inDevelopment ? true : false}
               />
             ) : (
               <div
