@@ -27,4 +27,14 @@ declare global {
     name: string
     type: string
   }
+
+  type CreateDataStore = {
+    userId: string
+    name: string
+    description: string
+  }
+
+  type UpdateDataStore = Partial<CreateDataStore> & {
+    dataStoreId: string
+  }
 }

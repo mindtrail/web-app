@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { getDataStoreList, createDataStore } from '@/lib/db/dataStore'
+import { getDataStoreListDbOp, createDataStoreDbOp } from '@/lib/db/dataStore'
 
 export async function GET() {
   console.time('session')
@@ -17,7 +17,7 @@ export async function GET() {
     })
   }
 
-  const datastoreList = await getDataStoreList({ userId })
+  const datastoreList = await getDataStoreListDbOp({ userId })
 
   return NextResponse.json(datastoreList)
 }
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     })
   }
 
-  const body = await req.json()
+  const body = (await req.json()) as CreateDataStore
   const { name, description, userId: clientUserId } = body
 
   if (clientUserId !== userId) {
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const dataStore = await createDataStore({
+    const dataStore = await createDataStoreDbOp({
       userId,
       name,
       description,
