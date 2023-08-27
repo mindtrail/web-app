@@ -14,7 +14,6 @@ const nextConfig = {
         hostname: 'avatars.githubusercontent.com',
       },
     ],
-    unoptimized: process.env.NODE_ENV === 'development' ? true : false,
   },
 }
 
