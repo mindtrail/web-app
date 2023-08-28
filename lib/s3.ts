@@ -8,8 +8,8 @@ const s3Client = new S3Client({
   region: 'eu-central-1',
   endpoint: 'https://s3.eu-central-1.amazonaws.com',
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: process.env.AMAZON_AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AMAZON_AWS_SECRET_ACCESS_KEY || '',
   },
 })
 

@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
+import { createAndStoreVectors } from '@/lib/qdrant'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -79,6 +80,9 @@ export async function POST(req: Request) {
       status: 400,
     })
   }
+
+  console.log(docs)
+  createAndStoreVectors({ docs, userId, dataStoreId })
 
   // Upload file to S3
   const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
