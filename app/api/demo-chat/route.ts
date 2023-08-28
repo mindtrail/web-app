@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { AIMessage, HumanMessage } from 'langchain/schema'
+// import { AIMessage, HumanMessage } from 'langchain/schema'
 // import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
-import { getOpenAIConnection } from '@/lib/openAI'
+// import { getOpenAIConnection } from '@/lib/openAI'
 
 export async function POST(req: Request, res: NextResponse) {
   const { messages } = await req.json()
@@ -14,7 +14,7 @@ export async function POST(req: Request, res: NextResponse) {
   }
 
   // const { stream, handlers } = LangChainStream()
-  const chat = getOpenAIConnection()
+  // const chat = getOpenAIConnection()
 
   // chat
     // .call(
