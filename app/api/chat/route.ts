@@ -1,9 +1,9 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai'
-import { AIMessage, HumanMessage } from 'langchain/schema'
+// import { AIMessage, HumanMessage } from 'langchain/schema'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { StreamingTextResponse, LangChainStream, Message } from 'ai'
+// import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
 import { searchSimilarText } from '@/lib/db/dataStore'
 
@@ -60,21 +60,21 @@ export async function POST(req: Request) {
   //   }
   // })
 
-  const { stream, handlers } = LangChainStream()
+  // const { stream, handlers } = LangChainStream()
 
   console.time('ai')
   const chat = getOpenAIConnection()
   console.timeEnd('ai')
 
-  chat
-    .call(
-      (messages as Message[]).map(({ role, content }) =>
-        role == 'user' ? new HumanMessage(content) : new AIMessage(content),
-      ),
-      {},
-      [handlers],
-    )
-    .catch(console.error)
-
-  return new StreamingTextResponse(stream)
+  // chat
+  // .call(
+  // (messages as Message[]).map(({ role, content }) =>
+  // role == 'user' ? new HumanMessage(content) : new AIMessage(content),
+  // ),
+  // {},
+  // [handlers],
+  // )
+  // .catch(console.error)
+  //
+  // return new StreamingTextResponse(stream)
 }
