@@ -1,4 +1,4 @@
-import { ChatOpenAI } from 'langchain/chat_models/openai'
+// import { ChatOpenAI } from 'langchain/chat_models/openai'
 // import { AIMessage, HumanMessage } from 'langchain/schema'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
@@ -7,21 +7,21 @@ import { authOptions } from '@/lib/authOptions'
 
 import { searchSimilarText } from '@/lib/db/dataStore'
 
-let openAIChat: ChatOpenAI
+// let openAIChat: ChatOpenAI
 
-const getOpenAIConnection = () => {
-  if (openAIChat) {
-    return openAIChat
-  }
+// const getOpenAIConnection = () => {
+//   if (openAIChat) {
+//     return openAIChat
+//   }
 
-  openAIChat = new ChatOpenAI({
-    streaming: true,
-    temperature: 0,
-    modelName: 'gpt-3.5-turbo',
-  })
+//   openAIChat = new ChatOpenAI({
+//     streaming: true,
+//     temperature: 0,
+//     modelName: 'gpt-3.5-turbo',
+//   })
 
-  return openAIChat
-}
+//   return openAIChat
+// }
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
   // const { stream, handlers } = LangChainStream()
 
   console.time('ai')
-  const chat = getOpenAIConnection()
+  // const chat = getOpenAIConnection()
   console.timeEnd('ai')
 
   // chat
