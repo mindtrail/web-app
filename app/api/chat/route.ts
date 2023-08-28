@@ -24,17 +24,14 @@ const getOpenAIConnection = () => {
 }
 
 export async function POST(req: Request) {
-  console.time('session')
-  const session = await getServerSession(authOptions)
-  console.timeEnd('session')
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session.user?.id
 
-  if (!session?.user) {
+  if (!userId) {
     return new Response('Unauthorized', {
       status: 401,
     })
   }
-  // @ts-ignore - userId is not in the session type but I added it
-  // const userId = session.user?.id
 
   const { messages } = await req.json()
 
@@ -44,25 +41,27 @@ export async function POST(req: Request) {
     })
   }
 
-  // const lastMessage = messages[messages.length - 1].content
-
-  // console.time('searchDB')
-  // const kbData = await searchSimilarText(lastMessage, userId)
-  // console.timeEnd('searchDB')
-
-  // console.log('kbData', kbData)
-  // const sources = kbData.map((item) => {
-  //   const metadata = item?.metadata
-  //   const file = metadata.fileName
-  //   const page = metadata?.loc?.pageNumber
-
-  //   return {
-  //     file,
-  //     page,
-  //   }
-  // })
-
   const { stream, handlers } = LangChainStream()
+
+  const lastMessage = messages[messages.length - 1].content
+
+  console.time('searchDB')
+  const kbData = await searchSimilarText(lastMessage, userId)
+  console.timeEnd('searchDB')
+
+  console.log('kbData', kbData)
+  
+  const sources = kbData.map((item) => {
+    const metadata = item?.metadata
+    const file = metadata.fileName
+    const page = metadata?.loc?.pageNumber
+
+    return {
+      file,
+      page,
+    }
+  })
+
 
   console.time('ai')
   const chat = getOpenAIConnection()

@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
-import { DataSourceStatus } from '@prisma/client'
+import { DataSrcStatus } from '@prisma/client'
 
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons'

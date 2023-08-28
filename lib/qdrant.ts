@@ -17,14 +17,36 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
 // @TODO: - create the UI and functionality for this
 const DATASTORE_NAME = ''
 
-export const createAndStoreVectors = async (docs: Document[], userId: string) => {
+interface CreateAndStoreVectors {
+  docs: Document[]
+  userId: string
+  dataStoreId: string
+  dataSrcId: string
+}
+
+export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
+  const { docs, userId, dataStoreId, dataSrcId } = props
+
   const qdrantOptions = {
     collectionConfig: COLLECTION_CONFIG,
-    collectionName: `${DATASTORE_NAME}${userId}`,
+    collectionName: `${userId}-${dataStoreId}`,
   }
 
+  const updatedDocs = docs.map((doc) => {
+    const { pageContent, metadata } = doc
+    return {
+      pageContent,
+      metadata: {
+        ...metadata,
+        dataStoreId,
+        dataSrcId,
+        userId,
+      },
+    }
+  })
+
   const vectorStore = await QdrantVectorStore.fromDocuments(
-    docs,
+    updatedDocs,
     new OpenAIEmbeddings(),
     qdrantOptions,
   )

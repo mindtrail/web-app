@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { AIMessage, HumanMessage } from 'langchain/schema'
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
-
 import { getOpenAIConnection } from '@/lib/openAI'
 
 export async function POST(req: Request, res: NextResponse) {
@@ -14,6 +13,16 @@ export async function POST(req: Request, res: NextResponse) {
   }
 
   const { stream, handlers } = LangChainStream()
+
+  const initialEndHandler = handlers.handleLLMEnd
+
+  // Adding my own handler for chat completion
+  handlers.handleLLMEnd = (message, runId) => {
+    console.log('CUSTOM MESSAGE', JSON.stringify(message))
+    return initialEndHandler(message, runId)
+  }
+
+  console.log(handlers.handleLLMEnd)
   const chat = getOpenAIConnection()
 
   chat

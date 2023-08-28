@@ -1,5 +1,8 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { DataSrc, DataSrcStatus } from '@prisma/client'
+
 import Typography from '@/components/typography'
 import { DataStoreForm } from '@/components/datastore/create/form'
 import { DataStoreFormValues } from '@/components/datastore/utils'
@@ -8,6 +11,7 @@ import {
   createDataStoreApiCall,
   uploadFileApiCall,
   getFileMetadataApiCall,
+  updateDataStoreApiCall,
 } from '@/lib/api/dataStore'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
@@ -16,26 +20,78 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
 }
 
 export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
+  const router = useRouter()
+
   const onSubmit = async (data: DataStoreFormValues) => {
-    const { name, description, files } = data
-
     try {
-      const dataStore = await createDataStoreApiCall({ userId, name, description })
-      const dataStoreId = dataStore.id
+      // Create datastore
+      if (!dataStore) {
+        await createDataStore(data)
+        // We force a reload of the page as the datastore list is not updated
+        window.location.href = '/datastore'
 
-      const fileUploadPromises = files.map(async ({ file }) => {
-        return await uploadFileApiCall(file, dataStoreId)
-      })
+        return
+      }
+      // Edit data store
+      await updateDataStore(data)
+      window.location.href = '/datastore'
 
-      const res = await Promise.all(fileUploadPromises)
-      console.log(res)
+      return
     } catch (err) {
       console.log(err)
     }
   }
 
+  const createDataStore = async (data: DataStoreFormValues) => {
+    const { name, description, files } = data
+    const dsPayload = { userId, name, description }
+
+    const newDataStore = await createDataStoreApiCall(dsPayload)
+    await uploadFiles(files, newDataStore.id)
+  }
+
+  const updateDataStore = async (data: DataStoreFormValues) => {
+    if (!dataStore) {
+      return
+    }
+
+    const { name, description, files } = data
+    const { id: dataStoreId, name: existingName, description: existingDescription } = dataStore
+
+    const unsynchedFiles = files.filter(({ status }) => status === DataSrcStatus.unsynched)
+
+    // We only add the name and description if they are different from the existing ones
+    const dsPayload = { userId } as Partial<CreateDataStore>
+    if (name !== existingName) {
+      dsPayload.name = name
+    }
+    if (description !== existingDescription) {
+      dsPayload.description = description
+    }
+
+    // We only update the datastore if there are changes
+    if (dsPayload.name || dsPayload.description) {
+      await updateDataStoreApiCall(dataStoreId, dsPayload)
+    }
+    // We only upload files if there are changes
+    if (unsynchedFiles.length) {
+      await uploadFiles(unsynchedFiles, dataStoreId)
+    }
+  }
+
+  const uploadFiles = async (files: AcceptedFile[], dataStoreId: string) => {
+    const fileUploadPromises = files.map(async ({ file }) => {
+      return await uploadFileApiCall(file as File, dataStoreId)
+    })
+    const res = await Promise.all(fileUploadPromises)
+    return res
+  }
+
   const getFilesMetadata = async (files: AcceptedFile[]) => {
-    const metadataPromises = files.map(async ({ file }) => await getFileMetadataApiCall(file))
+    const metadataPromises = files.map(async ({ file }) => {
+      const droppedFile = file as File
+      return await getFileMetadataApiCall(droppedFile)
+    })
     return await Promise.all(metadataPromises)
   }
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import Image from 'next/image'
 import { type Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
@@ -24,6 +25,8 @@ function getUserInitials(name: string) {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+  const inDevelopment = useMemo(() => process.env.NODE_ENV === 'development', [])
+
   return (
     <div className='flex items-center justify-end w-52 absolute'>
       <DropdownMenu>
@@ -31,12 +34,14 @@ export function UserMenu({ user }: UserMenuProps) {
           <Button variant='ghost' className='pr-2 pl-0'>
             {user?.image ? (
               <Image
+                loader={({ src }) => src}
                 className='w-6 h-6 transition-opacity duration-300 rounded-full
                 select-none ring-1 ring-zinc-100/10 hover:opacity-80'
                 src={user?.image ? `${user.image}` : ''}
                 alt={user.name ?? 'Avatar'}
                 width={32}
                 height={32}
+                unoptimized={inDevelopment ? true : false}
               />
             ) : (
               <div

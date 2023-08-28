@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { DataSourceType, DataSourceStatus } from '@prisma/client'
+import { DataSrcType, DataSrcStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToS3 } from '@/lib/s3'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
+import { createAndStoreVectors } from '@/lib/qdrant'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -66,29 +67,32 @@ export async function POST(req: Request) {
     name: fileName,
     dataStoreId,
     ownerId: userId,
-    type: DataSourceType.file,
+    type: DataSrcType.file,
     nbChunks,
     textSize,
   }
 
   const dataSrc = await createDataSrc(dataSrcPayload)
-  const dataSourceId = dataSrc?.id
+  const dataSrcId = dataSrc?.id
 
-  if (!dataSourceId) {
+  if (!dataSrcId) {
     return new Response(`Failed to save File. Try again`, {
       status: 400,
     })
   }
 
+  console.log(docs)
+  createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
+
   // Upload file to S3
-  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
+  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSrcId })
   // @TODO: return file upload success, and run the rest of the process in the background
   s3Upload
     .then((res) => {
-      updateDataSrc({ id: dataSourceId, status: DataSourceStatus.synched })
+      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
     })
     .catch((err) => {
-      updateDataSrc({ id: dataSourceId, status: DataSourceStatus.error })
+      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.error })
       console.error(err)
     })
 
