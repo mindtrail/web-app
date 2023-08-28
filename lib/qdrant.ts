@@ -17,10 +17,18 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
 // @TODO: - create the UI and functionality for this
 const DATASTORE_NAME = ''
 
-export const createAndStoreVectors = async (docs: Document[], userId: string) => {
+interface CreateAndStoreVectors {
+  docs: Document[]
+  userId: string
+  dataStoreId: string
+}
+
+export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
+  const { docs, userId, dataStoreId } = props
+
   const qdrantOptions = {
     collectionConfig: COLLECTION_CONFIG,
-    collectionName: `${DATASTORE_NAME}${userId}`,
+    collectionName: `${userId}-${dataStoreId}`,
   }
 
   const vectorStore = await QdrantVectorStore.fromDocuments(
