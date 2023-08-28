@@ -28,7 +28,11 @@ export default async function DataStorePage() {
   }
 
   const userId = session?.user?.id
-  let dataStoreList = await getDataStoreListDbOp({ userId, includeDataSrc: true })
+  const dataStoreList = await getDataStoreListDbOp({ userId, includeDataSrc: true })
+
+  if (!dataStoreList?.length) {
+    redirect(`/datastore/create`)
+  }
 
   return (
     <>

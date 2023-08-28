@@ -17,14 +17,14 @@ interface UploadToS3Props {
   fileBlob: Blob
   userId: string
   dataStoreId: string
-  dataSourceId: string
+  dataSrcId: string
 }
 
 export async function uploadToS3(props: UploadToS3Props) {
-  const { fileBlob, userId, dataStoreId, dataSourceId } = props
+  const { fileBlob, userId, dataStoreId, dataSrcId } = props
 
   const { name } = fileBlob
-  const key = `dataset1/${userId}/${dataStoreId}/${dataSourceId}-${name}`
+  const key = `dataset1/${userId}/${dataStoreId}/${dataSrcId}-${name}`
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer())
 
@@ -33,7 +33,7 @@ export async function uploadToS3(props: UploadToS3Props) {
     Key: key,
     Body: buffer,
     Metadata: {
-      dataSourceId,
+      dataSrcId,
       dataStoreId,
       userId,
     },

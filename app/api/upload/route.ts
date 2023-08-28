@@ -73,26 +73,26 @@ export async function POST(req: Request) {
   }
 
   const dataSrc = await createDataSrc(dataSrcPayload)
-  const dataSourceId = dataSrc?.id
+  const dataSrcId = dataSrc?.id
 
-  if (!dataSourceId) {
+  if (!dataSrcId) {
     return new Response(`Failed to save File. Try again`, {
       status: 400,
     })
   }
 
   console.log(docs)
-  createAndStoreVectors({ docs, userId, dataStoreId })
+  createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
 
   // Upload file to S3
-  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSourceId })
+  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSrcId })
   // @TODO: return file upload success, and run the rest of the process in the background
   s3Upload
     .then((res) => {
-      updateDataSrc({ id: dataSourceId, status: DataSrcStatus.synched })
+      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
     })
     .catch((err) => {
-      updateDataSrc({ id: dataSourceId, status: DataSrcStatus.error })
+      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.error })
       console.error(err)
     })
 
