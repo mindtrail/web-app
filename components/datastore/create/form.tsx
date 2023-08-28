@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
-import { DataSourceStatus } from '@prisma/client'
+import { DataSrc, DataSrcStatus } from '@prisma/client'
 
-import { FormList } from '@/components/datastore/create/formList'
+import { FormList } from '@/components/datastore/create/formFileList'
+import { deleteFileApiCall } from '@/lib/api/dataStore'
+import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
-import { deleteFileApiCall } from '@/lib/api/dataStore'
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -61,6 +61,8 @@ export function DataStoreForm(props: FormProps) {
     [existingDataStore],
   )
 
+  const { toast } = useToast()
+
   const [files, setFiles] = useState<AcceptedFile[]>(defaultValues?.files || [])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
 
@@ -70,8 +72,6 @@ export function DataStoreForm(props: FormProps) {
   const [processing, setProcessing] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [fileToDelete, setFileToDelete] = useState<AcceptedFile | null>(null)
-
-  const router = useRouter()
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -116,7 +116,6 @@ export function DataStoreForm(props: FormProps) {
     setDropzoneUsed(true) // User has interacted with the dropzone
     try {
       const metadataForFiles = (await getFilesMetadata(acceptedFiles)) as Metadata[]
-      console.log(metadataForFiles)
       const totalChars = metadataForFiles.reduce((acc, { charCount }) => acc + charCount, 0)
 
       setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
@@ -132,16 +131,21 @@ export function DataStoreForm(props: FormProps) {
       return
     }
 
-    const { file } = fileToDelete
-
-    console.log(file)
     try {
-      // @ts-ignore
-      deleteFileApiCall(file.id).then((res) => {
+      const { id, name } = fileToDelete.file as DataSrc
+      deleteFileApiCall(id).then((res) => {
+        toast({
+          title: 'File deleted',
+          description: `${name} has been deleted`,
+        })
         console.log(res)
-        // toast...
       })
     } catch (err) {
+      toast({
+        title: 'Error',
+        variant: 'destructive',
+        description: `Something went wrong while deleting ${name}`,
+      })
       console.log(err)
     }
 
@@ -155,7 +159,7 @@ export function DataStoreForm(props: FormProps) {
       return
     }
 
-    if (file.status === DataSourceStatus.synched) {
+    if (file.status === DataSrcStatus.synched) {
       setFileToDelete(file)
       setDeleteDialogOpen(true)
       return
@@ -176,11 +180,9 @@ export function DataStoreForm(props: FormProps) {
   }
 
   const onFormSumbit = async (data: DataStoreFormValues) => {
-    console.log('submitting')
     setProcessing(true)
     await onSubmit(data)
     setProcessing(false)
-    router.push('/datastore')
   }
 
   useEffect(() => {
@@ -273,7 +275,7 @@ export function DataStoreForm(props: FormProps) {
 
           <Button type='submit' size='lg' disabled={processing}>
             {processing && <IconSpinner className='mr-2' />}
-            {existingDataStore ? 'Edit' : 'Create'}
+            {existingDataStore ? 'Save Changes' : 'Create'}
           </Button>
         </form>
       </Form>
@@ -284,7 +286,7 @@ export function DataStoreForm(props: FormProps) {
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
               This will delete the file and the associated data. The action cannot be undone and
-              will permanently delete {'file--name'}.
+              will permanently delete <b>{fileToDelete?.file?.name}</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

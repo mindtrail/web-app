@@ -2,10 +2,10 @@
 CREATE TYPE "DataStoreVisibility" AS ENUM ('public', 'private');
 
 -- CreateEnum
-CREATE TYPE "DataSourceStatus" AS ENUM ('unsynched', 'pending', 'running', 'synched', 'error', 'usage_limit_reached');
+CREATE TYPE "DataSrcStatus" AS ENUM ('unsynched', 'pending', 'running', 'synched', 'error', 'usage_limit_reached');
 
 -- CreateEnum
-CREATE TYPE "DataSourceType" AS ENUM ('web_page', 'web_site', 'text', 'file', 'google_drive_file', 'google_drive_folder', 'notion');
+CREATE TYPE "DataSrcType" AS ENUM ('web_page', 'web_site', 'text', 'file', 'google_drive_file', 'google_drive_folder', 'notion');
 
 -- CreateEnum
 CREATE TYPE "DataStoreType" AS ENUM ('qdrant');
@@ -117,11 +117,11 @@ CREATE TABLE "DataStores" (
 );
 
 -- CreateTable
-CREATE TABLE "AppDataSources" (
+CREATE TABLE "DataSrcs" (
     "id" TEXT NOT NULL,
-    "type" "DataSourceType" NOT NULL,
+    "type" "DataSrcType" NOT NULL,
     "name" TEXT NOT NULL,
-    "status" "DataSourceStatus" NOT NULL DEFAULT 'unsynched',
+    "status" "DataSrcStatus" NOT NULL DEFAULT 'unsynched',
     "config" JSONB,
     "dataStoreId" TEXT,
     "ownerId" TEXT,
@@ -133,7 +133,7 @@ CREATE TABLE "AppDataSources" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "AppDataSources_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DataSrcs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -255,10 +255,10 @@ ALTER TABLE "Usage" ADD CONSTRAINT "Usage_userId_fkey" FOREIGN KEY ("userId") RE
 ALTER TABLE "DataStores" ADD CONSTRAINT "DataStores_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AppDataSources" ADD CONSTRAINT "AppDataSources_dataStoreId_fkey" FOREIGN KEY ("dataStoreId") REFERENCES "DataStores"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "DataSrcs" ADD CONSTRAINT "DataSrcs_dataStoreId_fkey" FOREIGN KEY ("dataStoreId") REFERENCES "DataStores"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AppDataSources" ADD CONSTRAINT "AppDataSources_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "DataSrcs" ADD CONSTRAINT "DataSrcs_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Conversations" ADD CONSTRAINT "Conversations_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

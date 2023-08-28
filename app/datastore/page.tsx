@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataStoreList } from '@/lib/db/dataStore'
+import { getDataStoreListDbOp } from '@/lib/db/dataStore'
 
 import { Header } from '@/components/header'
 import { DataStoreList } from '@/components/datastore'
@@ -28,10 +28,10 @@ export default async function DataStorePage() {
   }
 
   const userId = session?.user?.id
-  let dataStoreList = await getDataStoreList({ userId, includeDataSrc: true })
+  const dataStoreList = await getDataStoreListDbOp({ userId, includeDataSrc: true })
 
   if (!dataStoreList?.length) {
-    redirect('/datastore')
+    redirect(`/datastore/create`)
   }
 
   return (

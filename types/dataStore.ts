@@ -1,14 +1,14 @@
-import { DataStore, AppDataSource, DataSourceStatus } from '@prisma/client'
+import { DataStore, DataSrc, DataSrcStatus } from '@prisma/client'
 
 declare global {
   type DataStoreExtended = DataStore & {
-    dataSources: AppDataSource[]
+    dataSrcs: DataSrc[]
   }
 
   type AcceptedFile = {
-    file: File
+    file: File | DataSrc
     source?: 'local' | 'remote'
-    status?: DataSourceStatus
+    status?: DataSrcStatus
     charCount?: number
   }
 
@@ -26,5 +26,15 @@ declare global {
     charCount: number
     name: string
     type: string
+  }
+
+  type CreateDataStore = {
+    userId: string
+    name: string
+    description: string
+  }
+
+  type UpdateDataStore = Partial<CreateDataStore> & {
+    dataStoreId: string
   }
 }
