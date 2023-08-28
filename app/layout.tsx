@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 
 import { Metadata } from 'next'
 import { Toaster } from '@/components/ui/toaster'
-import { Analytics } from '@vercel/analytics/react'
+// import { Analytics } from '@vercel/analytics/react'
 
 import { Providers } from '@/app/context/providers'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
@@ -34,7 +34,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <TailwindIndicator />
           <Toaster />
         </Providers>
-        <Analytics />
+        {/* <Analytics /> */}
       </body>
     </html>
   )
