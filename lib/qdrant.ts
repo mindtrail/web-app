@@ -21,18 +21,32 @@ interface CreateAndStoreVectors {
   docs: Document[]
   userId: string
   dataStoreId: string
+  dataSrcId: string
 }
 
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
-  const { docs, userId, dataStoreId } = props
+  const { docs, userId, dataStoreId, dataSrcId } = props
 
   const qdrantOptions = {
     collectionConfig: COLLECTION_CONFIG,
     collectionName: `${userId}-${dataStoreId}`,
   }
 
+  const updatedDocs = docs.map((doc) => {
+    const { pageContent, metadata } = doc
+    return {
+      pageContent,
+      metadata: {
+        ...metadata,
+        dataStoreId,
+        dataSrcId,
+        userId,
+      },
+    }
+  })
+
   const vectorStore = await QdrantVectorStore.fromDocuments(
-    docs,
+    updatedDocs,
     new OpenAIEmbeddings(),
     qdrantOptions,
   )

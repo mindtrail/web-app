@@ -1,38 +1,37 @@
-// import { ChatOpenAI } from 'langchain/chat_models/openai'
-// import { AIMessage, HumanMessage } from 'langchain/schema'
+import { ChatOpenAI } from 'langchain/chat_models/openai'
+import { AIMessage, HumanMessage } from 'langchain/schema'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-// import { StreamingTextResponse, LangChainStream, Message } from 'ai'
+import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
 import { searchSimilarText } from '@/lib/db/dataStore'
 
-// let openAIChat: ChatOpenAI
+let openAIChat: ChatOpenAI
 
-// const getOpenAIConnection = () => {
-//   if (openAIChat) {
-//     return openAIChat
-//   }
+const getOpenAIConnection = () => {
+  if (openAIChat) {
+    return openAIChat
+  }
 
-//   openAIChat = new ChatOpenAI({
-//     streaming: true,
-//     temperature: 0,
-//     modelName: 'gpt-3.5-turbo',
-//   })
+  openAIChat = new ChatOpenAI({
+    streaming: true,
+    temperature: 0,
+    modelName: 'gpt-3.5-turbo',
+  })
 
-//   return openAIChat
-// }
+  return openAIChat
+}
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions)
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session.user?.id
 
-  if (!session?.user) {
+  if (!userId) {
     return new Response('Unauthorized', {
       status: 401,
     })
   }
-  // @ts-ignore - userId is not in the session type but I added it
-  // const userId = session.user?.id
 
   const { messages } = await req.json()
 
@@ -42,39 +41,41 @@ export async function POST(req: Request) {
     })
   }
 
-  // const lastMessage = messages[messages.length - 1].content
+  const { stream, handlers } = LangChainStream()
 
-  // console.time('searchDB')
-  // const kbData = await searchSimilarText(lastMessage, userId)
-  // console.timeEnd('searchDB')
+  const lastMessage = messages[messages.length - 1].content
 
-  // console.log('kbData', kbData)
-  // const sources = kbData.map((item) => {
-  //   const metadata = item?.metadata
-  //   const file = metadata.fileName
-  //   const page = metadata?.loc?.pageNumber
+  console.time('searchDB')
+  const kbData = await searchSimilarText(lastMessage, userId)
+  console.timeEnd('searchDB')
 
-  //   return {
-  //     file,
-  //     page,
-  //   }
-  // })
+  console.log('kbData', kbData)
+  
+  const sources = kbData.map((item) => {
+    const metadata = item?.metadata
+    const file = metadata.fileName
+    const page = metadata?.loc?.pageNumber
 
-  // const { stream, handlers } = LangChainStream()
+    return {
+      file,
+      page,
+    }
+  })
+
 
   console.time('ai')
-  // const chat = getOpenAIConnection()
+  const chat = getOpenAIConnection()
   console.timeEnd('ai')
 
-  // chat
-  // .call(
-  // (messages as Message[]).map(({ role, content }) =>
-  // role == 'user' ? new HumanMessage(content) : new AIMessage(content),
-  // ),
-  // {},
-  // [handlers],
-  // )
-  // .catch(console.error)
-  //
-  // return new StreamingTextResponse(stream)
+  chat
+    .call(
+      (messages as Message[]).map(({ role, content }) =>
+        role == 'user' ? new HumanMessage(content) : new AIMessage(content),
+      ),
+      {},
+      [handlers],
+    )
+    .catch(console.error)
+
+  return new StreamingTextResponse(stream)
 }
