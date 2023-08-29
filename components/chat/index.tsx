@@ -18,6 +18,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
+import Typography from '@/components/typography'
+
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 
@@ -26,9 +28,11 @@ const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
   id?: string
+  name?: string
+  description?: string
 }
 
-export function Chat({ id, initialMessages, className }: ChatProps) {
+export function Chat({ id, initialMessages, className, name, description }: ChatProps) {
   const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
@@ -37,8 +41,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     initialMessages,
     id,
     body: {
-      id,
-      previewToken,
+      chatId: id,
     },
   })
 
@@ -50,9 +53,9 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
           className,
         )}
       >
-        <div className='flex flex-col items-center gap-2'>
-          <h1 className='mb-2 text-lg font-semibold text-center'>Create Knowledge Base</h1>
-          <p>Step 1</p>
+        <div className='flex flex-col items-center'>
+          <Typography variant='h3'>{name} - Chat</Typography>
+          <Typography variant='p'>{description}</Typography>
         </div>
 
         {messages?.length ? (

@@ -70,6 +70,10 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
     router.push(`/datastore/${id}`)
   }
 
+  const openChat = (id: string) => {
+    router.push(`/chat/${id}`)
+  }
+
   return (
     <div className='flex bg- flex-col self-center flex-1 w-full max-w-6xl py-4 px-6 md:py-12 md:px-8'>
       <div className='flex justify-between py-4 border-b'>
@@ -87,6 +91,7 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
             dataStore={dataStore}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
+            handleClick={openChat}
           />
         ))}
       </div>
