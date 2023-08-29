@@ -3,12 +3,11 @@ import { notFound, redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
+import { getDataStoreById } from '@/lib/db/dataStore'
+import { Header } from '@/components/header'
 import { authOptions } from '@/lib/authOptions'
-import { getChat } from '@/app/actions'
 import { Chat } from '@/components/chat'
-
-// export const runtime = 'edge'
-// export const preferredRegion = 'home'
+// import { getChat } from '@/app/actions'
 
 export interface ChatPageProps {
   params: {
@@ -28,31 +27,34 @@ export async function generateMetadata({ params }: ChatPageProps): Promise<Metad
     return {}
   }
 
-  const userId = session.user.id
-
-  const chat = await getChat(params.id, userId)
+  // const userId = session.user.id
+  // const chat = await getChat(params.id, userId)
   return {
-    title: chat?.title.slice(0, 50) ?? 'Chat',
+    title: 'Chat',
   }
 }
 
 export default async function ChatPage({ params }: ChatPageProps) {
   const session = (await getServerSession(authOptions)) as ExtSession
-
-  if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
-  }
-
+  const chatId = params.id
   const userId = session.user.id
-  const chat = await getChat(params.id, userId)
 
-  if (!chat) {
-    notFound()
+  if (!userId) {
+    redirect(`/api/auth/signin?callbackUrl=/chat/${chatId}`)
   }
 
-  if (chat?.userId !== userId) {
-    notFound()
-  }
+  const dataStore = (await getDataStoreById({ userId, dataStoreId: chatId })) as DataStoreExtended
+  const { name, description } = dataStore
 
-  return <Chat id={chat.id} initialMessages={chat.messages} />
+  // const chat = await getChat(chatId, userId)
+  // if (!chat || chat?.userId !== userId) {
+  // notFound()
+  // }
+
+  return (
+    <>
+      <Header session={session} />
+      <Chat id={chatId} name={name} description={description || ''} />
+    </>
+  )
 }

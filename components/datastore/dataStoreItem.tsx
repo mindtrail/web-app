@@ -14,15 +14,16 @@ type itemProps = {
   dataStore: DataStoreExtended
   handleEdit: (id: string) => void
   handleDelete: (id: string, name: string) => void
+  handleClick: (id: string) => void
 }
 
 export function DataStoreListItem(props: itemProps) {
-  const { dataStore, handleEdit, handleDelete } = props
+  const { dataStore, handleEdit, handleDelete, handleClick } = props
   const { id, name, description, dataSrcs } = dataStore
 
   return (
     <div
-      onClick={() => handleEdit(id)}
+      onClick={() => handleClick(id)}
       className='flex w-full group border border-transparent hover:border-border hover:shadow  justify-between rounded-xl text-card-foreground cursor-pointer'
     >
       <div className='flex flex-col p-4'>

@@ -24,6 +24,13 @@ interface CreateAndStoreVectors {
   dataSrcId: string
 }
 
+type QdrantSearchResponse = Schemas['ScoredPoint'] & {
+  payload: {
+    metadata: object
+    content: string
+  }
+}
+
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   const { docs, userId, dataStoreId, dataSrcId } = props
 
@@ -55,14 +62,44 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
 }
 
 export const searchSimilarText = async (message: string, collectionName: string) => {
-  const vectorStore = await QdrantVectorStore.fromExistingCollection(new OpenAIEmbeddings(), {
-    collectionName,
+  // const vectorStore = await QdrantVectorStore.fromExistingCollection(new OpenAIEmbeddings(), {
+  // collectionName,
+  // })
+  //
+  // console.log('message', message)
+  //
+  // const response = await vectorStore.similaritySearch(message, 5)
+
+  const response = await searchDB(message, 5, collectionName)
+
+  // console.log(response)
+  return response
+}
+
+export const searchDB = async (searchQuery: string, limit: number = 5, collectionName: string) => {
+  if (!searchQuery) {
+    return ''
+  }
+
+  const openAIEmb = new OpenAIEmbeddings()
+  const embeddings = await openAIEmb.embedDocuments([searchQuery])
+
+  const qdrantClient = getQdrantConnection()
+  const results = await qdrantClient.search(collectionName, {
+    vector: embeddings[0],
+    limit,
   })
 
-  const response = await vectorStore.similaritySearch(message, 5)
-  console.log(response)
+  const result: Document[] = (results as QdrantSearchResponse[]).map((res) => {
+    console.log(res.score, res)
 
-  return response
+    return new Document({
+      metadata: res.payload.metadata,
+      pageContent: res.payload.content,
+    })
+  })
+
+  return result
 }
 
 let qdrantClient: QdrantClient

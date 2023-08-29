@@ -33,7 +33,10 @@ export async function POST(req: Request) {
     })
   }
 
-  const { messages } = await req.json()
+  const body = await req.json()
+
+  const { messages, chatId } = body
+  console.log('chatID ', chatId)
 
   if (!messages) {
     return new Response('No message provided', {
@@ -44,13 +47,21 @@ export async function POST(req: Request) {
   const { stream, handlers } = LangChainStream()
 
   const lastMessage = messages[messages.length - 1].content
+  const collectionName = `${userId}-${chatId}`
 
   console.time('searchDB')
-  const kbData = await searchSimilarText(lastMessage, userId)
+  const kbData = await searchSimilarText(lastMessage, collectionName)
   console.timeEnd('searchDB')
 
-  console.log('kbData', kbData)
-  
+  console.log('kbData', kbData.length)
+
+  if (!kbData?.length) {
+    // return a plain text response
+    return new Response('Sorry, I could not find the required information in your Knowledge Base', {
+      status: 200,
+    })
+  }
+
   const sources = kbData.map((item) => {
     const metadata = item?.metadata
     const file = metadata.fileName
@@ -61,7 +72,6 @@ export async function POST(req: Request) {
       page,
     }
   })
-
 
   console.time('ai')
   const chat = getOpenAIConnection()
