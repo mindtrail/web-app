@@ -81,7 +81,6 @@ export async function POST(req: Request) {
     })
   }
 
-  console.log(docs)
   createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
 
   // Upload file to S3
