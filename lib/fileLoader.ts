@@ -40,18 +40,44 @@ export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document
       throw new Error('Error loading file')
     }
 
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1500,
-      chunkOverlap: 150,
-      separators: ['\n\n', '\n', '?', '!', '...', '.', ' '],
+    const bulkTextSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 3000, // average page length
+      chunkOverlap: 0,
+      separators: ['\n\n'], // only split by new paragraphs
     })
 
-    const chunkHeaderOptions = {
-      chunkHeader: `File ${fileName} `,
-    }
+    const chunkTextSpliter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1500, // = 1500/5 = 300 tokens
+      chunkOverlap: 100,
+      separators: ['\n\n', '.', '!', '?', '...'], // final split
+    })
+
+    // const chunkHeaderOptions = {
+    // chunkHeader: `File ${fileName} `,
+    // }
 
     console.time('splitDocuments')
-    const chunks = (await textSplitter.splitDocuments(loadedDoc, chunkHeaderOptions)).map(
+    const initialChunks = (await bulkTextSplitter.splitDocuments(loadedDoc)).map(
+      ({ pageContent, metadata }) => {
+        return {
+          metadata,
+          pageContent: pageContent
+            .replace(/(?<!\n)\n(?!\n)/g, ' ') // Replace single newlines with spaces
+            .replace(/\s?-\s?/g, ' - ') // Fix spacing around dashes
+            .replace(/ \./g, '.') // Fix spacing around periods
+            .replace(/[‘’]/g, "'") // Normalize curly quotes to straight quotes
+            .replace(/[“”]/g, '"') // Normalize curly quotes to straight quotes
+            .replace(/ ' /g, "'") // Remove extra spaces around single straight quotes
+            .replace(/[ \t]{2,}/g, ' ') // Replace multiple spaces or tabs with a single space, without affecting newlines
+            .trim(), // Remove leading and trailing whitespace,
+        }
+      },
+    )
+
+    console.timeEnd('splitDocuments')
+    console.time('chunkTextSpliter')
+
+    const chunks = (await chunkTextSpliter.splitDocuments(initialChunks)).map(
       ({ pageContent, metadata }) => {
         return {
           metadata: {
@@ -59,13 +85,12 @@ export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document
             fileName,
           },
           pageContent: pageContent
-            .replace(/(?<!\n)\n(?!\n)/g, ' ')
-            .replace(/ +/g, ' ')
+            .replace(/\s{2,}/g, ' ') // Replace multiple whitespace characters with a single space
             .trim(),
         }
       },
     )
-    console.timeEnd('splitDocuments')
+    console.timeEnd('chunkTextSpliter')
 
     return chunks
   } catch (error) {
