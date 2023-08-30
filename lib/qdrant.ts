@@ -1,8 +1,10 @@
 import { QdrantClient, Schemas } from '@qdrant/js-client-rest'
 import { Document } from 'langchain/document'
 import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
+
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 
+const SIMILARITY_THRESHOLD = 0.78
 const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
   optimizers_config: {
     memmap_threshold: 10000,
@@ -11,7 +13,17 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
     size: 1536,
     distance: 'Cosine',
   },
-  on_disk_payload: true,
+  // on_disk_payload: true, // @TODO" test for improved performance without this
+}
+
+const QDRANT_CLIENT_PROPS: QdrantLibArgs = {
+  url: process.env.QDRANT_URL,
+  apiKey: process.env.QDRANT_API_KEY,
+}
+
+const QDRANT_ARGS: QdrantLibArgs = {
+  client: new QdrantClient(QDRANT_CLIENT_PROPS),
+  collectionConfig: COLLECTION_CONFIG,
 }
 
 // @TODO: - create the UI and functionality for this
@@ -34,12 +46,9 @@ type QdrantSearchResponse = Schemas['ScoredPoint'] & {
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   const { docs, userId, dataStoreId, dataSrcId } = props
 
-  const qdrantOptions = {
-    collectionConfig: COLLECTION_CONFIG,
-    collectionName: `${userId}-${dataStoreId}`,
-  }
+  const collectionName = `${userId}-${dataStoreId}`
 
-  const updatedDocs = docs.map((doc) => {
+  const payload = docs.map((doc) => {
     const { pageContent, metadata } = doc
     return {
       pageContent,
@@ -52,87 +61,26 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
     }
   })
 
-  const vectorStore = await QdrantVectorStore.fromDocuments(
-    updatedDocs,
-    new OpenAIEmbeddings(),
-    qdrantOptions,
-  )
-
-  return vectorStore
-}
-
-export const searchSimilarText = async (message: string, collectionName: string) => {
-  // const vectorStore = await QdrantVectorStore.fromExistingCollection(new OpenAIEmbeddings(), {
-  // collectionName,
-  // })
-  //
-  // console.log('message', message)
-  //
-  // const response = await vectorStore.similaritySearch(message, 5)
-
-  const response = await searchDB(message, 5, collectionName)
-
-  // console.log(response)
-  return response
-}
-
-export const searchDB = async (searchQuery: string, limit: number = 5, collectionName: string) => {
-  if (!searchQuery) {
-    return ''
-  }
-
-  const openAIEmb = new OpenAIEmbeddings()
-  const embeddings = await openAIEmb.embedDocuments([searchQuery])
-
-  const qdrantClient = getQdrantConnection()
-  const results = await qdrantClient.search(collectionName, {
-    vector: embeddings[0],
-    limit,
+  const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
+    ...QDRANT_ARGS,
+    collectionName,
   })
-
-  const result: Document[] = (results as QdrantSearchResponse[]).map((res) => {
-    console.log(res.score, res)
-
-    return new Document({
-      metadata: res.payload.metadata,
-      pageContent: res.payload.content,
-    })
-  })
+  const result = await vectorStore.addDocuments(payload)
 
   return result
 }
 
-let qdrantClient: QdrantClient
-// Create a singleton instance of the QdrantClient
-
-const getQdrantConnection = () => {
-  if (qdrantClient) {
-    console.log('Using existing connection - 111 --- 111 --')
-    return qdrantClient
-  }
-
-  qdrantClient = new QdrantClient({
-    url: process.env.QDRANT_URL,
-    apiKey: process.env.QDRANT_API_KEY,
-  })
-  return qdrantClient
-}
-
-export const updatePayload = async (
-  collectionName: string = 'first-collection-6kjTOdAdPf-4noUduqb8r',
-) => {
-  const qdrantClient = getQdrantConnection()
-
-  // First gett all points that have "originalfile" set in their payload metadata
-  const points = await qdrantClient.scroll(collectionName, {
-    filter: {
-      must_not: [{ key: 'metadata.originalname', match: { value: 'ala-bala-portocala' } }],
-    },
+export const searchSimilarText = async (
+  message: string,
+  collectionName: string,
+): Promise<Document[]> => {
+  const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
+    ...QDRANT_ARGS,
+    collectionName,
   })
 
-  console.log('Points:', points)
-
-  const currentCollection = await qdrantClient.getCollection(collectionName)
+  const result = await vectorStore.similaritySearchWithScore(message, 5)
+  return result.filter(([_doc, score]) => score > SIMILARITY_THRESHOLD).map(([doc]) => doc)
 }
 
 export const getCollections = async () => {
