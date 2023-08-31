@@ -31,9 +31,10 @@ export interface ChatProps extends React.ComponentProps<'div'> {
   name?: string
   description?: string
   flowiseURL?: string
+  userId?: string
 }
 
-export function Chat({ id, initialMessages, className, name, flowiseURL }: ChatProps) {
+export function Chat({ id, initialMessages, className, name, flowiseURL, userId }: ChatProps) {
   const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
@@ -60,6 +61,14 @@ export function Chat({ id, initialMessages, className, name, flowiseURL }: ChatP
       >
         <div className='flex flex-col items-center w-full gap-2'>
           <Typography variant='h3'>{name} - Chat</Typography>
+          <div className='flex gap-2 w-full items-center justify-center'>
+            <Typography variant='p' className='font-semibold'>
+              Qdrant Collection:
+            </Typography>
+            <Typography variant='p'>
+              {userId}-{id}
+            </Typography>
+          </div>
           <div className='flex gap-2 w-full md:max-w-2xl '>
             <Typography variant='p'>Flowise URL:</Typography>
             <input
