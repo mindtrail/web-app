@@ -39,6 +39,8 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const chatId = params.id
   const userId = session.user.id
 
+  const flowiseURL = process.env.FLOWISE_URL
+
   if (!userId) {
     redirect(`/api/auth/signin?callbackUrl=/chat/${chatId}`)
   }
@@ -54,7 +56,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
   return (
     <>
       <Header session={session} />
-      <Chat id={chatId} name={name} description={description || ''} />
+      <Chat id={chatId} name={name} description={description || ''} flowiseURL={flowiseURL} />
     </>
   )
 }

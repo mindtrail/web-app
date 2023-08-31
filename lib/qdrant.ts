@@ -17,7 +17,6 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
   // on_disk_payload: true, // @TODO" test for improved performance without this
 }
 
-
 const QDRANT_CLIENT_PROPS: QdrantLibArgs = {
   url: process.env.QDRANT_URL,
   apiKey: process.env.QDRANT_API_KEY,
@@ -27,9 +26,6 @@ const QDRANT_ARGS: QdrantLibArgs = {
   client: new QdrantClient(QDRANT_CLIENT_PROPS),
   collectionConfig: COLLECTION_CONFIG,
 }
-
-// @TODO: - create the UI and functionality for this
-const DATASTORE_NAME = ''
 
 interface CreateAndStoreVectors {
   docs: Document[]
@@ -43,6 +39,13 @@ type QdrantSearchResponse = Schemas['ScoredPoint'] & {
     metadata: object
     content: string
   }
+}
+
+export const getVectorStore = (collectionName: string) => {
+  const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
+    ...QDRANT_ARGS,
+    collectionName,
+  })
 }
 
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
@@ -62,6 +65,13 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
       },
     }
   })
+
+  const store = await QdrantVectorStore.fromDocuments(payload, new OpenAIEmbeddings(), {
+    ...QDRANT_ARGS,
+    collectionName,
+  })
+
+  store.asRetriever()
 
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     ...QDRANT_ARGS,

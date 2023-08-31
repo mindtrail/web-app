@@ -30,18 +30,23 @@ export interface ChatProps extends React.ComponentProps<'div'> {
   id?: string
   name?: string
   description?: string
+  flowiseURL?: string
 }
 
-export function Chat({ id, initialMessages, className, name, description }: ChatProps) {
+export function Chat({ id, initialMessages, className, name, flowiseURL }: ChatProps) {
   const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
+  const [flowiseURLState, setFlowiseURLState] = useState(flowiseURL)
 
+  console.log(flowiseURL)
   const { messages, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
     initialMessages,
     id,
+    sendExtraMessageFields: true,
     body: {
       chatId: id,
+      flowiseURL: flowiseURLState,
     },
   })
 
@@ -49,15 +54,19 @@ export function Chat({ id, initialMessages, className, name, description }: Chat
     <>
       <div
         className={cn(
-          'w-full flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-8',
+          'w-full flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-4',
           className,
         )}
       >
-        <div className='flex flex-col items-center'>
+        <div className='flex flex-col items-center w-full gap-2'>
           <Typography variant='h3'>{name} - Chat</Typography>
-          <div className='flex gap-2 max-w-2xl w-full'>
+          <div className='flex gap-2 w-full md:max-w-2xl '>
             <Typography variant='p'>Flowise URL:</Typography>
-            <input className='flex-1' />
+            <input
+              className='flex-1 bg-white border-[1px]'
+              value={flowiseURLState}
+              onChange={(e) => setFlowiseURLState(e.target.value)}
+            />
           </div>
         </div>
 
