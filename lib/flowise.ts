@@ -10,6 +10,8 @@ export async function callFlowiseChat({ question, config, flowiseURL }: FlowiseC
     overrideConfig: config,
   }
 
+  console.log('-- payload --- ', payload)
+
   const response = await fetch(flowiseURL, {
     headers: {
       Authorization: `Bearer ${process.env.FLOWISE_KEY}`,
