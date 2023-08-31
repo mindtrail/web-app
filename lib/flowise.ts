@@ -1,9 +1,14 @@
-export async function callFlowiseChat(question: string, socketIOClientId?: string) {
+interface FlowiseChat {
+  question: string
+  config?: Object
+  flowiseURL: string
+}
+
+export async function callFlowiseChat({ question, config, flowiseURL }: FlowiseChat) {
   const payload = {
-    question: question,
-    socketIOClientId,
+    question,
+    overrideConfig: config,
   }
-  const flowiseURL = process.env.FLOWISE_URL || ''
 
   const response = await fetch(flowiseURL, {
     headers: {

@@ -1,26 +1,8 @@
-import { ChatOpenAI } from 'langchain/chat_models/openai'
-import { AIMessage, HumanMessage } from 'langchain/schema'
 import { getServerSession } from 'next-auth/next'
-import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
 import { authOptions } from '@/lib/authOptions'
-import { chatWithAI } from '@/lib/langchain'
-
-let openAIChat: ChatOpenAI
-
-const getOpenAIConnection = () => {
-  if (openAIChat) {
-    return openAIChat
-  }
-
-  openAIChat = new ChatOpenAI({
-    streaming: true,
-    temperature: 0,
-    modelName: 'gpt-3.5-turbo',
-  })
-
-  return openAIChat
-}
+import { callLangchainChat } from '@/lib/langchain'
+import { callFlowiseChat } from '@/lib/flowise'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -34,8 +16,27 @@ export async function POST(req: Request) {
 
   const body = await req.json()
 
-  const { messages, chatId } = body
+  const { messages, chatId, flowiseURL } = body
   console.log('chatID ', chatId)
+
+  if (flowiseURL) {
+    console.log('000', messages)
+
+    const payload = {
+      question: messages[messages.length - 1].content,
+      overrideConfig: {
+        qdrantCollection: `${userId}-${chatId}`
+      },
+      flowiseURL
+    }
+
+    const result = await callFlowiseChat(payload)
+
+    console.log('--- flowise --- ', result)
+    return new Response(result.text, {
+      status: 200,
+    })
+  }
 
   if (!messages) {
     return new Response('No message provided', {
@@ -43,5 +44,13 @@ export async function POST(req: Request) {
     })
   }
 
-  return chatWithAI({ messages, chatId, userId })
+  try {
+    return callLangchainChat({ messages, chatId, userId })
+  } catch (error) {
+    console.error('An error occurred:', error)
+
+    return new Response('Server Error', {
+      status: 500,
+    })
+  }
 }
