@@ -49,13 +49,16 @@ export function Chat({ id, initialMessages, className, name, description }: Chat
     <>
       <div
         className={cn(
-          'flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-8 w-full',
+          'w-full flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-8',
           className,
         )}
       >
         <div className='flex flex-col items-center'>
           <Typography variant='h3'>{name} - Chat</Typography>
-          <Typography variant='p'>{description}</Typography>
+          <div className='flex gap-2 max-w-2xl w-full'>
+            <Typography variant='p'>Flowise URL:</Typography>
+            <input className='flex-1' />
+          </div>
         </div>
 
         {messages?.length ? (

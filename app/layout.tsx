@@ -1,10 +1,8 @@
 import '@/styles/globals.css'
-
 import { Metadata } from 'next'
-import { Toaster } from '@/components/ui/toaster'
-// import { Analytics } from '@vercel/analytics/react'
 
 import { Providers } from '@/app/context/providers'
+import { Toaster } from '@/components/ui/toaster'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 export const dynamic = 'force-dynamic'
@@ -34,7 +32,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <TailwindIndicator />
           <Toaster />
         </Providers>
-        {/* <Analytics /> */}
       </body>
     </html>
   )
