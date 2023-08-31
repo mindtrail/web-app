@@ -5,6 +5,7 @@ import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 
 const SIMILARITY_THRESHOLD = 0.78
+
 const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
   optimizers_config: {
     memmap_threshold: 10000,
@@ -15,6 +16,7 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
   },
   // on_disk_payload: true, // @TODO" test for improved performance without this
 }
+
 
 const QDRANT_CLIENT_PROPS: QdrantLibArgs = {
   url: process.env.QDRANT_URL,
@@ -78,6 +80,8 @@ export const searchSimilarText = async (
     ...QDRANT_ARGS,
     collectionName,
   })
+
+  console.log('--- message ---', message)
 
   const result = await vectorStore.similaritySearchWithScore(message, 5)
   return result.filter(([_doc, score]) => score > SIMILARITY_THRESHOLD).map(([doc]) => doc)

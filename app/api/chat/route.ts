@@ -1,11 +1,10 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { AIMessage, HumanMessage } from 'langchain/schema'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/authOptions'
-
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 
-import { searchSimilarText } from '@/lib/db/dataStore'
+import { authOptions } from '@/lib/authOptions'
+import { chatWithAI } from '@/lib/langchain'
 
 let openAIChat: ChatOpenAI
 
@@ -44,48 +43,5 @@ export async function POST(req: Request) {
     })
   }
 
-  const { stream, handlers } = LangChainStream()
-
-  const lastMessage = messages[messages.length - 1].content
-  const collectionName = `${userId}-${chatId}`
-
-  console.time('searchDB')
-  const kbData = await searchSimilarText(lastMessage, collectionName)
-  console.timeEnd('searchDB')
-
-  console.log('kbData', kbData.length)
-
-  if (!kbData?.length) {
-    // return a plain text response
-    return new Response('Sorry, I could not find the required information in your Knowledge Base', {
-      status: 200,
-    })
-  }
-
-  const sources = kbData.map((item) => {
-    const metadata = item?.metadata
-    const file = metadata.fileName
-    const page = metadata?.loc?.pageNumber
-
-    return {
-      file,
-      page,
-    }
-  })
-
-  console.time('ai')
-  const chat = getOpenAIConnection()
-  console.timeEnd('ai')
-
-  chat
-    .call(
-      (messages as Message[]).map(({ role, content }) =>
-        role == 'user' ? new HumanMessage(content) : new AIMessage(content),
-      ),
-      {},
-      [handlers],
-    )
-    .catch(console.error)
-
-  return new StreamingTextResponse(stream)
+  return chatWithAI({ messages, chatId, userId })
 }
