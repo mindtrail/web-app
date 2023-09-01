@@ -18,6 +18,8 @@ export async function POST(req: Request) {
 
   const { messages, chatId, flowiseURL } = body
   console.log('chatID ', chatId)
+  console.log('flowiseURL ', flowiseURL)
+
 
   if (flowiseURL) {
     console.log('000', messages)

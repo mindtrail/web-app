@@ -45,7 +45,10 @@ export function DataStoreListItem(props: itemProps) {
       <div className='invisible group-hover:visible flex p-4 gap-4 items-center overflow-auto'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'>
+            <Button
+              variant='ghost'
+              className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
+            >
               <DotsHorizontalIcon className='h-4 w-4' />
               <span className='sr-only'>Open menu</span>
             </Button>
@@ -57,10 +60,14 @@ export function DataStoreListItem(props: itemProps) {
             forceMount
             onClick={(e) => e.stopPropagation()}
           >
-            <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEdit(id)}>
+              Edit
+            </DropdownMenuItem>
             <DropdownMenuItem disabled>Duplicate</DropdownMenuItem>
             <DropdownMenuItem disabled>Share</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(id, name)}>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete(id, name)}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

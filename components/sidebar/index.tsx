@@ -32,7 +32,8 @@ const ACCEPTED_FILE_TYPES = [
 
 const UPLOAD_ENDPOINT = '/api/upload'
 const MAX_NR_OF_FILES = 30
-const UPLOAD_LABEL = 'Drag and drop files or <span class="filepond--label-action">Browse</span>'
+const UPLOAD_LABEL =
+  'Drag and drop files or <span class="filepond--label-action">Browse</span>'
 
 export function LeftSidebar() {
   const [files, setFiles] = useState([])
