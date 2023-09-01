@@ -70,12 +70,19 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
     router.push(`/datastore/${id}`)
   }
 
+  const openChat = (id: string) => {
+    router.push(`/chat/${id}`)
+  }
+
   return (
     <div className='flex bg- flex-col self-center flex-1 w-full max-w-6xl py-4 px-6 md:py-12 md:px-8'>
       <div className='flex justify-between py-4 border-b'>
         <Typography variant='h2'>Knowledge Bases</Typography>
 
-        <Link href='/datastore/create' className={buttonVariants({ variant: 'default' })}>
+        <Link
+          href='/datastore/create'
+          className={buttonVariants({ variant: 'default' })}
+        >
           <PlusIcon className='mr-2' />
           Create
         </Link>
@@ -87,6 +94,7 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
             dataStore={dataStore}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
+            handleClick={openChat}
           />
         ))}
       </div>
@@ -95,8 +103,9 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Knowledge Base?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete all the associated data and file. The action cannot be undone and
-              will permanently delete <b>{kbToDelete?.name}</b>
+              This will delete all the associated data and file. The action
+              cannot be undone and will permanently delete{' '}
+              <b>{kbToDelete?.name}</b>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

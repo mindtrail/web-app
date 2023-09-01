@@ -63,7 +63,7 @@ export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document
           metadata,
           pageContent: pageContent
             .replace(/(?<!\n)\n(?!\n)/g, ' ') // Replace single newlines with spaces
-            .replace(/\s?-\s?/g, ' - ') // Fix spacing around dashes
+            .replace(/\s?-\s?/g, '-') // Fix spacing around dashes
             .replace(/ \./g, '.') // Fix spacing around periods
             .replace(/[‘’]/g, "'") // Normalize curly quotes to straight quotes
             .replace(/[“”]/g, '"') // Normalize curly quotes to straight quotes
@@ -86,12 +86,16 @@ export const getDocumentChunks = async (fileBlob: Blob | File): Promise<Document
           },
           pageContent: pageContent
             .replace(/\s{2,}/g, ' ') // Replace multiple whitespace characters with a single space
+            .toLowerCase() // Convert to lowercase
+            .replace(/(?<=[\.!?]\s)([a-z])|^([a-z])/g, (_, firstLetter) =>
+              firstLetter?.toUpperCase(),
+            )
+            // Capitalize first letter of each sentence
             .trim(),
         }
       },
     )
     console.timeEnd('chunkTextSpliter')
-
     return chunks
   } catch (error) {
     console.error('Error loading file', error)

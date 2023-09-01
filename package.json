@@ -32,6 +32,7 @@
     "@vercel/kv": "^0.2.2",
     "ai": "^2.2.9",
     "body-scroll-lock": "4.0.0-beta.0",
+    "bufferutil": "^4.0.7",
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
     "d3-dsv": "^2.0.0",
@@ -61,8 +62,10 @@
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "sharp": "^0.32.4",
+    "socket.io-client": "^4.7.2",
     "srt-parser-2": "^1.2.3",
     "stream": "^0.0.2",
+    "utf-8-validate": "^5.0.10",
     "zod": "^3.21.4"
   },
   "devDependencies": {

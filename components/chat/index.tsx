@@ -9,6 +9,13 @@ import { ChatPanel } from '@/components/chat/chat-panel'
 import { EmptyChat } from '@/components/chat/empty-chat'
 import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
 import { useLocalStorage } from '@/lib/hooks/use-local-storage'
+import Typography from '@/components/typography'
+
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+
 import {
   Dialog,
   DialogContent,
@@ -18,41 +25,74 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
   id?: string
+  name?: string
+  description?: string
+  flowiseURLEnvVar?: string
+  userId?: string
 }
 
-export function Chat({ id, initialMessages, className }: ChatProps) {
-  const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
+export function Chat(props: ChatProps) {
+  const { id, initialMessages, className, name, flowiseURLEnvVar, userId } =
+    props
+
+  const [previewToken, setPreviewToken] = useLocalStorage<string | null>(
+    'ai-token',
+    null,
+  )
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
+  const [flowiseURL, setFlowiseURL] = useState(flowiseURLEnvVar)
+  const [flowiseEnabled, setFlowiseEnabled] = useState(true)
 
-  const { messages, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
+  const chatProps = {
     initialMessages,
     id,
     body: {
-      id,
-      previewToken,
+      chatId: id,
+      flowiseURL: flowiseEnabled && flowiseURL ? flowiseURL : undefined,
     },
-  })
+  }
+
+  const { messages, handleSubmit, reload, stop, isLoading, input, setInput } =
+    useChat(chatProps)
 
   return (
     <>
       <div
         className={cn(
-          'flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-8 w-full',
+          'w-full flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-4',
           className,
         )}
       >
-        <div className='flex flex-col items-center gap-2'>
-          <h1 className='mb-2 text-lg font-semibold text-center'>Create Knowledge Base</h1>
-          <p>Step 1</p>
+        <div className='flex flex-col items-center w-full gap-2'>
+          <Typography variant='h3'>{name} - Chat</Typography>
+          <div className='flex gap-2 w-full items-center justify-center'>
+            <Typography variant='p' className='font-semibold'>
+              Qdrant Collection:
+            </Typography>
+            <Typography variant='p'>
+              {userId}-{id}
+            </Typography>
+          </div>
+          <div className='flex gap-2 w-full md:max-w-2xl items-center'>
+            <Label htmlFor='flowiseURL'>Flowise URL:</Label>
+            <input
+              className='flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400 '
+              value={flowiseURL}
+              onChange={(e) => setFlowiseURL(e.target.value)}
+              disabled={!flowiseEnabled}
+            />
+            <Switch
+              id='flowiseURL'
+              checked={flowiseEnabled}
+              onCheckedChange={() => setFlowiseEnabled(!flowiseEnabled)}
+            />
+          </div>
         </div>
 
         {messages?.length ? (
@@ -82,12 +122,16 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
             <DialogTitle>Enter your OpenAI Key</DialogTitle>
             <DialogDescription>
               If you have not obtained your OpenAI API key, you can do so by{' '}
-              <a href='https://platform.openai.com/signup/' className='underline'>
+              <a
+                href='https://platform.openai.com/signup/'
+                className='underline'
+              >
                 signing up
               </a>{' '}
-              on the OpenAI website. This is only necessary for preview environments so that the
-              open source community can test the app. The token will be saved to your browser&apos;s
-              local storage under the name <code className='font-mono'>ai-token</code>.
+              on the OpenAI website. This is only necessary for preview
+              environments so that the open source community can test the app.
+              The token will be saved to your browser&apos;s local storage under
+              the name <code className='font-mono'>ai-token</code>.
             </DialogDescription>
           </DialogHeader>
           <Input

@@ -1,27 +1,8 @@
-import { ChatOpenAI } from 'langchain/chat_models/openai'
-import { AIMessage, HumanMessage } from 'langchain/schema'
 import { getServerSession } from 'next-auth/next'
+
 import { authOptions } from '@/lib/authOptions'
-
-import { StreamingTextResponse, LangChainStream, Message } from 'ai'
-
-import { searchSimilarText } from '@/lib/db/dataStore'
-
-let openAIChat: ChatOpenAI
-
-const getOpenAIConnection = () => {
-  if (openAIChat) {
-    return openAIChat
-  }
-
-  openAIChat = new ChatOpenAI({
-    streaming: true,
-    temperature: 0,
-    modelName: 'gpt-3.5-turbo',
-  })
-
-  return openAIChat
-}
+import { callLangchainChat } from '@/lib/langchain'
+import { callFlowiseChat } from '@/lib/flowise'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -33,7 +14,31 @@ export async function POST(req: Request) {
     })
   }
 
-  const { messages } = await req.json()
+  const body = await req.json()
+
+  const { messages, chatId, flowiseURL } = body
+  console.log('chatID ', chatId)
+  console.log('flowiseURL ', flowiseURL)
+
+
+  if (flowiseURL) {
+    console.log('000', messages)
+
+    const payload = {
+      question: messages[messages.length - 1].content,
+      overrideConfig: {
+        qdrantCollection: `${userId}-${chatId}`
+      },
+      flowiseURL
+    }
+
+    const result = await callFlowiseChat(payload)
+
+    console.log('--- flowise --- ', result)
+    return new Response(result.text, {
+      status: 200,
+    })
+  }
 
   if (!messages) {
     return new Response('No message provided', {
@@ -41,41 +46,13 @@ export async function POST(req: Request) {
     })
   }
 
-  const { stream, handlers } = LangChainStream()
+  try {
+    return callLangchainChat({ messages, chatId, userId })
+  } catch (error) {
+    console.error('An error occurred:', error)
 
-  const lastMessage = messages[messages.length - 1].content
-
-  console.time('searchDB')
-  const kbData = await searchSimilarText(lastMessage, userId)
-  console.timeEnd('searchDB')
-
-  console.log('kbData', kbData)
-  
-  const sources = kbData.map((item) => {
-    const metadata = item?.metadata
-    const file = metadata.fileName
-    const page = metadata?.loc?.pageNumber
-
-    return {
-      file,
-      page,
-    }
-  })
-
-
-  console.time('ai')
-  const chat = getOpenAIConnection()
-  console.timeEnd('ai')
-
-  chat
-    .call(
-      (messages as Message[]).map(({ role, content }) =>
-        role == 'user' ? new HumanMessage(content) : new AIMessage(content),
-      ),
-      {},
-      [handlers],
-    )
-    .catch(console.error)
-
-  return new StreamingTextResponse(stream)
+    return new Response('Server Error', {
+      status: 500,
+    })
+  }
 }

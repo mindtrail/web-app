@@ -14,15 +14,16 @@ type itemProps = {
   dataStore: DataStoreExtended
   handleEdit: (id: string) => void
   handleDelete: (id: string, name: string) => void
+  handleClick: (id: string) => void
 }
 
 export function DataStoreListItem(props: itemProps) {
-  const { dataStore, handleEdit, handleDelete } = props
+  const { dataStore, handleEdit, handleDelete, handleClick } = props
   const { id, name, description, dataSrcs } = dataStore
 
   return (
     <div
-      onClick={() => handleEdit(id)}
+      onClick={() => handleClick(id)}
       className='flex w-full group border border-transparent hover:border-border hover:shadow  justify-between rounded-xl text-card-foreground cursor-pointer'
     >
       <div className='flex flex-col p-4'>
@@ -44,7 +45,10 @@ export function DataStoreListItem(props: itemProps) {
       <div className='invisible group-hover:visible flex p-4 gap-4 items-center overflow-auto'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'>
+            <Button
+              variant='ghost'
+              className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
+            >
               <DotsHorizontalIcon className='h-4 w-4' />
               <span className='sr-only'>Open menu</span>
             </Button>
@@ -56,10 +60,14 @@ export function DataStoreListItem(props: itemProps) {
             forceMount
             onClick={(e) => e.stopPropagation()}
           >
-            <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEdit(id)}>
+              Edit
+            </DropdownMenuItem>
             <DropdownMenuItem disabled>Duplicate</DropdownMenuItem>
             <DropdownMenuItem disabled>Share</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(id, name)}>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete(id, name)}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
