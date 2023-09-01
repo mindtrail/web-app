@@ -56,7 +56,13 @@ export default async function ChatPage({ params }: ChatPageProps) {
   return (
     <>
       <Header session={session} />
-      <Chat id={chatId} userId={userId} name={name} description={description || ''} flowiseURL={flowiseURL} />
+      <Chat
+        id={chatId}
+        userId={userId}
+        name={name}
+        description={description || ''}
+        flowiseURLEnvVar={flowiseURL}
+      />
     </>
   )
 }

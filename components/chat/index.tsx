@@ -9,6 +9,13 @@ import { ChatPanel } from '@/components/chat/chat-panel'
 import { EmptyChat } from '@/components/chat/empty-chat'
 import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
 import { useLocalStorage } from '@/lib/hooks/use-local-storage'
+import Typography from '@/components/typography'
+
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+
 import {
   Dialog,
   DialogContent,
@@ -18,11 +25,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-import Typography from '@/components/typography'
-
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
@@ -30,26 +32,34 @@ export interface ChatProps extends React.ComponentProps<'div'> {
   id?: string
   name?: string
   description?: string
-  flowiseURL?: string
+  flowiseURLEnvVar?: string
   userId?: string
 }
 
-export function Chat({ id, initialMessages, className, name, flowiseURL, userId }: ChatProps) {
-  const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
+export function Chat(props: ChatProps) {
+  const { id, initialMessages, className, name, flowiseURLEnvVar, userId } =
+    props
+
+  const [previewToken, setPreviewToken] = useLocalStorage<string | null>(
+    'ai-token',
+    null,
+  )
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
-  const [flowiseURLState, setFlowiseURLState] = useState(flowiseURL)
+  const [flowiseURL, setFlowiseURL] = useState(flowiseURLEnvVar)
+  const [flowiseEnabled, setFlowiseEnabled] = useState(true)
 
-  console.log(flowiseURL)
-  const { messages, handleSubmit, reload, stop, isLoading, input, setInput } = useChat({
+  const chatProps = {
     initialMessages,
     id,
-    sendExtraMessageFields: true,
     body: {
       chatId: id,
-      flowiseURL: flowiseURLState,
+      flowiseURL: flowiseEnabled && flowiseURL ? flowiseURL : undefined,
     },
-  })
+  }
+
+  const { messages, handleSubmit, reload, stop, isLoading, input, setInput } =
+    useChat(chatProps)
 
   return (
     <>
@@ -69,12 +79,18 @@ export function Chat({ id, initialMessages, className, name, flowiseURL, userId 
               {userId}-{id}
             </Typography>
           </div>
-          <div className='flex gap-2 w-full md:max-w-2xl '>
-            <Typography variant='p'>Flowise URL:</Typography>
+          <div className='flex gap-2 w-full md:max-w-2xl items-center'>
+            <Label htmlFor='flowiseURL'>Flowise URL:</Label>
             <input
-              className='flex-1 bg-white border-[1px]'
-              value={flowiseURLState}
-              onChange={(e) => setFlowiseURLState(e.target.value)}
+              className='flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400 '
+              value={flowiseURL}
+              onChange={(e) => setFlowiseURL(e.target.value)}
+              disabled={!flowiseEnabled}
+            />
+            <Switch
+              id='flowiseURL'
+              checked={flowiseEnabled}
+              onCheckedChange={() => setFlowiseEnabled(!flowiseEnabled)}
             />
           </div>
         </div>
@@ -106,12 +122,16 @@ export function Chat({ id, initialMessages, className, name, flowiseURL, userId 
             <DialogTitle>Enter your OpenAI Key</DialogTitle>
             <DialogDescription>
               If you have not obtained your OpenAI API key, you can do so by{' '}
-              <a href='https://platform.openai.com/signup/' className='underline'>
+              <a
+                href='https://platform.openai.com/signup/'
+                className='underline'
+              >
                 signing up
               </a>{' '}
-              on the OpenAI website. This is only necessary for preview environments so that the
-              open source community can test the app. The token will be saved to your browser&apos;s
-              local storage under the name <code className='font-mono'>ai-token</code>.
+              on the OpenAI website. This is only necessary for preview
+              environments so that the open source community can test the app.
+              The token will be saved to your browser&apos;s local storage under
+              the name <code className='font-mono'>ai-token</code>.
             </DialogDescription>
           </DialogHeader>
           <Input
