@@ -1,13 +1,16 @@
 import { useMemo, useCallback } from 'react'
+// import { Cross1Icon } from '@radix-ui/react-icons'
 import { Cross1Icon } from '@radix-ui/react-icons'
-import { DataSrcStatus } from '@prisma/client'
 
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons'
 import { StatusIcon } from '@/components/datastore/statusIcon'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
-type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
+type DeleteHandler = (
+  event: React.MouseEvent<HTMLButtonElement>,
+  file: AcceptedFile,
+) => void
 
 interface FormList {
   acceptedFiles: AcceptedFile[]
@@ -18,7 +21,13 @@ interface FormList {
 }
 
 export function FormList(props: FormList) {
-  const { acceptedFiles, rejectedFiles, charCount, charCountLoading, handleFileDelete } = props
+  const {
+    acceptedFiles,
+    rejectedFiles,
+    charCount,
+    charCountLoading,
+    handleFileDelete,
+  } = props
 
   const acceptedFormList = useMemo(() => {
     return acceptedFiles.map(({ file, charCount, status }) => (
@@ -38,7 +47,9 @@ export function FormList(props: FormList) {
             size='sm'
             className='invisible group-hover:visible'
             disabled={status !== 'unsynched' && status !== 'synched'}
-            onClick={(event) => handleFileDelete(event, { file, charCount, status })}
+            onClick={(event) =>
+              handleFileDelete(event, { file, charCount, status })
+            }
           >
             <Cross1Icon />
           </Button>
@@ -48,7 +59,9 @@ export function FormList(props: FormList) {
   }, [acceptedFiles, handleFileDelete])
 
   const rejectedFormList = useMemo(() => {
-    return rejectedFiles.map(({ file }: RejectedFile) => <p key={file.name}>{file.name}</p>)
+    return rejectedFiles.map(({ file }: RejectedFile) => (
+      <p key={file.name}>{file.name}</p>
+    ))
   }, [rejectedFiles])
 
   return (
@@ -59,7 +72,8 @@ export function FormList(props: FormList) {
         </span>
 
         <span className='flex items-center'>
-          {charCountLoading ? <IconSpinner className='mr-2' /> : charCount} Chars
+          {charCountLoading ? <IconSpinner className='mr-2' /> : charCount}{' '}
+          Chars
         </span>
       </div>
 

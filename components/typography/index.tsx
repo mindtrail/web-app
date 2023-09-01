@@ -21,7 +21,7 @@ const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(functio
           'scroll-m-20 text-2xl font-semibold tracking-tight': variant === 'h3',
           'scroll-m-20 text-xl font-semibold tracking-tight': variant === 'h4',
           'scroll-m-20 text-x font-semibold tracking-tight': variant === 'h5',
-          'leading-7 [&:not(:first-child)]:mt-6': variant === 'p',
+          'leading-7': variant === 'p',
           'text-sm font-medium leading-none': variant === 'small',
         },
         className,

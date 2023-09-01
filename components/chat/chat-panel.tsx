@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { PromptForm } from '@/components/prompt-form'
 import { ButtonScrollToBottom } from '@/components/chat/button-scroll-to-bottom'
 import { IconRefresh, IconStop } from '@/components/ui/icons'
-import { FooterText } from '@/components/footer'
 
 export interface ChatPanelProps
   extends Pick<
@@ -29,7 +28,7 @@ export function ChatPanel(props: ChatPanelProps) {
       {demo ? null : <ButtonScrollToBottom />}
       {/* {demo ? null : <div className='spacer hidden md:flex md:w-[250px] lg:w-[300px]' />} */}
 
-      <div className='flex-1 mx-auto sm:max-w-2xl sm:px-4'>
+      <div className='flex-1 mx-auto sm:max-w-3xl sm:px-4'>
         <div className='flex h-10 items-center justify-center'>
           {isLoading ? (
             <Button variant='outline' onClick={() => stop()} className='bg-background'>
