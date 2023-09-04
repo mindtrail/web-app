@@ -46,15 +46,20 @@ import {
 } from '@/components/datastore/utils'
 
 type FormProps = {
+  onScrapeWebsite?: (url: string) => Promise<void>
   onSubmit: (data: DataStoreFormValues) => Promise<void>
   getFilesMetadata: (files: AcceptedFile[]) => Promise<Metadata[]>
   existingDataStore?: DataStoreExtended
 }
 
-export type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
+export type DeleteHandler = (
+  event: React.MouseEvent<HTMLButtonElement>,
+  file: AcceptedFile,
+) => void
 
 export function DataStoreForm(props: FormProps) {
-  const { onSubmit, getFilesMetadata, existingDataStore } = props
+  const { onSubmit, getFilesMetadata, existingDataStore, onScrapeWebsite } =
+    props
 
   const defaultValues: DataStoreFormValues = useMemo(
     () => getFormInitialValues(existingDataStore),
@@ -82,11 +87,12 @@ export function DataStoreForm(props: FormProps) {
 
   const { handleSubmit, control } = form
 
-  const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
-    accept: ACCEPTED_FILE_REACT_DROPZONE,
-    validator: formValidator,
-    onDrop: handleDrop,
-  })
+  const { getRootProps, getInputProps, isDragAccept, isDragReject } =
+    useDropzone({
+      accept: ACCEPTED_FILE_REACT_DROPZONE,
+      validator: formValidator,
+      onDrop: handleDrop,
+    })
 
   function formValidator(file: File) {
     const { name, type } = file
@@ -108,17 +114,27 @@ export function DataStoreForm(props: FormProps) {
 
     const remainingSlots = MAX_NR_OF_FILES - files.length
     // Filter files based on size and nr limit
-    let { acceptedFiles, rejectedFiles } = filterFiles(droppedFiles, remainingSlots)
+    let { acceptedFiles, rejectedFiles } = filterFiles(
+      droppedFiles,
+      remainingSlots,
+    )
 
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
     setRejectedFiles(rejectedFiles)
     setCharCountLoading(true)
     setDropzoneUsed(true) // User has interacted with the dropzone
     try {
-      const metadataForFiles = (await getFilesMetadata(acceptedFiles)) as Metadata[]
-      const totalChars = metadataForFiles.reduce((acc, { charCount }) => acc + charCount, 0)
+      const metadataForFiles = (await getFilesMetadata(
+        acceptedFiles,
+      )) as Metadata[]
+      const totalChars = metadataForFiles.reduce(
+        (acc, { charCount }) => acc + charCount,
+        0,
+      )
 
-      setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
+      setFiles((prevFiles) =>
+        updateFilesWithMetadata(prevFiles, metadataForFiles),
+      )
       setCharCount((prevChars) => prevChars + totalChars)
       setCharCountLoading(false)
     } catch (error) {
@@ -168,7 +184,9 @@ export function DataStoreForm(props: FormProps) {
     filterOutDeletedFileAndUpdateCharCount(file)
   }
 
-  const filterOutDeletedFileAndUpdateCharCount = (fileToDelete: AcceptedFile) => {
+  const filterOutDeletedFileAndUpdateCharCount = (
+    fileToDelete: AcceptedFile,
+  ) => {
     const { file, charCount = 0, status } = fileToDelete
 
     setFiles((prevFiles) =>
@@ -183,6 +201,17 @@ export function DataStoreForm(props: FormProps) {
     setProcessing(true)
     await onSubmit(data)
     setProcessing(false)
+  }
+
+  const handleWebsiteScrape = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault()
+
+    if (onScrapeWebsite) {
+      // const url = window.prompt('Enter a URL to scrape')
+      onScrapeWebsite('https://www.fuer-gruender.de/')
+    }
   }
 
   useEffect(() => {
@@ -250,12 +279,15 @@ export function DataStoreForm(props: FormProps) {
                     ) : (
                       <>
                         <p>
-                          Drop files or <span className='underline text-neutral-500'>Click</span> to
-                          browse
+                          Drop files or{' '}
+                          <span className='underline text-neutral-500'>
+                            Click
+                          </span>{' '}
+                          to browse
                         </p>
                         <p className='text-sm text-neutral-500'>
-                          <span>Supported file types:</span> .pdf, .docx, .txt, .md, .json, .jsonl,
-                          .csv
+                          <span>Supported file types:</span> .pdf, .docx, .txt,
+                          .md, .json, .jsonl, .csv
                         </p>
                       </>
                     )}
@@ -272,11 +304,22 @@ export function DataStoreForm(props: FormProps) {
             charCountLoading={charCountLoading}
             handleFileDelete={handleFileDelete}
           />
+          <div className='flex justify-between w-full'>
+            <Button type='submit' size='lg' disabled={processing}>
+              {processing && <IconSpinner className='mr-2' />}
+              {existingDataStore ? 'Save Changes' : 'Create'}
+            </Button>
 
-          <Button type='submit' size='lg' disabled={processing}>
-            {processing && <IconSpinner className='mr-2' />}
-            {existingDataStore ? 'Save Changes' : 'Create'}
-          </Button>
+            <Button
+              onClick={handleWebsiteScrape}
+              variant='outline'
+              size='lg'
+              disabled={processing}
+            >
+              {processing && <IconSpinner className='mr-2' />}
+              Load Page
+            </Button>
+          </div>
         </form>
       </Form>
 
@@ -285,8 +328,9 @@ export function DataStoreForm(props: FormProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete the file and the associated data. The action cannot be undone and
-              will permanently delete <b>{fileToDelete?.file?.name}</b>.
+              This will delete the file and the associated data. The action
+              cannot be undone and will permanently delete{' '}
+              <b>{fileToDelete?.file?.name}</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -42,6 +42,11 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
     }
   }
 
+  const onScrapeWebsite = async (url: string) => {
+    const res = await fetch(`/api/web-scrapper?url=${url}`)
+    const data = await res.json()
+  }
+
   const createDataStore = async (data: DataStoreFormValues) => {
     const { name, description, files } = data
     const dsPayload = { userId, name, description }
@@ -56,9 +61,15 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
     }
 
     const { name, description, files } = data
-    const { id: dataStoreId, name: existingName, description: existingDescription } = dataStore
+    const {
+      id: dataStoreId,
+      name: existingName,
+      description: existingDescription,
+    } = dataStore
 
-    const unsynchedFiles = files.filter(({ status }) => status === DataSrcStatus.unsynched)
+    const unsynchedFiles = files.filter(
+      ({ status }) => status === DataSrcStatus.unsynched,
+    )
 
     // We only add the name and description if they are different from the existing ones
     const dsPayload = { userId } as Partial<CreateDataStore>
@@ -98,13 +109,16 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
-        <Typography variant='h2'>{dataStore ? 'Edit' : ' Create'} Knowledge Base</Typography>
+        <Typography variant='h2'>
+          {dataStore ? 'Edit' : ' Create'} Knowledge Base
+        </Typography>
       </div>
       <div className='max-w-lg w-full'>
         <DataStoreForm
           onSubmit={onSubmit}
           getFilesMetadata={getFilesMetadata}
           existingDataStore={dataStore}
+          onScrapeWebsite={onScrapeWebsite}
         />
       </div>
     </div>
