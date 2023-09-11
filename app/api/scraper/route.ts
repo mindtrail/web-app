@@ -22,6 +22,9 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url)
   const urlsToScrape = url.searchParams.get('urls')
+  const dataStoreId = url.searchParams.get('dataStoreId')
+
+  console.log(dataStoreId, urlsToScrape)
 
   if (!urlsToScrape) {
     return new Response('No url provided', {

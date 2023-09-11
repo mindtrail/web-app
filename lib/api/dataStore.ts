@@ -98,11 +98,10 @@ export const deleteFileApiCall = async (fileId: string) => {
   return response.json()
 }
 
-export const scrapeURLsApiCall = async (
-  urls: string[],
-  dataStoreId: string,
-) => {
-  const response = await fetch(`${SCRAPER_ENDPOINT}?urls=${urls}`)
+export const scrapeURLsApiCall = async (urls: string, dataStoreId: string) => {
+  const response = await fetch(
+    `${SCRAPER_ENDPOINT}?urls=${urls}&dataStoreId=${dataStoreId}`,
+  )
 
   if (!response.ok) {
     throw new Error(`Failed to scrape URLs`)

@@ -261,6 +261,19 @@ export function DataStoreForm(props: FormProps) {
           />
           <FormField
             control={control}
+            name='urls'
+            render={({ field }) => (
+              <FormItem className='relative'>
+                <FormLabel>URL List</FormLabel>
+                <FormControl>
+                  <Input placeholder='URL List' {...field} />
+                </FormControl>
+                <FormMessage className='absolute' />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
             name='files'
             render={() => (
               <FormItem className='relative'>
