@@ -12,6 +12,7 @@ import {
   uploadFileApiCall,
   getFileMetadataApiCall,
   updateDataStoreApiCall,
+  scrapeURLsApiCall,
 } from '@/lib/api/dataStore'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
@@ -32,7 +33,7 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
 
         return
       }
-      // Edit data store
+
       await updateDataStore(data)
       window.location.href = '/datastore'
 
@@ -43,16 +44,24 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
   }
 
   const onScrapeWebsite = async (url: string) => {
-    const res = await fetch(`/api/web-scrapper?url=${url}`)
+    const res = await fetch(`/api/scraper?url=${url}`)
     const data = await res.json()
   }
 
   const createDataStore = async (data: DataStoreFormValues) => {
-    const { name, description, files } = data
+    const { name, description, files, urls } = data
     const dsPayload = { userId, name, description }
 
     const newDataStore = await createDataStoreApiCall(dsPayload)
-    await uploadFiles(files, newDataStore.id)
+
+    if (files?.length) {
+      await uploadFiles(files, newDataStore.id)
+    }
+
+    // Process URLs
+    if (urls?.length) {
+      scrapeURLsApiCall(urls, newDataStore.id)
+    }
   }
 
   const updateDataStore = async (data: DataStoreFormValues) => {
@@ -60,14 +69,14 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
       return
     }
 
-    const { name, description, files } = data
+    const { name, description, files, urls } = data
     const {
       id: dataStoreId,
       name: existingName,
       description: existingDescription,
     } = dataStore
 
-    const unsynchedFiles = files.filter(
+    const unsynchedFiles = files?.filter(
       ({ status }) => status === DataSrcStatus.unsynched,
     )
 
@@ -85,7 +94,7 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
       await updateDataStoreApiCall(dataStoreId, dsPayload)
     }
     // We only upload files if there are changes
-    if (unsynchedFiles.length) {
+    if (unsynchedFiles?.length) {
       await uploadFiles(unsynchedFiles, dataStoreId)
     }
   }

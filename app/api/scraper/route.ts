@@ -21,9 +21,9 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url)
-  const urlToScrape = url.searchParams.get('url')
+  const urlsToScrape = url.searchParams.get('urls')
 
-  if (!urlToScrape) {
+  if (!urlsToScrape) {
     return new Response('No url provided', {
       status: 400,
     })

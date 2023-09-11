@@ -1,6 +1,7 @@
 export const DATASTORE_ENDPOINT = '/api/datastore'
 export const UPLOAD_ENDPOINT = '/api/upload'
 export const METADATA_ENDPOINT = '/api/upload/metadata'
+export const SCRAPER_ENDPOINT = '/api/scraper'
 
 export async function createDataStoreApiCall(data: CreateDataStore) {
   const response = await fetch(DATASTORE_ENDPOINT, {
@@ -19,7 +20,10 @@ export async function createDataStoreApiCall(data: CreateDataStore) {
   return newDataStore
 }
 
-export async function updateDataStoreApiCall(dataStoreId: string, data: Partial<CreateDataStore>) {
+export async function updateDataStoreApiCall(
+  dataStoreId: string,
+  data: Partial<CreateDataStore>,
+) {
   const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
     method: 'PATCH',
     headers: {
@@ -89,6 +93,19 @@ export const deleteFileApiCall = async (fileId: string) => {
 
   if (!response.ok) {
     throw new Error(`Failed to delete file ${fileId}`)
+  }
+
+  return response.json()
+}
+
+export const scrapeURLsApiCall = async (
+  urls: string[],
+  dataStoreId: string,
+) => {
+  const response = await fetch(`${SCRAPER_ENDPOINT}?urls=${urls}`)
+
+  if (!response.ok) {
+    throw new Error(`Failed to scrape URLs`)
   }
 
   return response.json()

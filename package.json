@@ -42,7 +42,7 @@
     "filepond-plugin-file-validate-type": "^1.2.8",
     "fs": "0.0.1-security",
     "html-to-text": "^9.0.5",
-    "langchain": "^0.0.135",
+    "langchain": "^0.0.146",
     "mammoth": "^1.6.0",
     "nanoid": "^4.0.2",
     "next": "^13.4.19",
