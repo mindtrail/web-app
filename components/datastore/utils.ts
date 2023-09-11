@@ -19,14 +19,14 @@ export const getFormInitialValues = (
           status: file.status,
           charCount: file.textSize,
         })),
-      urls: dataStore.dataSrcs
-        .filter((file) => file.type === DataSrcType.web_page)
-        .map((url) => ({
-          url,
-          source: 'remote',
-          status: url.status,
-          charCount: url.textSize,
-        })),
+      // urls: dataStore.dataSrcs
+      //   .filter((file) => file.type === DataSrcType.web_page)
+      //   .map((url) => ({
+      //     url,
+      //     source: 'remote',
+      //     status: url.status,
+      //     charCount: url.textSize,
+      //   })),
     }
   }
 
@@ -34,7 +34,7 @@ export const getFormInitialValues = (
     name: `KB - ${formatDate(new Date())}`,
     description: '',
     files: [],
-    urls: [],
+    urls: '',
   }
 }
 
@@ -57,11 +57,11 @@ export const dataStoreFormSchema = z
         message: 'Description must not be longer than 100 characters.',
       }),
     files: z.array(z.any()).optional(),
-    urls: z.array(z.any()).optional(),
+    urls: z.string(z.any()).optional(),
   })
   .refine(
     (data) => {
-      return Boolean(data.files?.length) || Boolean(data.urls?.length)
+      return Boolean(data.files?.length) || Boolean(data.urls)
     },
     {
       message: 'You must add either files or urls.',

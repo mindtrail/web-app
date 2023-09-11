@@ -52,15 +52,18 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
     const { name, description, files, urls } = data
     const dsPayload = { userId, name, description }
 
+    // Process URLs
+    if (urls?.length) {
+      const result = await scrapeURLsApiCall(urls, '1234566')
+
+      console.log(result)
+      return
+    }
+
     const newDataStore = await createDataStoreApiCall(dsPayload)
 
     if (files?.length) {
       await uploadFiles(files, newDataStore.id)
-    }
-
-    // Process URLs
-    if (urls?.length) {
-      scrapeURLsApiCall(urls, newDataStore.id)
     }
   }
 
