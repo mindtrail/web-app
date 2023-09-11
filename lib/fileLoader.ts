@@ -4,6 +4,8 @@ import { JSONLoader, JSONLinesLoader } from 'langchain/document_loaders/fs/json'
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { SRTLoader } from 'langchain/document_loaders/fs/srt'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
+import { DocumentLoader } from 'langchain/dist/document_loaders/base'
+
 import { Document } from 'langchain/document'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 // import { EPubLoader } from 'langchain/document_loaders/fs/epub'

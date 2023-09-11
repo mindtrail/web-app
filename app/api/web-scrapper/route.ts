@@ -7,8 +7,8 @@ import { uploadToS3 } from '@/lib/s3'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
-import { PuppeteerCrawler } from 'crawlee'
-import { PuppeteerWebBaseLoader } from 'langchain/document_loaders/web/puppeteer'
+
+// import { PuppeteerWebBaseLoader } from 'langchain/document_loaders/web/puppeteer'
 
 export async function GET(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -21,7 +21,6 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url)
-
   const urlToScrape = url.searchParams.get('url')
 
   if (!urlToScrape) {
@@ -30,27 +29,30 @@ export async function GET(req: Request) {
     })
   }
 
-  console.log('GET', urlToScrape)
+  // const result = await getCrawlResult(urlToScrape)
+  // console.log('---- - ----', result)
 
-  const loader = new PuppeteerWebBaseLoader(urlToScrape, {
-    launchOptions: {
-      headless: 'new',
-    },
-    gotoOptions: {
-      waitUntil: 'domcontentloaded',
-    },
-  })
+  // const loader = new PuppeteerWebBaseLoader(urlToScrape, {
+  //   launchOptions: {
+  //     headless: 'new',
+  //   },
+  //   gotoOptions: {
+  //     waitUntil: 'domcontentloaded',
+  //   },
+  // })
 
-  const docs = await loader.load()
+  // const docs = await loader.load()
 
-  console.log(docs[0]?.pageContent?.length)
+  // console.log(docs[0]?.pageContent?.length)
 
   // Write to a temporaty file in the fs
-  // const tempFileName = `temp-web-scrapper-simple.txt`
-  // const tempFilePath = `tmp/${tempFileName}`
-  // fs.writeFileSync(tempFilePath, docs[0].pageContent)
+  const tempFileName = `scrapped-2.txt`
+  const tempFilePath = `tmp/${tempFileName}`
+  // const res = docs[0]?.pageContent
+  const res = 'hello world'
+  // fs.writeFileSync(tempFilePath, res)
 
-  return new Response(docs[0].pageContent, {
+  return new Response(res, {
     status: 200,
   })
 }
