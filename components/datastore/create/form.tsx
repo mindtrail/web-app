@@ -13,6 +13,9 @@ import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 
 import {
   AlertDialog,
@@ -31,6 +34,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form'
 
 import {
@@ -79,6 +83,7 @@ export function DataStoreForm(props: FormProps) {
   const [processing, setProcessing] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [fileToDelete, setFileToDelete] = useState<AcceptedFile | null>(null)
+  const [autoCrawl, setAutoCrawl] = useState(true)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -255,19 +260,23 @@ export function DataStoreForm(props: FormProps) {
               <FormItem className='relative'>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input placeholder='What the KB contains' {...field} />
+                  <Input
+                    onClick={() => console.log(field)}
+                    placeholder='What the KB contains'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage className='absolute' />
               </FormItem>
             )}
           />
-          <Tabs defaultValue='files'>
+          <Tabs defaultValue='urls'>
             <TabsList className='grid w-full grid-cols-2 '>
               <TabsTrigger value='files'>Documents</TabsTrigger>
               <TabsTrigger value='urls'>Website</TabsTrigger>
             </TabsList>
             <TabsContent value='files'>
-              <div className='flex flex-col gap-4'>
+              <div className='flex flex-col gap-4 mt-4'>
                 <FormField
                   control={control}
                   name='files'
@@ -316,31 +325,52 @@ export function DataStoreForm(props: FormProps) {
               </div>
             </TabsContent>
             <TabsContent value='urls'>
-              <div className='flex flex-col min-h-[184px]'>
-                <div className='flex w-full justify-between items-end gap-4'>
+              <div className='flex flex-col gap-4 min-h-[184px] mt-4'>
+                <div className='flex w-full flex-col items-start gap-4'>
                   <FormField
                     control={control}
                     name='urls'
                     render={({ field }) => (
-                      <FormItem className='flex-1 relative'>
-                        <FormLabel>URL List</FormLabel>
+                      <FormItem className='w-full relative'>
+                        <FormLabel>Website</FormLabel>
                         <FormControl>
-                          <Input placeholder='Enter URL' {...field} />
+                          <Input
+                            placeholder='https://your-website.com'
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage className='absolute' />
                       </FormItem>
                     )}
                   />
+                  <div className='flex items-center gap-4'>
+                    <Switch
+                      id='autoCrawl'
+                      checked={autoCrawl}
+                      onCheckedChange={() => setAutoCrawl(!autoCrawl)}
+                    />
+                    <Label htmlFor='autoCrawl' className='w-20'>
+                      {autoCrawl ? 'Automatic' : 'Manual'}
+                    </Label>
+                    <FormDescription>
+                      {autoCrawl
+                        ? 'Crawls all website pages, including sitemap links.'
+                        : 'Fetch the links you want to crawl and add them to the list.'}
+                    </FormDescription>
+                  </div>
+                </div>
+
+                {!autoCrawl && (
                   <Button
                     onClick={handleWebsiteScrape}
-                    variant='link'
+                    variant='secondary'
                     size='lg'
                     disabled={processing}
                   >
                     {processing && <IconSpinner className='mr-2' />}
-                    Load URL
+                    Fetch Links
                   </Button>
-                </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
