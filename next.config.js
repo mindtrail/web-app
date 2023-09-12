@@ -16,6 +16,7 @@ const nextConfig = {
       },
     ],
   },
+
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.externals.push({
@@ -28,5 +29,8 @@ const nextConfig = {
     return config
   },
 }
+process.on('unhandledRejection', (error) => {
+  console.log('unhandledRejection', error)
+})
 
 module.exports = nextConfig

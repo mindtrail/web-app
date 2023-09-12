@@ -29,23 +29,30 @@ export async function GET(req: Request) {
 
   console.log(urlsToScrape, dataStoreId)
 
-  const result = await fetch(
-    `${SCRAPER_URL}?url=${urlsToScrape}&limit=${SCRAPER_LIMIT}`,
-  )
-  if (!result.ok) {
+  try {
+    const result = await fetch(
+      `${SCRAPER_URL}?url=${urlsToScrape}&limit=${SCRAPER_LIMIT}`,
+    )
+    if (!result.ok) {
+      return new Response('Failed to scrape', {
+        status: 500,
+      })
+    }
+
+    console.log('result', await result?.text())
+    // const data = await result.json()
+
+    // console.log('data', data)
+
+    if (!urlsToScrape) {
+      return new Response('No url provided', {
+        status: 400,
+      })
+    }
+  } catch (e) {
+    console.log('error', e)
     return new Response('Failed to scrape', {
       status: 500,
-    })
-  }
-
-  console.log('result', await result?.text())
-  // const data = await result.json()
-
-  // console.log('data', data)
-
-  if (!urlsToScrape) {
-    return new Response('No url provided', {
-      status: 400,
     })
   }
 
@@ -72,7 +79,7 @@ export async function GET(req: Request) {
   // const res = 'hello world'
   // fs.writeFileSync(tempFilePath, res)
 
-  return new Response('ok', {
+  return new Response('ok - 123', {
     status: 200,
   })
 }

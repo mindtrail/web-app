@@ -29,6 +29,8 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
       if (!dataStore) {
         await createDataStore(data)
         // We force a reload of the page as the datastore list is not updated
+
+        return
         window.location.href = '/datastore'
 
         return
@@ -59,6 +61,8 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
       console.log(result)
       return
     }
+
+    return
 
     const newDataStore = await createDataStoreApiCall(dsPayload)
 

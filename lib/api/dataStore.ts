@@ -107,5 +107,5 @@ export const scrapeURLsApiCall = async (urls: string, dataStoreId: string) => {
     throw new Error(`Failed to scrape URLs`)
   }
 
-  return response.json()
+  return response.text()
 }
