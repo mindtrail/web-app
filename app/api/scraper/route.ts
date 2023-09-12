@@ -79,7 +79,7 @@ export async function GET(req: Request) {
   // const res = 'hello world'
   // fs.writeFileSync(tempFilePath, res)
 
-  return new Response('ok - 123', {
+  return new Response('ok', {
     status: 200,
   })
 }

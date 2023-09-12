@@ -46,7 +46,7 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
   }
 
   const onScrapeWebsite = async (url: string) => {
-    const res = await fetch(`/api/scraper?url=${url}`)
+    const res = await fetch(`/api/scraper?urls=${url}`)
     const data = await res.json()
   }
 
