@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -259,78 +261,94 @@ export function DataStoreForm(props: FormProps) {
               </FormItem>
             )}
           />
-          <FormField
-            control={control}
-            name='urls'
-            render={({ field }) => (
-              <FormItem className='relative'>
-                <FormLabel>URL List</FormLabel>
-                <FormControl>
-                  <Input placeholder='URL List' {...field} />
-                </FormControl>
-                <FormMessage className='absolute' />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name='files'
-            render={() => (
-              <FormItem className='relative'>
-                <FormLabel>Upload Files</FormLabel>
-                <FormControl>
-                  <div
-                    {...getRootProps()}
-                    className={`flex flex-col w-full h-28 rounded-xl justify-center
-                  border items-center gap-4 text-neutral-600
-                  select-none cursor-default transition .25s ease-in-out
-                  ${dropzoneInteractionClasses}`}
-                  >
-                    <input {...getInputProps()} />
-                    {isDragReject ? (
-                      'Unsupported file type!'
-                    ) : (
-                      <>
-                        <p>
-                          Drop files or{' '}
-                          <span className='underline text-neutral-500'>
-                            Click
-                          </span>{' '}
-                          to browse
-                        </p>
-                        <p className='text-sm text-neutral-500'>
-                          <span>Supported file types:</span> .pdf, .docx, .txt,
-                          .md, .json, .jsonl, .csv
-                        </p>
-                      </>
+          <Tabs defaultValue='files'>
+            <TabsList className='grid w-full grid-cols-2 '>
+              <TabsTrigger value='files'>Documents</TabsTrigger>
+              <TabsTrigger value='urls'>Website</TabsTrigger>
+            </TabsList>
+            <TabsContent value='files'>
+              <div className='flex flex-col gap-4'>
+                <FormField
+                  control={control}
+                  name='files'
+                  render={() => (
+                    <FormItem className='relative'>
+                      <FormLabel>Upload Files</FormLabel>
+                      <FormControl>
+                        <div
+                          {...getRootProps()}
+                          className={`flex flex-col w-full h-28 rounded-xl justify-center
+                        border items-center gap-4 text-neutral-600
+                        select-none cursor-default transition .25s ease-in-out
+                        ${dropzoneInteractionClasses}`}
+                        >
+                          <input {...getInputProps()} />
+                          {isDragReject ? (
+                            'Unsupported file type!'
+                          ) : (
+                            <>
+                              <p>
+                                Drop files or{' '}
+                                <span className='underline text-neutral-500'>
+                                  Click
+                                </span>{' '}
+                                to browse
+                              </p>
+                              <p className='text-sm text-neutral-500'>
+                                <span>Supported file types:</span> .pdf, .docx,
+                                .txt, .md, .json, .jsonl, .csv
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormList
+                  acceptedFiles={files}
+                  rejectedFiles={rejectedFiles}
+                  charCount={charCount}
+                  charCountLoading={charCountLoading}
+                  handleFileDelete={handleFileDelete}
+                />
+              </div>
+            </TabsContent>
+            <TabsContent value='urls'>
+              <div className='flex flex-col min-h-[184px]'>
+                <div className='flex w-full justify-between items-end gap-4'>
+                  <FormField
+                    control={control}
+                    name='urls'
+                    render={({ field }) => (
+                      <FormItem className='flex-1 relative'>
+                        <FormLabel>URL List</FormLabel>
+                        <FormControl>
+                          <Input placeholder='Enter URL' {...field} />
+                        </FormControl>
+                        <FormMessage className='absolute' />
+                      </FormItem>
                     )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormList
-            acceptedFiles={files}
-            rejectedFiles={rejectedFiles}
-            charCount={charCount}
-            charCountLoading={charCountLoading}
-            handleFileDelete={handleFileDelete}
-          />
+                  />
+                  <Button
+                    onClick={handleWebsiteScrape}
+                    variant='link'
+                    size='lg'
+                    disabled={processing}
+                  >
+                    {processing && <IconSpinner className='mr-2' />}
+                    Load URL
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+
           <div className='flex justify-between w-full'>
             <Button type='submit' size='lg' disabled={processing}>
               {processing && <IconSpinner className='mr-2' />}
               {existingDataStore ? 'Save Changes' : 'Create'}
-            </Button>
-
-            <Button
-              onClick={handleWebsiteScrape}
-              variant='outline'
-              size='lg'
-              disabled={processing}
-            >
-              {processing && <IconSpinner className='mr-2' />}
-              Load Page
             </Button>
           </div>
         </form>

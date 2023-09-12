@@ -129,7 +129,7 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
           {dataStore ? 'Edit' : ' Create'} Knowledge Base
         </Typography>
       </div>
-      <div className='max-w-lg w-full'>
+      <div className='max-w-xl w-full'>
         <DataStoreForm
           onSubmit={onSubmit}
           getFilesMetadata={getFilesMetadata}
