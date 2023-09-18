@@ -1,7 +1,7 @@
 import '@/styles/globals.css'
 import { Metadata } from 'next'
 
-import { Providers } from '@/app/context/providers'
+import { Providers } from '@/context/providers'
 import { Toaster } from '@/components/ui/toaster'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 

@@ -20,16 +20,15 @@ export async function POST(req: Request) {
   console.log('chatID ', chatId)
   console.log('flowiseURL ', flowiseURL)
 
-
   if (flowiseURL) {
     console.log('000', messages)
 
     const payload = {
+      flowiseURL,
       question: messages[messages.length - 1].content,
       overrideConfig: {
-        qdrantCollection: `${userId}-${chatId}`
+        qdrantCollection: `${userId}-${chatId}`,
       },
-      flowiseURL
     }
 
     const result = await callFlowiseChat(payload)

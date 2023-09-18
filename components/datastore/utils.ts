@@ -1,20 +1,32 @@
 import * as z from 'zod'
-import { DataSrcStatus } from '@prisma/client'
+import { DataSrcStatus, DataSrcType, DataSrc } from '@prisma/client'
 
 import { formatDate } from '@/lib/utils'
 import { MAX_FILE_SIZE } from '@/components/datastore/constants'
 
-export const getFormInitialValues = (dataStore?: DataStoreExtended): DataStoreFormValues => {
+export const getFormInitialValues = (
+  dataStore?: DataStoreExtended,
+): DataStoreFormValues => {
   if (dataStore) {
     return {
       name: dataStore.name,
       description: dataStore.description || '',
-      files: dataStore.dataSrcs.map((file) => ({
-        file,
-        source: 'remote',
-        status: file.status,
-        charCount: file.textSize,
-      })),
+      files: dataStore.dataSrcs
+        .filter((file) => file.type === DataSrcType.file)
+        .map((file) => ({
+          file,
+          source: 'remote',
+          status: file.status,
+          charCount: file.textSize,
+        })),
+      // urls: dataStore.dataSrcs
+      //   .filter((file) => file.type === DataSrcType.web_page)
+      //   .map((url) => ({
+      //     url,
+      //     source: 'remote',
+      //     status: url.status,
+      //     charCount: url.textSize,
+      //   })),
     }
   }
 
@@ -22,30 +34,39 @@ export const getFormInitialValues = (dataStore?: DataStoreExtended): DataStoreFo
     name: `KB - ${formatDate(new Date())}`,
     description: '',
     files: [],
+    urls: '',
   }
 }
 
-export const dataStoreFormSchema = z.object({
-  name: z
-    .string()
-    .min(4, {
-      message: 'Name must be at least 5 characters.',
-    })
-    .max(40, {
-      message: 'Name must not be longer than 40 characters.',
-    }),
-  description: z
-    .string()
-    .min(4, {
-      message: 'Description must be at least 5 characters.',
-    })
-    .max(100, {
-      message: 'Description must not be longer than 100 characters.',
-    }),
-  files: z.array(z.any()).min(1, {
-    message: 'You must upload at least one valid file.',
-  }),
-})
+export const dataStoreFormSchema = z
+  .object({
+    name: z
+      .string()
+      .min(4, {
+        message: 'Name must be at least 5 characters.',
+      })
+      .max(40, {
+        message: 'Name must not be longer than 40 characters.',
+      }),
+    description: z
+      .string()
+      .min(4, {
+        message: 'Description must be at least 5 characters.',
+      })
+      .max(100, {
+        message: 'Description must not be longer than 100 characters.',
+      }),
+    files: z.array(z.any()).optional(),
+    urls: z.string(z.any()).optional(),
+  })
+  .refine(
+    (data) => {
+      return Boolean(data.files?.length) || Boolean(data.urls)
+    },
+    {
+      message: 'You must add either files or urls.',
+    },
+  )
 
 export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
 
@@ -72,7 +93,10 @@ export const filterFiles = (files: File[], remainingSlots: number) => {
   return { acceptedFiles, rejectedFiles }
 }
 
-export const updateFilesWithMetadata = (prevFiles: AcceptedFile[], filesMetadata: Metadata[]) => {
+export const updateFilesWithMetadata = (
+  prevFiles: AcceptedFile[],
+  filesMetadata: Metadata[],
+) => {
   const filesMetadataMap: { [key: string]: Metadata } = {}
   filesMetadata.forEach((metadata) => {
     filesMetadataMap[metadata.name] = metadata

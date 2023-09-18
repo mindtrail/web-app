@@ -1,17 +1,21 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { DataSrc, DataSrcStatus } from '@prisma/client'
+import { DataSrcStatus } from '@prisma/client'
 
 import Typography from '@/components/typography'
 import { DataStoreForm } from '@/components/datastore/create/form'
 import { DataStoreFormValues } from '@/components/datastore/utils'
+import { useToast } from '@/components/ui/use-toast'
+import { GlobalStateContext } from '@/context/global-state'
+import { useContext } from 'react'
 
 import {
   createDataStoreApiCall,
   uploadFileApiCall,
   getFileMetadataApiCall,
   updateDataStoreApiCall,
+  scrapeURLsApiCall,
 } from '@/lib/api/dataStore'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
@@ -19,46 +23,88 @@ interface DataStoreProps extends React.ComponentProps<'div'> {
   dataStore?: DataStoreExtended
 }
 
-export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
+export function CreateDataStore({
+  userId,
+  dataStore: existingDataStore,
+}: DataStoreProps) {
+  const [state, dispatch] = useContext(GlobalStateContext)
+
+  const { toast } = useToast()
   const router = useRouter()
 
+  console.log(state, dispatch)
+
+  // Access state
+  console.log('STATE', state.unsyncedDataStores)
+
   const onSubmit = async (data: DataStoreFormValues) => {
+    const actionType = existingDataStore ? 'updated' : 'created'
+    const functionToCall = existingDataStore ? updateDataStore : createDataStore
+
     try {
-      // Create datastore
-      if (!dataStore) {
-        await createDataStore(data)
-        // We force a reload of the page as the datastore list is not updated
-        window.location.href = '/datastore'
+      await functionToCall(data)
 
-        return
-      }
-      // Edit data store
-      await updateDataStore(data)
-      window.location.href = '/datastore'
-
-      return
+      router.push('/datastore')
     } catch (err) {
       console.log(err)
+
+      toast({
+        title: 'Error',
+        variant: 'destructive',
+        description: `Something went wrong. ${data?.name} was not ${actionType} properly`,
+      })
     }
+  }
+
+  const onScrapeWebsite = async (url: string) => {
+    const res = await fetch(`/api/scraper?urls=${url}`)
+    const data = await res.json()
   }
 
   const createDataStore = async (data: DataStoreFormValues) => {
-    const { name, description, files } = data
+    const { name, description, files, urls } = data
     const dsPayload = { userId, name, description }
 
     const newDataStore = await createDataStoreApiCall(dsPayload)
-    await uploadFiles(files, newDataStore.id)
+    const dsId = newDataStore.id
+
+    // Process URLs
+    if (urls?.length) {
+      scrapeURLsApiCall(urls, dsId)
+    }
+
+    if (files?.length) {
+      await uploadFiles(files, newDataStore.id)
+    }
+
+    dispatch({
+      type: 'ADD_UNSYNCED_DATA_STORE',
+      payload: { id: dsId },
+    })
+
+    toast({
+      title: 'Knowledge Base created',
+      description: `${name} has been created`,
+    })
+
+    return { id: dsId }
   }
 
   const updateDataStore = async (data: DataStoreFormValues) => {
-    if (!dataStore) {
+    if (!existingDataStore) {
       return
     }
 
-    const { name, description, files } = data
-    const { id: dataStoreId, name: existingName, description: existingDescription } = dataStore
+    const { name, description, files, urls } = data
+    const {
+      id: dataStoreId,
+      name: existingName,
+      description: existingDescription,
+    } = existingDataStore
 
-    const unsynchedFiles = files.filter(({ status }) => status === DataSrcStatus.unsynched)
+    const unsynchedFiles = files?.filter(
+      ({ status }) => status === DataSrcStatus.unsynched,
+    )
 
     // We only add the name and description if they are different from the existing ones
     const dsPayload = { userId } as Partial<CreateDataStore>
@@ -74,16 +120,28 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
       await updateDataStoreApiCall(dataStoreId, dsPayload)
     }
     // We only upload files if there are changes
-    if (unsynchedFiles.length) {
+    if (unsynchedFiles?.length) {
       await uploadFiles(unsynchedFiles, dataStoreId)
     }
+
+
+    dispatch({
+      type: 'ADD_UNSYNCED_DATA_STORE',
+      payload: { id: dataStoreId },
+    })
+
+
+    toast({
+      title: 'Knowledge Base updated',
+      description: `${name} has been updated`,
+    })
   }
 
   const uploadFiles = async (files: AcceptedFile[], dataStoreId: string) => {
     const fileUploadPromises = files.map(async ({ file }) => {
       return await uploadFileApiCall(file as File, dataStoreId)
     })
-    const res = await Promise.all(fileUploadPromises)
+    const res = await Promise.allSettled(fileUploadPromises)
     return res
   }
 
@@ -98,13 +156,16 @@ export function CreateDataStore({ userId, dataStore }: DataStoreProps) {
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
-        <Typography variant='h2'>{dataStore ? 'Edit' : ' Create'} Knowledge Base</Typography>
+        <Typography variant='h2'>
+          {existingDataStore ? 'Edit' : ' Create'} Knowledge Base
+        </Typography>
       </div>
-      <div className='max-w-lg w-full'>
+      <div className='max-w-xl w-full'>
         <DataStoreForm
           onSubmit={onSubmit}
           getFilesMetadata={getFilesMetadata}
-          existingDataStore={dataStore}
+          existingDataStore={existingDataStore}
+          onScrapeWebsite={onScrapeWebsite}
         />
       </div>
     </div>

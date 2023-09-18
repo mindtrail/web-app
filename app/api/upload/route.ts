@@ -17,7 +17,10 @@ export async function POST(req: Request) {
     })
   }
 
-  if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
+  if (
+    !req ||
+    !req.headers.get('content-type')?.startsWith('multipart/form-data')
+  ) {
     return new Response('Bad Request', {
       status: 400,
     })
@@ -96,11 +99,4 @@ export async function POST(req: Request) {
     })
 
   return NextResponse.json({ nbChunks, textSize, docs })
-}
-
-export async function DELETE(req: Request) {
-  // const body = await req.json()
-
-  console.log('delete ')
-  return NextResponse.json({ success: true })
 }
