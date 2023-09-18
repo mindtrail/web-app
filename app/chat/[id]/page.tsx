@@ -20,7 +20,9 @@ interface UserWithId {
 }
 type ExtSession = Session & { user: UserWithId | null }
 
-export async function generateMetadata({ params }: ChatPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ChatPageProps): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtSession
 
   if (!session?.user?.id) {
@@ -45,7 +47,15 @@ export default async function ChatPage({ params }: ChatPageProps) {
     redirect(`/api/auth/signin?callbackUrl=/chat/${chatId}`)
   }
 
-  const dataStore = (await getDataStoreById({ userId, dataStoreId: chatId })) as DataStoreExtended
+  const dataStore = (await getDataStoreById({
+    userId,
+    dataStoreId: chatId,
+  })) as DataStoreExtended
+
+  if (!dataStore) {
+    redirect(`/datastore?notFound=${chatId}`)
+  }
+
   const { name, description } = dataStore
 
   // const chat = await getChat(chatId, userId)
