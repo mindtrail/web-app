@@ -7,18 +7,12 @@ import { Header } from '@/components/header'
 import { authOptions } from '@/lib/authOptions'
 import { Chat } from '@/components/chat'
 
-export interface ChatPageProps {
-  params: {
-    id: string
-  }
-}
-
 interface UserWithId {
   id: string | null
 }
 type ExtSession = Session & { user: UserWithId | null }
 
-export async function generateMetadata({ params }: ChatPageProps): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtSession
 
   if (!session?.user?.id) {
@@ -32,11 +26,11 @@ export async function generateMetadata({ params }: ChatPageProps): Promise<Metad
   }
 }
 
-export default async function ChatPage({ params }: ChatPageProps) {
+export default async function ChatPage() {
   const session = (await getServerSession(authOptions)) as ExtSession
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/${params.id}`)
+    redirect(`/api/auth/signin?callbackUrl=/chat/`)
   }
 
   const userId = session.user.id
