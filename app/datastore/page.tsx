@@ -20,15 +20,27 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function DataStorePage() {
+export interface DSProps {
+  searchParams: {
+    notFound: string
+  }
+}
+
+export default async function DataStorePage(params: DSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
     redirect(`/api/auth/signin?callbackUrl=/datastore`)
   }
 
+  // @TODO: send a notification to the user that the chat was not found
+  const notFoundChat = params?.searchParams?.notFound
+
   const userId = session?.user?.id
-  const dataStoreList = await getDataStoreListDbOp({ userId, includeDataSrc: true })
+  const dataStoreList = await getDataStoreListDbOp({
+    userId,
+    includeDataSrc: true,
+  })
 
   if (!dataStoreList?.length) {
     redirect(`/datastore/create`)
