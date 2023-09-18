@@ -260,11 +260,7 @@ export function DataStoreForm(props: FormProps) {
               <FormItem className='relative'>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input
-                    onClick={() => console.log(field)}
-                    placeholder='What the KB contains'
-                    {...field}
-                  />
+                  <Input placeholder='What the KB contains' {...field} />
                 </FormControl>
                 <FormMessage className='absolute' />
               </FormItem>
