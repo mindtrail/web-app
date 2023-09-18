@@ -32,11 +32,6 @@ export function CreateDataStore({
   const { toast } = useToast()
   const router = useRouter()
 
-  console.log(state, dispatch)
-
-  // Access state
-  console.log('STATE', state.unsyncedDataStores)
-
   const onSubmit = async (data: DataStoreFormValues) => {
     const actionType = existingDataStore ? 'updated' : 'created'
     const functionToCall = existingDataStore ? updateDataStore : createDataStore
@@ -124,12 +119,10 @@ export function CreateDataStore({
       await uploadFiles(unsynchedFiles, dataStoreId)
     }
 
-
     dispatch({
       type: 'ADD_UNSYNCED_DATA_STORE',
       payload: { id: dataStoreId },
     })
-
 
     toast({
       title: 'Knowledge Base updated',

@@ -8,13 +8,11 @@ export const globalReducer = (
 
   switch (type) {
     case 'ADD_UNSYNCED_DATA_STORE':
-      console.log('Adding unsynced dataStore', payload)
       return {
         ...state,
         unsyncedDataStores: [...state.unsyncedDataStores, payload],
       }
     case 'REMOVE_SYNCED_DATA_STORE':
-      console.log('Removing synced dataStore', payload)
       return {
         ...state,
         unsyncedDataStores: state.unsyncedDataStores.filter(
