@@ -12,6 +12,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -29,6 +34,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form'
 
 import {
@@ -46,15 +52,20 @@ import {
 } from '@/components/datastore/utils'
 
 type FormProps = {
+  onScrapeWebsite?: (url: string) => Promise<void>
   onSubmit: (data: DataStoreFormValues) => Promise<void>
   getFilesMetadata: (files: AcceptedFile[]) => Promise<Metadata[]>
   existingDataStore?: DataStoreExtended
 }
 
-export type DeleteHandler = (event: React.MouseEvent<HTMLButtonElement>, file: AcceptedFile) => void
+export type DeleteHandler = (
+  event: React.MouseEvent<HTMLButtonElement>,
+  file: AcceptedFile,
+) => void
 
 export function DataStoreForm(props: FormProps) {
-  const { onSubmit, getFilesMetadata, existingDataStore } = props
+  const { onSubmit, getFilesMetadata, existingDataStore, onScrapeWebsite } =
+    props
 
   const defaultValues: DataStoreFormValues = useMemo(
     () => getFormInitialValues(existingDataStore),
@@ -72,6 +83,7 @@ export function DataStoreForm(props: FormProps) {
   const [processing, setProcessing] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [fileToDelete, setFileToDelete] = useState<AcceptedFile | null>(null)
+  const [autoCrawl, setAutoCrawl] = useState(true)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -82,11 +94,12 @@ export function DataStoreForm(props: FormProps) {
 
   const { handleSubmit, control } = form
 
-  const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
-    accept: ACCEPTED_FILE_REACT_DROPZONE,
-    validator: formValidator,
-    onDrop: handleDrop,
-  })
+  const { getRootProps, getInputProps, isDragAccept, isDragReject } =
+    useDropzone({
+      accept: ACCEPTED_FILE_REACT_DROPZONE,
+      validator: formValidator,
+      onDrop: handleDrop,
+    })
 
   function formValidator(file: File) {
     const { name, type } = file
@@ -108,17 +121,27 @@ export function DataStoreForm(props: FormProps) {
 
     const remainingSlots = MAX_NR_OF_FILES - files.length
     // Filter files based on size and nr limit
-    let { acceptedFiles, rejectedFiles } = filterFiles(droppedFiles, remainingSlots)
+    let { acceptedFiles, rejectedFiles } = filterFiles(
+      droppedFiles,
+      remainingSlots,
+    )
 
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
     setRejectedFiles(rejectedFiles)
     setCharCountLoading(true)
     setDropzoneUsed(true) // User has interacted with the dropzone
     try {
-      const metadataForFiles = (await getFilesMetadata(acceptedFiles)) as Metadata[]
-      const totalChars = metadataForFiles.reduce((acc, { charCount }) => acc + charCount, 0)
+      const metadataForFiles = (await getFilesMetadata(
+        acceptedFiles,
+      )) as Metadata[]
+      const totalChars = metadataForFiles.reduce(
+        (acc, { charCount }) => acc + charCount,
+        0,
+      )
 
-      setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
+      setFiles((prevFiles) =>
+        updateFilesWithMetadata(prevFiles, metadataForFiles),
+      )
       setCharCount((prevChars) => prevChars + totalChars)
       setCharCountLoading(false)
     } catch (error) {
@@ -168,7 +191,9 @@ export function DataStoreForm(props: FormProps) {
     filterOutDeletedFileAndUpdateCharCount(file)
   }
 
-  const filterOutDeletedFileAndUpdateCharCount = (fileToDelete: AcceptedFile) => {
+  const filterOutDeletedFileAndUpdateCharCount = (
+    fileToDelete: AcceptedFile,
+  ) => {
     const { file, charCount = 0, status } = fileToDelete
 
     setFiles((prevFiles) =>
@@ -183,6 +208,17 @@ export function DataStoreForm(props: FormProps) {
     setProcessing(true)
     await onSubmit(data)
     setProcessing(false)
+  }
+
+  const handleWebsiteScrape = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault()
+
+    if (onScrapeWebsite) {
+      // const url = window.prompt('Enter a URL to scrape')
+      onScrapeWebsite('https://www.fuer-gruender.de/')
+    }
   }
 
   useEffect(() => {
@@ -230,53 +266,117 @@ export function DataStoreForm(props: FormProps) {
               </FormItem>
             )}
           />
-          <FormField
-            control={control}
-            name='files'
-            render={() => (
-              <FormItem className='relative'>
-                <FormLabel>Upload Files</FormLabel>
-                <FormControl>
-                  <div
-                    {...getRootProps()}
-                    className={`flex flex-col w-full h-28 rounded-xl justify-center
-                  border items-center gap-4 text-neutral-600
-                  select-none cursor-default transition .25s ease-in-out
-                  ${dropzoneInteractionClasses}`}
-                  >
-                    <input {...getInputProps()} />
-                    {isDragReject ? (
-                      'Unsupported file type!'
-                    ) : (
-                      <>
-                        <p>
-                          Drop files or <span className='underline text-neutral-500'>Click</span> to
-                          browse
-                        </p>
-                        <p className='text-sm text-neutral-500'>
-                          <span>Supported file types:</span> .pdf, .docx, .txt, .md, .json, .jsonl,
-                          .csv
-                        </p>
-                      </>
+          <Tabs defaultValue='urls'>
+            <TabsList className='grid w-full grid-cols-2 '>
+              <TabsTrigger value='files'>Documents</TabsTrigger>
+              <TabsTrigger value='urls'>Website</TabsTrigger>
+            </TabsList>
+            <TabsContent value='files'>
+              <div className='flex flex-col gap-4 mt-4'>
+                <FormField
+                  control={control}
+                  name='files'
+                  render={() => (
+                    <FormItem className='relative'>
+                      <FormLabel>Upload Files</FormLabel>
+                      <FormControl>
+                        <div
+                          {...getRootProps()}
+                          className={`flex flex-col w-full h-28 rounded-xl justify-center
+                        border items-center gap-4 text-neutral-600
+                        select-none cursor-default transition .25s ease-in-out
+                        ${dropzoneInteractionClasses}`}
+                        >
+                          <input {...getInputProps()} />
+                          {isDragReject ? (
+                            'Unsupported file type!'
+                          ) : (
+                            <>
+                              <p>
+                                Drop files or{' '}
+                                <span className='underline text-neutral-500'>
+                                  Click
+                                </span>{' '}
+                                to browse
+                              </p>
+                              <p className='text-sm text-neutral-500'>
+                                <span>Supported file types:</span> .pdf, .docx,
+                                .txt, .md, .json, .jsonl, .csv
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormList
+                  acceptedFiles={files}
+                  rejectedFiles={rejectedFiles}
+                  charCount={charCount}
+                  charCountLoading={charCountLoading}
+                  handleFileDelete={handleFileDelete}
+                />
+              </div>
+            </TabsContent>
+            <TabsContent value='urls'>
+              <div className='flex flex-col gap-4 min-h-[184px] mt-4'>
+                <div className='flex w-full flex-col items-start gap-4'>
+                  <FormField
+                    control={control}
+                    name='urls'
+                    render={({ field }) => (
+                      <FormItem className='w-full relative'>
+                        <FormLabel>Website</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='https://your-website.com'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className='absolute' />
+                      </FormItem>
                     )}
+                  />
+                  <div className='flex items-center gap-4'>
+                    <Switch
+                      id='autoCrawl'
+                      checked={autoCrawl}
+                      onCheckedChange={() => setAutoCrawl(!autoCrawl)}
+                    />
+                    <Label htmlFor='autoCrawl' className='w-20'>
+                      {autoCrawl ? 'Automatic' : 'Manual'}
+                    </Label>
+                    <FormDescription>
+                      {autoCrawl
+                        ? 'Crawls all website pages, including sitemap links.'
+                        : 'Fetch the links you want to crawl and add them to the list.'}
+                    </FormDescription>
                   </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormList
-            acceptedFiles={files}
-            rejectedFiles={rejectedFiles}
-            charCount={charCount}
-            charCountLoading={charCountLoading}
-            handleFileDelete={handleFileDelete}
-          />
+                </div>
 
-          <Button type='submit' size='lg' disabled={processing}>
-            {processing && <IconSpinner className='mr-2' />}
-            {existingDataStore ? 'Save Changes' : 'Create'}
-          </Button>
+                {!autoCrawl && (
+                  <Button
+                    onClick={handleWebsiteScrape}
+                    variant='secondary'
+                    size='lg'
+                    disabled={processing}
+                  >
+                    {processing && <IconSpinner className='mr-2' />}
+                    Fetch Links
+                  </Button>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className='flex justify-between w-full'>
+            <Button type='submit' size='lg' disabled={processing}>
+              {processing && <IconSpinner className='mr-2' />}
+              {existingDataStore ? 'Save Changes' : 'Create'}
+            </Button>
+          </div>
         </form>
       </Form>
 
@@ -285,8 +385,9 @@ export function DataStoreForm(props: FormProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete the file and the associated data. The action cannot be undone and
-              will permanently delete <b>{fileToDelete?.file?.name}</b>.
+              This will delete the file and the associated data. The action
+              cannot be undone and will permanently delete{' '}
+              <b>{fileToDelete?.file?.name}</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
