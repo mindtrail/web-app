@@ -1,0 +1,25 @@
+{
+  "hosting": {
+    "source": ".",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "frameworksBackend": {
+      "region": "europe-west1"
+    },
+    "scripts": {
+      "build": "prisma generate && next build"
+    },
+    "hosting": {
+      "predeploy": "prisma generate && npm run build"
+    }
+  },
+  "emulators": {
+    "firestore": {
+      "port": 8080
+    },
+
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
+}

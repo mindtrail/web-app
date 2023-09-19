@@ -5,9 +5,7 @@ import { authOptions } from '@/lib/authOptions'
 import { getDataStoreListDbOp, createDataStoreDbOp } from '@/lib/db/dataStore'
 
 export async function GET() {
-  console.time('session')
   const session = (await getServerSession(authOptions)) as ExtendedSession
-  console.timeEnd('session')
 
   const userId = session?.user?.id
 
@@ -23,9 +21,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  console.time('session')
   const session = (await getServerSession(authOptions)) as ExtendedSession
-  console.timeEnd('session')
 
   const userId = session?.user?.id
 

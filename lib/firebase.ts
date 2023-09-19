@@ -1,10 +1,12 @@
 import { initializeApp } from 'firebase/app'
-// import { getAnalytics } from 'firebase/analytics'
 import { getFirestore } from 'firebase/firestore'
-import { collection, addDoc, doc, onSnapshot } from 'firebase/firestore'
-
-import dotenv from 'dotenv'
-dotenv.config()
+import {
+  collection,
+  addDoc,
+  doc,
+  onSnapshot,
+  connectFirestoreEmulator,
+} from 'firebase/firestore'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -14,14 +16,14 @@ const firebaseConfig = {
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 }
 
 const WEBSITES_COLLECTION = 'scraped-websites'
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
+export const db = getFirestore(app)
+
+connectFirestoreEmulator(db, 'localhost', 8080)
 // const analytics = getAnalytics(app)
 
 export async function addWebsiteToDb(payload: any) {
@@ -40,4 +42,4 @@ export async function listenForDataStoreUpdate(
   return onSnapshot(doc(db, WEBSITES_COLLECTION, dataStoreId), callback)
 }
 
-export { db, doc, onSnapshot, WEBSITES_COLLECTION }
+export { doc, onSnapshot, WEBSITES_COLLECTION }
