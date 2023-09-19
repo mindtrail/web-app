@@ -14,7 +14,9 @@ export const ACCEPTED_FILE_TYPES = [
 export const ACCEPTED_FILE_REACT_DROPZONE = {
   'application/json': ['.json', '.jsonl'],
   'application/pdf': ['.pdf'],
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
+    '.docx',
+  ],
   'application/x-ndjson': ['.jsonl'],
   'application/x-subrip': ['.srt'],
   // 'application/octet-stream': ['', ''],
@@ -23,9 +25,9 @@ export const ACCEPTED_FILE_REACT_DROPZONE = {
   'text/markdown': ['.md'],
 }
 
-export const MAX_NR_OF_FILES = 10
-export const MAX_FILE_SIZE = 10 * 1024 * 1024
-export const MAX_CHARS_PER_KB = 5 * 1000 * 1000
+export const MAX_NR_OF_FILES = 20
+export const MAX_FILE_SIZE = 100 * 1024 * 1024 // 10 MB
+export const MAX_CHARS_PER_KB = 500 * 1000 * 1000 //
 export const UPLOAD_LABEL =
   'Drag and drop files or <span class="filepond--label-action">Browse</span>'
 
