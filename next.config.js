@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
-
 // @TODO: add "output: 'standalone'," to nextConfig if I building a Docker image
-
 const nextConfig = {
   experimental: {
     appDir: true,
