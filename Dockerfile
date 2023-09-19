@@ -56,8 +56,6 @@ RUN adduser --system --uid 1001 nextjs
 RUN ls -al
 RUN pwd
 
-
-
 COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
@@ -72,7 +70,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 EXPOSE 3000
-
 ENV PORT 3000
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
