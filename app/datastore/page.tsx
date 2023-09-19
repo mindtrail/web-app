@@ -22,7 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export interface DSProps {
   searchParams: {
-    notFound: string
+    notFound?: string
+    refresh?: string
   }
 }
 
@@ -35,6 +36,7 @@ export default async function DataStorePage(params: DSProps) {
 
   // @TODO: send a notification to the user that the chat was not found
   const notFoundChat = params?.searchParams?.notFound
+  const refresh = params?.searchParams?.refresh
 
   const userId = session?.user?.id
   const dataStoreList = await getDataStoreListDbOp({

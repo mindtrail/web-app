@@ -4,10 +4,11 @@ import { authOptions } from '@/lib/authOptions'
 
 import { deleteDataSrcDbOp } from '@/lib/db/dataStore'
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  console.time('session')
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } },
+) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
-  console.timeEnd('session')
 
   const userId = session?.user?.id
   const dataStoreId = params.id

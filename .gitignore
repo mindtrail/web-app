@@ -60,3 +60,8 @@ amplifytools.xcconfig
 
 amplify/
 .vscode/
+
+.firebase/
+.github/
+firebase-debug.log
+ui-debug.log
