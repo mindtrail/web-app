@@ -26,8 +26,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Override the default next.config.js with the one for docker
+RUN mv next.config.docker.js next.config.js
+
 RUN ls -al
-RUN pwd
+RUN ls -al /app
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -41,6 +44,7 @@ RUN pwd
 
 # If using npm comment out above and use below instead
 RUN yarn run build
+# RUN NODE_OPTIONS="--max_old_space_size=12288" yarn build
 
 # Production image, copy all the files and run next
 FROM base AS runner
