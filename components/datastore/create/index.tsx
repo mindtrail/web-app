@@ -39,7 +39,7 @@ export function CreateDataStore({
     try {
       await functionToCall(data)
 
-      router.push('/datastore')
+      router.push('/datastore?refresh=true')
     } catch (err) {
       console.log(err)
 
@@ -61,11 +61,11 @@ export function CreateDataStore({
     const dsPayload = { userId, name, description }
 
     const newDataStore = await createDataStoreApiCall(dsPayload)
-    const dsId = newDataStore.id
+    const dataStoreId = newDataStore.id
 
     // Process URLs
     if (urls?.length) {
-      scrapeURLsApiCall(urls, dsId)
+      scrapeURLsApiCall(urls, dataStoreId)
     }
 
     if (files?.length) {
@@ -74,7 +74,7 @@ export function CreateDataStore({
 
     dispatch({
       type: 'ADD_UNSYNCED_DATA_STORE',
-      payload: { id: dsId },
+      payload: { id: dataStoreId },
     })
 
     toast({
@@ -82,7 +82,7 @@ export function CreateDataStore({
       description: `${name} has been created`,
     })
 
-    return { id: dsId }
+    return { id: dataStoreId }
   }
 
   const updateDataStore = async (data: DataStoreFormValues) => {
@@ -114,15 +114,23 @@ export function CreateDataStore({
     if (dsPayload.name || dsPayload.description) {
       await updateDataStoreApiCall(dataStoreId, dsPayload)
     }
+
+    // Process URLs
+    if (urls?.length) {
+      scrapeURLsApiCall(urls, dataStoreId)
+    }
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {
       await uploadFiles(unsynchedFiles, dataStoreId)
     }
 
-    dispatch({
-      type: 'ADD_UNSYNCED_DATA_STORE',
-      payload: { id: dataStoreId },
-    })
+    // Those are the only async operations
+    if (urls?.length || unsynchedFiles?.length) {
+      dispatch({
+        type: 'ADD_UNSYNCED_DATA_STORE',
+        payload: { id: dataStoreId },
+      })
+    }
 
     toast({
       title: 'Knowledge Base updated',
