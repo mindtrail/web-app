@@ -2,7 +2,6 @@
 // @TODO: add "output: 'standalone'," to nextConfig if I building a Docker image
 const nextConfig = {
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -27,6 +26,7 @@ const nextConfig = {
     return config
   },
 }
+
 process.on('unhandledRejection', (error) => {
   console.log('unhandledRejection', error)
 })
