@@ -1,8 +1,5 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { Buffer } from 'buffer'
-import dotenv from 'dotenv'
-
-dotenv.config()
 
 const s3Client = new S3Client({
   region: 'eu-central-1',

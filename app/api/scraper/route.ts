@@ -10,6 +10,7 @@ const SCRAPER_URL =
     : 'https://indies-scraper-jgnk6lxbhq-ey.a.run.app' // deployed scraper
 const SCRAPER_LIMIT = 10
 
+// Method to initiate scraping
 export async function GET(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
