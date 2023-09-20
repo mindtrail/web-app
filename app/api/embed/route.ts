@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next'
 import { DataSrcType, DataSrcStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
-import { uploadToGCS } from '@/lib/cloudStorage'
+import { uploadToS3 } from '@/lib/s3'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { getDocumentChunks } from '@/lib/fileLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
@@ -86,11 +86,11 @@ export async function POST(req: Request) {
 
   createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
 
-  // Upload file to GCS
-  const fileUpload = uploadToGCS({ fileBlob, userId, dataStoreId, dataSrcId })
+  // Upload file to S3
+  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSrcId })
   // @TODO: return file upload success, and run the rest of the process in the background
-  fileUpload
-    .then(() => {
+  s3Upload
+    .then((res) => {
       updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
     })
     .catch((err) => {
@@ -100,5 +100,3 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ nbChunks, textSize, docs })
 }
-
-// NOT LOG_ID("cloudaudit.googleapis.com/activity") AND NOT LOG_ID("externalaudit.googleapis.com/activity") AND NOT LOG_ID("cloudaudit.googleapis.com/system_event") AND NOT LOG_ID("externalaudit.googleapis.com/system_event") AND NOT LOG_ID("cloudaudit.googleapis.com/access_transparency") AND NOT LOG_ID("externalaudit.googleapis.com/access_transparency")
