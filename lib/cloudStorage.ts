@@ -9,23 +9,35 @@ interface UploadToGCSProps {
 }
 
 const storage = new Storage()
+const bucketName = process.env.GCS_BUCKET_NAME || ''
+
+// Return Blob or null
+export async function getFileFromGCS(fileName: string): Promise<Blob | null> {
+  const bucket = storage.bucket(bucketName)
+  const file = bucket.file(fileName)
+  try {
+    const [fileBuffer] = await file.download()
+    const blob = new Blob([fileBuffer], { type: 'text/html' })
+
+    return blob
+  } catch (error) {
+    console.error('Error downloading from GCS', error)
+    return null
+  }
+}
 
 export async function uploadToGCS(props: UploadToGCSProps) {
   const { fileBlob, userId, dataStoreId, dataSrcId } = props
-
-  const bucketName = process.env.GCS_BUCKET_NAME || ''
   const fileName = `${userId}/${dataStoreId}/${dataSrcId}-${fileBlob.name}`
 
   const bucket = storage.bucket(bucketName)
-  const file = bucket.file(fileName)
-
-  const buffer = Buffer.from(await fileBlob.arrayBuffer())
+  const newFile = bucket.file(fileName)
 
   try {
-    console.time('GCS')
-    await file.save(buffer)
+    const buffer = Buffer.from(await fileBlob.arrayBuffer())
+    await newFile.save(buffer)
 
-    await file.setMetadata({
+    await newFile.setMetadata({
       metadata: {
         customTime: new Date().toISOString(),
         metadata: {
@@ -35,7 +47,6 @@ export async function uploadToGCS(props: UploadToGCSProps) {
         },
       },
     })
-    console.timeEnd('GCS')
 
     return 'File uploaded successfully'
   } catch (error) {

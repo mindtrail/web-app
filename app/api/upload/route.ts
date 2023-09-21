@@ -5,7 +5,7 @@ import { DataSrcType, DataSrcStatus } from '@prisma/client'
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
-import { getDocumentChunks } from '@/lib/fileLoader'
+import { getChunksFromFile } from '@/lib/fileLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
 
 export async function POST(req: Request) {
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   const { name: fileName = '' } = fileBlob
 
   // Return nr of chunks & character count
-  const docs = await getDocumentChunks(fileBlob)
+  const docs = await getChunksFromFile(fileBlob)
 
   if (docs instanceof Error) {
     // Handle the error case

@@ -4,14 +4,13 @@ import { authOptions } from '@/lib/authOptions'
 
 const env = process.env.NODE_ENV
 
-const SCRAPER_URL =
+const SCRAPER_SERVICE_URL =
   env === 'development'
-    ? 'http://localhost:80' // Local scraper
-    : 'https://indies-scraper-jgnk6lxbhq-ey.a.run.app' // deployed scraper
-const SCRAPER_LIMIT = 10
+    ? process.env.LOCAL_SCRAPER_SERVICE_URL
+    : process.env.SCRAPER_SERVICE_URL
 
 // Method to initiate scraping
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
@@ -21,40 +20,44 @@ export async function GET(req: Request) {
     })
   }
 
-  const reqUrl = new URL(req.url)
+  const body = await req.json()
+  let { urls, dataStoreId } = body
+  urls = typeof urls === 'string' ? [urls] : urls
 
-  const urls = reqUrl.searchParams.getAll('urls')
-  const dataStoreId = reqUrl.searchParams.get('dataStoreId')
-
-  if (!urls) {
-    return new NextResponse('No url provided', {
+  if (!urls?.length || !dataStoreId) {
+    return new NextResponse('Invalid request, No URL or dataStoreId provided', {
       status: 400,
     })
   }
 
+  if (!SCRAPER_SERVICE_URL) {
+    return new NextResponse('Scraper service URL not set', {
+      status: 500,
+    })
+  }
+
   try {
-    // Join array elements into a repeated parameters string
-    const urlsParams = urls
-      .map((url) => `urls=${encodeURIComponent(url)}`)
-      .join('&')
-
-    const scraperUrl = `${SCRAPER_URL}?${urlsParams}&limit=${SCRAPER_LIMIT}&dataStoreId=${dataStoreId}&userId=${userId}`
-
-    const result = await fetch(scraperUrl)
+    const result = await fetch(SCRAPER_SERVICE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ urls, dataStoreId, userId }),
+    })
 
     if (!result.ok) {
+      console.log('Scrapper service Error', result.status)
       return new Response('Failed to scrape', {
         status: 500,
       })
     }
 
     const res = await result?.json()
-    console.log('res ---', res)
+    console.log('Scraper ---', res)
 
     return NextResponse.json(res)
   } catch (e) {
     console.log('error', e)
-
     return new NextResponse('Failed to scrape', {
       status: 500,
     })

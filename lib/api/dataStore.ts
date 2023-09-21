@@ -99,12 +99,14 @@ export const deleteFileApiCall = async (fileId: string) => {
 }
 
 export const scrapeURLsApiCall = async (urls: string, dataStoreId: string) => {
-  // @TODO: fix this. Now I'm creating an array of one element
-  // Join array elements into a repeated parameters string
-  // const urlsParams = urlsArray.map(url => `urls=${encodeURIComponent(url)}`).join('&');
-
-  const scraperUrl = `${SCRAPER_ENDPOINT}?urls=${urls}&dataStoreId=${dataStoreId}`
-  const response = await fetch(scraperUrl)
+  const response = await fetch(SCRAPER_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    // @TODO: add limit to number of urls
+    body: JSON.stringify({ urls, dataStoreId }),
+  })
 
   if (!response.ok) {
     console.log('response', response)

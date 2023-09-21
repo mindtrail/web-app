@@ -1,59 +1,42 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
 import { DataSrcType, DataSrcStatus } from '@prisma/client'
 
-import { authOptions } from '@/lib/authOptions'
-import { uploadToS3 } from '@/lib/s3'
+import { uploadToGCS } from '@/lib/cloudStorage'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
-import { getDocumentChunks } from '@/lib/fileLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
 
-export async function POST(req: Request) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
+const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
-  if (!session?.user?.id) {
+interface EmbeddingPayload {
+  userId: string
+  dataStoreId: string
+  urls: string[]
+}
+
+export async function POST(req: Request) {
+  // This will be a call from a Cloud Run service, from the same project & VPC
+  // I want to make this call accessible only from the Cloud Run service
+  const secret = req.headers.get('X-Custom-Secret')
+  if (secret !== EMBEDDING_SECRET) {
     return new Response('Unauthorized', {
       status: 401,
     })
   }
 
-  if (
-    !req ||
-    !req.headers.get('content-type')?.startsWith('multipart/form-data')
-  ) {
+  let body
+
+  try {
+    body = (await req.json()) as EmbeddingPayload
+  } catch (err) {
+    console.error(err)
     return new Response('Bad Request', {
       status: 400,
     })
   }
-
-  let dataStoreId = ''
-  let fileBlob: Blob | null = null
-
-  const userId = session.user?.id
-  const formData = await req.formData()
-
-  for (const value of Array.from(formData.values())) {
-    // FormDataEntryValue can either be type `Blob` or `string`.
-    // If its type is object then it's a Blob
-    if (typeof value == 'object') {
-      fileBlob = value
-    }
-    // If its type is string then it's the dataStoreId
-    if (typeof value == 'string') {
-      dataStoreId = value
-    }
-  }
-
-  if (!fileBlob || !dataStoreId) {
-    return new Response(`Missing ${!fileBlob ? 'file' : 'dataStoreId'}`, {
-      status: 400,
-    })
-  }
-
-  const { name: fileName = '' } = fileBlob
+  const { userId, dataStoreId, urls } = body
 
   // Return nr of chunks & character count
-  const docs = await getDocumentChunks(fileBlob)
+  const docs = {} // await getChunksFromFile(fileBlob)
 
   if (docs instanceof Error) {
     // Handle the error case
@@ -62,6 +45,8 @@ export async function POST(req: Request) {
       status: 400,
     })
   }
+
+  return NextResponse.json({ 1234: '1234' })
 
   const nbChunks = docs.length
   const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
@@ -87,7 +72,7 @@ export async function POST(req: Request) {
   createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
 
   // Upload file to S3
-  const s3Upload = uploadToS3({ fileBlob, userId, dataStoreId, dataSrcId })
+  const s3Upload = uploadToGCS({ fileBlob, userId, dataStoreId, dataSrcId })
   // @TODO: return file upload success, and run the rest of the process in the background
   s3Upload
     .then((res) => {
