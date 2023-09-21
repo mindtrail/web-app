@@ -34,8 +34,9 @@ export async function POST(req: Request) {
   }
 
   if (!fileBlob) {
-    console.log('No FileBlob')
-    return null
+    return new Response('Bad Request', {
+      status: 400,
+    })
   }
 
   // Return nr of chunks & character count
