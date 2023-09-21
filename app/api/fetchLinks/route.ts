@@ -7,7 +7,6 @@ const SCRAPER_URL =
   env === 'development'
     ? 'http://localhost:80' // Local scraper
     : 'https://indies-scraper-jgnk6lxbhq-ey.a.run.app' // deployed scraper
-const SCRAPER_LIMIT = 10
 
 const FETCH_LINKS_URL = SCRAPER_URL + '/links'
 

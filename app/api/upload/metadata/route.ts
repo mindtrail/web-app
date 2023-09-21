@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDocumentChunks } from '@/lib/fileLoader'
+import { getChunksFromFile } from '@/lib/fileLoader'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -13,7 +13,10 @@ export async function POST(req: Request) {
     })
   }
 
-  if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
+  if (
+    !req ||
+    !req.headers.get('content-type')?.startsWith('multipart/form-data')
+  ) {
     return new Response('Bad Request', {
       status: 400,
     })
@@ -36,7 +39,7 @@ export async function POST(req: Request) {
   }
 
   // Return nr of chunks & character count
-  const docs = await getDocumentChunks(fileBlob)
+  const docs = await getChunksFromFile(fileBlob)
 
   if (docs instanceof Error) {
     // Handle the error case
