@@ -1,27 +1,21 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/authOptions'
+// import { getServerSession } from 'next-auth/next'
+// import { authOptions } from '@/lib/authOptions'
+import { getWebsite } from '@/lib/cloudStorage'
+import { getChunksFromHTML } from '@/lib/htmlLoader'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
 interface EmbeddingPayload {
   userId: string
   dataStoreId: string
-  urls: string[]
+  files: string[]
+  bucket: string
 }
 
 export async function POST(req: Request) {
   // This will be a call from a Cloud Run service, from the same project & VPC
   // I want to make this call accessible only from the Cloud Run service
-
-  const session = (await getServerSession(authOptions)) as ExtendedSession
-
-  const userId = session?.user?.id
-  if (!userId) {
-    return new NextResponse('Unauthorized', {
-      status: 401,
-    })
-  }
 
   const secret = req.headers.get('X-Custom-Secret')
   if (secret !== EMBEDDING_SECRET) {
@@ -30,27 +24,39 @@ export async function POST(req: Request) {
     })
   }
 
-  let body
-
   try {
-    body = (await req.json()) as EmbeddingPayload
+    const body = (await req.json()) as EmbeddingPayload
+    console.log('--- >', body)
+
+    console.time('getWebsite')
+    const { userId, dataStoreId, files } = body
+
+    // Download the files from GCS
+    const filesHTML = await Promise.all(
+      files.map(async (fileName) => await getWebsite(fileName)),
+    )
+    const validFiles = filesHTML.filter((file) => file !== null)
+
+    // Constructed the chunks...
+    const chunks = await Promise.all(
+      validFiles.map(async (file) => {
+        if (!file) {
+          return null
+        }
+        return await getChunksFromHTML(file)
+      }),
+    )
+
+    const result = chunks.filter((chunk) => chunk !== null).flat()
+    // console.log('--- >', result)
+
+    console.log(result.length)
+    console.timeEnd('getWebsite')
+    return NextResponse.json(result)
   } catch (err) {
     console.error(err)
     return new Response('Bad Request', {
       status: 400,
     })
   }
-
-  // Return nr of chunks & character count
-  const docs = {} // await getChunksFromFile(fileBlob)
-
-  if (docs instanceof Error) {
-    // Handle the error case
-    console.error(docs.message)
-    return new NextResponse('Unsupported file type', {
-      status: 400,
-    })
-  }
-
-  return NextResponse.json({ 1234: '1234' })
 }

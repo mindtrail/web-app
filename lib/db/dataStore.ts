@@ -13,7 +13,10 @@ type DataStoreById = {
   dataStoreId: string
 }
 
-export const getDataStoreListDbOp = async ({ userId, includeDataSrc = false }: DataStoreList) => {
+export const getDataStoreListDbOp = async ({
+  userId,
+  includeDataSrc = false,
+}: DataStoreList) => {
   // Fetch data using Prisma based on the user
   const dataStoreList = await prisma.dataStore.findMany({
     where: { ownerId: userId },
@@ -25,7 +28,10 @@ export const getDataStoreListDbOp = async ({ userId, includeDataSrc = false }: D
   return dataStoreList
 }
 
-export const getDataStoreById = async ({ userId, dataStoreId }: DataStoreById) => {
+export const getDataStoreById = async ({
+  userId,
+  dataStoreId,
+}: DataStoreById) => {
   // Fetch data using Prisma based on the user
   const dataStoreList = await prisma.dataStore.findUnique({
     where: { ownerId: userId, id: dataStoreId },
@@ -37,7 +43,11 @@ export const getDataStoreById = async ({ userId, dataStoreId }: DataStoreById) =
   return dataStoreList
 }
 
-export const createDataStoreDbOp = async ({ userId, name, description }: CreateDataStore) => {
+export const createDataStoreDbOp = async ({
+  userId,
+  name,
+  description,
+}: CreateDataStore) => {
   const type = DataStoreType.qdrant
 
   // Check if a datastore with the specified name already exists for the user
@@ -70,7 +80,11 @@ export const createDataStoreDbOp = async ({ userId, name, description }: CreateD
   return dataStore
 }
 
-export const updateDataStoreDbOp = async ({ dataStoreId, userId, ...rest }: UpdateDataStore) => {
+export const updateDataStoreDbOp = async ({
+  dataStoreId,
+  userId,
+  ...rest
+}: UpdateDataStore) => {
   const dataStore = await prisma.dataStore.update({
     where: {
       id: dataStoreId,
@@ -95,7 +109,10 @@ export const deleteAllDataStoresForUser = async (userId: string) => {
   return dataStore
 }
 
-export const deleteDataStoreDbOp = async (userId: string, dataStoreId: string) => {
+export const deleteDataStoreDbOp = async (
+  userId: string,
+  dataStoreId: string,
+) => {
   const dataStore = await prisma.dataStore.delete({
     where: {
       id: dataStoreId,
