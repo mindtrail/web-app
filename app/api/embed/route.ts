@@ -26,10 +26,9 @@ export async function POST(req: Request) {
 
   try {
     const body = (await req.json()) as EmbeddingPayload
-    console.log('--- >', body)
-
     console.time('getWebsite')
     const { userId, dataStoreId, files } = body
+    console.log('--- >', userId, dataStoreId, JSON.stringify(files))
 
     // Download the files from GCS
     const filesHTML = await Promise.all(
