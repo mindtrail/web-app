@@ -19,8 +19,8 @@ export async function getWebsite(fileName: string): Promise<HTMLFile | null> {
     const [metadata] = await file.getMetadata()
 
     return {
-      fileName,
       html,
+      fileName: `${bucketName}\\${fileName}`,
       metadata: metadata?.metadata || {},
     }
   } catch (error) {
