@@ -28,7 +28,7 @@ declare global {
   interface HTMLFile {
     fileName: string
     html: string
-    metadata: {
+    storageMetadata: {
       pageTitle: string
       metaDescription: string
       userId: string

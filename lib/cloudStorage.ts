@@ -11,7 +11,7 @@ interface UploadToGCSProps {
 const storage = new Storage()
 const bucketName = process.env.GCS_BUCKET_NAME || ''
 
-export async function getWebsite(fileName: string): Promise<HTMLFile | null> {
+export async function getWebsiteData(fileName: string): Promise<HTMLFile | null> {
   const bucket = storage.bucket(bucketName)
   const file = bucket.file(fileName)
   try {
@@ -21,7 +21,7 @@ export async function getWebsite(fileName: string): Promise<HTMLFile | null> {
     return {
       html,
       fileName: `${bucketName}\\${fileName}`,
-      metadata: metadata?.metadata || {},
+      storageMetadata: metadata?.metadata || {},
     }
   } catch (error) {
     console.error('Error downloading from GCS', error)
