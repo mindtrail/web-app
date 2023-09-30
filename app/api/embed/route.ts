@@ -5,7 +5,8 @@ import { getWebsiteData } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
 import { DataSrcType } from '@prisma/client'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
-import { createAndStoreVectors } from '@/lib/qdrant'
+import { createAndStoreVectors } from '@/lib/qdrant-langchain'
+import { Document } from 'langchain/document'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
     const { dataStoreId, files } = body
 
     console.log('--- >', dataStoreId, files.length, JSON.stringify(files))
+
     // Download the files from GCS
     const filesHTML = await Promise.all(
       files.map(async (fileName) => await getWebsiteData(fileName)),
@@ -42,7 +44,7 @@ export async function POST(req: Request) {
     const validFiles = filesHTML.filter((file) => file !== null)
 
     // Constructed the chunks...
-    const result = await Promise.all(
+    const docsToStore = await Promise.all(
       validFiles.map(async (file) => {
         if (!file) {
           return null
@@ -68,26 +70,38 @@ export async function POST(req: Request) {
 
         const dataSrc = await createDataSrc(dataSrcPayload)
         const dataSrcId = dataSrc?.id
-        console.log('DATA SRC ---', dataSrcPayload)
 
         if (!dataSrcId) {
           return null
         }
 
-        return await createAndStoreVectors({
-          docs,
-          userId,
-          dataStoreId,
-          dataSrcId,
-        })
+        return docs.map(({ pageContent, metadata }) => ({
+          pageContent,
+          metadata: {
+            ...metadata,
+            dataStoreId,
+            dataSrcId,
+            userId,
+          },
+        }))
       }),
     )
 
-    return NextResponse.json({ result: `${result.length} dataSrcs Created` })
+    const docs = docsToStore.flat(2).filter((doc) => doc !== null) as Document[]
+
+    console.log(docs)
+    await createAndStoreVectors({ docs })
+
+    return NextResponse.json({
+      result: `${docsToStore.length} dataSrcs Created`,
+    })
   } catch (err) {
-    console.error(err)
-    return new Response('Bad Request', {
+    console.error('errr', err)
+    return new NextResponse('Somethin went wrong', {
       status: 400,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
   }
 }
