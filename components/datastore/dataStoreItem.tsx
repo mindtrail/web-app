@@ -26,10 +26,10 @@ export function DataStoreListItem(props: itemProps) {
       onClick={() => handleClick(id)}
       className='flex w-full group border border-transparent hover:border-border hover:shadow  justify-between rounded-xl text-card-foreground cursor-pointer'
     >
-      <div className='flex flex-col p-4'>
+      <div className='flex flex-col p-4 flex-1 overflow-hidden'>
         <Typography variant='h5'>{name}</Typography>
-        <div className='flex gap-4'>
-          <span className='w-32 overflow-hidden whitespace-nowrap text-ellipsis'>
+        <div className='flex gap-4 max-w-full'>
+          <span className='w-32 shrink-0 overflow-hidden whitespace-nowrap text-ellipsis'>
             {description}
           </span>
           {dataSrcs.map((file, index) => (
@@ -42,7 +42,7 @@ export function DataStoreListItem(props: itemProps) {
           ))}
         </div>
       </div>
-      <div className='invisible group-hover:visible flex p-4 gap-4 items-center overflow-auto'>
+      <div className='invisible group-hover:visible flex p-4 gap-4 items-center'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
