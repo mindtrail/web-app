@@ -71,7 +71,12 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
     collectionName,
   })
 
-  await vectorStore.addDocuments(payload)
+  // vectorStore.ensureCollection
+
+  console.log('--- vectorStore ---', vectorStore)
+  const result = await vectorStore.addDocuments(payload)
+  console.log('--- result ---', result)
+  return result
 }
 
 export const searchSimilarText = async (

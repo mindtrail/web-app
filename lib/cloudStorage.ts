@@ -22,7 +22,7 @@ export async function getWebsiteData(
 
     return {
       html,
-      fileName: `${bucketName}/${fileName}`,
+      fileName,
       storageMetadata: metadata?.metadata || {},
     }
   } catch (error) {

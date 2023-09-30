@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server'
-// import { getServerSession } from 'next-auth/next'
-// import { authOptions } from '@/lib/authOptions'
 import { getWebsiteData } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
 import { DataSrcType } from '@prisma/client'
-import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
+import { createDataSrc } from '@/lib/db/dataSrc'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 
@@ -33,24 +31,16 @@ export async function POST(req: Request) {
     const body = (await req.json()) as EmbeddingPayload
 
     console.time(`Embed website ${timestamp}`)
-    const { dataStoreId, files } = body
+    const { userId, dataStoreId, files } = body
 
     console.log('--- >', dataStoreId, files.length, JSON.stringify(files))
-
     // Download the files from GCS
-    const filesHTML = await Promise.all(
-      files.map(async (fileName) => await getWebsiteData(fileName)),
-    )
-    const validFiles = filesHTML.filter((file) => file !== null)
-
-    // Constructed the chunks...
-    const docsToStore = await Promise.all(
-      validFiles.map(async (file) => {
+    const documents = await Promise.all(
+      files.map(async (fileName) => {
+        const file = await getWebsiteData(fileName)
         if (!file) {
           return null
         }
-        const { storageMetadata, fileName } = file
-        const { userId, dataStoreId } = storageMetadata
 
         const docs = await getChunksFromHTML(file)
         const nbChunks = docs.length
@@ -58,6 +48,10 @@ export async function POST(req: Request) {
           (acc, doc) => acc + doc?.pageContent?.length,
           0,
         )
+
+        if (!nbChunks || !textSize) {
+          return null
+        }
 
         const dataSrcPayload = {
           name: fileName,
@@ -79,21 +73,31 @@ export async function POST(req: Request) {
           pageContent,
           metadata: {
             ...metadata,
-            dataStoreId,
             dataSrcId,
-            userId,
           },
         }))
       }),
     )
 
-    const docs = docsToStore.flat(2).filter((doc) => doc !== null) as Document[]
+    if (!documents.length) {
+      return new NextResponse('No docs', {
+        status: 400,
+      })
+    }
 
-    console.log(docs)
-    await createAndStoreVectors({ docs })
+    const filteredDocs = documents
+      .flat()
+      .filter((doc) => doc !== null) as Document[]
+
+    console.log('--- filteredDocs ---', filteredDocs.length)
+
+    await createAndStoreVectors({
+      docs: filteredDocs,
+      collectionName: `${userId}-${dataStoreId}`,
+    })
 
     return NextResponse.json({
-      result: `${docsToStore.length} dataSrcs Created`,
+      result: `${filteredDocs.length} dataSrcs Created`,
     })
   } catch (err) {
     console.error('errr', err)
