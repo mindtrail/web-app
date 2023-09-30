@@ -14,7 +14,6 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
     size: 1536,
     distance: 'Cosine',
   },
-  // on_disk_payload: true, // @TODO" test for improved performance without this
 }
 
 const QDRANT_CLIENT_PROPS: QdrantLibArgs = {
@@ -22,13 +21,9 @@ const QDRANT_CLIENT_PROPS: QdrantLibArgs = {
   apiKey: process.env.QDRANT_API_KEY,
 }
 
-// const QDRANT_ARGS: QdrantLibArgs = {
-//   client: new QdrantClient(QDRANT_CLIENT_PROPS),
-//   collectionConfig: COLLECTION_CONFIG,
-// }
-
 interface CreateAndStoreVectors {
   docs: Document[]
+  collectionName: string
 }
 
 type QdrantSearchResponse = Schemas['ScoredPoint'] & {
@@ -39,20 +34,17 @@ type QdrantSearchResponse = Schemas['ScoredPoint'] & {
 }
 
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
-  const { docs } = props
+  const { docs, collectionName } = props
 
-  if (!docs.length) {
-    return
-  }
-  const { userId, dataStoreId } = docs[0].metadata
-  const collectionName = `${userId}-${dataStoreId}`
-
-  await QdrantVectorStore.fromDocuments(docs, new OpenAIEmbeddings(), {
-    ...QDRANT_CLIENT_PROPS,
-    collectionName,
-    collectionConfig: COLLECTION_CONFIG,
-  })
-  // console.log('--- vectorStore ---', vectorStore)
+  const vectorStore = await QdrantVectorStore.fromDocuments(
+    docs,
+    new OpenAIEmbeddings(),
+    {
+      ...QDRANT_CLIENT_PROPS,
+      collectionName,
+      collectionConfig: COLLECTION_CONFIG,
+    },
+  )
 }
 
 // export const searchSimilarText = async (

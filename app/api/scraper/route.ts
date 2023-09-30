@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ urls, dataStoreId, userId, limit: 3 }),
+      body: JSON.stringify({ urls, dataStoreId, userId, limit: 10 }),
     })
 
     if (!result.ok) {
