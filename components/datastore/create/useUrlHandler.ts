@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 
 export function useUrlHandler(initialUrls: URLScrapped[] = []) {
+  console.log(initialUrls)
   const [urls, setUrls] = useState(initialUrls)
   const [autoCrawl, setAutoCrawl] = useState(true)
 
