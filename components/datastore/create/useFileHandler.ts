@@ -50,6 +50,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         const metadataForFiles = (await getFilesMetadata(
           acceptedFiles,
         )) as Metadata[]
+
         const totalChars = metadataForFiles.reduce(
           (acc, { charCount }) => acc + charCount,
           0,
@@ -102,13 +103,13 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
     try {
       const { id, name } = fileToDelete.file as DataSrc
-      deleteFileApiCall(id).then((res) => {
-        toast({
-          title: 'File deleted',
-          description: `${name} has been deleted`,
-        })
-        console.log(res)
+      const deleteResult = await deleteFileApiCall(id)
+
+      toast({
+        title: 'File deleted',
+        description: `${name} has been deleted`,
       })
+      console.log(deleteResult)
     } catch (err) {
       toast({
         title: 'Error',

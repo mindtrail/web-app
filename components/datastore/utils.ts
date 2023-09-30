@@ -38,6 +38,30 @@ export const getFormInitialValues = (
   }
 }
 
+// const fileSchema = z.object({
+//   file: z.object({
+//     name: z.string(),
+//     type: z.string(),
+//     // ... other file properties
+//   }),
+//   status: z.enum([DataSrcStatus.unsynched, /* ... other statuses */]),
+//   // ... other file properties
+// });
+
+// const urlSchema = z.object({
+//   url: z.object({
+//     name: z.string(),
+//     // ... other url properties
+//   }),
+//   status: z.enum([DataSrcStatus.unsynched /* ... other statuses */]),
+//   // ... other url properties
+// })
+
+const newURLSchema = z.string().refine(validateUrls, {
+  message:
+    'Invalid URLs. If entering multiple URLs, separate them with commas.',
+})
+
 export const dataStoreFormSchema = z
   .object({
     name: z
@@ -58,6 +82,7 @@ export const dataStoreFormSchema = z
       }),
     files: z.array(z.any()).optional(),
     urls: z.array(z.any()).optional(),
+    newURL: newURLSchema.optional(), // Add the newURL field here and make it optional
   })
   .refine(
     (data) => {
@@ -121,4 +146,17 @@ export const updateFilesWithMetadata = (
   })
 
   return newFiles
+}
+
+function validateUrls(value: string) {
+  const urlPattern =
+    /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  const urls = value.split(',')
+  for (let url of urls) {
+    url = url.trim()
+    if (!urlPattern.test(url)) {
+      return false // Invalid URL found
+    }
+  }
+  return true // All URLs are valid
 }
