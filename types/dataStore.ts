@@ -12,6 +12,13 @@ declare global {
     charCount?: number
   }
 
+  type URLScrapped = {
+    url: string
+    source?: 'local' | 'remote'
+    status?: DataSrcStatus
+    charCount?: number
+  }
+
   type RejectedFile = {
     file: File
     error: 'size' | 'limit'

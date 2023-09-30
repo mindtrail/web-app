@@ -6,6 +6,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { FormList } from '@/components/datastore/create/formFileList'
 import { useFileHandler } from '@/components/datastore/create/useFileHandler'
+import { useUrlHandler } from '@/components/datastore/create/useUrlHandler'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -40,8 +41,6 @@ import {
 } from '@/components/datastore/constants'
 
 import {
-  filterFiles,
-  updateFilesWithMetadata,
   dataStoreFormSchema,
   getFormInitialValues,
   DataStoreFormValues,
@@ -60,6 +59,7 @@ export function DataStoreForm(props: FormProps) {
     () => getFormInitialValues(existingDataStore),
     [existingDataStore],
   )
+  const [processing, setProcessing] = useState(false)
 
   const {
     files,
@@ -75,8 +75,7 @@ export function DataStoreForm(props: FormProps) {
     setDeleteDialogOpen,
   } = useFileHandler(defaultValues?.files)
 
-  const [processing, setProcessing] = useState(false)
-  const [autoCrawl, setAutoCrawl] = useState(true)
+  const { autoCrawl, setAutoCrawl } = useUrlHandler(defaultValues?.urls)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),

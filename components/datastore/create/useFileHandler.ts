@@ -10,7 +10,6 @@ import {
 
 import { getFileMetadataApiCall, deleteFileApiCall } from '@/lib/api/dataStore'
 
-
 const getFilesMetadata = async (files: AcceptedFile[]) => {
   const metadataPromises = files.map(async ({ file }) => {
     const droppedFile = file as File
@@ -65,7 +64,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         console.log(error)
       }
     },
-    [files?.length, getFilesMetadata],
+    [files?.length],
   )
 
   const handleFileDelete: DeleteHandler = useCallback((event, file) => {
