@@ -1,7 +1,18 @@
+import { useMemo } from 'react'
+
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Button } from '@/components/ui/button'
+import { DataSrcType } from '@prisma/client'
+
 import Typography from '@/components/typography'
 import { StatusIcon } from '@/components/datastore/statusIcon'
+import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+
+const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/
 
 import {
   DropdownMenu,
@@ -21,6 +32,20 @@ export function DataStoreListItem(props: itemProps) {
   const { dataStore, handleEdit, handleDelete, handleClick } = props
   const { id, name, description, dataSrcs } = dataStore
 
+  const dataSources = useMemo(() => {
+    return dataSrcs.map((file) => {
+      if (file.type === DataSrcType.web_page) {
+        const match = file.name.match(WEB_PAGE_REGEX)
+        return {
+          ...file,
+          name: match ? match[1] : file.name,
+        }
+      }
+
+      return file
+    })
+  }, [dataSrcs])
+
   return (
     <div
       onClick={() => handleClick(id)}
@@ -32,11 +57,16 @@ export function DataStoreListItem(props: itemProps) {
           <span className='w-32 shrink-0 overflow-hidden whitespace-nowrap text-ellipsis'>
             {description}
           </span>
-          {dataSrcs.map((file, index) => (
+          {dataSources.map((file, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
               <StatusIcon status={file.status} />
               <p className='text-sm text-muted-foreground whitespace-nowrap text-ellipsis overflow-hidden max-w-[120px]'>
-                {file.name}
+                <Tooltip>
+                  <TooltipTrigger>{file.name}</TooltipTrigger>
+                  <TooltipContent>
+                    <p>{file.name}</p>
+                  </TooltipContent>
+                </Tooltip>
               </p>
             </div>
           ))}
