@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
 import { useDropzone } from 'react-dropzone'
 
 import { FormList } from '@/components/datastore/create/formFileList'
@@ -86,7 +87,8 @@ export function DataStoreForm(props: FormProps) {
     shouldFocusError: false, // Prevents auto focusing on the first error, which can trigger error displays immediately.
   })
 
-  const { handleSubmit, control } = form
+  const { handleSubmit, control, formState } = form
+  const { errors } = formState
 
   const { getRootProps, getInputProps, isDragAccept, isDragReject } =
     useDropzone({
@@ -144,6 +146,10 @@ export function DataStoreForm(props: FormProps) {
     return defaultValues?.urls?.length ? 'urls' : 'files'
   }, [defaultValues])
 
+  // @ts-ignore
+  const dataSrcError = errors['']
+
+  console.log(dataSrcError)
   return (
     <>
       <Form {...form}>
@@ -175,9 +181,14 @@ export function DataStoreForm(props: FormProps) {
             )}
           />
           <Tabs defaultValue={defaultTab}>
-            <TabsList className='grid w-full grid-cols-2 '>
+            <TabsList className='grid w-full grid-cols-2 relative'>
               <TabsTrigger value='files'>Documents</TabsTrigger>
               <TabsTrigger value='urls'>Website</TabsTrigger>
+              {dataSrcError && (
+                <span className='text-[0.8rem] font-medium text-destructive absolute top-14 right-0'>
+                  {dataSrcError?.message}
+                </span>
+              )}
             </TabsList>
             <TabsContent value='files'>
               <div className='flex flex-col gap-4 mt-4'>
@@ -186,7 +197,9 @@ export function DataStoreForm(props: FormProps) {
                   name='files'
                   render={() => (
                     <FormItem className='relative'>
-                      <FormLabel>Upload Files</FormLabel>
+                      <FormLabel className={dataSrcError && 'text-destructive'}>
+                        Upload Files
+                      </FormLabel>
                       <FormControl>
                         <div
                           {...getRootProps()}
@@ -233,13 +246,17 @@ export function DataStoreForm(props: FormProps) {
                 <div className='flex w-full flex-col items-start gap-4'>
                   <FormField
                     control={control}
-                    name='urls'
+                    name='newURL'
                     render={({ field }) => (
                       <FormItem className='w-full relative'>
-                        <FormLabel>Website</FormLabel>
+                        <FormLabel
+                          className={dataSrcError && 'text-destructive'}
+                        >
+                          Website
+                        </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder='https://your-website.com'
+                            placeholder='Enter urls separated by coma (,)'
                             {...field}
                           />
                         </FormControl>
@@ -247,7 +264,7 @@ export function DataStoreForm(props: FormProps) {
                       </FormItem>
                     )}
                   />
-                  <div className='flex items-center gap-4'>
+                  <div className='flex items-center gap-4 mt-4'>
                     <Switch
                       id='autoCrawl'
                       checked={autoCrawl}
