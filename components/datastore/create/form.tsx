@@ -52,6 +52,8 @@ type FormProps = {
   existingDataStore?: DataStoreExtended
 }
 
+const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/
+
 export function DataStoreForm(props: FormProps) {
   const { onSubmit, existingDataStore, onScrapeWebsite } = props
 
@@ -75,7 +77,7 @@ export function DataStoreForm(props: FormProps) {
     setDeleteDialogOpen,
   } = useFileHandler(defaultValues?.files)
 
-  const { autoCrawl, setAutoCrawl } = useUrlHandler(defaultValues?.urls)
+  const { urls, autoCrawl, setAutoCrawl } = useUrlHandler(defaultValues?.urls)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -273,6 +275,14 @@ export function DataStoreForm(props: FormProps) {
                     Fetch Links
                   </Button>
                 )}
+                <div>
+                  {urls.map((url, index) => {
+                    const match = url?.url?.name.match(WEB_PAGE_REGEX)
+                    const page = match ? match[1] : url?.url?.name
+
+                    return <p key={index}>{page}</p>
+                  })}
+                </div>
               </div>
             </TabsContent>
           </Tabs>
