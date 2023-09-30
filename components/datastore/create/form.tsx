@@ -236,6 +236,10 @@ export function DataStoreForm(props: FormProps) {
       : DROPZONE_STYLES.DEFAULT
   }, [isDragAccept, isDragReject])
 
+  const defaultTab = useMemo(() => {
+    return defaultValues?.urls?.length ? 'urls' : 'files'
+  }, [defaultValues])
+
   return (
     <>
       <Form {...form}>
@@ -266,7 +270,7 @@ export function DataStoreForm(props: FormProps) {
               </FormItem>
             )}
           />
-          <Tabs defaultValue='urls'>
+          <Tabs defaultValue={defaultTab}>
             <TabsList className='grid w-full grid-cols-2 '>
               <TabsTrigger value='files'>Documents</TabsTrigger>
               <TabsTrigger value='urls'>Website</TabsTrigger>
