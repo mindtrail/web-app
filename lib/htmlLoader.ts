@@ -61,7 +61,8 @@ const formatChunkForEmbedding = (chunk: string): string => {
     .replace(/(?<!\n)\n(?!\n)/g, ' ') // Replace single newlines with spaces
     .replace(/\s?-\s?/g, '-') // Fix spacing around dashes
     .replace(/\.+/g, '.') // remove two consecutive periods
-    .replace(/ \./g, '.') // Fix spacing around periods
+    .replace(/ \./g, '.') // Remove spaces before periods
+    .replace(/\.(?=[a-zA-Z0-9])/g, '. ') // Ensure space after a period
     .replace(/[‘’]/g, "'") // Normalize curly quotes to straight quotes
     .replace(/[“”]/g, '"') // Normalize curly quotes to straight quotes
     .replace(/ ' /g, "'") // Remove extra spaces around single straight quotes
