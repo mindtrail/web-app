@@ -2,11 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { compile } from 'html-to-text'
-import { RecursiveUrlLoader } from 'langchain/document_loaders/web/recursive_url'
-
 const env = process.env.NODE_ENV
-const compiledConvert = compile({ wordwrap: 130 }) // returns (text: string) => string;
 
 const SCRAPER_SERVICE_URL =
   env === 'development'
@@ -17,12 +13,12 @@ const SCRAPER_SERVICE_URL =
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
-  // const userId = session?.user?.id
-  // if (!userId) {
-  //   return new NextResponse('Unauthorized', {
-  //     status: 401,
-  //   })
-  // }
+  const userId = session?.user?.id
+  if (!userId) {
+    return new NextResponse('Unauthorized', {
+      status: 401,
+    })
+  }
 
   const body = await req.json()
   let { urls, dataStoreId } = body
@@ -41,47 +37,29 @@ export async function POST(req: Request) {
   }
 
   try {
-    const loader = new RecursiveUrlLoader(urls[0], {
-      extractor: compiledConvert,
-      maxDepth: 8,
+    const result = await fetch(SCRAPER_SERVICE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ urls, dataStoreId, userId, limit: 2 }),
     })
 
-    const docs = await loader.load()
-    // console.log('docs', docs)
-    return new NextResponse(JSON.stringify(docs?.length), {
-      status: 200,
-    })
+    if (!result.ok) {
+      console.log('Scrapper service Error', result.status)
+      return new Response('Failed to scrape', {
+        status: 500,
+      })
+    }
+
+    const res = await result?.json()
+    console.log('Scraper ---', res)
+
+    return NextResponse.json(res)
   } catch (e) {
     console.log('error', e)
     return new NextResponse('Failed to scrape', {
       status: 500,
     })
   }
-
-  // try {
-  //   const result = await fetch(SCRAPER_SERVICE_URL, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({ urls, dataStoreId, userId, limit: 2 }),
-  //   })
-
-  //   if (!result.ok) {
-  //     console.log('Scrapper service Error', result.status)
-  //     return new Response('Failed to scrape', {
-  //       status: 500,
-  //     })
-  //   }
-
-  //   const res = await result?.json()
-  //   console.log('Scraper ---', res)
-
-  //   return NextResponse.json(res)
-  // } catch (e) {
-  //   console.log('error', e)
-  //   return new NextResponse('Failed to scrape', {
-  //     status: 500,
-  //   })
-  // }
 }
