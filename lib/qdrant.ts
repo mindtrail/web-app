@@ -66,19 +66,16 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
     }
   })
 
-  const store = await QdrantVectorStore.fromDocuments(payload, new OpenAIEmbeddings(), {
-    ...QDRANT_ARGS,
-    collectionName,
-  })
-
-  store.asRetriever()
-
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     ...QDRANT_ARGS,
     collectionName,
   })
-  const result = await vectorStore.addDocuments(payload)
 
+  // vectorStore.ensureCollection
+
+  console.log('--- vectorStore ---', vectorStore)
+  const result = await vectorStore.addDocuments(payload)
+  console.log('--- result ---', result)
   return result
 }
 
@@ -94,7 +91,9 @@ export const searchSimilarText = async (
   console.log('--- message ---', message)
 
   const result = await vectorStore.similaritySearchWithScore(message, 5)
-  return result.filter(([_doc, score]) => score > SIMILARITY_THRESHOLD).map(([doc]) => doc)
+  return result
+    .filter(([_doc, score]) => score > SIMILARITY_THRESHOLD)
+    .map(([doc]) => doc)
 }
 
 export const getCollections = async () => {

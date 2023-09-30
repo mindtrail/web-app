@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     const validFiles = filesHTML.filter((file) => file !== null)
 
     // Constructed the chunks...
-    const vectorStore = await Promise.all(
+    const result = await Promise.all(
       validFiles.map(async (file) => {
         if (!file) {
           return null
@@ -68,6 +68,7 @@ export async function POST(req: Request) {
 
         const dataSrc = await createDataSrc(dataSrcPayload)
         const dataSrcId = dataSrc?.id
+        console.log('DATA SRC ---', dataSrcPayload)
 
         if (!dataSrcId) {
           return null
@@ -82,7 +83,7 @@ export async function POST(req: Request) {
       }),
     )
 
-    return NextResponse.json(vectorStore)
+    return NextResponse.json({ result: `${result.length} dataSrcs Created` })
   } catch (err) {
     console.error(err)
     return new Response('Bad Request', {
