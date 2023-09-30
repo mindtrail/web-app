@@ -60,14 +60,18 @@ export function DataStoreListItem(props: itemProps) {
           {dataSources.map((file, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
               <StatusIcon status={file.status} />
-              <p className='text-sm text-muted-foreground whitespace-nowrap text-ellipsis overflow-hidden max-w-[120px]'>
+              <div className='text-sm text-muted-foreground '>
                 <Tooltip>
-                  <TooltipTrigger>{file.name}</TooltipTrigger>
+                  <TooltipTrigger>
+                    <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[120px]'>
+                      {file.name}
+                    </p>
+                  </TooltipTrigger>
                   <TooltipContent>
                     <p>{file.name}</p>
                   </TooltipContent>
                 </Tooltip>
-              </p>
+              </div>
             </div>
           ))}
         </div>
