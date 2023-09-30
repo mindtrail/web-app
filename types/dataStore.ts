@@ -37,4 +37,9 @@ declare global {
   type UpdateDataStore = Partial<CreateDataStore> & {
     dataStoreId: string
   }
+
+  type DeleteHandler = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    file: AcceptedFile,
+  ) => void
 }

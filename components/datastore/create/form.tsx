@@ -3,19 +3,16 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
-import { DataSrc, DataSrcStatus } from '@prisma/client'
 
 import { FormList } from '@/components/datastore/create/formFileList'
-import { deleteFileApiCall } from '@/lib/api/dataStore'
-import { useToast } from '@/components/ui/use-toast'
+import { useFileHandler } from '@/components/datastore/create/useFileHandler'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 
 import {
   AlertDialog,
@@ -40,7 +37,6 @@ import {
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
   DROPZONE_STYLES,
-  MAX_NR_OF_FILES,
 } from '@/components/datastore/constants'
 
 import {
@@ -54,35 +50,32 @@ import {
 type FormProps = {
   onScrapeWebsite?: (url: string) => Promise<void>
   onSubmit: (data: DataStoreFormValues) => Promise<void>
-  getFilesMetadata: (files: AcceptedFile[]) => Promise<Metadata[]>
   existingDataStore?: DataStoreExtended
 }
 
-export type DeleteHandler = (
-  event: React.MouseEvent<HTMLButtonElement>,
-  file: AcceptedFile,
-) => void
-
 export function DataStoreForm(props: FormProps) {
-  const { onSubmit, getFilesMetadata, existingDataStore, onScrapeWebsite } =
-    props
+  const { onSubmit, existingDataStore, onScrapeWebsite } = props
 
   const defaultValues: DataStoreFormValues = useMemo(
     () => getFormInitialValues(existingDataStore),
     [existingDataStore],
   )
 
-  const { toast } = useToast()
+  const {
+    files,
+    rejectedFiles,
+    dropzoneUsed,
+    charCount,
+    charCountLoading,
+    fileToDelete,
+    deleteDialogOpen,
+    handleFileDrop,
+    handleFileDelete,
+    confirmFileDelete,
+    setDeleteDialogOpen,
+  } = useFileHandler(defaultValues?.files)
 
-  const [files, setFiles] = useState<AcceptedFile[]>(defaultValues?.files || [])
-  const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
-
-  const [dropzoneUsed, setDropzoneUsed] = useState(false)
-  const [charCount, setCharCount] = useState(0)
-  const [charCountLoading, setCharCountLoading] = useState(false)
   const [processing, setProcessing] = useState(false)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [fileToDelete, setFileToDelete] = useState<AcceptedFile | null>(null)
   const [autoCrawl, setAutoCrawl] = useState(true)
 
   const form = useForm<DataStoreFormValues>({
@@ -98,7 +91,7 @@ export function DataStoreForm(props: FormProps) {
     useDropzone({
       accept: ACCEPTED_FILE_REACT_DROPZONE,
       validator: formValidator,
-      onDrop: handleDrop,
+      onDrop: handleFileDrop,
     })
 
   function formValidator(file: File) {
@@ -112,96 +105,6 @@ export function DataStoreForm(props: FormProps) {
     }
 
     return null
-  }
-
-  async function handleDrop(droppedFiles: File[]) {
-    if (!droppedFiles.length) {
-      return
-    }
-
-    const remainingSlots = MAX_NR_OF_FILES - files.length
-    // Filter files based on size and nr limit
-    let { acceptedFiles, rejectedFiles } = filterFiles(
-      droppedFiles,
-      remainingSlots,
-    )
-
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
-    setRejectedFiles(rejectedFiles)
-    setCharCountLoading(true)
-    setDropzoneUsed(true) // User has interacted with the dropzone
-    try {
-      const metadataForFiles = (await getFilesMetadata(
-        acceptedFiles,
-      )) as Metadata[]
-      const totalChars = metadataForFiles.reduce(
-        (acc, { charCount }) => acc + charCount,
-        0,
-      )
-
-      setFiles((prevFiles) =>
-        updateFilesWithMetadata(prevFiles, metadataForFiles),
-      )
-      setCharCount((prevChars) => prevChars + totalChars)
-      setCharCountLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const confirmFileDelete = async () => {
-    if (!fileToDelete) {
-      return
-    }
-
-    try {
-      const { id, name } = fileToDelete.file as DataSrc
-      deleteFileApiCall(id).then((res) => {
-        toast({
-          title: 'File deleted',
-          description: `${name} has been deleted`,
-        })
-        console.log(res)
-      })
-    } catch (err) {
-      toast({
-        title: 'Error',
-        variant: 'destructive',
-        description: `Something went wrong while deleting ${name}`,
-      })
-      console.log(err)
-    }
-
-    filterOutDeletedFileAndUpdateCharCount(fileToDelete)
-  }
-
-  const handleFileDelete: DeleteHandler = (event, file) => {
-    event.preventDefault()
-
-    if (!file) {
-      return
-    }
-
-    if (file.status === DataSrcStatus.synched) {
-      setFileToDelete(file)
-      setDeleteDialogOpen(true)
-      return
-    }
-
-    filterOutDeletedFileAndUpdateCharCount(file)
-  }
-
-  const filterOutDeletedFileAndUpdateCharCount = (
-    fileToDelete: AcceptedFile,
-  ) => {
-    const { file, charCount = 0, status } = fileToDelete
-
-    setFiles((prevFiles) =>
-      prevFiles.filter(({ file: prevFile }) => {
-        return prevFile.name !== file.name
-      }),
-    )
-    setCharCount((prevChars) => prevChars - charCount)
   }
 
   const onFormSumbit = async (data: DataStoreFormValues) => {

@@ -13,7 +13,6 @@ import { useContext } from 'react'
 import {
   createDataStoreApiCall,
   uploadFileApiCall,
-  getFileMetadataApiCall,
   updateDataStoreApiCall,
   scrapeURLsApiCall,
 } from '@/lib/api/dataStore'
@@ -146,14 +145,6 @@ export function CreateDataStore({
     return res
   }
 
-  const getFilesMetadata = async (files: AcceptedFile[]) => {
-    const metadataPromises = files.map(async ({ file }) => {
-      const droppedFile = file as File
-      return await getFileMetadataApiCall(droppedFile)
-    })
-    return await Promise.all(metadataPromises)
-  }
-
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
@@ -164,7 +155,6 @@ export function CreateDataStore({
       <div className='max-w-xl w-full'>
         <DataStoreForm
           onSubmit={onSubmit}
-          getFilesMetadata={getFilesMetadata}
           existingDataStore={existingDataStore}
           onScrapeWebsite={onScrapeWebsite}
         />

@@ -7,11 +7,6 @@ import { IconSpinner } from '@/components/ui/icons'
 import { StatusIcon } from '@/components/datastore/statusIcon'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 
-type DeleteHandler = (
-  event: React.MouseEvent<HTMLButtonElement>,
-  file: AcceptedFile,
-) => void
-
 interface FormList {
   acceptedFiles: AcceptedFile[]
   rejectedFiles: RejectedFile[]
@@ -78,13 +73,13 @@ export function FormList(props: FormList) {
       </div>
 
       {acceptedFormList.length > 0 && (
-        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2'>
+        <div className='w-full flex-1 relative flex flex-col gap-2'>
           {acceptedFormList}
         </div>
       )}
 
       {rejectedFormList.length > 0 && (
-        <div className='max-w-lg w-full flex-1 relative flex flex-col gap-2 text-red-800'>
+        <div className='w-full flex-1 relative flex flex-col gap-2 text-red-800'>
           {rejectedFormList}
         </div>
       )}
