@@ -4,9 +4,23 @@ import { Cross1Icon, FileTextIcon, GlobeIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons'
-import { StatusIcon } from '@/components/datastore/statusIcon'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
-import { DataSrcType } from '@prisma/client'
+import { DataSrcStatus, DataSrcType } from '@prisma/client'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+
+const colorMap = {
+  [DataSrcStatus.unsynched]: 'grey-500',
+  [DataSrcStatus.synched]: 'green-500',
+  [DataSrcStatus.error]: 'red-500',
+  [DataSrcStatus.running]: 'yellow-500',
+  [DataSrcStatus.pending]: 'gray-900',
+  [DataSrcStatus.usage_limit_reached]: 'gray-800',
+}
 
 interface DataSrcList {
   type: DataSrcType
@@ -27,14 +41,23 @@ export function DataSrcList(props: DataSrcList) {
   } = props
 
   const acceptedDataSrcList = useMemo(() => {
-    return acceptedFiles.map(({ file, charCount, status }) => (
+    return acceptedFiles.map(({ file, charCount, status = 'unsynched' }) => (
       <div
         className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
         key={file.name}
       >
         <div className='flex gap-2 items-center'>
-          <StatusIcon size='md' status={status} />
-          <FileTextIcon  />
+          <Tooltip>
+            <TooltipTrigger>
+              <FileTextIcon className={`text-${colorMap[status]}`} />
+              <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[125px]'></p>
+            </TooltipTrigger>
+            <TooltipContent
+              className={status !== DataSrcStatus.synched ? 'bg-gray-500' : ''}
+            >
+              {status}
+            </TooltipContent>
+          </Tooltip>
           {file.name}
         </div>
 
