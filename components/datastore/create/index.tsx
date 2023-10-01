@@ -90,7 +90,7 @@ export function CreateDataStore({
       return
     }
 
-    const { name, description, files, urls } = data
+    const { name, description, files, urls, newURL } = data
     const {
       id: dataStoreId,
       name: existingName,
@@ -115,9 +115,10 @@ export function CreateDataStore({
       await updateDataStoreApiCall(dataStoreId, dsPayload)
     }
 
-    // Process URLs
-    if (urls?.length) {
-      scrapeURLsApiCall(urls, dataStoreId)
+    if (newURL) {
+      // @TODO: If I will add https:// automatically, it should be done here
+      const urlList = newURL.split(',').map((url) => url.trim())
+      scrapeURLsApiCall(urlList, dataStoreId)
     }
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {

@@ -27,6 +27,7 @@ export const getFormInitialValues = (
           status: url.status,
           charCount: url.textSize,
         })),
+      newURL: '',
     }
   }
 
