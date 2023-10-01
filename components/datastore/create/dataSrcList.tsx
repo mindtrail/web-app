@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 import { DataSrcStatus, DataSrcType } from '@prisma/client'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 import {
   Tooltip,
@@ -127,9 +128,9 @@ export function DataSrcList(props: DataSrcList) {
       )}
 
       {acceptedDataSrcList.length > 0 && (
-        <div className='w-full flex-1 relative flex flex-col gap-1 overflow-auto'>
+        <ScrollArea className='w-full flex-1 relative flex flex-col gap-1 max-h-[50vh] rounded-md border py-4 px-2'>
           {acceptedDataSrcList}
-        </div>
+        </ScrollArea>
       )}
 
       {rejectedDataSrcList.length > 0 && (
