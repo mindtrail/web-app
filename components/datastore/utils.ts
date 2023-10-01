@@ -57,11 +57,6 @@ export const getFormInitialValues = (
 //   // ... other url properties
 // })
 
-const newURLSchema = z.string().refine(validateUrls, {
-  message:
-    'Invalid URLs. If entering multiple URLs, separate them with commas.',
-})
-
 export const dataStoreFormSchema = z
   .object({
     name: z
@@ -82,14 +77,14 @@ export const dataStoreFormSchema = z
       }),
     files: z.array(z.any()).optional(),
     urls: z.array(z.any()).optional(),
-    newURL: newURLSchema.optional(), // Add the newURL field here and make it optional
+    newURL: z.string().optional(), // Add the newURL field here and make it optional
   })
   .refine(
     (data) => {
-      return Boolean(data.files?.length) || Boolean(data.urls?.length)
+      return Boolean(data.files?.length) || Boolean(data.newURL)
     },
     {
-      message: 'You must add either files or urls.',
+      message: 'You must add either a File or a Website.',
     },
   )
 
