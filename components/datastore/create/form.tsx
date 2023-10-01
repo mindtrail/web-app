@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { ErrorMessage } from '@hookform/error-message'
 import { useDropzone } from 'react-dropzone'
 
 import { FormList } from '@/components/datastore/create/formFileList'
