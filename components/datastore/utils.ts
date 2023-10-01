@@ -22,7 +22,7 @@ export const getFormInitialValues = (
       urls: dataStore.dataSrcs
         .filter((file) => file.type === DataSrcType.web_page)
         .map((url) => ({
-          url,
+          file: url,
           source: 'remote',
           status: url.status,
           charCount: url.textSize,

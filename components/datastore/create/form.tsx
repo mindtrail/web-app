@@ -246,8 +246,8 @@ export function DataStoreForm(props: FormProps) {
                 />
                 <DataSrcList
                   type={DataSrcType.file}
-                  acceptedFiles={files}
-                  rejectedFiles={rejectedFiles}
+                  acceptedItems={files}
+                  rejectedItems={rejectedFiles}
                   charCount={charCount}
                   charCountLoading={charCountLoading}
                   handleFileDelete={handleFileDelete}
@@ -308,8 +308,7 @@ export function DataStoreForm(props: FormProps) {
                 )}
                 <DataSrcList
                   type={DataSrcType.web_page}
-                  acceptedFiles={files}
-                  rejectedFiles={rejectedFiles}
+                  acceptedItems={urls}
                   charCount={charCount}
                   charCountLoading={charCountLoading}
                   handleFileDelete={handleFileDelete}

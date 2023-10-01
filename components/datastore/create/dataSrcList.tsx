@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo } from 'react'
 // import { Cross1Icon } from '@radix-ui/react-icons'
 import { Cross1Icon, FileTextIcon, GlobeIcon } from '@radix-ui/react-icons'
 
@@ -24,24 +24,38 @@ const colorMap = {
 
 interface DataSrcList {
   type: DataSrcType
-  acceptedFiles: AcceptedFile[] | URLScrapped[]
-  rejectedFiles: RejectedFile[]
+  acceptedItems: AcceptedFile[] | URLScrapped[]
+  rejectedItems?: RejectedFile[]
   charCount: number
   charCountLoading: boolean
   handleFileDelete: DeleteHandler
 }
 
+const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/
+
 export function DataSrcList(props: DataSrcList) {
   const {
-    acceptedFiles,
-    rejectedFiles,
+    type,
+    acceptedItems,
+    rejectedItems = [],
     charCount,
     charCountLoading,
     handleFileDelete,
   } = props
 
+  const IconElement = type === DataSrcType.web_page ? GlobeIcon : FileTextIcon
+
+  const getName = (name: string) => {
+    if (type === DataSrcType.web_page) {
+      const match = name.match(WEB_PAGE_REGEX)
+      return match ? match[1] : name
+    }
+
+    return name
+  }
+
   const acceptedDataSrcList = useMemo(() => {
-    return acceptedFiles.map(({ file, charCount, status = 'unsynched' }) => (
+    return acceptedItems.map(({ file, charCount, status = 'unsynched' }) => (
       <div
         className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
         key={file.name}
@@ -49,7 +63,7 @@ export function DataSrcList(props: DataSrcList) {
         <div className='flex gap-2 items-center'>
           <Tooltip>
             <TooltipTrigger>
-              <FileTextIcon className={`text-${colorMap[status]}`} />
+              <IconElement className={`text-${colorMap[status]}`} />
               <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[125px]'></p>
             </TooltipTrigger>
             <TooltipContent
@@ -58,7 +72,7 @@ export function DataSrcList(props: DataSrcList) {
               {status}
             </TooltipContent>
           </Tooltip>
-          {file.name}
+          {getName(file.name)}
         </div>
 
         <div className='flex gap-2 items-center'>
@@ -77,26 +91,28 @@ export function DataSrcList(props: DataSrcList) {
         </div>
       </div>
     ))
-  }, [acceptedFiles, handleFileDelete])
+  }, [acceptedItems, handleFileDelete, IconElement, getName])
 
   const rejectedDataSrcList = useMemo(() => {
-    return rejectedFiles.map(({ file }: RejectedFile) => (
+    return rejectedItems.map(({ file }: RejectedFile) => (
       <p key={file.name}>{file.name}</p>
     ))
-  }, [rejectedFiles])
+  }, [rejectedItems])
 
   return (
     <>
-      <div className='flex justify-between items-center'>
-        <span className='text-ellipsis max-w-sm'>
-          {`${acceptedFiles.length} of ${MAX_NR_OF_FILES} uploaded`}
-        </span>
+      {type === DataSrcType.file && (
+        <div className='flex justify-between items-center'>
+          <span className='text-ellipsis max-w-sm'>
+            {`${acceptedItems.length} of ${MAX_NR_OF_FILES} uploaded`}
+          </span>
 
-        <span className='flex items-center'>
-          {charCountLoading ? <IconSpinner className='mr-2' /> : charCount}{' '}
-          Chars
-        </span>
-      </div>
+          <span className='flex items-center'>
+            {charCountLoading ? <IconSpinner className='mr-2' /> : charCount}{' '}
+            Chars
+          </span>
+        </div>
+      )}
 
       {acceptedDataSrcList.length > 0 && (
         <div className='w-full flex-1 relative flex flex-col gap-2'>
