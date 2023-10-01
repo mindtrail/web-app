@@ -13,7 +13,7 @@ declare global {
   }
 
   type URLScrapped = {
-    url: DataSrc
+    file: DataSrc
     source?: 'local' | 'remote'
     status?: DataSrcStatus
     charCount?: number
