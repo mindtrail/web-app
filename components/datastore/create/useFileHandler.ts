@@ -70,7 +70,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
   const handleFileDelete: DeleteHandler = useCallback((event, file) => {
     event.preventDefault()
-
+    console.log('file', file)
     if (!file) {
       return
     }

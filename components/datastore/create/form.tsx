@@ -79,7 +79,16 @@ export function DataStoreForm(props: FormProps) {
     setDeleteDialogOpen,
   } = useFileHandler(defaultValues?.files)
 
-  const { urls, autoCrawl, setAutoCrawl } = useUrlHandler(defaultValues?.urls)
+  const {
+    urls,
+    autoCrawl,
+    deleteURLOpen,
+    urlToDelete,
+    confirmURLDelete,
+    setAutoCrawl,
+    handleURLDelete,
+    setDeleteURLOpen,
+  } = useUrlHandler(defaultValues?.urls)
 
   const form = useForm<DataStoreFormValues>({
     resolver: zodResolver(dataStoreFormSchema),
@@ -87,6 +96,16 @@ export function DataStoreForm(props: FormProps) {
     mode: 'onChange',
     shouldFocusError: false, // Prevents auto focusing on the first error, which can trigger error displays immediately.
   })
+
+  const sumbitConfirmation = () => {
+    if (deleteDialogOpen) {
+      confirmFileDelete()
+      setDeleteDialogOpen(false)
+    } else {
+      confirmURLDelete()
+      setDeleteURLOpen(false)
+    }
+  }
 
   const { handleSubmit, control, formState, clearErrors } = form
   const { errors } = formState
@@ -158,10 +177,8 @@ export function DataStoreForm(props: FormProps) {
   }, [isDragAccept, isDragReject])
 
   const defaultTab = useMemo(() => {
-    return defaultValues?.urls?.length && !defaultValues?.files?.length
-      ? 'urls'
-      : 'files'
-  }, [defaultValues])
+    return urls?.length && !files?.length ? 'urls' : 'files'
+  }, [urls, files])
 
   return (
     <>
@@ -314,7 +331,7 @@ export function DataStoreForm(props: FormProps) {
                   acceptedItems={urls}
                   charCount={charCount}
                   charCountLoading={charCountLoading}
-                  handleFileDelete={handleFileDelete}
+                  handleFileDelete={handleURLDelete}
                 />
               </div>
             </TabsContent>
@@ -329,25 +346,27 @@ export function DataStoreForm(props: FormProps) {
         </form>
       </Form>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog
+        open={deleteDialogOpen || deleteURLOpen}
+        onOpenChange={deleteDialogOpen ? setDeleteDialogOpen : setDeleteURLOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
               This will delete the file and the associated data. The action
               cannot be undone and will permanently delete{' '}
-              <b>{fileToDelete?.file?.name}</b>.
+              <b>
+                {deleteDialogOpen
+                  ? fileToDelete?.file?.name
+                  : urlToDelete?.file?.name}
+              </b>
+              .
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button
-              variant='destructive'
-              onClick={() => {
-                confirmFileDelete()
-                setDeleteDialogOpen(false)
-              }}
-            >
+            <Button variant='destructive' onClick={sumbitConfirmation}>
               Delete
             </Button>
           </AlertDialogFooter>

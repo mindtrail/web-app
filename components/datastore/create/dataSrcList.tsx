@@ -45,52 +45,64 @@ export function DataSrcList(props: DataSrcList) {
 
   const IconElement = type === DataSrcType.web_page ? GlobeIcon : FileTextIcon
 
+  // @TODO: update the name of the file in the DataSrc to don't need the regex
   const acceptedDataSrcList = useMemo(() => {
-    const getName = (name: string) => {
-      if (type === DataSrcType.web_page) {
-        const match = name.match(WEB_PAGE_REGEX)
-        return match ? match[1] : name
-      }
-
-      return name
-    }
-
-    return acceptedItems.map(({ file, charCount, status = 'unsynched' }) => (
-      <div
-        className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
-        key={file.name}
-      >
-        <Tooltip>
-          <TooltipTrigger onClick={(e) => e.preventDefault()}>
-            <div className='flex gap-2 items-center cursor-default'>
-              <IconElement className={`${colorMap[status]}`} />
-              <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[125px]'></p>
-              {getName(file.name)}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent
-            className={status !== DataSrcStatus.synched ? 'bg-gray-500' : ''}
-          >
-            {status}
-          </TooltipContent>
-        </Tooltip>
-
-        <div className='flex gap-2 items-center'>
-          <span>{charCount}</span>
-          <Button
-            variant='ghost'
-            size='sm'
-            className='invisible group-hover:visible'
-            disabled={status !== 'unsynched' && status !== 'synched'}
-            onClick={(event) =>
-              handleFileDelete(event, { file, charCount, status })
+    const processedItems =
+      type === DataSrcType.web_page
+        ? acceptedItems.map((item) => {
+            const name = item?.file?.name
+            const match = name.match(WEB_PAGE_REGEX)
+            return {
+              ...item,
+              file: {
+                ...item.file,
+                name: match ? match[1] : name,
+              },
             }
-          >
-            <Cross1Icon />
-          </Button>
+          })
+        : acceptedItems
+
+    processedItems.sort((a, b) => (a?.file?.name < b?.file?.name ? 1 : -1))
+
+    return processedItems.map(
+      ({ file, charCount, status = 'unsynched' }, index) => (
+        <div
+          className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
+          key={index}
+        >
+          <Tooltip>
+            <TooltipTrigger onClick={(e) => e.preventDefault()}>
+              <div className='flex gap-2 items-center cursor-default'>
+                <IconElement className={`${colorMap[status]}`} />
+                <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[125px]'></p>
+                {file.name}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent
+              className={status !== DataSrcStatus.synched ? 'bg-gray-500' : ''}
+            >
+              {status}
+            </TooltipContent>
+          </Tooltip>
+
+          <div className='flex gap-2 items-center'>
+            <span>{charCount}</span>
+            <Button
+              variant='ghost'
+              size='sm'
+              className='invisible group-hover:visible'
+              disabled={status !== 'unsynched' && status !== 'synched'}
+              onClick={(event) =>
+                // @ts-ignore
+                handleFileDelete(event, { file, charCount, status })
+              }
+            >
+              <Cross1Icon />
+            </Button>
+          </div>
         </div>
-      </div>
-    ))
+      ),
+    )
   }, [acceptedItems, handleFileDelete, IconElement, type])
 
   const rejectedDataSrcList = useMemo(() => {
@@ -115,13 +127,13 @@ export function DataSrcList(props: DataSrcList) {
       )}
 
       {acceptedDataSrcList.length > 0 && (
-        <div className='w-full flex-1 relative flex flex-col gap-2'>
+        <div className='w-full flex-1 relative flex flex-col gap-1 overflow-auto'>
           {acceptedDataSrcList}
         </div>
       )}
 
       {rejectedDataSrcList.length > 0 && (
-        <div className='w-full flex-1 relative flex flex-col gap-2 text-red-800'>
+        <div className='w-full flex-1 relative flex flex-col gap-1 text-red-800'>
           {rejectedDataSrcList}
         </div>
       )}

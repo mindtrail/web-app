@@ -47,6 +47,6 @@ declare global {
 
   type DeleteHandler = (
     event: React.MouseEvent<HTMLButtonElement>,
-    file: AcceptedFile,
+    file: AcceptedFile | URLScrapped,
   ) => void
 }
