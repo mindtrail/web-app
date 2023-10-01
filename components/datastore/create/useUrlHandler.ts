@@ -16,7 +16,6 @@ export function useUrlHandler(initialUrls: URLScrapped[] = []) {
       // if (onScrapeWebsite) {
       //   await onScrapeWebsite(url)
       // }
-      console.log('--- urls ---', url)
     } catch (error) {
       console.error(error)
     }
@@ -28,8 +27,6 @@ export function useUrlHandler(initialUrls: URLScrapped[] = []) {
 
   const handleURLDelete: DeleteHandler = useCallback((event, file) => {
     event.preventDefault()
-    console.log('file', file)
-
     if (!file) {
       return
     }

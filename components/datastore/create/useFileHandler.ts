@@ -70,7 +70,6 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
   const handleFileDelete: DeleteHandler = useCallback((event, file) => {
     event.preventDefault()
-    console.log('file', file)
     if (!file) {
       return
     }
@@ -109,7 +108,6 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         title: 'File deleted',
         description: `${name} has been deleted`,
       })
-      console.log(deleteResult)
     } catch (err) {
       toast({
         title: 'Error',
