@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
 
-import { FormList } from '@/components/datastore/create/formFileList'
+import { DataSrcList } from '@/components/datastore/create/dataSrcList'
 import { useFileHandler } from '@/components/datastore/create/useFileHandler'
 import { useUrlHandler } from '@/components/datastore/create/useUrlHandler'
 
@@ -45,6 +45,7 @@ import {
   getFormInitialValues,
   DataStoreFormValues,
 } from '@/components/datastore/utils'
+import { DataSrcType } from '@prisma/client'
 
 type FormProps = {
   onScrapeWebsite?: (url: string) => Promise<void>
@@ -243,7 +244,8 @@ export function DataStoreForm(props: FormProps) {
                     </FormItem>
                   )}
                 />
-                <FormList
+                <DataSrcList
+                  type={DataSrcType.file}
                   acceptedFiles={files}
                   rejectedFiles={rejectedFiles}
                   charCount={charCount}
@@ -304,14 +306,14 @@ export function DataStoreForm(props: FormProps) {
                     Fetch Links
                   </Button>
                 )}
-                <div>
-                  {urls.map((url, index) => {
-                    const match = url?.url?.name.match(WEB_PAGE_REGEX)
-                    const page = match ? match[1] : url?.url?.name
-
-                    return <p key={index}>{page}</p>
-                  })}
-                </div>
+                <DataSrcList
+                  type={DataSrcType.web_page}
+                  acceptedFiles={files}
+                  rejectedFiles={rejectedFiles}
+                  charCount={charCount}
+                  charCountLoading={charCountLoading}
+                  handleFileDelete={handleFileDelete}
+                />
               </div>
             </TabsContent>
           </Tabs>
