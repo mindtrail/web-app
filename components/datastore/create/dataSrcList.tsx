@@ -1,21 +1,23 @@
 import { useMemo, useCallback } from 'react'
 // import { Cross1Icon } from '@radix-ui/react-icons'
-import { Cross1Icon } from '@radix-ui/react-icons'
+import { Cross1Icon, FileTextIcon, GlobeIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons'
 import { StatusIcon } from '@/components/datastore/statusIcon'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
+import { DataSrcType } from '@prisma/client'
 
-interface FormList {
-  acceptedFiles: AcceptedFile[]
+interface DataSrcList {
+  type: DataSrcType
+  acceptedFiles: AcceptedFile[] | URLScrapped[]
   rejectedFiles: RejectedFile[]
   charCount: number
   charCountLoading: boolean
   handleFileDelete: DeleteHandler
 }
 
-export function FormList(props: FormList) {
+export function DataSrcList(props: DataSrcList) {
   const {
     acceptedFiles,
     rejectedFiles,
@@ -24,7 +26,7 @@ export function FormList(props: FormList) {
     handleFileDelete,
   } = props
 
-  const acceptedFormList = useMemo(() => {
+  const acceptedDataSrcList = useMemo(() => {
     return acceptedFiles.map(({ file, charCount, status }) => (
       <div
         className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
@@ -32,6 +34,7 @@ export function FormList(props: FormList) {
       >
         <div className='flex gap-2 items-center'>
           <StatusIcon size='md' status={status} />
+          <FileTextIcon  />
           {file.name}
         </div>
 
@@ -53,7 +56,7 @@ export function FormList(props: FormList) {
     ))
   }, [acceptedFiles, handleFileDelete])
 
-  const rejectedFormList = useMemo(() => {
+  const rejectedDataSrcList = useMemo(() => {
     return rejectedFiles.map(({ file }: RejectedFile) => (
       <p key={file.name}>{file.name}</p>
     ))
@@ -72,15 +75,15 @@ export function FormList(props: FormList) {
         </span>
       </div>
 
-      {acceptedFormList.length > 0 && (
+      {acceptedDataSrcList.length > 0 && (
         <div className='w-full flex-1 relative flex flex-col gap-2'>
-          {acceptedFormList}
+          {acceptedDataSrcList}
         </div>
       )}
 
-      {rejectedFormList.length > 0 && (
+      {rejectedDataSrcList.length > 0 && (
         <div className='w-full flex-1 relative flex flex-col gap-2 text-red-800'>
-          {rejectedFormList}
+          {rejectedDataSrcList}
         </div>
       )}
     </>

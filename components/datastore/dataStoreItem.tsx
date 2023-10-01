@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { DataSrcType } from '@prisma/client'
+import { DataSrcStatus, DataSrcType } from '@prisma/client'
 
 import Typography from '@/components/typography'
 import { StatusIcon } from '@/components/datastore/statusIcon'
@@ -57,18 +57,29 @@ export function DataStoreListItem(props: itemProps) {
           <span className='w-32 shrink-0 overflow-hidden whitespace-nowrap text-ellipsis'>
             {description}
           </span>
-          {dataSources.map((file, index) => (
+          {dataSources.map(({ status, name }, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
-              <StatusIcon status={file.status} />
+              <StatusIcon status={status} />
               <div className='text-sm text-muted-foreground '>
                 <Tooltip>
                   <TooltipTrigger>
-                    <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[120px]'>
-                      {file.name}
+                    <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[125px]'>
+                      {name}
                     </p>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{file.name}</p>
+                  <TooltipContent
+                    className={
+                      status !== DataSrcStatus.synched ? 'bg-gray-500' : ''
+                    }
+                  >
+                    <p className='flex flex-col gap-2'>
+                      {status !== DataSrcStatus.synched && (
+                        <span className='flex gap-1 items-center capitalize'>
+                          {status}
+                        </span>
+                      )}
+                      {name}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </div>
