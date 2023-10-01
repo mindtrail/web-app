@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getWebsiteData } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
-import { DataSrcType } from '@prisma/client'
-import { createDataSrc } from '@/lib/db/dataSrc'
+import { DataSrcType, DataSrcStatus } from '@prisma/client'
+import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 
@@ -89,11 +89,15 @@ export async function POST(req: Request) {
       .flat()
       .filter((doc) => doc !== null) as Document[]
 
-    console.log('--- filteredDocs ---', filteredDocs.length)
-
     await createAndStoreVectors({
       docs: filteredDocs,
       collectionName: `${userId}-${dataStoreId}`,
+    })
+
+    // Update the dataSrc status to synched for each doc
+    filteredDocs.map(({ metadata }) => {
+      const { dataSrcId } = metadata
+      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
     })
 
     return NextResponse.json({

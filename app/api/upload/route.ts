@@ -86,17 +86,14 @@ export async function POST(req: Request) {
 
   createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
 
-  // Upload file to GCS
-  const fileUpload = uploadToGCS({ fileBlob, userId, dataStoreId, dataSrcId })
-  // @TODO: return file upload success, and run the rest of the process in the background
-  fileUpload
-    .then(() => {
-      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
-    })
-    .catch((err) => {
-      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.error })
-      console.error(err)
-    })
+  try {
+    await uploadToGCS({ fileBlob, userId, dataStoreId, dataSrcId })
+    updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
+  } catch (err) {
+    // @TODO: return file upload success, and run the rest of the process in the background
+    updateDataSrc({ id: dataSrcId, status: DataSrcStatus.error })
+    console.error(err)
+  }
 
   return NextResponse.json({ nbChunks, textSize, docs })
 }
