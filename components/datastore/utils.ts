@@ -35,27 +35,9 @@ export const getFormInitialValues = (
     description: '',
     files: [],
     urls: [],
+    newURL: '',
   }
 }
-
-// const fileSchema = z.object({
-//   file: z.object({
-//     name: z.string(),
-//     type: z.string(),
-//     // ... other file properties
-//   }),
-//   status: z.enum([DataSrcStatus.unsynched, /* ... other statuses */]),
-//   // ... other file properties
-// });
-
-// const urlSchema = z.object({
-//   url: z.object({
-//     name: z.string(),
-//     // ... other url properties
-//   }),
-//   status: z.enum([DataSrcStatus.unsynched /* ... other statuses */]),
-//   // ... other url properties
-// })
 
 export const dataStoreFormSchema = z
   .object({
@@ -77,7 +59,12 @@ export const dataStoreFormSchema = z
       }),
     files: z.array(z.any()).optional(),
     urls: z.array(z.any()).optional(),
-    newURL: z.string().optional(), // Add the newURL field here and make it optional
+    newURL: z
+      .string()
+      .refine((url) => validateUrls(url), {
+        message: 'Please enter a valid URL. Eg: https://www.example.com',
+      })
+      .optional(),
   })
   .refine(
     (data) => {
@@ -85,6 +72,7 @@ export const dataStoreFormSchema = z
     },
     {
       message: 'You must add either a File or a Website.',
+      path: ['filesOrUrls'],
     },
   )
 
@@ -143,15 +131,23 @@ export const updateFilesWithMetadata = (
   return newFiles
 }
 
-function validateUrls(value: string) {
-  const urlPattern =
-    /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-  const urls = value.split(',')
-  for (let url of urls) {
-    url = url.trim()
-    if (!urlPattern.test(url)) {
-      return false // Invalid URL found
+function validateUrls(urls: string = '') {
+  if (!urls) {
+    return true
+  }
+
+  const urlList = urls.split(',').map((url) => url.trim())
+
+  // Check each URL string to see if it's valid
+  for (let urlString of urlList) {
+    try {
+      new URL(urlString)
+    } catch (e) {
+      // If any URL string is invalid, return false
+      return false
     }
   }
-  return true // All URLs are valid
+
+  // If all URL strings are valid, return true
+  return true
 }
