@@ -14,12 +14,12 @@ import {
 } from '@/components/ui/tooltip'
 
 const colorMap = {
-  [DataSrcStatus.unsynched]: 'grey-500',
-  [DataSrcStatus.synched]: 'green-500',
-  [DataSrcStatus.error]: 'red-500',
-  [DataSrcStatus.running]: 'yellow-500',
-  [DataSrcStatus.pending]: 'gray-900',
-  [DataSrcStatus.usage_limit_reached]: 'gray-800',
+  [DataSrcStatus.unsynched]: 'text-grey-500',
+  [DataSrcStatus.synched]: 'text-green-500',
+  [DataSrcStatus.error]: 'text-red-500',
+  [DataSrcStatus.running]: 'text-yellow-500',
+  [DataSrcStatus.pending]: 'text-gray-900',
+  [DataSrcStatus.usage_limit_reached]: 'text-gray-800',
 }
 
 interface DataSrcList {
@@ -45,35 +45,35 @@ export function DataSrcList(props: DataSrcList) {
 
   const IconElement = type === DataSrcType.web_page ? GlobeIcon : FileTextIcon
 
-  const getName = (name: string) => {
-    if (type === DataSrcType.web_page) {
-      const match = name.match(WEB_PAGE_REGEX)
-      return match ? match[1] : name
+  const acceptedDataSrcList = useMemo(() => {
+    const getName = (name: string) => {
+      if (type === DataSrcType.web_page) {
+        const match = name.match(WEB_PAGE_REGEX)
+        return match ? match[1] : name
+      }
+
+      return name
     }
 
-    return name
-  }
-
-  const acceptedDataSrcList = useMemo(() => {
     return acceptedItems.map(({ file, charCount, status = 'unsynched' }) => (
       <div
         className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
         key={file.name}
       >
-        <div className='flex gap-2 items-center'>
-          <Tooltip>
-            <TooltipTrigger>
-              <IconElement className={`text-${colorMap[status]}`} />
+        <Tooltip>
+          <TooltipTrigger onClick={(e) => e.preventDefault()}>
+            <div className='flex gap-2 items-center cursor-default'>
+              <IconElement className={`${colorMap[status]}`} />
               <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[125px]'></p>
-            </TooltipTrigger>
-            <TooltipContent
-              className={status !== DataSrcStatus.synched ? 'bg-gray-500' : ''}
-            >
-              {status}
-            </TooltipContent>
-          </Tooltip>
-          {getName(file.name)}
-        </div>
+              {getName(file.name)}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent
+            className={status !== DataSrcStatus.synched ? 'bg-gray-500' : ''}
+          >
+            {status}
+          </TooltipContent>
+        </Tooltip>
 
         <div className='flex gap-2 items-center'>
           <span>{charCount}</span>
@@ -91,7 +91,7 @@ export function DataSrcList(props: DataSrcList) {
         </div>
       </div>
     ))
-  }, [acceptedItems, handleFileDelete, IconElement, getName])
+  }, [acceptedItems, handleFileDelete, IconElement, type])
 
   const rejectedDataSrcList = useMemo(() => {
     return rejectedItems.map(({ file }: RejectedFile) => (

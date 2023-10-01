@@ -62,6 +62,7 @@ export function DataStoreForm(props: FormProps) {
     () => getFormInitialValues(existingDataStore),
     [existingDataStore],
   )
+
   const [processing, setProcessing] = useState(false)
 
   const {
@@ -157,7 +158,9 @@ export function DataStoreForm(props: FormProps) {
   }, [isDragAccept, isDragReject])
 
   const defaultTab = useMemo(() => {
-    return defaultValues?.urls?.length ? 'urls' : 'files'
+    return defaultValues?.urls?.length && !defaultValues?.files?.length
+      ? 'urls'
+      : 'files'
   }, [defaultValues])
 
   return (
