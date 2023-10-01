@@ -86,8 +86,12 @@ export function DataStoreForm(props: FormProps) {
     shouldFocusError: false, // Prevents auto focusing on the first error, which can trigger error displays immediately.
   })
 
-  const { handleSubmit, control, formState } = form
+  const { handleSubmit, control, formState, clearErrors } = form
   const { errors } = formState
+  const newURL = form.getValues('newURL')
+
+  // @ts-ignore - getting the error for the refined error type
+  const filesOrUrlsError = errors?.filesOrUrls
 
   const { getRootProps, getInputProps, isDragAccept, isDragReject } =
     useDropzone({
@@ -130,8 +134,18 @@ export function DataStoreForm(props: FormProps) {
     if (dropzoneUsed) {
       form.setValue('files', files)
       form.trigger('files')
+
+      if (files.length) {
+        // @ts-ignore - getting the error for the refined error type
+        clearErrors('filesOrUrls')
+      }
     }
-  }, [files, form, dropzoneUsed])
+
+    if (newURL) {
+      // @ts-ignore - getting the error for the refined error type
+      clearErrors('filesOrUrls')
+    }
+  }, [files, form, dropzoneUsed, newURL, clearErrors])
 
   const dropzoneInteractionClasses = useMemo(() => {
     return isDragAccept
@@ -145,10 +159,6 @@ export function DataStoreForm(props: FormProps) {
     return defaultValues?.urls?.length ? 'urls' : 'files'
   }, [defaultValues])
 
-  // @ts-ignore
-  const dataSrcError = errors['']
-
-  console.log(dataSrcError)
   return (
     <>
       <Form {...form}>
@@ -183,9 +193,9 @@ export function DataStoreForm(props: FormProps) {
             <TabsList className='grid w-full grid-cols-2 relative'>
               <TabsTrigger value='files'>Documents</TabsTrigger>
               <TabsTrigger value='urls'>Website</TabsTrigger>
-              {dataSrcError && (
+              {filesOrUrlsError && (
                 <span className='text-[0.8rem] font-medium text-destructive absolute top-14 right-0'>
-                  {dataSrcError?.message}
+                  {filesOrUrlsError?.message}
                 </span>
               )}
             </TabsList>
@@ -196,7 +206,9 @@ export function DataStoreForm(props: FormProps) {
                   name='files'
                   render={() => (
                     <FormItem className='relative'>
-                      <FormLabel className={dataSrcError && 'text-destructive'}>
+                      <FormLabel
+                        className={filesOrUrlsError && 'text-destructive'}
+                      >
                         Upload Files
                       </FormLabel>
                       <FormControl>
@@ -249,7 +261,7 @@ export function DataStoreForm(props: FormProps) {
                     render={({ field }) => (
                       <FormItem className='w-full relative'>
                         <FormLabel
-                          className={dataSrcError && 'text-destructive'}
+                          className={filesOrUrlsError && 'text-destructive'}
                         >
                           Website
                         </FormLabel>
@@ -266,6 +278,7 @@ export function DataStoreForm(props: FormProps) {
                   <div className='flex items-center gap-4 mt-4'>
                     <Switch
                       id='autoCrawl'
+                      disabled={true}
                       checked={autoCrawl}
                       onCheckedChange={() => setAutoCrawl(!autoCrawl)}
                     />

@@ -56,15 +56,16 @@ export function CreateDataStore({
   }
 
   const createDataStore = async (data: DataStoreFormValues) => {
-    const { name, description, files, urls } = data
+    const { name, description, files, newURL } = data
     const dsPayload = { userId, name, description }
 
     const newDataStore = await createDataStoreApiCall(dsPayload)
     const dataStoreId = newDataStore.id
 
-    // Process URLs
-    if (urls?.length) {
-      scrapeURLsApiCall(urls, dataStoreId)
+    if (newURL) {
+      // @TODO: If I will add https:// automatically, it should be done here
+      const urlList = newURL.split(',').map((url) => url.trim())
+      scrapeURLsApiCall(urlList, dataStoreId)
     }
 
     if (files?.length) {
