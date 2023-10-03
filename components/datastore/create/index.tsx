@@ -10,11 +10,10 @@ import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
 import { useContext } from 'react'
 
+import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSrc'
 import {
   createDataStoreApiCall,
-  uploadFileApiCall,
   updateDataStoreApiCall,
-  scrapeURLsApiCall,
 } from '@/lib/api/dataStore'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {

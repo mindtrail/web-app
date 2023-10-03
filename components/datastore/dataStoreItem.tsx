@@ -13,8 +13,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,20 +31,6 @@ export function DataStoreListItem(props: itemProps) {
   const { dataStore, handleEdit, handleDelete, handleClick } = props
   const { id, name, description, dataSrcs } = dataStore
 
-  const dataSources = useMemo(() => {
-    return dataSrcs.map((file) => {
-      if (file.type === DataSrcType.web_page) {
-        const match = file.name.match(WEB_PAGE_REGEX)
-        return {
-          ...file,
-          name: match ? match[1] : file.name,
-        }
-      }
-
-      return file
-    })
-  }, [dataSrcs])
-
   return (
     <div
       onClick={() => handleClick(id)}
@@ -58,7 +42,7 @@ export function DataStoreListItem(props: itemProps) {
           <span className='w-32 shrink-0 overflow-hidden whitespace-nowrap text-ellipsis'>
             {description}
           </span>
-          {dataSources.map(({ status, name }, index) => (
+          {dataSrcs.map(({ status, name }, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
               <StatusIcon status={status} />
               <div className='text-sm text-muted-foreground '>

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { DataSrc } from '@prisma/client'
-import { deleteFileApiCall } from '@/lib/api/dataStore'
+import { deleteDataSrcApiCall } from '@/lib/api/dataSrc'
 import { useToast } from '@/components/ui/use-toast'
 
 export function useUrlHandler(initialUrls: URLScrapped[] = []) {
@@ -42,20 +42,19 @@ export function useUrlHandler(initialUrls: URLScrapped[] = []) {
 
     try {
       const { id, name } = urlToDelete.file as DataSrc
-      const deleteResult = await deleteFileApiCall(id)
+      await deleteDataSrcApiCall(id)
 
       toast({
         title: 'Webpage deleted',
         description: `${name} has been deleted`,
       })
-      console.log(deleteResult)
     } catch (err) {
       toast({
         title: 'Error',
         variant: 'destructive',
         description: `Something went wrong while deleting ${name}`,
       })
-      console.log(err)
+      console.error(err)
     }
 
     filterOutDeletedURLs(urlToDelete)
