@@ -7,6 +7,7 @@ import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
+const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/ // Matches everything after the second slash
 
 interface EmbeddingPayload {
   userId: string
@@ -53,8 +54,9 @@ export async function POST(req: Request) {
           return null
         }
 
+        const match = fileName.match(WEB_PAGE_REGEX)
         const dataSrcPayload = {
-          name: fileName,
+          name: match ? match[1] : fileName,
           dataStoreId,
           ownerId: userId,
           type: DataSrcType.web_page,

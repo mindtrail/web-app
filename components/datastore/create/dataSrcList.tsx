@@ -32,8 +32,6 @@ interface DataSrcList {
   handleFileDelete: DeleteHandler
 }
 
-const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/
-
 export function DataSrcList(props: DataSrcList) {
   const {
     type,
@@ -48,35 +46,21 @@ export function DataSrcList(props: DataSrcList) {
 
   // @TODO: update the name of the file in the DataSrc to don't need the regex
   const acceptedDataSrcList = useMemo(() => {
-    const processedItems =
-      type === DataSrcType.web_page
-        ? acceptedItems.map((item) => {
-            const name = item?.file?.name
-            const match = name.match(WEB_PAGE_REGEX)
-            return {
-              ...item,
-              file: {
-                ...item.file,
-                name: match ? match[1] : name,
-              },
-            }
-          })
-        : acceptedItems
+    acceptedItems.sort((a, b) => (a?.file?.name < b?.file?.name ? 1 : -1))
 
-    processedItems.sort((a, b) => (a?.file?.name < b?.file?.name ? 1 : -1))
-
-    return processedItems.map(
+    return acceptedItems.map(
       ({ file, charCount, status = 'unsynched' }, index) => (
         <div
-          className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100'
+          className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100 '
           key={index}
         >
           <Tooltip>
             <TooltipTrigger onClick={(e) => e.preventDefault()}>
               <div className='flex gap-2 items-center cursor-default'>
                 <IconElement className={`${colorMap[status]}`} />
-                <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[125px]'></p>
-                {file.name}
+                <p className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[60%] sm:max-w-sm'>
+                  {file.name}
+                </p>
               </div>
             </TooltipTrigger>
             <TooltipContent
@@ -86,7 +70,7 @@ export function DataSrcList(props: DataSrcList) {
             </TooltipContent>
           </Tooltip>
 
-          <div className='flex gap-2 items-center'>
+          <div className='flex gap-2 items-center shrink-0'>
             <span>{charCount}</span>
             <Button
               variant='ghost'
@@ -104,7 +88,7 @@ export function DataSrcList(props: DataSrcList) {
         </div>
       ),
     )
-  }, [acceptedItems, handleFileDelete, IconElement, type])
+  }, [acceptedItems, handleFileDelete, IconElement])
 
   const rejectedDataSrcList = useMemo(() => {
     return rejectedItems.map(({ file }: RejectedFile) => (

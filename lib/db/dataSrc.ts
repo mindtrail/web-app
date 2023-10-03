@@ -63,3 +63,14 @@ export const updateDataSrc = async (payload: updateDataSrcPayload) => {
 
   return dataSrc
 }
+
+export const deleteDataSrcDbOp = async (userId: string, dataSrcId: string) => {
+  const dataSrc = await prisma.dataSrc.delete({
+    where: {
+      id: dataSrcId,
+      ownerId: userId,
+    },
+  })
+
+  return dataSrc
+}

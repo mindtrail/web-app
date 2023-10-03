@@ -53,8 +53,6 @@ type FormProps = {
   existingDataStore?: DataStoreExtended
 }
 
-const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/
-
 export function DataStoreForm(props: FormProps) {
   const { onSubmit, existingDataStore, onScrapeWebsite } = props
 

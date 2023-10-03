@@ -3,12 +3,12 @@ import { DataSrcStatus, DataSrc } from '@prisma/client'
 
 import { useToast } from '@/components/ui/use-toast'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
+import { getFileMetadataApiCall, deleteDataSrcApiCall } from '@/lib/api/dataSrc'
+
 import {
   filterFiles,
   updateFilesWithMetadata,
 } from '@/components/datastore/utils'
-
-import { getFileMetadataApiCall, deleteFileApiCall } from '@/lib/api/dataStore'
 
 const getFilesMetadata = async (files: AcceptedFile[]) => {
   const metadataPromises = files.map(async ({ file }) => {
@@ -102,7 +102,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
     try {
       const { id, name } = fileToDelete.file as DataSrc
-      const deleteResult = await deleteFileApiCall(id)
+      const deleteResult = await deleteDataSrcApiCall(id)
 
       toast({
         title: 'File deleted',

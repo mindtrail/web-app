@@ -1,5 +1,6 @@
 import { Buffer } from 'buffer'
 import { Storage } from '@google-cloud/storage'
+import { DataSrc } from '@prisma/client'
 
 interface UploadToGCSProps {
   fileBlob: Blob
@@ -72,5 +73,22 @@ export async function uploadToGCS(props: UploadToGCSProps) {
   } catch (error) {
     console.error('Error uploading to GCS', error)
     return null
+  }
+}
+
+export async function deleteFileFromGCS(dataSrc: DataSrc) {
+  const { id: dataSrcId, dataStoreId, ownerId: userId, type, name } = dataSrc
+
+  try {
+    const bucket = storage.bucket(bucketName)
+    const path = `${userId}/${dataStoreId}`
+    const fileName =
+      type === 'file' ? `${path}/${dataSrcId}-${name}` : `${path}/${name}`
+
+    await bucket.file(fileName).delete()
+    return 'File deleted successfully from GCS'
+  } catch (error) {
+    console.error('Error deleting from GCS', error)
+    return error
   }
 }

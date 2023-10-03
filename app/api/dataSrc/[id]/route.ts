@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataSrcDbOp } from '@/lib/db/dataStore'
+import { deleteDataSrcDbOp } from '@/lib/db/dataSrc'
+import { deleteFileFromGCS } from '@/lib/cloudStorage'
 
 export async function DELETE(
   req: Request,
@@ -11,7 +12,7 @@ export async function DELETE(
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const dataStoreId = params.id
+  const dataSrcId = params.id
 
   if (!userId) {
     return new NextResponse('Unauthorized', {
@@ -19,7 +20,12 @@ export async function DELETE(
     })
   }
   try {
-    const dataSrc = await deleteDataSrcDbOp(userId, dataStoreId)
+    const dataSrc = await deleteDataSrcDbOp(userId, dataSrcId)
+    // Delete dataSrc from Qdrant and GCS
+    const res = await deleteFileFromGCS(dataSrc)
+
+    console.log(res)
+
     return NextResponse.json({ dataSrc })
   } catch (error) {
     return new NextResponse('DataStore not found', { status: 404 })
