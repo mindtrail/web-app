@@ -56,9 +56,8 @@ export async function POST(req: Request) {
       return null
     }
 
-    const match = fileName.match(WEB_PAGE_REGEX)
     const dataSrcPayload = {
-      name: match ? match[1] : fileName,
+      name: fileName,
       dataStoreId: TEST_DATASTORE_ID,
       ownerId: TEST_USER_ID,
       type: DataSrcType.web_page,
