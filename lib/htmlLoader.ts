@@ -26,7 +26,7 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<Document[]> {
   }
 
   const chunkTextSpliter = new RecursiveCharacterTextSplitter({
-    chunkSize: 1500, // = 2000/5 = 400 tokens
+    chunkSize: 800, // characters
     chunkOverlap: 0,
     separators: ['\n\n'], // Split only on new paragraphs
   })
@@ -81,3 +81,5 @@ const formatChunkForEmbedding = (chunk: string): string => {
     ) // Capitalize first letter of each sentence
     .trim()
 }
+
+// extension_id=eanggfilgoajaocelnaflolkadkeghjp
