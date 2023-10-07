@@ -25,9 +25,10 @@ export async function POST(req: Request) {
 
   try {
     console.log(searchQuery)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    return Response.json(['https://teleporthq.io'])
 
     // return callLangchainChat({ searchQuery, chatId, userId })
-    return Response.json({ success: 123 })
   } catch (error) {
     console.error('An error occurred:', error)
 

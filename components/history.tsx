@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { IconSpinner } from '@/components/ui/icons'
+import Typography from '@/components/typography'
 
 type HistoryLookupProps = {
   userId: string
@@ -13,20 +14,23 @@ type HistoryLookupProps = {
 export function HistoryLookup({ userId }: HistoryLookupProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [processing, setProcessing] = useState(false)
+  const [foundWebsites, setFoundWebsites] = useState([])
 
   const handleSearch = async (event: MouseEvent) => {
     event.preventDefault()
-    console.log('searching for', searchQuery)
     setProcessing(true)
+
     try {
-      await fetch('/api/history', {
+      const result = await fetch('/api/history', {
         method: 'POST',
         body: JSON.stringify({ userId, searchQuery }),
         headers: {
           'Content-Type': 'application/json',
         },
       })
+      const websites = await result.json()
       setProcessing(false)
+      setFoundWebsites(websites)
     } catch (e) {
       console.log('error', e)
       setProcessing(false)
@@ -49,6 +53,23 @@ export function HistoryLookup({ userId }: HistoryLookupProps) {
           {processing && <IconSpinner className='mr-2' />}
           Search
         </Button>
+      </div>
+      <div className='w-full flex flex-col flex-1 items-center gap-6 pt-6'>
+        {processing && (
+          <div className='flex gap-4 items-center'>
+            <IconSpinner className='mr-2' />
+            Searching for Websites...
+          </div>
+        )}
+
+        {foundWebsites.length ? (
+          <>
+            <Typography variant='h4' className='mb-4 text-gray-700'>
+              History results
+            </Typography>
+            <iframe className='w-full flex-1' src={foundWebsites[0]} />
+          </>
+        ) : null}
       </div>
     </div>
   )
