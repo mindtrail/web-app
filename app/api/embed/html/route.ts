@@ -65,7 +65,8 @@ export async function POST(req: Request) {
       textSize,
     }
 
-    const dataSrc = await createDataSrc(dataSrcPayload)
+    const uniqueName = true
+    const dataSrc = await createDataSrc(dataSrcPayload, uniqueName)
     const dataSrcId = dataSrc?.id
 
     if (!dataSrcId) {
