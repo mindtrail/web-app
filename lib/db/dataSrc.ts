@@ -17,8 +17,20 @@ type CreateDataSrcPayload = Pick<
   'name' | 'dataStoreId' | 'ownerId' | 'type' | 'nbChunks' | 'textSize'
 >
 
-export const createDataSrc = async (payload: CreateDataSrcPayload) => {
+export const createDataSrc = async (
+  payload: CreateDataSrcPayload,
+  uniqueName = false,
+) => {
   const { name, dataStoreId, ownerId, type, nbChunks, textSize } = payload
+
+  if (uniqueName) {
+    const existingDataSrc = await prisma.dataSrc.findFirst({
+      where: { name },
+    })
+    if (existingDataSrc) {
+      return null
+    }
+  }
 
   const dataSrc = await prisma.dataSrc.create({
     data: {
