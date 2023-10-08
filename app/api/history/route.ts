@@ -1,8 +1,9 @@
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { callLangchainChat } from '@/lib/langchain'
-import { callFlowiseChat } from '@/lib/flowise'
+import { searchSimilarText } from '@/lib/qdrant-langchain'
+
+const TEST_COLLECTION = 'bookmark-ai'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -25,9 +26,10 @@ export async function POST(req: Request) {
 
   try {
     console.log(searchQuery)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    return Response.json(['https://teleporthq.io'])
+    const result = await searchSimilarText(searchQuery, TEST_COLLECTION)
+    console.log(result)
 
+    return Response.json([result])
     // return callLangchainChat({ searchQuery, chatId, userId })
   } catch (error) {
     console.error('An error occurred:', error)
