@@ -23,7 +23,7 @@ export function HistoryLookup({ userId }: HistoryLookupProps) {
     try {
       const result = await fetch('/api/history', {
         method: 'POST',
-        body: JSON.stringify({ userId, searchQuery }),
+        body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -46,7 +46,7 @@ export function HistoryLookup({ userId }: HistoryLookupProps) {
         <Input
           className='flex-1 bg-white h-8 border-[1px] disabled:bg-gray-100 disabled:text-gray-400 px-2'
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value?.trim())}
+          onChange={(e) => setSearchQuery(e.target.value)}
           placeholder='A website about travel'
         />
         <Button onClick={handleSearch} disabled={!searchQuery}>
@@ -58,7 +58,7 @@ export function HistoryLookup({ userId }: HistoryLookupProps) {
         {processing && (
           <div className='flex gap-4 items-center'>
             <IconSpinner className='mr-2' />
-            Searching for Websites...
+            Searching for a match...
           </div>
         )}
 

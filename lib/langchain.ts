@@ -14,7 +14,11 @@ interface chatWithAI {
   userId: string
 }
 
-export async function callLangchainChat({ messages, chatId, userId }: chatWithAI) {
+export async function callLangchainChat({
+  messages,
+  chatId,
+  userId,
+}: chatWithAI) {
   if (!messages) {
     return new Response('No message provided', {
       status: 400,
@@ -42,9 +46,12 @@ export async function callLangchainChat({ messages, chatId, userId }: chatWithAI
 
   if (!kbData?.length) {
     // return a plain text response
-    return new Response('Sorry, I could not find the required information in your Knowledge Base', {
-      status: 200,
-    })
+    return new Response(
+      'Sorry, I could not find the required information in your Knowledge Base',
+      {
+        status: 200,
+      },
+    )
   }
 
   const sources = kbData.map((item) => {
