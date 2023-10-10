@@ -21,23 +21,22 @@ export const createDataSrc = async (
   payload: CreateDataSrcPayload,
   uniqueName = false,
 ) => {
-  const { name, dataStoreId, ownerId, type, nbChunks, textSize } = payload
+  const { name, dataStoreId, ownerId, ...rest } = payload
 
   if (uniqueName) {
     const existingDataSrc = await prisma.dataSrc.findFirst({
       where: { name },
     })
     if (existingDataSrc) {
-      return null
+      const { id } = existingDataSrc
+      return updateDataSrc({ id, ...payload })
     }
   }
 
   const dataSrc = await prisma.dataSrc.create({
     data: {
+      ...rest,
       name,
-      type,
-      nbChunks,
-      textSize,
       owner: {
         connect: {
           // @ts-ignore - ownerId is already checked before calling this function
@@ -62,7 +61,7 @@ type updateDataSrcPayload = Partial<CreateDataSrcPayload> & {
 }
 
 export const updateDataSrc = async (payload: updateDataSrcPayload) => {
-  const { id, dataStoreId, ...rest } = payload
+  const { id, ...rest } = payload
 
   const dataSrc = await prisma.dataSrc.update({
     where: {
