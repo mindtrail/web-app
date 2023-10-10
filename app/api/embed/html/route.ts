@@ -57,8 +57,6 @@ export async function POST(req: Request) {
 
     const summary = await sumarizePage(sumaryContent)
 
-    console.log(summary)
-
     const dataSrcPayload = {
       name: fileName,
       dataStoreId: TEST_DATASTORE_ID,
@@ -72,7 +70,6 @@ export async function POST(req: Request) {
     const uniqueName = true
     const dataSrc = await createDataSrc(dataSrcPayload, uniqueName)
     const dataSrcId = dataSrc?.id
-    console.log(dataSrc)
 
     if (!dataSrcId) {
       return new NextResponse('Empty docs', {
