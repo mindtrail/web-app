@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server'
-import { getWebsiteData } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
 import { DataSrcType, DataSrcStatus } from '@prisma/client'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
+import { sumarizePage } from '@/lib/openAI'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
-const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/ // Matches everything after the second slash
 const TEST_USER_ID = process.env.TEST_USER_ID || ''
 const TEST_DATASTORE_ID = process.env.TEST_DATASTORE_ID || ''
 
@@ -36,7 +35,6 @@ export async function POST(req: Request) {
     console.time(`Embed website ${timestamp}`)
     const { html, url: fileName, storageMetadata } = body
 
-    console.log(fileName, html.substring(0, 200))
     // Download the files from GCS
     const payload = {
       fileName,
@@ -44,8 +42,7 @@ export async function POST(req: Request) {
       storageMetadata,
     }
 
-    const docs = await getChunksFromHTML(payload)
-
+    const { chunks: docs, sumaryContent } = await getChunksFromHTML(payload)
     const nbChunks = docs.length
     const textSize = docs.reduce(
       (acc, doc) => acc + doc?.pageContent?.length,
@@ -53,8 +50,14 @@ export async function POST(req: Request) {
     )
 
     if (!nbChunks || !textSize) {
-      return null
+      return new NextResponse('Empty docs', {
+        status: 400,
+      })
     }
+
+    const summary = await sumarizePage(sumaryContent)
+
+    console.log(summary)
 
     const dataSrcPayload = {
       name: fileName,
@@ -63,14 +66,18 @@ export async function POST(req: Request) {
       type: DataSrcType.web_page,
       nbChunks,
       textSize,
+      summary,
     }
 
     const uniqueName = true
     const dataSrc = await createDataSrc(dataSrcPayload, uniqueName)
     const dataSrcId = dataSrc?.id
+    console.log(dataSrc)
 
     if (!dataSrcId) {
-      return null
+      return new NextResponse('Empty docs', {
+        status: 400,
+      })
     }
 
     const documents = docs
@@ -99,7 +106,6 @@ export async function POST(req: Request) {
       const { dataSrcId } = metadata
       updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
     })
-    console.log(documents.length, documents)
 
     return NextResponse.json({
       result: `${documents.length} dataSrcs Created`,

@@ -5,9 +5,14 @@ import * as cheerio from 'cheerio'
 
 const ANCHORS_WITH_SIBINGS = 'a:has(a)'
 const ITEMS_TO_EXCLUDE =
-  'nav, header, footer, aside, menu, menuitem, .nav, .header, .footer, .aside, .menu, .menuitem, .navigation, .navBar, .nav-bar, .navbar, .sidebar, .topnav, .bottomnav, .breadcrumb, .pagination, .dropdown, .pageFooter, .footer, .sidenav, .main-menu, .submenu, .widget, script, style, noscript, iframe, link[rel="alternate"]'
+  'nav, header, footer, aside, menu, menuitem, .nav, .header, .footer, .aside, .menu, .menuitem, .navigation, .navBar, .nav-bar, .navbar, .sidebar, .topnav, .bottomnav, .breadcrumb, .pagination, .dropdown, .pageFooter, .footer, .sidenav, .main-menu, .submenu, .widget, script, style, noscript, iframe, link[rel="alternate svg image"]'
 
-export async function getChunksFromHTML(file: HTMLFile): Promise<Document[]> {
+type HTMLResponse = {
+  chunks: Document[]
+  sumaryContent: string
+}
+
+export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
   const { html, storageMetadata, fileName } = file
   const { pageTitle = '', metaDescription = '' } = storageMetadata
 
@@ -20,6 +25,9 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<Document[]> {
 
   const cleanedHTML = $('body').html() || ''
   const pageContent = htmlToText(cleanedHTML)
+
+  const sumaryContent = `${pageTitle} \n
+    ${metaDescription} \n ${pageContent.substring(0, 1000)}`
 
   if (!pageContent) {
     throw new Error('Page has not content to read')
@@ -49,7 +57,10 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<Document[]> {
       }
     })
 
-    return chunks
+    return {
+      chunks,
+      sumaryContent,
+    }
   } catch (err) {
     console.error(err)
     throw new Error('Error splitting document')

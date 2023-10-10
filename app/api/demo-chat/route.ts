@@ -6,6 +6,7 @@ import { getOpenAIConnection } from '@/lib/openAI'
 export async function POST(req: Request, res: NextResponse) {
   const { messages } = await req.json()
 
+  console.log(messages)
   if (!messages) {
     return new Response('No message provided', {
       status: 400,

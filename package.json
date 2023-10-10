@@ -8,6 +8,7 @@
     "prisma:migrate:prod": "dotenv -e .env.local -- prisma migrate deploy",
     "prisma:migrate:reset": "dotenv -e .env.local -- prisma migrate reset --force",
     "prisma:db:push": "dotenv -e .env.local -- prisma db push",
+    "prisma:db:pull": "dotenv -e .env.local -- prisma db pull",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
