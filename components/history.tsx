@@ -1,5 +1,7 @@
 'use client'
 import { useState, MouseEvent } from 'react'
+import { DataSrc } from '@prisma/client'
+import { GlobeIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,12 +11,14 @@ import Typography from '@/components/typography'
 
 type HistoryLookupProps = {
   userId: string
+  historyItems: DataSrc[]
 }
 
-export function HistoryLookup({ userId }: HistoryLookupProps) {
+export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [processing, setProcessing] = useState(false)
   const [foundWebsites, setFoundWebsites] = useState([])
+  const [history, setHistory] = useState(historyItems)
 
   const handleSearch = async (event: MouseEvent) => {
     event.preventDefault()
@@ -40,7 +44,6 @@ export function HistoryLookup({ userId }: HistoryLookupProps) {
   // return <div>Chat Page</div>
   return (
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
-      <div className='flex flex-col  max-w-2xl items-center gap-2'></div>
       <div className='flex gap-8 w-full md:max-w-2xl items-center'>
         <Label htmlFor='flowiseURL'>History search:</Label>
         <Input
@@ -54,13 +57,22 @@ export function HistoryLookup({ userId }: HistoryLookupProps) {
           Search
         </Button>
       </div>
-      <div className='w-full flex flex-col flex-1 items-center gap-6 pt-6'>
+      <div className='w-full max-w-2xl flex flex-col flex-1 gap-6 pt-6'>
         {processing && (
           <div className='flex gap-4 items-center'>
             <IconSpinner className='mr-2' />
             Searching for a match...
           </div>
         )}
+
+        {history.length
+          ? history.map((item, index) => (
+              <div key={index} className='flex gap-2 items-center'>
+                <GlobeIcon />
+                {item.name}
+              </div>
+            ))
+          : null}
 
         {foundWebsites.length ? (
           <>

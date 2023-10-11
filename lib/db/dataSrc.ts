@@ -1,11 +1,14 @@
 import { DataSrcStatus, DataSrc } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 
-export const getDataSrcList = async (userId: string, datastoreId: string) => {
+export const getDataSrcList = async (userId: string, datastoreId?: string) => {
   const dataSrcList = await prisma.dataSrc.findMany({
     where: {
       ownerId: userId,
       dataStoreId: datastoreId,
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
   })
 
