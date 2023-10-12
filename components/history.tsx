@@ -1,7 +1,8 @@
 'use client'
-import { useState, MouseEvent, KeyboardEvent } from 'react'
+import { useState, MouseEvent, KeyboardEvent, useEffect } from 'react'
 import { DataSrc } from '@prisma/client'
 import { GlobeIcon } from '@radix-ui/react-icons'
+import { Document } from 'langchain/document'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,43 +10,44 @@ import { Label } from '@/components/ui/label'
 import { IconSpinner } from '@/components/ui/icons'
 import Typography from '@/components/typography'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import * as cheerio from 'cheerio'
 
 type HistoryLookupProps = {
   userId: string
   historyItems: DataSrc[]
 }
 
-async function getOGData(url: string) {
-  fetch(url)
-    .then((response) => response.text())
-    .then((html) => {
-      const $ = cheerio.load(html)
+type SearchResult = Document['metadata'] & {
+  image: string
+  summary: string
+}
 
-      const title = $.html('title')
-      const description = $.html('meta[name="description"]')
-      const image = $.html('meta[property="og:image"]')
-
-      return {
-        title,
-        description,
-        image,
-      }
-    })
-    .catch((error) => console.error(error))
+const extractRoute = (url: string) => {
+  const match = url.match(/^https?:\/\/([^:]+)([^?]+)?/)
+  return match ? match[1] + (match[2] || '') : ''
 }
 
 export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [processing, setProcessing] = useState(false)
-  const [foundWebsites, setFoundWebsites] = useState([])
-  const [history, setHistory] = useState(historyItems)
+  const [history, setHistory] = useState<DataSrc[]>([])
+  const [foundWebsite, setFoundWebsite] = useState<SearchResult>()
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       handleSearch(event)
     }
   }
+
+  console.log(historyItems)
+  useEffect(() => {
+    const updatedItems = historyItems.map((item) => {
+      return {
+        ...item,
+        name: extractRoute(item.name),
+      }
+    })
+    setHistory(updatedItems)
+  }, [historyItems])
 
   const handleSearch = async (event: MouseEvent | KeyboardEvent) => {
     event.preventDefault()
@@ -61,12 +63,13 @@ export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
       })
       const websites = await result.json()
       setProcessing(false)
-      setFoundWebsites(websites)
+      setFoundWebsite(websites)
     } catch (e) {
       console.log('error', e)
       setProcessing(false)
     }
   }
+  console.log('foundWebsite', foundWebsite)
 
   // return <div>Chat Page</div>
   return (
@@ -93,13 +96,20 @@ export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
           </div>
         )}
 
-        {foundWebsites.length ? (
-          <>
-            <Typography variant='h5' className='text-gray-700'>
-              Search results
+        {foundWebsite ? (
+          <div className='flex flex-col gap-2'>
+            <Typography variant='h5' className='text-gray-600 capitalize'>
+              {foundWebsite?.hostName}
             </Typography>
-            <iframe className='w-full flex-1' src={foundWebsites[0]} />
-          </>
+            <Typography variant='p' className='text-gray-600'>
+              {foundWebsite?.summary}
+            </Typography>
+            <img
+              width={500}
+              alt={foundWebsite?.metaDescription}
+              src={foundWebsite?.image}
+            />
+          </div>
         ) : null}
 
         {history.length ? (

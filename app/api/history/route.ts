@@ -1,9 +1,17 @@
 import { getServerSession } from 'next-auth/next'
+import * as cheerio from 'cheerio'
 
 import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/qdrant-langchain'
+import { getDataSrcById } from '@/lib/db/dataSrc'
 
 const TEST_COLLECTION = 'bookmark-ai'
+
+type ResultItem = {
+  title: string
+  description: string
+  image: string
+}
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -26,10 +34,26 @@ export async function POST(req: Request) {
 
   try {
     console.log(searchQuery)
-    const result = await searchSimilarText(searchQuery, TEST_COLLECTION)
-    console.log(result)
+    const websiteFound = await searchSimilarText(searchQuery, TEST_COLLECTION)
 
-    return Response.json([result])
+    if (!websiteFound) {
+      return new Response('No website found', {
+        status: 404,
+      })
+    }
+
+    const { dataSrcId, fileName: url } = websiteFound
+    const dataSrc = await getDataSrcById(dataSrcId)
+
+    const image = await getOGImage([url])
+
+    console.log(image)
+
+    return Response.json({
+      ...websiteFound,
+      image: image[0],
+      summary: dataSrc?.summary,
+    })
     // return callLangchainChat({ searchQuery, chatId, userId })
   } catch (error) {
     console.error('An error occurred:', error)
@@ -38,4 +62,25 @@ export async function POST(req: Request) {
       status: 500,
     })
   }
+}
+
+async function getOGImage(foundWebsites: string[]) {
+  const websitesData = await Promise.all(
+    foundWebsites.map(async (website) => {
+      try {
+        const res = await fetch(website)
+        const html = await res.text()
+
+        const $ = cheerio.load(html)
+        const image = $('meta[property="og:image"]').attr('content')
+
+        return image
+      } catch (error) {
+        console.error(error)
+        return ''
+      }
+    }),
+  )
+
+  return websitesData.filter((website) => website !== null)
 }

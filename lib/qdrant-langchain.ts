@@ -50,7 +50,7 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
 export const searchSimilarText = async (
   message: string,
   collectionName: string,
-): Promise<string> => {
+): Promise<Document['metadata'] | undefined> => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     collectionName,
   })
@@ -58,24 +58,26 @@ export const searchSimilarText = async (
   console.log('--- message ---', message)
 
   const allChunks = await vectorStore.similaritySearch(message, 10)
-  const website = findMostFrequentFileName(allChunks)
+  const website = getWebsiteWithMostHits(allChunks)
 
   return website
 }
 
-function findMostFrequentFileName(dataArray: Document[]): string {
+function getWebsiteWithMostHits(
+  dataArray: Document[],
+): Document['metadata'] | undefined {
   const fileNameCounts: { [key: string]: number } = {}
   let maxCount = 0
-  let mostFrequentFileName = ''
+  let websiteWithMostHits
 
   for (const data of dataArray) {
     const fileName = data.metadata.fileName
     fileNameCounts[fileName] = (fileNameCounts[fileName] || 0) + 1
     if (fileNameCounts[fileName] > maxCount) {
       maxCount = fileNameCounts[fileName]
-      mostFrequentFileName = fileName
+      websiteWithMostHits = data.metadata as Document['metadata']
     }
   }
 
-  return mostFrequentFileName
+  return websiteWithMostHits
 }
