@@ -15,31 +15,9 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
+  const { messages, chatId } = body
 
-  const { messages, chatId, flowiseURL } = body
-  console.log('chatID ', chatId)
-  console.log('flowiseURL ', flowiseURL)
-
-  if (flowiseURL) {
-    console.log('000', messages)
-
-    const payload = {
-      flowiseURL,
-      question: messages[messages.length - 1].content,
-      overrideConfig: {
-        qdrantCollection: `${userId}-${chatId}`,
-      },
-    }
-
-    const result = await callFlowiseChat(payload)
-
-    console.log('--- flowise --- ', result)
-    return new Response(result.text, {
-      status: 200,
-    })
-  }
-
-  if (!messages) {
+  if (!messages?.length) {
     return new Response('No message provided', {
       status: 400,
     })
@@ -55,3 +33,22 @@ export async function POST(req: Request) {
     })
   }
 }
+
+// if (flowiseURL) {
+//   console.log('000', messages)
+
+//   const payload = {
+//     flowiseURL,
+//     question: messages[messages.length - 1].content,
+//     overrideConfig: {
+//       qdrantCollection: `${userId}-${chatId}`,
+//     },
+//   }
+
+//   const result = await callFlowiseChat(payload)
+
+//   console.log('--- flowise --- ', result)
+//   return new Response(result.text, {
+//     status: 200,
+//   })
+// }

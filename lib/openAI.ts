@@ -5,7 +5,7 @@ import { SystemMessage, HumanMessage, AIMessageChunk } from 'langchain/schema'
 const SUMMARY_PROMPT = process.env.SUMMARY_PROMPT || ''
 const CATEGORY_PROMPT = process.env.CATEGORY_PROMPT || ''
 
-const prompt = PromptTemplate.fromTemplate(CATEGORY_PROMPT)
+const categoryPromptTemplate = PromptTemplate.fromTemplate(CATEGORY_PROMPT)
 
 const EXISTING_CATEGORIES = [
   'utils',
@@ -48,13 +48,12 @@ export const getOpenAIConnection = () => {
 export const getPageCategory = async (pageDescription: string) => {
   const openAI = getOpenAIConnection()
 
-  const formattedPrompt = await prompt.format({
-    description: pageDescription,
+  const formattedPrompt = await categoryPromptTemplate.format({
     categories: EXISTING_CATEGORIES.join(', '),
   })
 
-  const humanMessage = new HumanMessage(formattedPrompt)
-  const systemMessage = new SystemMessage(CATEGORY_PROMPT)
+  const systemMessage = new SystemMessage(formattedPrompt)
+  const humanMessage = new HumanMessage(pageDescription)
 
   const response = (await openAI
     .call([systemMessage, humanMessage])

@@ -48,17 +48,15 @@ export function Chat(props: ChatProps) {
   const [flowiseURL, setFlowiseURL] = useState(flowiseURLEnvVar)
   const [flowiseEnabled, setFlowiseEnabled] = useState(false)
 
-  console.log(flowiseURL)
-
   const chatProps = {
     initialMessages,
     id,
     body: {
       chatId: id,
-      flowiseURL: flowiseEnabled && flowiseURL ? flowiseURL : undefined,
     },
   }
 
+  console.log(chatProps)
   const { messages, handleSubmit, reload, stop, isLoading, input, setInput } =
     useChat(chatProps)
 
@@ -66,7 +64,7 @@ export function Chat(props: ChatProps) {
     <>
       <div
         className={cn(
-          'w-full flex flex-col flex-1  pb-[200px] pt-4 px-6 md:pt-8 md:px-8 md:py-8 gap-4',
+          'w-full flex flex-col flex-1 mb-[200px] pt-4 px-6 md:pt-8 md:px-8 md:py-8 gap-4',
           className,
         )}
       >
