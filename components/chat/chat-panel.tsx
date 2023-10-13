@@ -8,15 +8,30 @@ import { IconRefresh, IconStop } from '@/components/ui/icons'
 export interface ChatPanelProps
   extends Pick<
     UseChatHelpers,
-    'isLoading' | 'reload' | 'messages' | 'stop' | 'input' | 'setInput' | 'handleSubmit'
+    | 'isLoading'
+    | 'reload'
+    | 'messages'
+    | 'stop'
+    | 'input'
+    | 'setInput'
+    | 'handleSubmit'
   > {
   demo?: boolean
   notInitialised?: boolean
 }
 
 export function ChatPanel(props: ChatPanelProps) {
-  const { demo, isLoading, stop, handleSubmit, reload, input, setInput, messages, notInitialised } =
-    props
+  const {
+    demo,
+    isLoading,
+    stop,
+    handleSubmit,
+    reload,
+    input,
+    setInput,
+    messages,
+    notInitialised,
+  } = props
 
   const positionStyles = demo ? '' : 'fixed'
 
@@ -28,16 +43,24 @@ export function ChatPanel(props: ChatPanelProps) {
       {demo ? null : <ButtonScrollToBottom />}
       {/* {demo ? null : <div className='spacer hidden md:flex md:w-[250px] lg:w-[300px]' />} */}
 
-      <div className='flex-1 mx-auto sm:max-w-3xl sm:px-4'>
+      <div className='flex-1 mx-auto sm:max-w-3xl sm:px-8'>
         <div className='flex h-10 items-center justify-center'>
           {isLoading ? (
-            <Button variant='outline' onClick={() => stop()} className='bg-background'>
+            <Button
+              variant='outline'
+              onClick={() => stop()}
+              className='bg-background'
+            >
               <IconStop className='mr-2' />
               Stop generating
             </Button>
           ) : (
             messages?.length > 0 && (
-              <Button variant='outline' onClick={() => reload()} className='bg-background'>
+              <Button
+                variant='outline'
+                onClick={() => reload()}
+                className='bg-background'
+              >
                 <IconRefresh className='mr-2' />
                 Regenerate response
               </Button>

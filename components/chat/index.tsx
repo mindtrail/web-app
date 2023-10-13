@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { useChat, type Message } from 'ai/react'
 
@@ -47,7 +46,9 @@ export function Chat(props: ChatProps) {
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
   const [flowiseURL, setFlowiseURL] = useState(flowiseURLEnvVar)
-  const [flowiseEnabled, setFlowiseEnabled] = useState(true)
+  const [flowiseEnabled, setFlowiseEnabled] = useState(false)
+
+  console.log(flowiseURL)
 
   const chatProps = {
     initialMessages,
@@ -65,34 +66,14 @@ export function Chat(props: ChatProps) {
     <>
       <div
         className={cn(
-          'w-full flex flex-col flex-1 items-center pb-[200px] pt-4 px-6 md:pt-12 md:px-8 gap-4',
+          'w-full flex flex-col flex-1  pb-[200px] pt-4 px-6 md:pt-8 md:px-8 md:py-8 gap-4',
           className,
         )}
       >
-        <div className='flex flex-col items-center w-full gap-2'>
-          <Typography variant='h3'>{name} - Chat</Typography>
-          <div className='flex gap-2 w-full items-center justify-center'>
-            <Typography variant='p' className='font-semibold'>
-              Qdrant Collection:
-            </Typography>
-            <Typography variant='p'>
-              {userId}-{id}
-            </Typography>
-          </div>
-          <div className='flex gap-2 w-full md:max-w-2xl items-center'>
-            <Label htmlFor='flowiseURL'>Flowise URL:</Label>
-            <input
-              className='flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400 '
-              value={flowiseURL}
-              onChange={(e) => setFlowiseURL(e.target.value)}
-              disabled={!flowiseEnabled}
-            />
-            <Switch
-              id='flowiseURL'
-              checked={flowiseEnabled}
-              onCheckedChange={() => setFlowiseEnabled(!flowiseEnabled)}
-            />
-          </div>
+        <div className='flex flex-col w-full gap-2'>
+          <Typography variant='h4' className='mb-4 text-gray-700'>
+            Chat
+          </Typography>
         </div>
 
         {messages?.length ? (
