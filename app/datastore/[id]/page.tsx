@@ -5,7 +5,6 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { getDataStoreById } from '@/lib/db/dataStore'
 
-import { Header } from '@/components/header'
 import { CreateDataStore } from '@/components/datastore'
 
 export interface EditDSProps {
@@ -14,7 +13,9 @@ export interface EditDSProps {
   }
 }
 
-export async function generateMetadata({ params }: EditDSProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: EditDSProps): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -48,7 +49,6 @@ export default async function EditDS({ params }: EditDSProps) {
         <div>Knowledge Base Not Found...</div>
       ) : (
         <>
-          <Header session={session} />
           <CreateDataStore userId={userId} dataStore={dataStore} />
         </>
       )}

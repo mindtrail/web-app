@@ -1,16 +1,13 @@
 'use client'
 import { useState, MouseEvent, KeyboardEvent, useEffect } from 'react'
 import { DataSrc } from '@prisma/client'
-import { GlobeIcon } from '@radix-ui/react-icons'
 import { Document } from 'langchain/document'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { IconSpinner } from '@/components/ui/icons'
 import Typography from '@/components/typography'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 type HistoryLookupProps = {
   userId: string
@@ -72,7 +69,10 @@ export function Search({ userId, historyItems }: HistoryLookupProps) {
 
   // return <div>Chat Page</div>
   return (
-    <div className='flex flex-col flex-1 w-full items-center px-4 py-4 md:py-8 md:px-8 gap-4'>
+    <div className='flex flex-col flex-1 w-full  px-4 py-4 md:py-8 md:px-8 gap-4'>
+      <Typography variant='h4' className='mb-4 text-gray-700'>
+        Search any information
+      </Typography>
       <div className='flex gap-4 w-full items-center'>
         <Input
           id='search'

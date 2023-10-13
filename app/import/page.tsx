@@ -3,9 +3,11 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
-import { Search } from '@/components/search'
 import { authOptions } from '@/lib/authOptions'
-import { getDataSrcList } from '@/lib/db/dataSrc'
+import { getDataStoreById } from '@/lib/db/dataStore'
+import { ImportDataSrc } from '@/components/datastore/import/importDataSrc'
+
+const TEST_DATA_STORE = process.env.TEST_DATASTORE_ID || ''
 
 interface UserWithId {
   id: string | null
@@ -20,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: 'Search',
+    title: 'Import',
   }
 }
 
@@ -30,9 +32,16 @@ export default async function ChatPage() {
   if (!session?.user?.id) {
     redirect(`/api/auth/signin?callbackUrl=/chat/`)
   }
-
   const userId = session.user.id
 
-  // return <div>Chat Page</div>
-  return <>{/* <Search userId={userId} historyItems={historyItems} /> */}</>
+  const dataStore = await getDataStoreById({
+    userId,
+    dataStoreId: TEST_DATA_STORE,
+  })
+
+  if (!dataStore) {
+    redirect('/datastore?error=not-found')
+  }
+
+  return <ImportDataSrc userId={userId}  dataStore={dataStore} />
 }
