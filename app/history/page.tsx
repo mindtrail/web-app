@@ -20,10 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     return {}
   }
 
-  const userId = session.user.id
-
   return {
-    title: 'Chat',
+    title: 'History',
   }
 }
 

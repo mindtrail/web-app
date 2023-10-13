@@ -20,7 +20,7 @@ export function Header({ session }: HeaderProps) {
     >
       <div className='flex w-full max-w-6xl px-4 md:px-6 items-center justify-between'>
         <div className='flex w-40'>
-          <Link href='/'>Indie Chat</Link>
+          <Link href='/'>Mind Trail</Link>
         </div>
         {user && <Link href='/datastore'>Knowledge Bases</Link>}
 
