@@ -4,7 +4,7 @@ import { DataSrcType, DataSrcStatus } from '@prisma/client'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
-import { sumarizePage } from '@/lib/openAI'
+import { sumarizePage, getPageCategory } from '@/lib/openAI'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 const TEST_USER_ID = process.env.TEST_USER_ID || ''
@@ -56,6 +56,8 @@ export async function POST(req: Request) {
     }
 
     const summary = await sumarizePage(sumaryContent)
+    const category = await getPageCategory(summary)
+    console.log(category)
 
     const dataSrcPayload = {
       name: fileName,
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
       nbChunks,
       textSize,
       summary,
+      thumbnail: category,
     }
 
     const uniqueName = true

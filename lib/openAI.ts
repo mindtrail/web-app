@@ -1,11 +1,14 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai'
+import { PromptTemplate } from 'langchain/prompts'
 import { SystemMessage, HumanMessage, AIMessageChunk } from 'langchain/schema'
 
 const SUMMARY_PROMPT = process.env.SUMMARY_PROMPT || ''
 const CATEGORY_PROMPT = process.env.CATEGORY_PROMPT || ''
 
+const prompt = PromptTemplate.fromTemplate(CATEGORY_PROMPT)
+
 const EXISTING_CATEGORIES = [
-  'tools',
+  'utils',
   'RAG',
   'AI',
   'library',
@@ -23,6 +26,7 @@ const EXISTING_CATEGORIES = [
   'espresso',
   'ai',
   'foundation-models',
+  'langchain',
 ]
 
 let openAIChat: ChatOpenAI
@@ -41,10 +45,15 @@ export const getOpenAIConnection = () => {
   return openAIChat
 }
 
-export const getPageCategory = async (text: string) => {
+export const getPageCategory = async (pageDescription: string) => {
   const openAI = getOpenAIConnection()
 
-  const humanMessage = new HumanMessage(text)
+  const formattedPrompt = await prompt.format({
+    description: pageDescription,
+    categories: EXISTING_CATEGORIES.join(', '),
+  })
+
+  const humanMessage = new HumanMessage(formattedPrompt)
   const systemMessage = new SystemMessage(CATEGORY_PROMPT)
 
   const response = (await openAI
