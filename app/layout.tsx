@@ -21,6 +21,10 @@ const sidebarNavItems = [
     href: '/categories',
   },
   {
+    title: 'Chat',
+    href: '/chat',
+  },
+  {
     title: 'Import',
     href: '/import',
   },

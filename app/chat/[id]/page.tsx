@@ -6,7 +6,9 @@ import { Session } from 'next-auth'
 import { getDataStoreById } from '@/lib/db/dataStore'
 import { authOptions } from '@/lib/authOptions'
 import { Chat } from '@/components/chat'
-// import { getChat } from '@/app/actions'
+
+const TEST_DATA_STORE = process.env.TEST_DATASTORE_ID || ''
+const FLOWISE_URL = process.env.FLOWISE_URL || ''
 
 export interface ChatPageProps {
   params: {
@@ -19,17 +21,13 @@ interface UserWithId {
 }
 type ExtSession = Session & { user: UserWithId | null }
 
-export async function generateMetadata({
-  params,
-}: ChatPageProps): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtSession
 
   if (!session?.user?.id) {
     return {}
   }
 
-  // const userId = session.user.id
-  // const chat = await getChat(params.id, userId)
   return {
     title: 'Chat',
   }
@@ -37,14 +35,11 @@ export async function generateMetadata({
 
 export default async function ChatPage({ params }: ChatPageProps) {
   const session = (await getServerSession(authOptions)) as ExtSession
-  const chatId = params.id
-  const userId = session.user.id
-
-  const flowiseURL = process.env.FLOWISE_URL
-
-  if (!userId) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/${chatId}`)
+  if (!session?.user?.id) {
+    redirect(`/api/auth/signin?callbackUrl=/chat/`)
   }
+  const userId = session.user.id
+  const chatId = TEST_DATA_STORE
 
   const dataStore = (await getDataStoreById({
     userId,
@@ -57,20 +52,15 @@ export default async function ChatPage({ params }: ChatPageProps) {
 
   const { name, description } = dataStore
 
-  // const chat = await getChat(chatId, userId)
-  // if (!chat || chat?.userId !== userId) {
-  // notFound()
-  // }
-
   return (
-    <>
-      <Chat
-        id={chatId}
-        userId={userId}
-        name={name}
-        description={description || ''}
-        flowiseURLEnvVar={flowiseURL}
-      />
-    </>
+    <Chat
+      id={chatId}
+      userId={userId}
+      name={name}
+      description={description || ''}
+      flowiseURLEnvVar={
+        'http://ec2-18-195-176-166.eu-central-1.compute.amazonaws.com:3000/api/v1/prediction/dc41ff3b-210c-4f73-a4c6-4ea4e229f19e'
+      }
+    />
   )
 }
