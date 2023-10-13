@@ -51,7 +51,7 @@ export const getVectorStore = (collectionName: string) => {
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   const { docs, userId, dataStoreId, dataSrcId } = props
 
-  const collectionName = `${userId}-${dataStoreId}`
+  const collectionName = `bookmark-ai`
 
   const payload = docs.map((doc) => {
     const { pageContent, metadata } = doc
@@ -81,14 +81,19 @@ export const searchSimilarText = async (
 ): Promise<Document[]> => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     ...QDRANT_ARGS,
-    collectionName,
+    collectionName: 'bookmark-ai',
   })
 
-  console.log('--- message ---', message)
+  const result = await vectorStore.similaritySearchWithScore(message, 10)
 
-  const result = await vectorStore.similaritySearchWithScore(message, 5)
+  const NR_OF_SOURCES = 3
+
   return result
-    .filter(([_doc, score]) => score > SIMILARITY_THRESHOLD)
+    .filter(([_doc, score], index) => {
+      return score > SIMILARITY_THRESHOLD
+    })
+    .sort(([_docA, scoreA], [_docB, scoreB]) => scoreB - scoreA)
+    .splice(0, NR_OF_SOURCES)
     .map(([doc]) => doc)
 }
 

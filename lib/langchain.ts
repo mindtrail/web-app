@@ -1,12 +1,18 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { RetrievalQAChain } from 'langchain/chains'
-import { AIMessage, HumanMessage } from 'langchain/schema'
+import { AIMessage, SystemMessage, HumanMessage } from 'langchain/schema'
 import { StreamingTextResponse, LangChainStream, Message } from 'ai'
 import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { Document } from 'langchain/document'
+import { PromptTemplate } from 'langchain/prompts'
 
 import { searchSimilarText } from '@/lib/db/dataStore'
+
+const CHAT_SYSTEM = process.env.CHAT_SYSTEM || ''
+const CHAT_PROMPT = process.env.CHAT_PROMPT || ''
+
+const chatPrompt = PromptTemplate.fromTemplate(CHAT_PROMPT)
 
 interface chatWithAI {
   messages: Message[]
@@ -28,61 +34,64 @@ export async function callLangchainChat({
   const lastMessage = messages[messages.length - 1].content
   const collectionName = `${userId}-${chatId}`
 
-  console.time('ai init')
   const model = new ChatOpenAI({
     streaming: true,
     temperature: 0,
     modelName: 'gpt-3.5-turbo',
   })
-  console.timeEnd('ai init')
-
   // const chain = RetrievalQAChain.fromLLM(model)
 
-  console.time('searchDB')
-  const kbData = await searchSimilarText(lastMessage, collectionName)
-  console.timeEnd('searchDB')
+  console.time('searchDB ---')
+  const kbData = (await searchSimilarText(
+    lastMessage,
+    collectionName,
+  )) as Document[]
+  console.timeEnd('searchDB ---')
 
   console.log('kbData', kbData.length)
 
   if (!kbData?.length) {
     // return a plain text response
     return new Response(
-      'Sorry, I could not find the required information in your Knowledge Base',
+      'Sorry, I could not find related information in your browsing history',
       {
         status: 200,
       },
     )
   }
 
-  const sources = kbData.map((item) => {
-    const metadata = item?.metadata
-    const file = metadata.fileName
-    const page = metadata?.loc?.pageNumber
-
+  const sources = kbData.map(({ pageContent, metadata }) => {
     return {
-      file,
-      page,
+      pageContent,
+      fileName: metadata.fileName,
     }
   })
 
+  const context = sources.map(({ pageContent }) => pageContent).join(' \n ')
+
+  const formattedChatPrompt = await chatPrompt.format({
+    question: lastMessage,
+    context,
+  })
+
+  const systemMessage = new SystemMessage(CHAT_SYSTEM)
+  const humanMessage = new HumanMessage(formattedChatPrompt)
+
   const { stream, handlers } = LangChainStream()
   const initialEndHandler = handlers.handleLLMEnd
-
   // Adding my own handler for chat completion
   handlers.handleLLMEnd = (message, runId) => {
-    console.log(sources)
-    console.log(message)
     return initialEndHandler(message, runId)
   }
 
+  const preparedMessages = (messages as Message[]).map(({ role, content }) =>
+    role == 'user' ? new HumanMessage(content) : new AIMessage(content),
+  )
+
   model
-    .call(
-      (messages as Message[]).map(({ role, content }) =>
-        role == 'user' ? new HumanMessage(content) : new AIMessage(content),
-      ),
-      {},
-      [handlers],
-    )
+    .call(preparedMessages.concat([systemMessage, humanMessage]), {}, [
+      handlers,
+    ])
     .catch(console.error)
 
   return new StreamingTextResponse(stream)
