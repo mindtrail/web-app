@@ -24,7 +24,15 @@ const getRouteWithoutProtocol = (url: string) => {
   return match ? match[1] + (match[2] || '') : ''
 }
 
+const addHttpsIfMissing = (url: string) => {
+  if (!/^https?:\/\//i.test(url)) {
+    return 'https://' + url
+  }
+  return url
+}
+
 export function Search({ userId, historyItems }: HistoryLookupProps) {
+  const [searchPerfromed, setSearchPerfromed] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [processing, setProcessing] = useState(false)
   const [history, setHistory] = useState<DataSrc[]>([])
@@ -65,6 +73,7 @@ export function Search({ userId, historyItems }: HistoryLookupProps) {
       console.log('error', e)
       setProcessing(false)
     }
+    setSearchPerfromed(true)
   }
 
   // return <div>Chat Page</div>
@@ -94,23 +103,25 @@ export function Search({ userId, historyItems }: HistoryLookupProps) {
           </div>
         )}
 
-        {foundWebsite ? (
+        {foundWebsite?.summary ? (
           <div className='flex flex-col gap-4'>
-            <Link href={foundWebsite?.fileName}>
-              <Typography variant='h5' className='text-gray-600 capitalize'>
+            <Link href={addHttpsIfMissing(foundWebsite?.fileName)}>
+              <Typography variant='h5' className='text-gray-600'>
                 {foundWebsite?.hostName}
               </Typography>
             </Link>
             <Typography variant='p' className='text-gray-600'>
               {foundWebsite?.summary}
             </Typography>
-            <Link href={foundWebsite?.fileName}>
+            <Link href={addHttpsIfMissing(foundWebsite?.fileName)}>
               <img
                 alt={foundWebsite?.metaDescription}
                 src={foundWebsite?.image}
               />
             </Link>
           </div>
+        ) : searchPerfromed ? (
+          <>No results found</>
         ) : null}
       </div>
     </div>

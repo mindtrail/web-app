@@ -17,8 +17,8 @@ const sidebarNavItems = [
     href: '/search',
   },
   {
-    title: 'History',
-    href: '/history',
+    title: 'Categories',
+    href: '/categories',
   },
   {
     title: 'Import',

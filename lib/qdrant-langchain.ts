@@ -58,6 +58,7 @@ export const searchSimilarText = async (
   console.log('--- message +++', message)
 
   const allChunks = await vectorStore.similaritySearch(message, 10)
+  console.log(allChunks)
   const website = getWebsiteWithMostHits(allChunks)
 
   return website
@@ -78,8 +79,6 @@ function getWebsiteWithMostHits(
       websiteWithMostHits = data.metadata as Document['metadata']
     }
   }
-
-  console.log(fileNameCounts, websiteWithMostHits)
 
   return websiteWithMostHits
 }
