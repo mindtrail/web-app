@@ -33,7 +33,6 @@ export async function POST(req: Request) {
   }
 
   try {
-    console.log(searchQuery)
     const websiteFound = await searchSimilarText(searchQuery, TEST_COLLECTION)
 
     if (!websiteFound) {
@@ -44,15 +43,12 @@ export async function POST(req: Request) {
 
     const { dataSrcId, fileName: url } = websiteFound
     const dataSrc = await getDataSrcById(dataSrcId)
-
-    const image = await getOGImage([url])
-
-    console.log(image)
+    const image = await getOGImage(url)
 
     return Response.json({
       ...websiteFound,
-      image: image[0],
-      summary: dataSrc?.summary,
+      image,
+      summary: dataSrc?.summary || '',
     })
     // return callLangchainChat({ searchQuery, chatId, userId })
   } catch (error) {
@@ -64,23 +60,30 @@ export async function POST(req: Request) {
   }
 }
 
-async function getOGImage(foundWebsites: string[]) {
-  const websitesData = await Promise.all(
-    foundWebsites.map(async (website) => {
-      try {
-        const res = await fetch(website)
-        const html = await res.text()
+async function getOGImage(website: string) {
+  try {
+    const res = await fetchWithTimeout(website)
+    const html = await res.text()
 
-        const $ = cheerio.load(html)
-        const image = $('meta[property="og:image"]').attr('content')
+    const $ = cheerio.load(html)
+    const image = $('meta[property="og:image"]').attr('content')
 
-        return image
-      } catch (error) {
-        console.error(error)
-        return ''
-      }
-    }),
-  )
+    return image
+  } catch (err) {
+    return ''
+  }
+}
 
-  return websitesData.filter((website) => website !== null)
+async function fetchWithTimeout(url: string) {
+  const timeout = 1500
+
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), timeout)
+
+  const response = await fetch(url, {
+    signal: controller.signal,
+  })
+  clearTimeout(id)
+
+  return response
 }

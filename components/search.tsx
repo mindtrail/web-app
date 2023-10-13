@@ -83,14 +83,14 @@ export function Search({ userId, historyItems }: HistoryLookupProps) {
           placeholder='A website about travel'
         />
         <Button onClick={handleSearch} disabled={!searchQuery}>
-          {processing && <IconSpinner className='mr-2' />}
           Search
         </Button>
       </div>
       <div className='w-full max-w-2xl flex flex-col flex-1 gap-6 pt-6'>
         {processing && (
-          <div className='flex gap-4 items-center'>
+          <div className='flex gap-2 items-center'>
             Searching for a match...
+            {processing && <IconSpinner className='' />}
           </div>
         )}
 

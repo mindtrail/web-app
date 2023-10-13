@@ -30,8 +30,15 @@ type Tags = {
 }
 
 const getRouteWithoutProtocol = (url: string) => {
-  const match = url.match(/^https?:\/\/([^:]+)([^?]+)?/)
-  return match ? match[1] + (match[2] || '') : ''
+  const match = url.match(/^(?:https?:\/\/)?([^?]+)?/)
+  return match ? match[1] : ''
+}
+
+const addHttpsIfMissing = (url: string) => {
+  if (!/^https?:\/\//i.test(url)) {
+    return 'https://' + url
+  }
+  return url
 }
 
 export function HistoryLookup({ historyItems }: HistoryLookupProps) {
@@ -40,21 +47,24 @@ export function HistoryLookup({ historyItems }: HistoryLookupProps) {
   const [categoryFilter, setCategoryFilter] = useState<TagList[]>()
 
   console.log(history)
-
   useEffect(() => {
     const tags: Tags = {}
-    historyItems.forEach((item) => {
-      const elemtnTags = item?.thumbnail?.split(',')
+    const historyUpdated = historyItems.map((item) => {
+      const elemtnTags = item?.thumbnail?.split(',').map((tag) => tag.trim())
       elemtnTags?.forEach((tag) => {
-        const tagKey = tag?.trim()
-        tags[tagKey] = tagKey
+        tags[tag] = tag
       })
-    })
 
-    setHistory(historyItems)
+      return {
+        ...item,
+        tags: elemtnTags,
+      }
+    })
 
     const tagList = Object.keys(tags).map((tag) => ({ label: tag, value: tag }))
     setCategories(tagList)
+
+    setHistory([...historyUpdated])
   }, [historyItems])
 
   useEffect(() => {
@@ -92,7 +102,7 @@ export function HistoryLookup({ historyItems }: HistoryLookupProps) {
               {history.map((item, index) => (
                 <Link
                   target='_blank'
-                  href={item.name}
+                  href={addHttpsIfMissing(item.name)}
                   key={index}
                   className='flex group w-full justify-between items-center'
                 >
@@ -100,6 +110,7 @@ export function HistoryLookup({ historyItems }: HistoryLookupProps) {
                     <GlobeIcon className='text-green-500' />
                     {getRouteWithoutProtocol(item.name)}
                   </span>
+
                   <Button
                     variant='ghost'
                     size='sm'
