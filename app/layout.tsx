@@ -56,22 +56,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang='en' suppressHydrationWarning>
       <body className='flex flex-col min-h-screen'>
         <Providers>
-          <main className='flex flex-col flex-1 w-full items-center'>
+          <main className='flex flex-col flex-1 w-full h-full items-center'>
             <Header />
 
-            <div className='pt-8 w-full max-w-7xl sm:px-6 px-12'>
-              <div className='space-y-0.5'>
-                <Typography variant='h3'>Your online journey</Typography>
-                <Typography variant='p' className='text-muted-foreground'>
-                  Manage your account settings and set e-mail preferences.
-                </Typography>
-              </div>
-              <Separator className='my-6' />
-              <div className='flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0'>
-                <aside className='-mx-4 lg:w-1/5'>
-                  <SidebarNav items={sidebarNavItems} />
+            <div className='flex flex-col flex-1 w-full max-w-7xl sm:px-6 px-12'>
+              <div className='flex flex-col w-full flex-1 lg:flex-row lg:gap-12'>
+                <aside className='-mx-4 lg:w-1/5 flex '>
+                  <SidebarNav
+                    items={sidebarNavItems}
+                    className='flex-1 mt-4 pr-2'
+                  />
+                  <Separator
+                    orientation='vertical'
+                    className='hidden lg:flex'
+                  />
                 </aside>
-                <div className='flex-1 lg:max-w-2xl'>{children}</div>
+                <div className='flex-1 flex max-w-3xl w-full'>{children}</div>
               </div>
             </div>
           </main>

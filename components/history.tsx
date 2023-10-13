@@ -1,15 +1,13 @@
 'use client'
-import { useState, MouseEvent, KeyboardEvent, useEffect } from 'react'
+import { useState, MouseEvent, KeyboardEvent, useEffect, use } from 'react'
 import { DataSrc } from '@prisma/client'
 import { GlobeIcon } from '@radix-ui/react-icons'
 import { Document } from 'langchain/document'
+import Select, { ClearIndicatorProps } from 'react-select'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { IconSpinner } from '@/components/ui/icons'
 import Typography from '@/components/typography'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { set } from 'zod'
 
 type HistoryLookupProps = {
   userId: string
@@ -21,101 +19,82 @@ type SearchResult = Document['metadata'] & {
   summary: string
 }
 
+type TagList = {
+  label: string
+  value: string
+}
+
+type Tags = {
+  [key: string]: string
+}
+
 const getRouteWithoutProtocol = (url: string) => {
   const match = url.match(/^https?:\/\/([^:]+)([^?]+)?/)
   return match ? match[1] + (match[2] || '') : ''
 }
 
-export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [processing, setProcessing] = useState(false)
+export function HistoryLookup({ historyItems }: HistoryLookupProps) {
   const [history, setHistory] = useState<DataSrc[]>([])
-  const [foundWebsite, setFoundWebsite] = useState<SearchResult>()
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSearch(event)
-    }
-  }
+  const [categories, setCategories] = useState<TagList[]>([])
+  const [categoryFilter, setCategoryFilter] = useState<TagList[]>()
 
   useEffect(() => {
+    const tags: Tags = {}
     const updatedItems = historyItems.map((item) => {
+      const elemtnTags = item?.thumbnail?.split(',')
+      elemtnTags?.forEach((tag) => {
+        const tagKey = tag?.trim()
+        tags[tagKey] = tagKey
+      })
+
       return {
         ...item,
         name: getRouteWithoutProtocol(item.name),
       }
     })
     setHistory(updatedItems)
+
+    const tagList = Object.keys(tags).map((tag) => ({ label: tag, value: tag }))
+    setCategories(tagList)
   }, [historyItems])
 
-  const handleSearch = async (event: MouseEvent | KeyboardEvent) => {
-    event.preventDefault()
-    setProcessing(true)
-
-    try {
-      const result = await fetch('/api/history', {
-        method: 'POST',
-        body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      const websites = await result.json()
-      setProcessing(false)
-      setFoundWebsite(websites)
-    } catch (e) {
-      console.log('error', e)
-      setProcessing(false)
+  useEffect(() => {
+    if (!categoryFilter?.length) {
+      setHistory(historyItems)
+      return
     }
-  }
+    const selectedTags = categoryFilter?.map((tag) => tag.value) || []
 
-  // return <div>Chat Page</div>
+    // Create a regex pattern that accounts for potential spaces
+    const pattern = new RegExp('\\b' + selectedTags.join('\\s*|\\s*') + '\\b')
+
+    const filteredHistory = historyItems.filter((item) =>
+      pattern.test(item?.thumbnail || ''),
+    )
+
+    setHistory(filteredHistory)
+  }, [categoryFilter, historyItems])
+
   return (
-    <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
-      <div className='flex gap-8 w-full md:max-w-2xl items-center'>
-        <Label htmlFor='flowiseURL'>History search:</Label>
-        <Input
-          className='flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400 px-2'
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder='A website about travel'
-        />
-        <Button onClick={handleSearch} disabled={!searchQuery}>
-          {processing && <IconSpinner className='mr-2' />}
-          Search
-        </Button>
-      </div>
-      <div className='w-full max-w-2xl flex flex-col flex-1 gap-6 pt-6'>
-        {processing && (
-          <div className='flex gap-4 items-center'>
-            <IconSpinner className='mr-2' />
-            Searching for a match...
-          </div>
-        )}
-
-        {foundWebsite ? (
-          <div className='flex flex-col gap-2'>
-            <Typography variant='h5' className='text-gray-600 capitalize'>
-              {foundWebsite?.hostName}
-            </Typography>
-            <Typography variant='p' className='text-gray-600'>
-              {foundWebsite?.summary}
-            </Typography>
-            <img
-              width={500}
-              alt={foundWebsite?.metaDescription}
-              src={foundWebsite?.image}
-            />
-          </div>
-        ) : null}
+    <div className='flex flex-col flex-1 w-full items-center px-4 py-4 md:py-8 md:px-8 gap-4'>
+      <div className='flex flex-col gap-4 w-full'>
+        <div>
+          <Typography variant='h4' className='mb-4 text-gray-700'>
+            Last Visited
+          </Typography>
+          <Select
+            // closeMenuOnSelect={false}
+            // components={{ ClearIndicator }}
+            // styles={{ clearIndicator: ClearIndicatorStyles }}
+            isMulti
+            options={categories}
+            onChange={(selected) => setCategoryFilter(selected as TagList[])}
+          />
+        </div>
 
         {history.length ? (
-          <ScrollArea className='flex-1 relative flex flex-col gap-2 max-h-[75vh] rounded-md border py-4 px-2'>
-            <Typography variant='h5' className='mb-4 text-gray-700'>
-              Last Visited
-            </Typography>
-            <div className='flex flex-col gap-2 mt-4 cursor-default'>
+          <ScrollArea className='flex-1 flex flex-col gap-2 max-h-[81vh] rounded-md py-4 px-2'>
+            <div className='flex flex-col gap-2  cursor-default'>
               {history.map((item, index) => (
                 <div key={index} className='flex gap-2 items-center'>
                   <GlobeIcon />
