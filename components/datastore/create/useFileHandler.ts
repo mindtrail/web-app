@@ -21,7 +21,7 @@ const getFilesMetadata = async (files: AcceptedFile[]) => {
 export function useFileHandler(initialFiles: AcceptedFile[] = []) {
   const { toast } = useToast()
 
-  const [files, setFiles] = useState(initialFiles)
+  const [files, setFiles] = useState<AcceptedFile[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
   const [charCountLoading, setCharCountLoading] = useState(false)
   const [dropzoneUsed, setDropzoneUsed] = useState(false)
@@ -35,14 +35,16 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         return
       }
 
-      const remainingSlots = MAX_NR_OF_FILES - files.length
+      const existingFiles = files?.length || 0
+
+      const remainingSlots = MAX_NR_OF_FILES - existingFiles
       // Filter files based on size and nr limit
       let { acceptedFiles, rejectedFiles } = filterFiles(
         droppedFiles,
         remainingSlots,
       )
 
-      setFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
+      setFiles((prevFiles = []) => [...prevFiles, ...acceptedFiles])
       setRejectedFiles(rejectedFiles)
       setCharCountLoading(true)
       setDropzoneUsed(true) // User has interacted with the dropzone

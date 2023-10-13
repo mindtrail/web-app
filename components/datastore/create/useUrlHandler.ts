@@ -4,7 +4,7 @@ import { deleteDataSrcApiCall } from '@/lib/api/dataSrc'
 import { useToast } from '@/components/ui/use-toast'
 
 export function useUrlHandler(initialUrls: URLScrapped[] = []) {
-  const [urls, setUrls] = useState(initialUrls)
+  const [urls, setUrls] = useState<URLScrapped[]>([])
   const [autoCrawl, setAutoCrawl] = useState(true)
   const [urlToDelete, setUrlToDelete] = useState<URLScrapped | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -65,7 +65,7 @@ export function useUrlHandler(initialUrls: URLScrapped[] = []) {
 
     setUrls((prevURLs) =>
       prevURLs.filter(({ file: prevFile }) => {
-        return prevFile.id !== file.id
+        return prevFile?.id !== file.id
       }),
     )
   }

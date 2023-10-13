@@ -6,6 +6,7 @@ import { Document } from 'langchain/document'
 import Select, { ClearIndicatorProps } from 'react-select'
 import Link from 'next/link'
 
+import { Button } from '@/components/ui/button'
 import Typography from '@/components/typography'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
@@ -38,21 +39,19 @@ export function HistoryLookup({ historyItems }: HistoryLookupProps) {
   const [categories, setCategories] = useState<TagList[]>([])
   const [categoryFilter, setCategoryFilter] = useState<TagList[]>()
 
+  console.log(history)
+
   useEffect(() => {
     const tags: Tags = {}
-    const updatedItems = historyItems.map((item) => {
+    historyItems.forEach((item) => {
       const elemtnTags = item?.thumbnail?.split(',')
       elemtnTags?.forEach((tag) => {
         const tagKey = tag?.trim()
         tags[tagKey] = tagKey
       })
-
-      return {
-        ...item,
-        name: getRouteWithoutProtocol(item.name),
-      }
     })
-    setHistory(updatedItems)
+
+    setHistory(historyItems)
 
     const tagList = Object.keys(tags).map((tag) => ({ label: tag, value: tag }))
     setCategories(tagList)
@@ -92,12 +91,27 @@ export function HistoryLookup({ historyItems }: HistoryLookupProps) {
             <div className='flex flex-col gap-2  cursor-default'>
               {history.map((item, index) => (
                 <Link
+                  target='_blank'
                   href={item.name}
                   key={index}
-                  className='flex gap-2 items-center'
+                  className='flex group w-full justify-between items-center'
                 >
-                  <GlobeIcon />
-                  {item.name}
+                  <span className='flex gap-2 items-center max-w-xl text-ellipsis overflow-hidden whitespace-nowrap'>
+                    <GlobeIcon className='text-green-500' />
+                    {getRouteWithoutProtocol(item.name)}
+                  </span>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    className='invisible group-hover:visible'
+                    disabled={status !== 'unsynched' && status !== 'synched'}
+                    onClick={(event) =>
+                      // @ts-ignore
+                      handleFileDelete(event, { file, charCount, status })
+                    }
+                  >
+                    123
+                  </Button>
                 </Link>
               ))}
             </div>

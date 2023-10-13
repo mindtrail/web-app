@@ -37,7 +37,7 @@ export function CreateDataStore({
     try {
       await functionToCall(data)
 
-      router.push('/datastore?refresh=true')
+      router.push('/search?refresh=true')
     } catch (err) {
       console.log(err)
 
