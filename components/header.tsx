@@ -1,28 +1,30 @@
 import * as React from 'react'
 import Link from 'next/link'
-// import { useSession } from 'next-auth/react'
+import Image from 'next/image'
+import { getServerSession } from 'next-auth/next'
+
+import { authOptions } from '@/lib/authOptions'
 
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
 
-interface HeaderProps {
-  session: ExtendedSession
-}
-
-export function Header({ session }: HeaderProps) {
+export async function Header() {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
   const user = session?.user
 
   return (
     <header
       className='sticky top-0 z-50 flex h-16 w-full shrink-0
       items-center justify-center bg-gradient-to-b border-b
-      from-background/10 via-background/50 to-background/80 backdrop-blur-xl'
+      from-background/10 via-background/50 to-background/80 backdrop-blur-xl sm:px-6 px-12'
     >
-      <div className='flex w-full max-w-6xl px-4 md:px-6 items-center justify-between'>
-        <div className='flex w-40'>
-          <Link href='/'>Mind Trail</Link>
-        </div>
-        {user && <Link href='/datastore'>Knowledge Bases</Link>}
+      <div className='flex w-full max-w-7xl px-4 md:px-0 items-center justify-between'>
+        <Link href='/' className='flex w-40 items-center gap-4'>
+          <Image width={32} height={32} src='/icon-2.png' alt='Mind Trail' />
+          Mind Trail
+        </Link>
+
+        {/* {user && <Link href='/datastore'>Knowledge Bases</Link>} */}
 
         <div className='flex justify-end items-center w-40 relative'>
           {user ? (
