@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
-import { Header } from '@/components/header'
 import { HistoryLookup } from '@/components/history'
 import { authOptions } from '@/lib/authOptions'
 import { getDataSrcList } from '@/lib/db/dataSrc'
@@ -38,7 +37,6 @@ export default async function ChatPage() {
   // return <div>Chat Page</div>
   return (
     <>
-      <Header session={session} />
       <HistoryLookup userId={userId} historyItems={historyItems} />
     </>
   )
