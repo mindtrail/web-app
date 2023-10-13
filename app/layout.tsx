@@ -21,16 +21,12 @@ const sidebarNavItems = [
     href: '/history',
   },
   {
+    title: 'Import',
+    href: '/import',
+  },
+  {
     title: 'Settings',
     href: '/settings',
-  },
-  {
-    title: 'Import',
-    href: '/examples/forms/notifications',
-  },
-  {
-    title: 'Files',
-    href: '/examples/forms/display',
   },
 ]
 

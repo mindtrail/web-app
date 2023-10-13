@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { Header } from '@/components/header'
 import { CreateDataStore } from '@/components/datastore'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,7 +28,6 @@ export default async function CreateDS() {
 
   return (
     <>
-      <Header session={session} />
       <CreateDataStore userId={userId} />
     </>
   )
