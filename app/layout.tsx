@@ -9,8 +9,8 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Indie Chat',
-    template: `%s - Indie Chat`,
+    default: 'Mind Trail',
+    template: `Mind Trail - %s`,
   },
   description: 'An AI-powered chatbot for your docs and website.',
   themeColor: [{ media: '(prefers-color-scheme: light)', color: 'white' }],

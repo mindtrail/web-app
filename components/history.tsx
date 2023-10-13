@@ -21,7 +21,7 @@ type SearchResult = Document['metadata'] & {
   summary: string
 }
 
-const extractRoute = (url: string) => {
+const getRouteWithoutProtocol = (url: string) => {
   const match = url.match(/^https?:\/\/([^:]+)([^?]+)?/)
   return match ? match[1] + (match[2] || '') : ''
 }
@@ -32,18 +32,17 @@ export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
   const [history, setHistory] = useState<DataSrc[]>([])
   const [foundWebsite, setFoundWebsite] = useState<SearchResult>()
 
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       handleSearch(event)
     }
   }
 
-  console.log(historyItems)
   useEffect(() => {
     const updatedItems = historyItems.map((item) => {
       return {
         ...item,
-        name: extractRoute(item.name),
+        name: getRouteWithoutProtocol(item.name),
       }
     })
     setHistory(updatedItems)
@@ -69,7 +68,6 @@ export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
       setProcessing(false)
     }
   }
-  console.log('foundWebsite', foundWebsite)
 
   // return <div>Chat Page</div>
   return (
@@ -77,10 +75,10 @@ export function HistoryLookup({ userId, historyItems }: HistoryLookupProps) {
       <div className='flex gap-8 w-full md:max-w-2xl items-center'>
         <Label htmlFor='flowiseURL'>History search:</Label>
         <Input
-          className='flex-1 bg-white h-8 border-[1px] disabled:bg-gray-100 disabled:text-gray-400 px-2'
+          className='flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400 px-2'
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleKeyPress}
+          onKeyDown={handleKeyDown}
           placeholder='A website about travel'
         />
         <Button onClick={handleSearch} disabled={!searchQuery}>
