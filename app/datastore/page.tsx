@@ -5,7 +5,6 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { getDataStoreListDbOp } from '@/lib/db/dataStore'
 
-import { Header } from '@/components/header'
 import { DataStoreList } from '@/components/datastore'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -50,7 +49,6 @@ export default async function DataStorePage(params: DSProps) {
 
   return (
     <>
-      <Header session={session} />
       <DataStoreList dataStoreList={dataStoreList} />
     </>
   )

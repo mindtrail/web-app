@@ -4,10 +4,10 @@ import { DataSrc } from '@prisma/client'
 import { GlobeIcon } from '@radix-ui/react-icons'
 import { Document } from 'langchain/document'
 import Select, { ClearIndicatorProps } from 'react-select'
+import Link from 'next/link'
 
 import Typography from '@/components/typography'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { set } from 'zod'
 
 type HistoryLookupProps = {
   userId: string
@@ -96,10 +96,14 @@ export function HistoryLookup({ historyItems }: HistoryLookupProps) {
           <ScrollArea className='flex-1 flex flex-col gap-2 max-h-[81vh] rounded-md py-4 px-2'>
             <div className='flex flex-col gap-2  cursor-default'>
               {history.map((item, index) => (
-                <div key={index} className='flex gap-2 items-center'>
+                <Link
+                  href={item.name}
+                  key={index}
+                  className='flex gap-2 items-center'
+                >
                   <GlobeIcon />
                   {item.name}
-                </div>
+                </Link>
               ))}
             </div>
           </ScrollArea>
