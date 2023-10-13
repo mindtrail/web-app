@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { getDataStoreById } from '@/lib/db/dataStore'
-import { Header } from '@/components/header'
 import { authOptions } from '@/lib/authOptions'
 import { Chat } from '@/components/chat'
 // import { getChat } from '@/app/actions'
@@ -65,7 +64,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
 
   return (
     <>
-      <Header session={session} />
       <Chat
         id={chatId}
         userId={userId}

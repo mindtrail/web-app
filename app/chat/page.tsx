@@ -2,7 +2,6 @@ import { type Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
-import { Header } from '@/components/header'
 
 import { authOptions } from '@/lib/authOptions'
 import { Chat } from '@/components/chat'
@@ -38,7 +37,6 @@ export default async function ChatPage() {
   // return <div>Chat Page</div>
   return (
     <>
-      <Header session={session} />
       <Chat id={'123'} />
     </>
   )

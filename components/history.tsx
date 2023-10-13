@@ -78,22 +78,17 @@ export function HistoryLookup({ historyItems }: HistoryLookupProps) {
   return (
     <div className='flex flex-col flex-1 w-full items-center px-4 py-4 md:py-8 md:px-8 gap-4'>
       <div className='flex flex-col gap-4 w-full'>
-        <div>
-          <Typography variant='h4' className='mb-4 text-gray-700'>
-            Last Visited
-          </Typography>
-          <Select
-            // closeMenuOnSelect={false}
-            // components={{ ClearIndicator }}
-            // styles={{ clearIndicator: ClearIndicatorStyles }}
-            isMulti
-            options={categories}
-            onChange={(selected) => setCategoryFilter(selected as TagList[])}
-          />
-        </div>
+        <Typography variant='h4' className='mb-4 text-gray-700'>
+          Last Visited
+        </Typography>
+        <Select
+          isMulti
+          options={categories}
+          onChange={(selected) => setCategoryFilter(selected as TagList[])}
+        />
 
         {history.length ? (
-          <ScrollArea className='flex-1 flex flex-col gap-2 max-h-[81vh] rounded-md py-4 px-2'>
+          <ScrollArea className='flex-1 flex flex-col gap-2 max-h-[76vh] rounded-md py-4 px-2'>
             <div className='flex flex-col gap-2  cursor-default'>
               {history.map((item, index) => (
                 <Link
