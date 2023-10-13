@@ -5,6 +5,7 @@ import { DataSrcType, DataSrcStatus } from '@prisma/client'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
+import { sumarizePage, getPageCategory } from '@/lib/openAI'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/ // Matches everything after the second slash
@@ -43,16 +44,20 @@ export async function POST(req: Request) {
           return null
         }
 
-        const docs = await getChunksFromHTML(file)
-        const nbChunks = docs.length
-        const textSize = docs.reduce(
+        const { chunks, sumaryContent } = await getChunksFromHTML(file)
+        const nbChunks = chunks.length
+        const textSize = chunks.reduce(
           (acc, doc) => acc + doc?.pageContent?.length,
           0,
         )
 
         if (!nbChunks || !textSize) {
-          return null
+          return new NextResponse('Empty docs', {
+            status: 400,
+          })
         }
+        const summary = await sumarizePage(sumaryContent)
+        const category = await getPageCategory(summary)
 
         const match = fileName.match(WEB_PAGE_REGEX)
         const dataSrcPayload = {
@@ -62,16 +67,20 @@ export async function POST(req: Request) {
           type: DataSrcType.web_page,
           nbChunks,
           textSize,
+          summary,
+          thumbnail: category,
         }
 
         const dataSrc = await createDataSrc(dataSrcPayload)
         const dataSrcId = dataSrc?.id
 
         if (!dataSrcId) {
-          return null
+          return new NextResponse('Empty docs', {
+            status: 400,
+          })
         }
 
-        return docs.map(({ pageContent, metadata }) => ({
+        return chunks.map(({ pageContent, metadata }) => ({
           pageContent,
           metadata: {
             ...metadata,

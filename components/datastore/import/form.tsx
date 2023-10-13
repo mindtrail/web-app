@@ -145,7 +145,7 @@ export function ImportForm(props: FormProps) {
 
     if (onScrapeWebsite) {
       // const url = window.prompt('Enter a URL to scrape')
-      onScrapeWebsite('https://www.fuer-gruender.de/')
+      // onScrapeWebsite('https://www.fuer-gruender.de/')
     }
   }
 
@@ -178,7 +178,7 @@ export function ImportForm(props: FormProps) {
     <>
       <Form {...form}>
         <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
-          <Tabs defaultValue='files'>
+          <Tabs defaultValue='urls'>
             <TabsList className='grid w-full grid-cols-2 relative'>
               <TabsTrigger value='files'>Documents</TabsTrigger>
               <TabsTrigger value='urls'>Website</TabsTrigger>
@@ -308,7 +308,7 @@ export function ImportForm(props: FormProps) {
           <div className='flex justify-between w-full'>
             <Button type='submit' size='lg' disabled={processing}>
               {processing && <IconSpinner className='mr-2' />}
-              {existingDataStore ? 'Save Changes' : 'Create'}
+              Import
             </Button>
           </div>
         </form>
