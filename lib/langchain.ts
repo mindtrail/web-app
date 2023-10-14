@@ -31,7 +31,7 @@ export async function callLangchainChat({
     })
   }
 
-  const lastMessage = messages[messages.length - 1].content
+  let lastMessage = messages[messages.length - 1].content
   const collectionName = `${userId}-${chatId}`
 
   const model = new ChatOpenAI({
@@ -42,7 +42,7 @@ export async function callLangchainChat({
   // const chain = RetrievalQAChain.fromLLM(model)
 
   console.time('searchDB ---')
-  const kbData = (await searchSimilarText(
+  let kbData = (await searchSimilarText(
     lastMessage,
     collectionName,
   )) as Document[]
@@ -51,13 +51,17 @@ export async function callLangchainChat({
   console.log('kbData', kbData.length)
 
   if (!kbData?.length) {
+    kbData = (await searchSimilarText(
+      'tell me more about latest yc batch from summer 2023',
+      collectionName,
+    )) as Document[]
     // return a plain text response
-    return new Response(
-      'Sorry, I could not find related information in your browsing history',
-      {
-        status: 200,
-      },
-    )
+    // return new Response(
+    //   'Sorry, I could not find related information in your browsing history',
+    //   {
+    //     status: 200,
+    //   },
+    // )
   }
 
   const sources = kbData.map(({ pageContent, metadata }) => {
