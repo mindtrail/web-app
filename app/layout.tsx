@@ -13,12 +13,12 @@ export const dynamic = 'force-dynamic'
 
 const sidebarNavItems = [
   {
-    title: 'Search',
-    href: '/search',
+    title: 'History',
+    href: '/history',
   },
   {
-    title: 'Categories',
-    href: '/categories',
+    title: 'Search',
+    href: '/search',
   },
   {
     title: 'Chat',
