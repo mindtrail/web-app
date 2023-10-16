@@ -6,7 +6,6 @@ import { Toaster } from '@/components/ui/toaster'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { Separator } from '@/components/ui/separator'
 import { SidebarNav } from '@/components/sidebar-nav'
-import Typography from '@/components/typography'
 import { Header } from '@/components/header'
 
 export const dynamic = 'force-dynamic'
