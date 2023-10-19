@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 
 export default function Form({ type }: { type: 'login' | 'register' }) {
   const [loading, setLoading] = useState(false)
+
   const router = useRouter()
 
   return (
@@ -57,7 +58,10 @@ export default function Form({ type }: { type: 'login' | 'register' }) {
       className='flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16'
     >
       <div>
-        <label htmlFor='email' className='block text-xs text-gray-600 uppercase'>
+        <label
+          htmlFor='email'
+          className='block text-xs text-gray-600 uppercase'
+        >
           Email Address
         </label>
         <input
@@ -71,7 +75,10 @@ export default function Form({ type }: { type: 'login' | 'register' }) {
         />
       </div>
       <div>
-        <label htmlFor='password' className='block text-xs text-gray-600 uppercase'>
+        <label
+          htmlFor='password'
+          className='block text-xs text-gray-600 uppercase'
+        >
           Password
         </label>
         <input
