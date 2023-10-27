@@ -11,7 +11,6 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 # COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 COPY package*.json yarn.lock ./
-
 RUN yarn install
 
 # Rebuild the source code only when needed
@@ -37,7 +36,7 @@ RUN ls -al /app
 # RUN NODE_OPTIONS="--max_old_space_size=4096" npm run build
 
 # If using npm comment out above and use below instead
-RUN yarn run build
+# RUN yarn run build
 # RUN NODE_OPTIONS="--max_old_space_size=12288" yarn build
 
 # Production image, copy all the files and run next
@@ -68,7 +67,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 EXPOSE 3000
+
 ENV PORT 3000
+
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
