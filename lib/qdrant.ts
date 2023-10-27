@@ -5,6 +5,7 @@ import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 
 const SIMILARITY_THRESHOLD = 0.78
+
 const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
   optimizers_config: {
     memmap_threshold: 10000,
