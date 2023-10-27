@@ -36,7 +36,7 @@ RUN ls -al /app
 # RUN NODE_OPTIONS="--max_old_space_size=4096" npm run build
 
 # If using npm comment out above and use below instead
-# RUN yarn run build
+RUN yarn run build
 # RUN NODE_OPTIONS="--max_old_space_size=12288" yarn build
 
 # Production image, copy all the files and run next
