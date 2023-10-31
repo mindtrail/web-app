@@ -26,7 +26,6 @@ export async function searchHistory(searchQuery: string) {
       })
     }
 
-    console.log(1234, searchQuery)
     const { dataSrcId, fileName: url } = websiteFound
     const dataSrc = await getDataSrcById(dataSrcId)
     const image = await getOGImage(url)

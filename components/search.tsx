@@ -8,19 +8,10 @@ import { Input } from '@/components/ui/input'
 import { IconSpinner } from '@/components/ui/icons'
 import Typography from '@/components/typography'
 
+type WebsiteSearchResult = Document['metadata'] | null
+
 type HistoryLookupProps = {
-  foundWebsite: Document['metadata']
-  submitSearch: (query: string) => void
-}
-
-type SearchResult = Document['metadata'] & {
-  image: string
-  summary: string
-}
-
-const getRouteWithoutProtocol = (url: string) => {
-  const match = url.match(/^https?:\/\/([^:]+)([^?]+)?/)
-  return match ? match[1] + (match[2] || '') : ''
+  userId: string
 }
 
 const addHttpsIfMissing = (url: string) => {
@@ -30,10 +21,11 @@ const addHttpsIfMissing = (url: string) => {
   return url
 }
 
-export function Search({ foundWebsite, submitSearch }: HistoryLookupProps) {
+export function Search({ userId }: HistoryLookupProps) {
   const [searchPerfromed, setSearchPerfromed] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [processing, setProcessing] = useState(false)
+  const [foundWebsite, setFoundWebsite] = useState<WebsiteSearchResult>()
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -45,8 +37,16 @@ export function Search({ foundWebsite, submitSearch }: HistoryLookupProps) {
     event.preventDefault()
     setProcessing(true)
 
-    await submitSearch(searchQuery.trim())
+    const result = await fetch('/api/history', {
+      method: 'POST',
+      body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const websites = await result.json()
 
+    setFoundWebsite(websites)
     setProcessing(false)
     setSearchPerfromed(true)
   }
