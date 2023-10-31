@@ -24,10 +24,14 @@ export function SidebarList({ userId }: SidebarListProps) {
       {chats?.length ? (
         <div className='space-y-2 px-2'>
           {chats.map(
-            (chat) =>
+            (chat, index) =>
               chat && (
-                <SidebarItem key={chat?.id} chat={chat}>
-                  <SidebarActions chat={chat} removeChat={removeChat} shareChat={shareChat} />
+                <SidebarItem key={index} chat={chat}>
+                  <SidebarActions
+                    chat={chat}
+                    removeChat={removeChat}
+                    shareChat={shareChat}
+                  />
                 </SidebarItem>
               ),
           )}

@@ -88,9 +88,9 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
         </Link>
       </div>
       <div className='flex flex-wrap w-full'>
-        {dataStoreList.map((dataStore) => (
+        {dataStoreList.map((dataStore, index) => (
           <DataStoreListItem
-            key={dataStore.id}
+            key={index}
             dataStore={dataStore}
             handleDelete={handleDelete}
             handleEdit={handleEdit}

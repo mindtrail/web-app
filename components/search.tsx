@@ -1,6 +1,5 @@
 'use client'
 import { useState, MouseEvent, KeyboardEvent, useEffect } from 'react'
-import { DataSrc } from '@prisma/client'
 import { Document } from 'langchain/document'
 import Link from 'next/link'
 
@@ -10,8 +9,8 @@ import { IconSpinner } from '@/components/ui/icons'
 import Typography from '@/components/typography'
 
 type HistoryLookupProps = {
-  userId: string
-  historyItems: DataSrc[]
+  foundWebsite: Document['metadata']
+  submitSearch: (query: string) => void
 }
 
 type SearchResult = Document['metadata'] & {
@@ -31,12 +30,10 @@ const addHttpsIfMissing = (url: string) => {
   return url
 }
 
-export function Search({ userId, historyItems }: HistoryLookupProps) {
+export function Search({ foundWebsite, submitSearch }: HistoryLookupProps) {
   const [searchPerfromed, setSearchPerfromed] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [processing, setProcessing] = useState(false)
-  const [history, setHistory] = useState<DataSrc[]>([])
-  const [foundWebsite, setFoundWebsite] = useState<SearchResult>()
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -44,35 +41,13 @@ export function Search({ userId, historyItems }: HistoryLookupProps) {
     }
   }
 
-  useEffect(() => {
-    const updatedItems = historyItems.map((item) => {
-      return {
-        ...item,
-        name: getRouteWithoutProtocol(item.name),
-      }
-    })
-    setHistory(updatedItems)
-  }, [historyItems])
-
   const handleSearch = async (event: MouseEvent | KeyboardEvent) => {
     event.preventDefault()
     setProcessing(true)
 
-    try {
-      const result = await fetch('/api/history', {
-        method: 'POST',
-        body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      const websites = await result.json()
-      setProcessing(false)
-      setFoundWebsite(websites)
-    } catch (e) {
-      console.log('error', e)
-      setProcessing(false)
-    }
+    await submitSearch(searchQuery.trim())
+
+    setProcessing(false)
     setSearchPerfromed(true)
   }
 
