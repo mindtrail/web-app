@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
+import { searchHistory } from '@/lib/search'
 import { Search } from '@/components/search'
 import { authOptions } from '@/lib/authOptions'
 import { getDataSrcList } from '@/lib/db/dataSrc'
@@ -25,6 +26,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ChatPage() {
+  async function submitSearch(searchQuery: string) {
+    'use server'
+    const result = await searchHistory(searchQuery)
+    console.log(1111, searchQuery)
+    const response = await result.json()
+    console.log(2222, response)
+    // return result
+  }
+
   const session = (await getServerSession(authOptions)) as ExtSession
 
   if (!session?.user?.id) {
@@ -33,11 +43,11 @@ export default async function ChatPage() {
 
   const userId = session.user.id
   const historyItems = await getDataSrcList(userId)
-
+  console.log(222)
   // return <div>Chat Page</div>
   return (
     <>
-      <Search userId={userId} historyItems={historyItems} />
+      <Search foundWebsite={historyItems} submitSearch={submitSearch} />
     </>
   )
 }

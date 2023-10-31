@@ -55,10 +55,10 @@ export const searchSimilarText = async (
     collectionName,
   })
 
-  console.log('--- message +++', message)
+  // console.log('--- message +++', message)
 
   const allChunks = await vectorStore.similaritySearch(message, 10)
-  console.log(allChunks)
+  // console.log(allChunks)
   const website = getWebsiteWithMostHits(allChunks)
 
   return website

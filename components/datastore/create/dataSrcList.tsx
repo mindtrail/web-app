@@ -91,8 +91,8 @@ export function DataSrcList(props: DataSrcList) {
   }, [acceptedItems, handleFileDelete, IconElement])
 
   const rejectedDataSrcList = useMemo(() => {
-    return rejectedItems.map(({ file }: RejectedFile) => (
-      <p key={file.name}>{file.name}</p>
+    return rejectedItems.map(({ file }: RejectedFile, index) => (
+      <p key={index}>{file.name}</p>
     ))
   }, [rejectedItems])
 
