@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import { Metadata } from 'next'
+import { Viewport } from 'next'
 
 import { Providers } from '@/context/providers'
 import { Toaster } from '@/components/ui/toaster'
@@ -33,6 +34,10 @@ const sidebarNavItems = [
   },
 ]
 
+export const viewport: Viewport = {
+  themeColor: [{ media: '(prefers-color-scheme: light)', color: 'white' }],
+}
+
 export const metadata: Metadata = {
   title: {
     default: 'Mind Trail',
@@ -40,7 +45,6 @@ export const metadata: Metadata = {
   },
   description:
     'AI assitant to emember and structures everything you see online',
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: 'white' }],
   icons: {
     icon: '/favicon.ico',
   },
