@@ -3,19 +3,32 @@ import { useState, useCallback, useEffect, MouseEvent } from 'react'
 import { DataSrc } from '@prisma/client'
 import Select from 'react-select'
 
-import Typography from '@/components/typography'
-import { ScrollArea } from '@/components/ui/scroll-area'
-
 import { HistoryEntry } from '@/components/history/entry'
+import { deleteHistoryEntryApiCall } from '@/lib/api/history'
 
-type HistoryList = DataSrc & {
+import { useToast } from '@/components/ui/use-toast'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import Typography from '@/components/typography'
+
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+
+type HistoryItem = DataSrc & {
   tags?: string[]
   displayName?: string
 }
 
 type HistoryViewProps = {
   userId: string
-  historyItems: HistoryList[]
+  historyItems: HistoryItem[]
 }
 
 type TagList = {
@@ -33,11 +46,15 @@ const getRouteWithoutProtocol = (url: string) => {
 }
 
 export function HistoryView({ historyItems }: HistoryViewProps) {
-  const [history, setHistory] = useState<HistoryList[]>([])
-  const [filteredItems, setFilteredItems] = useState<HistoryList[]>([])
+  const [history, setHistory] = useState<HistoryItem[]>([])
+  const [filteredItems, setFilteredItems] = useState<HistoryItem[]>([])
 
   const [categories, setCategories] = useState<TagList[]>([])
   const [filters, setFilters] = useState<TagList[]>()
+  const [itemToDelete, setItemToDelete] = useState<HistoryItem | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const { toast } = useToast()
 
   useEffect(() => {
     const tags: Tags = {}
@@ -53,7 +70,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
         ...item,
         displayName: getRouteWithoutProtocol(item.name),
         tags: elementTags,
-      } as HistoryList
+      } as HistoryItem
     })
 
     const tagList = Object.keys(tags).map((tag) => ({ label: tag, value: tag }))
@@ -98,16 +115,42 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
     })
   }, [])
 
-  const handleHistoryDelete = useCallback((event: MouseEvent<HTMLElement>) => {
-    event.preventDefault()
+  const handleHistoryDelete = useCallback(
+    (event: MouseEvent<HTMLElement>, historyItem: HistoryItem) => {
+      event.preventDefault()
 
-    const historyEntryId = event.currentTarget.dataset.entryId
-    if (!historyEntryId) {
+      if (!historyItem) {
+        return
+      }
+      setItemToDelete(historyItem)
+      setDeleteDialogOpen(true)
+    },
+    [],
+  )
+
+  const confirmHistoryDelete = useCallback(async () => {
+    if (!itemToDelete) {
       return
     }
+    const { id, displayName } = itemToDelete
 
-    console.log('handleHistoryDelete', event.target)
-  }, [])
+    try {
+      const deleteResult = await deleteHistoryEntryApiCall(id)
+      console.log(deleteResult)
+
+      toast({
+        title: 'File deleted',
+        description: `${displayName} has been deleted`,
+      })
+    } catch (err) {
+      toast({
+        title: 'Error',
+        variant: 'destructive',
+        description: `Something went wrong while deleting ${displayName}`,
+      })
+      console.log(err)
+    }
+  }, [itemToDelete, toast])
 
   return (
     <div className='flex flex-col flex-1 w-full px-4 py-4 md:py-8 md:px-8 gap-4'>
@@ -136,6 +179,25 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
           </div>
         </ScrollArea>
       ) : null}
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete file?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will delete the file and the associated data. The action
+              cannot be undone and will permanently delete{' '}
+              <b>{itemToDelete?.displayName}</b>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button variant='destructive' onClick={confirmHistoryDelete}>
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
