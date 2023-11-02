@@ -104,7 +104,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
     try {
       const { id, name } = fileToDelete.file as DataSrc
-      const deleteResult = await deleteDataSrcApiCall(id)
+      await deleteDataSrcApiCall(id)
 
       toast({
         title: 'File deleted',
