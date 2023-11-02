@@ -1,4 +1,4 @@
-import { useMemo, MouseEvent } from 'react'
+import { useMemo, useCallback, MouseEvent } from 'react'
 import Link from 'next/link'
 import { DataSrc } from '@prisma/client'
 import { GlobeIcon, Cross1Icon } from '@radix-ui/react-icons'
@@ -19,7 +19,10 @@ type HistoryItemProps = {
   historyItem: HistoryItem
   filters?: TagList[]
   handleTagListClick: (event: MouseEvent<HTMLButtonElement>) => void
-  handleHistoryDelete: (event: MouseEvent<HTMLButtonElement>) => void
+  handleHistoryDelete: (
+    event: MouseEvent<HTMLButtonElement>,
+    historyItem: HistoryItem,
+  ) => void
 }
 
 const addHttpsIfMissing = (url: string) => {
@@ -44,6 +47,13 @@ export const HistoryEntry = ({
       selected: filterList?.includes(tag),
     }))
   }, [filters, tags])
+
+  const handleDelete = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      handleHistoryDelete(event, historyItem)
+    },
+    [handleHistoryDelete, historyItem],
+  )
 
   return (
     <Link
@@ -77,8 +87,8 @@ export const HistoryEntry = ({
           variant='ghost'
           size='sm'
           className='invisible group-hover:visible'
-          data-entryId={id} // Set a data attribute
-          onClick={handleHistoryDelete}
+          data-id={id} // Set a data attribute
+          onClick={handleDelete}
         >
           <Cross1Icon />
         </Button>

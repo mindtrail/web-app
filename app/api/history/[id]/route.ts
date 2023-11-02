@@ -24,6 +24,7 @@ export async function DELETE(
 
     // Delete dataSrc from Qdrant and GCS
     deleteFileFromGCS(dataSrc)
+
     // @TODO delete points from Qdrant -> Dimitri
 
     return NextResponse.json({ dataSrc })
