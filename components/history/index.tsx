@@ -1,5 +1,5 @@
 'use client'
-import { useState, MouseEvent, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, MouseEvent } from 'react'
 import { DataSrc } from '@prisma/client'
 import Select from 'react-select'
 
@@ -80,24 +80,34 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
     setFilteredItems(filteredHistory)
   }, [filters, history])
 
-  const handleTagListClick = useCallback(
-    (event: MouseEvent, newTag: string) => {
-      event.preventDefault()
-      setFilters((prevFilters = []) => {
-        const newFilters = prevFilters.filter(
-          (prevTag) => prevTag.value !== newTag,
-        )
+  const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    const newTag = event.currentTarget.dataset.value || ''
 
-        // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
-        if (newFilters.length === prevFilters.length) {
-          newFilters.push({ value: newTag, label: newTag })
-        }
+    setFilters((prevFilters = []) => {
+      const newFilters = prevFilters.filter(
+        (prevTag) => prevTag.value !== newTag,
+      )
 
-        return newFilters
-      })
-    },
-    [],
-  )
+      // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
+      if (newFilters.length === prevFilters.length) {
+        newFilters.push({ value: newTag, label: newTag })
+      }
+
+      return newFilters
+    })
+  }, [])
+
+  const handleHistoryDelete = useCallback((event: MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+
+    const historyEntryId = event.currentTarget.dataset.entryId
+    if (!historyEntryId) {
+      return
+    }
+
+    console.log('handleHistoryDelete', event.target)
+  }, [])
 
   return (
     <div className='flex flex-col flex-1 w-full px-4 py-4 md:py-8 md:px-8 gap-4'>
@@ -120,6 +130,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
                 historyItem={historyItem}
                 filters={filters}
                 handleTagListClick={handleTagListClick}
+                handleHistoryDelete={handleHistoryDelete}
               />
             ))}
           </div>
