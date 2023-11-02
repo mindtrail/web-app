@@ -1,7 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, MouseEvent } from 'react'
 import Link from 'next/link'
 import { DataSrc } from '@prisma/client'
-import { GlobeIcon } from '@radix-ui/react-icons'
+import { GlobeIcon, Cross1Icon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 
@@ -18,10 +18,8 @@ type TagList = {
 type HistoryItemProps = {
   historyItem: HistoryItem
   filters?: TagList[]
-  handleTagListClick: (
-    event: React.MouseEvent<HTMLButtonElement>,
-    tag: string,
-  ) => void
+  handleTagListClick: (event: MouseEvent<HTMLButtonElement>) => void
+  handleHistoryDelete: (event: MouseEvent<HTMLButtonElement>) => void
 }
 
 const addHttpsIfMissing = (url: string) => {
@@ -35,8 +33,9 @@ export const HistoryEntry = ({
   historyItem,
   filters,
   handleTagListClick,
+  handleHistoryDelete,
 }: HistoryItemProps) => {
-  const { name, tags, displayName } = historyItem
+  const { id, name, tags, displayName } = historyItem
 
   const processedTags = useMemo(() => {
     const filterList = filters?.map((filter) => filter.value)
@@ -68,11 +67,21 @@ export const HistoryEntry = ({
             className={`invisible group-hover:visible hover:bg-slate-200
               ${selected && 'bg-slate-200'}
             `}
-            onClick={(event) => handleTagListClick(event, value)}
+            data-value={value} // Set a data attribute
+            onClick={handleTagListClick}
           >
             {value}
           </Button>
         ))}
+        <Button
+          variant='ghost'
+          size='sm'
+          className='invisible group-hover:visible'
+          data-entryId={id} // Set a data attribute
+          onClick={handleHistoryDelete}
+        >
+          <Cross1Icon />
+        </Button>
       </span>
     </Link>
   )
