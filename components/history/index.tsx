@@ -29,6 +29,7 @@ type HistoryItem = DataSrc & {
 type HistoryViewProps = {
   userId: string
   historyItems: HistoryItem[]
+  serverCall: () => void
 }
 
 type TagList = {
@@ -45,7 +46,7 @@ const getRouteWithoutProtocol = (url: string) => {
   return match ? match[1] : ''
 }
 
-export function HistoryView({ historyItems }: HistoryViewProps) {
+export function HistoryView({ historyItems, serverCall }: HistoryViewProps) {
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>([])
 
@@ -142,6 +143,10 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
         title: 'File deleted',
         description: `${displayName} has been deleted`,
       })
+      serverCall()
+
+      setDeleteDialogOpen(false)
+      setItemToDelete(null)
     } catch (err) {
       toast({
         title: 'Error',
@@ -149,6 +154,9 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
         description: `Something went wrong while deleting ${displayName}`,
       })
       console.log(err)
+
+      setDeleteDialogOpen(false)
+      setItemToDelete(null)
     }
   }, [itemToDelete, toast])
 

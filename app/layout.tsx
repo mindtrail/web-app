@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarNav } from '@/components/sidebar-nav'
 import { Header } from '@/components/header'
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
 const sidebarNavItems = [
   {
