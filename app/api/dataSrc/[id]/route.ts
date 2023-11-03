@@ -24,8 +24,6 @@ export async function DELETE(
     // Delete dataSrc from Qdrant and GCS
     const res = await deleteFileFromGCS(dataSrc)
 
-    console.log(res)
-
     return NextResponse.json({ dataSrc })
   } catch (error) {
     return new NextResponse('DataStore not found', { status: 404 })
