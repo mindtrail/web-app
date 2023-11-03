@@ -11,19 +11,17 @@ type deletePayload = {
   dataSrcId: string
 }
 export async function deleteDataSrc(props: deletePayload) {
-  console.log('props', props)
   const { dataSrcId } = props
 
   const session = (await getServerSession(authOptions)) as ExtendedSession
-
   const userId = session?.user?.id
 
-  console.log(userId)
   if (!userId) {
     return {
       status: 401,
     }
   }
+
   try {
     const dataSrc = await deleteDataSrcDbOp(userId, dataSrcId)
 

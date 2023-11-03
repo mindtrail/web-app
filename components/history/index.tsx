@@ -137,8 +137,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
     const { id, displayName } = itemToDelete
 
     try {
-      const res = await deleteDataSrc({ dataSrcId: id })
-      console.log(res)
+      await deleteDataSrc({ dataSrcId: id })
 
       toast({
         title: 'File deleted',
