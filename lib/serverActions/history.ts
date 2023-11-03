@@ -1,23 +1,28 @@
-import { NextResponse } from 'next/server'
+'use server'
+
 import { getServerSession } from 'next-auth/next'
+import { revalidateTag } from 'next/cache'
 import { authOptions } from '@/lib/authOptions'
 
 import { deleteDataSrcDbOp } from '@/lib/db/dataSrc'
 import { deleteFileFromGCS } from '@/lib/cloudStorage'
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+type deletePayload = {
+  dataSrcId: string
+}
+export async function deleteDataSrc(props: deletePayload) {
+  console.log('props', props)
+  const { dataSrcId } = props
+
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const dataSrcId = params.id
 
+  console.log(userId)
   if (!userId) {
-    return new NextResponse('Unauthorized', {
+    return {
       status: 401,
-    })
+    }
   }
   try {
     const dataSrc = await deleteDataSrcDbOp(userId, dataSrcId)
@@ -27,8 +32,9 @@ export async function DELETE(
 
     // @TODO delete points from Qdrant -> Dimitri
 
-    return NextResponse.json({ dataSrc })
+    revalidateTag('history')
+    return { dataSrc }
   } catch (error) {
-    return new NextResponse('DataStore not found', { status: 404 })
+    return { status: 404 }
   }
 }

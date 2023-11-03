@@ -1,10 +1,11 @@
 'use client'
+
 import { useState, useCallback, useEffect, MouseEvent } from 'react'
 import { DataSrc } from '@prisma/client'
 import Select from 'react-select'
 
 import { HistoryEntry } from '@/components/history/entry'
-import { deleteHistoryEntryApiCall } from '@/lib/api/history'
+import { deleteDataSrc } from '@/lib/serverActions/history'
 
 import { useToast } from '@/components/ui/use-toast'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -29,7 +30,7 @@ type HistoryItem = DataSrc & {
 type HistoryViewProps = {
   userId: string
   historyItems: HistoryItem[]
-  serverCall: () => void
+  // serverCall: () => void
 }
 
 type TagList = {
@@ -46,7 +47,7 @@ const getRouteWithoutProtocol = (url: string) => {
   return match ? match[1] : ''
 }
 
-export function HistoryView({ historyItems, serverCall }: HistoryViewProps) {
+export function HistoryView({ historyItems }: HistoryViewProps) {
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>([])
 
@@ -136,14 +137,13 @@ export function HistoryView({ historyItems, serverCall }: HistoryViewProps) {
     const { id, displayName } = itemToDelete
 
     try {
-      const deleteResult = await deleteHistoryEntryApiCall(id)
-      console.log(deleteResult)
+      const res = await deleteDataSrc({ dataSrcId: id })
+      console.log(res)
 
       toast({
         title: 'File deleted',
         description: `${displayName} has been deleted`,
       })
-      serverCall()
 
       setDeleteDialogOpen(false)
       setItemToDelete(null)
