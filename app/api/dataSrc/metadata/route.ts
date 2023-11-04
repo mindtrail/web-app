@@ -22,25 +22,25 @@ export async function POST(req: Request) {
     })
   }
 
-  let fileBlob: Blob | null = null
+  let uploadedFile: File | null = null
 
   const formData = await req.formData()
   for (const value of Array.from(formData.values())) {
     // FormDataEntryValue can either be type `Blob` or `string`.
     // If its type is object then it's a Blob
     if (typeof value == 'object') {
-      fileBlob = value
+      uploadedFile = value
     }
   }
 
-  if (!fileBlob) {
+  if (!uploadedFile) {
     return new Response('Bad Request', {
       status: 400,
     })
   }
 
   // Return nr of chunks & character count
-  const docs = await getChunksFromFile(fileBlob)
+  const docs = await getChunksFromFile(uploadedFile)
 
   if (docs instanceof Error) {
     // Handle the error case
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
   const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
-  const { name, type } = fileBlob
+  const { name, type } = uploadedFile
   return NextResponse.json({ charCount, name, type })
 }
 

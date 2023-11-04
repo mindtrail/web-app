@@ -3,7 +3,7 @@ import { Storage } from '@google-cloud/storage'
 import { DataSrc } from '@prisma/client'
 
 interface UploadToGCSProps {
-  fileBlob: Blob
+  uploadedFile: File
   userId: string
   dataStoreId: string
   dataSrcId: string
@@ -48,14 +48,14 @@ export async function getFileFromGCS(fileName: string): Promise<Blob | null> {
 }
 
 export async function uploadToGCS(props: UploadToGCSProps) {
-  const { fileBlob, userId, dataStoreId, dataSrcId } = props
-  const fileName = `${userId}/${dataStoreId}/${dataSrcId}-${fileBlob.name}`
+  const { uploadedFile, userId, dataStoreId, dataSrcId } = props
+  const fileName = `${userId}/${dataStoreId}/${dataSrcId}-${uploadedFile.name}`
 
   const bucket = storage.bucket(bucketName)
   const newFile = bucket.file(fileName)
 
   try {
-    const buffer = Buffer.from(await fileBlob.arrayBuffer())
+    const buffer = Buffer.from(await uploadedFile.arrayBuffer())
     await newFile.save(buffer)
 
     await newFile.setMetadata({
