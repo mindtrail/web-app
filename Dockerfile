@@ -10,8 +10,9 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 # COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-COPY package*.json  ./
-RUN npm install
+COPY package*.json yarn.lock* ./
+RUN yarn install
+# RUN npm install
 
 # Rebuild the source code only when needed
 FROM base AS builder
