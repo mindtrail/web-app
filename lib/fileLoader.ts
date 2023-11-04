@@ -41,7 +41,7 @@ const getFileLoader = (type: string) => {
 }
 
 export const getChunksFromFile = async (
-  fileBlob: Blob | File,
+  fileBlob: File,
 ): Promise<Document[] | Error> => {
   const { name: fileName, type } = fileBlob
 

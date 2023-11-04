@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:20.9.0-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -10,8 +10,8 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 # COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-COPY package*.json yarn.lock ./
-RUN yarn install
+COPY package*.json  ./
+RUN npm install
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -31,12 +31,12 @@ RUN ls -al /app
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 # RUN yarn prisma:generate
-# RUN npm run prisma:generate
+RUN npm run prisma:generate
 
 # RUN NODE_OPTIONS="--max_old_space_size=4096" npm run build
 
 # If using npm comment out above and use below instead
-RUN yarn run build
+RUN npm run build
 # RUN NODE_OPTIONS="--max_old_space_size=12288" yarn build
 
 # Production image, copy all the files and run next

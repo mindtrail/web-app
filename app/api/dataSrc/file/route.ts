@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   }
 
   let dataStoreId = ''
-  let fileBlob: Blob | null = null
+  let uploadedFile: File | null = null
 
   const userId = session.user?.id
   const formData = await req.formData()
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     // FormDataEntryValue can either be type `Blob` or `string`.
     // If its type is object then it's a Blob
     if (typeof value == 'object') {
-      fileBlob = value
+      uploadedFile = value
     }
     // If its type is string then it's the dataStoreId
     if (typeof value == 'string') {
@@ -44,16 +44,18 @@ export async function POST(req: Request) {
     }
   }
 
-  if (!fileBlob || !dataStoreId) {
-    return new Response(`Missing ${!fileBlob ? 'file' : 'dataStoreId'}`, {
+  if (!uploadedFile || !dataStoreId) {
+    return new Response(`Missing ${!uploadedFile ? 'file' : 'dataStoreId'}`, {
       status: 400,
     })
   }
 
-  const { name: fileName = '' } = fileBlob
+  console.log('uploadedFile', uploadedFile)
+
+  const { name: fileName = '' } = uploadedFile
 
   // Return nr of chunks & character count
-  const docs = await getChunksFromFile(fileBlob)
+  const docs = await getChunksFromFile(uploadedFile)
 
   if (docs instanceof Error) {
     // Handle the error case
@@ -87,7 +89,7 @@ export async function POST(req: Request) {
   createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
 
   try {
-    await uploadToGCS({ fileBlob, userId, dataStoreId, dataSrcId })
+    await uploadToGCS({ uploadedFile, userId, dataStoreId, dataSrcId })
     updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
   } catch (err) {
     // @TODO: return file upload success, and run the rest of the process in the background
