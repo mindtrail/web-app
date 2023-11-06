@@ -57,7 +57,6 @@ export async function POST(req: Request) {
 
     const summary = await sumarizePage(sumaryContent)
     const category = await getPageCategory(summary)
-    console.log(category)
 
     const dataSrcPayload = {
       name: fileName,
