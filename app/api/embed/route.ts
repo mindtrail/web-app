@@ -10,6 +10,8 @@ import { sumarizePage, getPageCategory } from '@/lib/openAI'
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/ // Matches everything after the second slash
 
+// THIS IS EMBEDDING FILES FROM GCS
+
 interface EmbeddingPayload {
   userId: string
   dataStoreId: string
