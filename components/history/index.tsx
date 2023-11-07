@@ -160,7 +160,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   }, [itemToDelete, toast])
 
   return (
-    <div className='flex flex-col flex-1 w-full px-4 py-4 md:py-8 md:px-8 gap-4'>
+    <div className='flex flex-col flex-1 px-4 py-4 md:py-8 md:px-8 gap-4'>
       <Typography variant='h4' className='mb-4 text-gray-700'>
         Categories
       </Typography>
