@@ -11,49 +11,57 @@ import Typography from './typography'
 
 const sidebarItems = [
   {
-    title: 'History',
-    href: '/history',
-  },
-  {
-    title: 'Search',
+    title: 'View 1',
     href: '/search',
   },
   {
-    title: 'Chat',
+    title: 'View 2',
     href: '/chat',
   },
   {
-    title: 'Import',
+    title: 'View 3',
     href: '/import',
   },
   {
-    title: 'Settings',
+    title: 'View 4',
     href: '/settings',
   },
 ]
 
-const TAG_BOARD_PATH = 'tag-board'
+const TAG_BOARD_PATH = '/'
+const HISTORY = '/history'
+
+const LINK_STYLE = cn(
+  buttonVariants({ variant: 'ghost', size: 'lg' }),
+  'justify-start hover:bg-white px-4 rounded-none border-l-4 border-transparent',
+)
+
+const ACTIVE_LINK_STYLE = 'bg-white border-blue-500'
 
 export function SidebarNav() {
   const pathname = usePathname()
 
   return (
     // <nav className='flex-1 mt-4 pr-2 flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1'>
-    <nav className='flex-1 mt-4 pr-2 flex space-x-2 flex-col space-y-1'>
+    <nav className='flex-1 flex flex-col bg-slate-100 py-4'>
       <Link
         href={TAG_BOARD_PATH}
         className={cn(
-          buttonVariants({ variant: 'ghost' }),
-          pathname === TAG_BOARD_PATH
-            ? 'bg-muted hover:bg-muted'
-            : 'hover:bg-transparent hover:underline',
-          'justify-start',
+          LINK_STYLE,
+          pathname === TAG_BOARD_PATH && ACTIVE_LINK_STYLE,
         )}
       >
         Tag Board
       </Link>
 
-      <Typography variant='small' className='text-gray-500'>
+      <Link
+        href={HISTORY}
+        className={cn(LINK_STYLE, pathname === HISTORY && ACTIVE_LINK_STYLE)}
+      >
+        History
+      </Link>
+
+      <Typography variant='small' className='text-gray-500 mt-8 mb-4 px-2'>
         Views
       </Typography>
 
@@ -62,11 +70,8 @@ export function SidebarNav() {
           key={index}
           href={item.href}
           className={cn(
-            buttonVariants({ variant: 'ghost' }),
-            pathname === item.href
-              ? 'bg-muted hover:bg-muted'
-              : 'hover:bg-transparent hover:underline',
-            'justify-start',
+            LINK_STYLE,
+            pathname === item.href && ACTIVE_LINK_STYLE,
           )}
         >
           {item.title}

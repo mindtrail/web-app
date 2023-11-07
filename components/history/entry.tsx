@@ -63,7 +63,7 @@ export const HistoryEntry = ({
     >
       <span className='flex gap-2 items-center '>
         <GlobeIcon className='text-green-500' />
-        <span className=' max-w-sm lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
+        <span className='max-w-md lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
           {displayName}
         </span>
       </span>
