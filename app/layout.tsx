@@ -43,10 +43,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <div className='flex flex-col w-full flex-1 md:flex-row lg:gap-10'>
                 <aside className='flex flex-shrink-0 basis-44'>
                   <SidebarNav />
-                  <Separator
+                  {/* <Separator
                     orientation='vertical'
                     className='hidden md:flex'
-                  />
+                  /> */}
                 </aside>
                 <div className='flex-1 flex max-w-3xl'>{children}</div>
               </div>

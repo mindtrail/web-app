@@ -26,7 +26,7 @@ export async function deleteDataSrc(props: deletePayload) {
     const dataSrc = await deleteDataSrcDbOp(userId, dataSrcId)
 
     // Delete dataSrc from Qdrant and GCS
-    deleteFileFromGCS(dataSrc)
+    // deleteFileFromGCS(dataSrc)
 
     // @TODO delete points from Qdrant -> Dimitri
 
