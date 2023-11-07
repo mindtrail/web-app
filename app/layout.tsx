@@ -11,29 +11,6 @@ import { Header } from '@/components/header'
 
 // export const dynamic = 'force-dynamic'
 
-const sidebarNavItems = [
-  {
-    title: 'History',
-    href: '/history',
-  },
-  {
-    title: 'Search',
-    href: '/search',
-  },
-  {
-    title: 'Chat',
-    href: '/chat',
-  },
-  {
-    title: 'Import',
-    href: '/import',
-  },
-  {
-    title: 'Settings',
-    href: '/settings',
-  },
-]
-
 export const viewport: Viewport = {
   themeColor: [{ media: '(prefers-color-scheme: light)', color: 'white' }],
 }
@@ -62,19 +39,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <main className='flex flex-col flex-1 w-full h-full items-center'>
             <Header />
 
-            <div className='flex flex-col flex-1 w-full max-w-7xl sm:px-6 px-12'>
-              <div className='flex flex-col w-full flex-1 lg:flex-row lg:gap-12'>
-                <aside className='-mx-4 lg:w-1/5 flex '>
-                  <SidebarNav
-                    items={sidebarNavItems}
-                    className='flex-1 mt-4 pr-2'
-                  />
+            <div className='flex flex-col flex-1 w-full'>
+              <div className='flex flex-col w-full flex-1 md:flex-row lg:gap-10'>
+                <aside className='flex flex-shrink-0 basis-44'>
+                  <SidebarNav />
                   <Separator
                     orientation='vertical'
-                    className='hidden lg:flex'
+                    className='hidden md:flex'
                   />
                 </aside>
-                <div className='flex-1 flex max-w-3xl w-full'>{children}</div>
+                <div className='flex-1 flex max-w-3xl'>{children}</div>
               </div>
             </div>
           </main>

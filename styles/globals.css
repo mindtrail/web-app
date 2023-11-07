@@ -61,3 +61,7 @@
 ::selection {
   background: #b4d5fe !important;
 }
+
+body {
+  box-sizing: border-box;
+}

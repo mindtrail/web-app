@@ -59,16 +59,16 @@ export const HistoryEntry = ({
     <Link
       target='_blank'
       href={addHttpsIfMissing(name)}
-      className='flex group justify-between items-center'
+      className='flex group justify-between items-center relative'
     >
       <span className='flex gap-2 items-center '>
         <GlobeIcon className='text-green-500' />
-        <span className=' max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
+        <span className=' max-w-sm lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
           {displayName}
         </span>
       </span>
 
-      <span className='flex items-center gap-2'>
+      <span className='flex items-center gap-2 absolute right-0'>
         {processedTags?.map(({ value, selected }, index) => (
           <Button
             key={index}

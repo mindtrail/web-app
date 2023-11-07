@@ -18,7 +18,7 @@ export async function Header() {
       items-center justify-center bg-gradient-to-b border-b
       from-background/10 via-background/50 to-background/80 backdrop-blur-xl sm:px-6 px-12'
     >
-      <div className='flex w-full max-w-7xl px-4 md:px-0 items-center justify-between'>
+      <div className='flex w-full px-4 md:px-0 items-center justify-between'>
         <Link href='/' className='flex w-40 items-center gap-4'>
           <Image width={32} height={32} src='/icon-2.png' alt='Mind Trail' />
           Mind Trail
