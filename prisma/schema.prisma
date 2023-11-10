@@ -102,7 +102,6 @@ model DataStore {
   name        String
   description String?
   type        DataStoreType
-  dataSrcs    DataSrc[]
   visibility  DataStoreVisibility @default(private)
 
   config Json?
