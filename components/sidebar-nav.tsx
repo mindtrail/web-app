@@ -3,11 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PlusIcon,
-} from '@radix-ui/react-icons'
+import { PlusIcon } from '@radix-ui/react-icons'
 
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'

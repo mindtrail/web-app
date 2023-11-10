@@ -12,8 +12,8 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="ghost"
-      size="icon"
+      variant='ghost'
+      size='icon'
       onClick={() => {
         startTransition(() => {
           setTheme(theme === 'light' ? 'dark' : 'light')
@@ -21,11 +21,11 @@ export function ThemeToggle() {
       }}
     >
       {!theme ? null : theme === 'dark' ? (
-        <IconMoon className="transition-all" />
+        <IconMoon className='transition-all' />
       ) : (
-        <IconSun className="transition-all" />
+        <IconSun className='transition-all' />
       )}
-      <span className="sr-only">Toggle theme</span>
+      <span className='sr-only'>Toggle theme</span>
     </Button>
   )
 }

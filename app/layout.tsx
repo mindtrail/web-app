@@ -36,7 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className='flex flex-col min-h-screen'>
         <Providers>
           <main className='flex flex-col flex-1 w-full h-full items-center'>
-            {/* <Header /> */}
+            <Header />
 
             <div className='flex flex-col flex-1 w-full'>
               <div className='flex flex-col w-full flex-1 md:flex-row lg:gap-10'>
