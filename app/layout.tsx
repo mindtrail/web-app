@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { Separator } from '@/components/ui/separator'
 import { SidebarNav } from '@/components/sidebar-nav'
-import { Header } from '@/components/header'
+import { SidebarRight } from '@/components/sidebar-right'
 
 // export const dynamic = 'force-dynamic'
 
@@ -38,7 +38,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <SidebarNav className='' />
           <main className='flex flex-1'>
             <div className='flex flex-1 '>{children}</div>
-            <div className='flex flex-col w-[200px]'>Right Sidebar</div>
+            <Separator orientation='vertical' />
+            <SidebarRight />
           </main>
           <TailwindIndicator />
           <Toaster />
