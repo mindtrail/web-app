@@ -25,13 +25,17 @@ function getUserInitials(name: string) {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
-  const inDevelopment = useMemo(() => process.env.NODE_ENV === 'development', [])
+  const inDevelopment = useMemo(
+    () => process.env.NODE_ENV === 'development',
+    [],
+  )
 
   return (
-    <div className='flex items-center justify-end w-52 absolute'>
+    <div className='flex items-center justify-end w-full absolute'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='pr-2 pl-0'>
+          <Button variant='ghost' className='px-2 mr-2 gap-2'>
+            <span className=''>{user?.name}</span>
             {user?.image ? (
               <Image
                 loader={({ src }) => src}
@@ -52,7 +56,6 @@ export function UserMenu({ user }: UserMenuProps) {
                 {user?.name ? getUserInitials(user?.name) : null}
               </div>
             )}
-            <span className='ml-2'>{user?.name}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent sideOffset={8} className='w-[200px]'>
