@@ -36,12 +36,15 @@ const LINK_STYLE = cn(
 
 const ACTIVE_LINK_STYLE = 'bg-white border-blue-500'
 
-export function SidebarNav() {
+type SidebarNavProps = {
+  className?: string
+}
+
+export function SidebarNav({ className }: SidebarNavProps) {
   const pathname = usePathname()
 
   return (
-    // <nav className='flex-1 mt-4 pr-2 flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1'>
-    <nav className='flex-1 flex flex-col bg-slate-100 py-4 gap-4'>
+    <nav className={cn('flex flex-col basis-[256px] bg-slate-100', className)}>
       <Link href='/' className='flex w-40 items-center gap-4 px-4'>
         <Image width={32} height={32} src='/icon-2.png' alt='Mind Trail' />
         Mind Trail
