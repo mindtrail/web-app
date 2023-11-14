@@ -33,19 +33,12 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className='flex flex-col min-h-screen'>
+      <body className='flex min-h-screen'>
         <Providers>
-          <main className='flex flex-col flex-1 w-full h-full items-center'>
-            <Header />
-
-            <div className='flex flex-col flex-1 w-full'>
-              <div className='flex flex-col w-full flex-1 md:flex-row lg:gap-10'>
-                <aside className='flex flex-shrink-0 basis-48'>
-                  <SidebarNav />
-                </aside>
-                <div className='flex-1 flex max-w-3xl'>{children}</div>
-              </div>
-            </div>
+          <SidebarNav className='' />
+          <main className='flex flex-1'>
+            <div className='flex flex-1 '>{children}</div>
+            <div className='flex flex-col w-[200px]'>Right Sidebar</div>
           </main>
           <TailwindIndicator />
           <Toaster />
