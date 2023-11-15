@@ -165,6 +165,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
         History
       </Typography> */}
       <Select
+        instanceId='history-filter'
         isMulti
         value={filters}
         options={categories}

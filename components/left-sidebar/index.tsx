@@ -14,8 +14,8 @@ type SidebarNavProps = {
   className?: string
 }
 
-const ACTIVE_TAB_STYLE =
-  'font-normal data-[state=active]:shadow-none data-[state=active]:font-medium'
+const TAB_STYLE =
+  'font-normal hover:text-foreground data-[state=active]:shadow-none data-[state=active]:font-medium'
 
 export function LeftSidebar({ className }: SidebarNavProps) {
   return (
@@ -35,10 +35,10 @@ export function LeftSidebar({ className }: SidebarNavProps) {
       <Separator />
       <Tabs defaultValue='data' className='w-full flex flex-col flex-1'>
         <TabsList className='grid grid-cols-2 bg-transparent px-4'>
-          <TabsTrigger value='data' className={ACTIVE_TAB_STYLE}>
+          <TabsTrigger value='data' className={TAB_STYLE}>
             Data
           </TabsTrigger>
-          <TabsTrigger value='tag-board' className={ACTIVE_TAB_STYLE}>
+          <TabsTrigger value='tag-board' className={TAB_STYLE}>
             Tag Board
           </TabsTrigger>
         </TabsList>
