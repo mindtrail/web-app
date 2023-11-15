@@ -5,8 +5,12 @@ import { usePathname } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import { IconMessage, IconUsers } from '@/components/ui/icons'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { IconMessage, IconUsers } from '@/components/ui/icons/next-icons'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 interface SidebarItemProps {
   chat: Chat
@@ -24,7 +28,10 @@ export function SidebarItem({ chat, children }: SidebarItemProps) {
       <div className='absolute left-2 top-1 flex h-6 w-6 items-center justify-center'>
         {chat.sharePath ? (
           <Tooltip delayDuration={1000}>
-            <TooltipTrigger tabIndex={-1} className='focus:bg-muted focus:ring-1 focus:ring-ring'>
+            <TooltipTrigger
+              tabIndex={-1}
+              className='focus:bg-muted focus:ring-1 focus:ring-ring'
+            >
               <IconUsers className='mr-2' />
             </TooltipTrigger>
             <TooltipContent>This is a shared chat.</TooltipContent>

@@ -4,16 +4,27 @@ import { UseChatHelpers } from 'ai/react'
 
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit'
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { IconArrowElbow } from '@/components/ui/icons'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { IconArrowElbow } from '@/components/ui/icons/next-icons'
 
-export interface PromptProps extends Pick<UseChatHelpers, 'input' | 'setInput'> {
+export interface PromptProps
+  extends Pick<UseChatHelpers, 'input' | 'setInput'> {
   isLoading: boolean
   notInitialised?: boolean
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
 }
 
-export function PromptForm({ onSubmit, input, setInput, isLoading, notInitialised }: PromptProps) {
+export function PromptForm({
+  onSubmit,
+  input,
+  setInput,
+  isLoading,
+  notInitialised,
+}: PromptProps) {
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = useRef<HTMLTextAreaElement>(null)
 

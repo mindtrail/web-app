@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
@@ -15,11 +14,17 @@ type SidebarNavProps = {
   className?: string
 }
 
-export function LeftSidebar({ className }: SidebarNavProps) {
-  const pathname = usePathname()
+const ACTIVE_TAB_STYLE =
+  'font-normal data-[state=active]:shadow-none data-[state=active]:font-medium'
 
+export function LeftSidebar({ className }: SidebarNavProps) {
   return (
-    <nav className={cn('flex flex-col basis-[256px] bg-slate-100', className)}>
+    <nav
+      className={cn(
+        'flex flex-col w-[256px] border-r flex-shrink-0',
+        className,
+      )}
+    >
       <div className='h-12 flex justify-center items-center'>
         <Link href='/' className='flex w-40 items-center gap-4 px-4'>
           <Image width={32} height={32} src='/icon-2.png' alt='Mind Trail' />
@@ -28,21 +33,25 @@ export function LeftSidebar({ className }: SidebarNavProps) {
       </div>
 
       <Separator />
-      <div className='flex items-center '>
-        <Tabs defaultValue='data' className='w-full'>
-          <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='data'>Data</TabsTrigger>
-            <TabsTrigger value='tag-board'>Tag Board</TabsTrigger>
-          </TabsList>
-          <Separator />
-          <TabsContent value='data'>
-            <DataHistory />
-          </TabsContent>
-          <TabsContent value='tag-board'>
-            <TagBoard />
-          </TabsContent>
-        </Tabs>
-      </div>
+      <Tabs defaultValue='data' className='w-full flex flex-col flex-1'>
+        <TabsList className='grid grid-cols-2 bg-transparent px-4'>
+          <TabsTrigger value='data' className={ACTIVE_TAB_STYLE}>
+            Data
+          </TabsTrigger>
+          <TabsTrigger value='tag-board' className={ACTIVE_TAB_STYLE}>
+            Tag Board
+          </TabsTrigger>
+        </TabsList>
+
+        <Separator />
+
+        <TabsContent value='data' className='flex-1'>
+          <DataHistory />
+        </TabsContent>
+        <TabsContent value='tag-board' className='flex-1'>
+          <TagBoard />
+        </TabsContent>
+      </Tabs>
     </nav>
   )
 }

@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { IconSpinner } from '@/components/ui/icons'
+import { IconSpinner } from '@/components/ui/icons/next-icons'
 import Typography from '@/components/typography'
 
 type WebsiteSearchResult = Document['metadata'] | null

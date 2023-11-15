@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react'
 
 import { cn } from '@/lib/utils'
 import { Button, type ButtonProps } from '@/components/ui/button'
-import { IconSpinner } from '@/components/ui/icons'
+import { IconSpinner } from '@/components/ui/icons/next-icons'
 
 interface LoginButtonProps extends ButtonProps {
   text?: string
