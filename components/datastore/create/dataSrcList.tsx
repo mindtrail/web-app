@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { Cross1Icon, FileTextIcon, GlobeIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
-import { IconSpinner } from '@/components/ui/icons'
+import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
 import { DataSrcStatus, DataSrcType } from '@prisma/client'
 import { ScrollArea } from '@/components/ui/scroll-area'

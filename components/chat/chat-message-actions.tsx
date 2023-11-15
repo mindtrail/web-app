@@ -3,7 +3,7 @@
 import { type Message } from 'ai'
 
 import { Button } from '@/components/ui/button'
-import { IconCheck, IconCopy } from '@/components/ui/icons'
+import { IconCheck, IconCopy } from '@/components/ui/icons/next-icons'
 import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard'
 import { cn } from '@/lib/utils'
 
@@ -22,17 +22,17 @@ export function ChatMessageActions({
     <div
       className={cn(
         'flex items-center justify-end transition-opacity group-hover:opacity-100 md:absolute md:-right-10 md:-top-2 md:opacity-0',
-        className
+        className,
       )}
       {...props}
     >
       <Button
-        variant="ghost"
-        size="icon"
+        variant='ghost'
+        size='icon'
         onClick={() => copyToClipboard(message.content)}
       >
         {isCopied ? <IconCheck /> : <IconCopy />}
-        <span className="sr-only">Copy message</span>
+        <span className='sr-only'>Copy message</span>
       </Button>
     </div>
   )

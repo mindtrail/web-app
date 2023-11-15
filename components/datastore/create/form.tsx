@@ -10,7 +10,7 @@ import { useUrlHandler } from '@/components/datastore/create/useUrlHandler'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { IconSpinner } from '@/components/ui/icons'
+import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
