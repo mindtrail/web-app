@@ -5,7 +5,7 @@ import { Providers } from '@/context/providers'
 import { Toaster } from '@/components/ui/toaster'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { Separator } from '@/components/ui/separator'
-import { SidebarNav } from '@/components/sidebar-nav'
+import { LeftSidebar } from '@/components/left-sidebar'
 import { SidebarRight } from '@/components/sidebar-right'
 
 // export const dynamic = 'force-dynamic'
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang='en' suppressHydrationWarning>
       <body className='flex min-h-screen'>
         <Providers>
-          <SidebarNav className='' />
+          <LeftSidebar className='' />
           <main className='flex flex-1'>
             <div className='flex flex-1 '>{children}</div>
             <Separator orientation='vertical' />
