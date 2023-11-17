@@ -1,17 +1,14 @@
 'use client'
 
-import { useState, useCallback, useEffect, MouseEvent } from 'react'
-import { DataSrc } from '@prisma/client'
+import { MouseEvent, useCallback, useEffect, useState } from 'react'
 import Select from 'react-select'
 
-import { HistoryEntry } from '@/components/history/entry'
+import { DataSrc } from '@prisma/client'
+
 import { deleteDataSrc } from '@/lib/serverActions/history'
 
-import { useToast } from '@/components/ui/use-toast'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Button } from '@/components/ui/button'
-import Typography from '@/components/typography'
-
+import { HistoryEntry } from '@/components/history/entry'
+import { SearchBar } from '@/components/search-bar'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -21,6 +18,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { useToast } from '@/components/ui/use-toast'
 
 type HistoryItem = DataSrc & {
   tags?: string[]
@@ -75,7 +75,10 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
       } as HistoryItem
     })
 
-    const tagList = Object.keys(tags).map((tag) => ({ label: tag, value: tag }))
+    const tagList = Object.keys(tags).map((tag) => ({
+      label: tag,
+      value: tag,
+    }))
     setCategories(tagList)
 
     setHistory([...processedHistory])
@@ -89,11 +92,11 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
 
     // Create a regex pattern that accounts for potential spaces
     const pattern = new RegExp(
-      '\\b' + filters.map((f) => f.value).join('\\s*|\\s*') + '\\b',
+      '\\b' + filters.map((f) => f.value).join('\\s*|\\s*') + '\\b'
     )
 
     const filteredHistory = history.filter((item) =>
-      pattern.test(item?.thumbnail || ''),
+      pattern.test(item?.thumbnail || '')
     )
 
     setFilteredItems(filteredHistory)
@@ -105,7 +108,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
 
     setFilters((prevFilters = []) => {
       const newFilters = prevFilters.filter(
-        (prevTag) => prevTag.value !== newTag,
+        (prevTag) => prevTag.value !== newTag
       )
 
       // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
@@ -127,7 +130,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
       setItemToDelete(historyItem)
       setDeleteDialogOpen(true)
     },
-    [],
+    []
   )
 
   const confirmHistoryDelete = useCallback(async () => {
@@ -160,7 +163,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   }, [itemToDelete, toast])
 
   return (
-    <div className='flex flex-col flex-1 px-4 py-4 md:py-8 md:px-8 gap-4'>
+    <div className='flex flex-1 flex-col gap-4 px-4 py-4 md:px-8 md:py-8'>
       {/* <Typography variant='h4' className='mb-4 text-gray-700'>
         History
       </Typography> */}
@@ -176,8 +179,8 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
       </div>
 
       {filteredItems.length ? (
-        <ScrollArea className='min-w-0 flex-1 flex flex-col gap-2 max-h-[76vh] rounded-md py-4 px-2'>
-          <div className='flex flex-col gap-2 max-w-2xl  cursor-default'>
+        <ScrollArea className='flex max-h-[76vh] min-w-0 flex-1 flex-col gap-2 rounded-md px-2 py-4'>
+          <div className='flex max-w-2xl cursor-default flex-col  gap-2'>
             {filteredItems.map((historyItem, index) => (
               <HistoryEntry
                 key={index}

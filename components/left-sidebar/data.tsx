@@ -1,17 +1,16 @@
+import { useCallback, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
 import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  FileIcon,
   PlusIcon,
   StarIcon,
-  ChevronRightIcon,
-  ChevronDownIcon,
-  FileIcon,
 } from '@radix-ui/react-icons'
-import { usePathname } from 'next/navigation'
-import { useCallback, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { buttonVariants } from '@/components/ui/button'
-import { FilterIcon } from '@/components/ui/icons/custom'
+import { cn } from '@/lib/utils'
 
 import {
   Accordion,
@@ -19,8 +18,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
+import { FilterIcon } from '@/components/ui/icons/custom'
 
 const TAG_BOARD_PATH = '/'
 const HISTORY = '/history'
