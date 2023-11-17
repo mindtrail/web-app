@@ -164,13 +164,16 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
       {/* <Typography variant='h4' className='mb-4 text-gray-700'>
         History
       </Typography> */}
-      <Select
-        instanceId='history-filter'
-        isMulti
-        value={filters}
-        options={categories}
-        onChange={(selected) => setFilters(selected as TagList[])}
-      />
+      <div className='flex w-full '>
+        <Select
+          className='flex-1'
+          instanceId='history-filter'
+          isMulti
+          value={filters}
+          options={categories}
+          onChange={(selected) => setFilters(selected as TagList[])}
+        />
+      </div>
 
       {filteredItems.length ? (
         <ScrollArea className='min-w-0 flex-1 flex flex-col gap-2 max-h-[76vh] rounded-md py-4 px-2'>
