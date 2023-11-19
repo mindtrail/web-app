@@ -1,34 +1,6 @@
 {
   "extends": "next/core-web-vitals",
-  "plugins": ["simple-import-sort"],
   "rules": {
-    "@next/next/no-img-element": "off",
-    "simple-import-sort/exports": "error",
-    "simple-import-sort/imports": [
-      "error",
-      {
-        "groups": [
-          // `react` first, `next` second, then packages starting with a character
-          ["^react$", "^next", "^[a-z]"],
-          [""],
-          ["^@/"],
-          [""],
-          ["^@/pages"],
-          [""],
-          ["^@/components/"],
-          [""],
-          // Imports starting with `../`
-          ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-          // Imports starting with `./`
-          ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
-          // Style imports
-          ["^.+\\.s?css$"],
-          // Side effect imports
-          ["^\\u0000"],
-          [""]
-        ]
-      }
-    ],
-    "no-multiple-empty-lines": ["error", { "max": 1 }]
+    "@next/next/no-img-element": "off"
   }
 }
