@@ -168,14 +168,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
         History
       </Typography> */}
       <div className='flex w-full '>
-        <Select
-          className='flex-1'
-          instanceId='history-filter'
-          isMulti
-          value={filters}
-          options={categories}
-          onChange={(selected) => setFilters(selected as TagList[])}
-        />
+        <SearchBar />
       </div>
 
       {filteredItems.length ? (
