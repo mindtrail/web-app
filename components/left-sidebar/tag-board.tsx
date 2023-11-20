@@ -7,8 +7,8 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { Section } from '@/components/left-sidebar/section'
 
-const mockFilters = [{ id: '1', name: 'UX Research', url: '/' }]
-const mockCollections = [{ id: '1', name: 'Group 1', url: '/import' }]
+const mockFilters = [{ id: '1', name: 'UX Research', url: '/import' }]
+const mockCollections = [{ id: '1', name: 'Group 1', url: '/search' }]
 
 const FAVORITES_URL = '/'
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
