@@ -6,9 +6,8 @@ import { usePathname } from 'next/navigation'
 import {
   ChevronDownIcon,
   ChevronRightIcon,
-  FileIcon,
   PlusIcon,
-  StarIcon,
+  FileIcon,
 } from '@radix-ui/react-icons'
 
 import {
@@ -19,12 +18,11 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
-import { FilterIcon } from '@/components/ui/icons/custom'
-import path from 'path'
 
 interface SectionProps {
   items: any[]
   title: string
+  iconOverride?: React.FC
 }
 
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
@@ -33,7 +31,11 @@ const ACTIVE_SIDEBAR_BUTTON = 'text-primary font-semibold hover:text-primary'
 const TRIGGER_HEADER_STYLE =
   'flex flex-1 justify-between px-4 gap-2 cursor-pointer'
 
-export default function Section({ title, items }: SectionProps) {
+export function Section({
+  title,
+  items,
+  iconOverride: Icon = FileIcon,
+}: SectionProps) {
   const [sectionIsOpen, setSectionIsOpen] = useState(true)
   const pathname = usePathname()
 
@@ -52,12 +54,12 @@ export default function Section({ title, items }: SectionProps) {
             pathname === url && ACTIVE_SIDEBAR_BUTTON,
           )}
         >
-          <FilterIcon />
+          <Icon />
           {name}
         </Link>
       )
     })
-  }, [items, pathname])
+  }, [items, pathname, Icon])
 
   console.log(renderItems)
 
@@ -69,13 +71,19 @@ export default function Section({ title, items }: SectionProps) {
       onValueChange={onToggleSection}
     >
       <AccordionItem value='filters' className='border-none'>
-        <AccordionTrigger asChild className='py-2'>
+        <AccordionTrigger asChild className='py-1'>
           <div className={TRIGGER_HEADER_STYLE}>
-            <Button variant='sidebarSection'>
+            <Button
+              variant='sidebarSection'
+              className='whitespace-nowrap overflow-hidden text-ellipsis'
+            >
               {sectionIsOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
               {title}
             </Button>
-            <Button variant='sidebar' className='hover:bg-slate-200 -mr-4'>
+            <Button
+              variant='sidebar'
+              className='hover:bg-slate-200 -mr-4 shrink-0'
+            >
               <PlusIcon />
             </Button>
           </div>
