@@ -1,27 +1,12 @@
-import { useCallback, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  FileIcon,
-  PlusIcon,
-  StarIcon,
-} from '@radix-ui/react-icons'
-
+import { StarIcon, FileIcon } from '@radix-ui/react-icons'
 import { cn } from '@/lib/utils'
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
-
-import Section from '@/components/left-sidebar/section'
+import { Section } from '@/components/left-sidebar/section'
+import { FilterIcon } from '@/components/ui/icons/custom'
 
 const mockFilters = [
   { id: '1', name: 'All Items', url: '/history' },
@@ -39,7 +24,7 @@ const ACTIVE_SIDEBAR_BUTTON = 'text-primary font-semibold hover:text-primary'
 export default function ResearchHistory() {
   const pathname = usePathname()
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex flex-col'>
       <div className='flex flex-col mx-2 items-stretch'>
         <Link
           href={FAVORITES_URL}
@@ -52,7 +37,11 @@ export default function ResearchHistory() {
           Favorites
         </Link>
 
-        <Section title='Filters' items={mockFilters} />
+        <Section
+          title='Filters'
+          items={mockFilters}
+          iconOverride={FilterIcon}
+        />
       </div>
 
       <div className='flex flex-col px-2 items-stretch'>
