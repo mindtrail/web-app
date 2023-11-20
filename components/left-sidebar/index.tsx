@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import DataHistory from '@/components/left-sidebar/data'
+import DataHistory from '@/components/left-sidebar/research'
 import TagBoard from '@/components/left-sidebar/tag-board'
 
 type SidebarNavProps = {
