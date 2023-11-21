@@ -47,7 +47,7 @@ export function Section({
     return items.map(({ name, url }, index) => {
       return (
         <Link
-          key={index}
+          key={index + name}
           href={url}
           className={cn(
             NESTED_ITEM_STYLE,
@@ -60,8 +60,6 @@ export function Section({
       )
     })
   }, [items, pathname, Icon])
-
-  console.log(renderItems)
 
   return (
     <Accordion
