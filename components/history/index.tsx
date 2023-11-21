@@ -1,14 +1,8 @@
 'use client'
 
 import { MouseEvent, useCallback, useEffect, useState } from 'react'
-import Select from 'react-select'
-
-import { DataSrc } from '@prisma/client'
-
 import { deleteDataSrc } from '@/lib/serverActions/history'
 
-import { HistoryEntry } from '@/components/history/entry'
-import { SearchBar } from '@/components/search-bar'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -19,24 +13,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { useToast } from '@/components/ui/use-toast'
 
-type HistoryItem = DataSrc & {
-  tags?: string[]
-  displayName?: string
-}
-
-type HistoryViewProps = {
-  userId: string
-  historyItems: HistoryItem[]
-  // serverCall: () => void
-}
-
-type TagList = {
-  label: string
-  value: string
-}
+import { SearchBar } from '@/components/history/search-bar'
+import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
+import { HistoryTable } from '@/components/history/table'
 
 type Tags = {
   [key: string]: string
@@ -51,8 +32,8 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>([])
 
-  const [categories, setCategories] = useState<TagList[]>([])
-  const [filters, setFilters] = useState<TagList[]>()
+  const [categories, setCategories] = useState<HistoryFilter[]>([])
+  const [filters, setFilters] = useState<HistoryFilter[]>()
   const [itemToDelete, setItemToDelete] = useState<HistoryItem | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
@@ -92,11 +73,11 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
 
     // Create a regex pattern that accounts for potential spaces
     const pattern = new RegExp(
-      '\\b' + filters.map((f) => f.value).join('\\s*|\\s*') + '\\b'
+      '\\b' + filters.map((f) => f.value).join('\\s*|\\s*') + '\\b',
     )
 
     const filteredHistory = history.filter((item) =>
-      pattern.test(item?.thumbnail || '')
+      pattern.test(item?.thumbnail || ''),
     )
 
     setFilteredItems(filteredHistory)
@@ -108,7 +89,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
 
     setFilters((prevFilters = []) => {
       const newFilters = prevFilters.filter(
-        (prevTag) => prevTag.value !== newTag
+        (prevTag) => prevTag.value !== newTag,
       )
 
       // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
@@ -130,7 +111,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
       setItemToDelete(historyItem)
       setDeleteDialogOpen(true)
     },
-    []
+    [],
   )
 
   const confirmHistoryDelete = useCallback(async () => {
@@ -163,29 +144,18 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   }, [itemToDelete, toast])
 
   return (
-    <div className='flex flex-1 flex-col gap-4 px-4 py-4 md:px-8 md:py-8'>
-      {/* <Typography variant='h4' className='mb-4 text-gray-700'>
-        History
-      </Typography> */}
-      <div className='flex w-full '>
+    <div className='flex flex-1 flex-col gap-2 px-4 py-4 md:px-8 md:py-8'>
+      <div className='flex flex-col w-full gap-4'>
         <SearchBar />
+        <HistoryBreadcrumbs />
       </div>
 
-      {filteredItems.length ? (
-        <ScrollArea className='flex max-h-[76vh] min-w-0 flex-1 flex-col gap-2 rounded-md px-2 py-4'>
-          <div className='flex max-w-2xl cursor-default flex-col  gap-2'>
-            {filteredItems.map((historyItem, index) => (
-              <HistoryEntry
-                key={index}
-                historyItem={historyItem}
-                filters={filters}
-                handleTagListClick={handleTagListClick}
-                handleHistoryDelete={handleHistoryDelete}
-              />
-            ))}
-          </div>
-        </ScrollArea>
-      ) : null}
+      <HistoryTable
+        items={filteredItems}
+        filters={filters}
+        handleTagListClick={handleTagListClick}
+        handleHistoryDelete={handleHistoryDelete}
+      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

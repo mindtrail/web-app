@@ -9,12 +9,12 @@ import { Section } from '@/components/left-sidebar/section'
 import { FilterIcon } from '@/components/ui/icons/custom'
 
 const mockFilters = [
-  { id: '1', name: 'All Items', url: '/history' },
-  { id: '2', name: 'First Filters', url: '/search' },
+  { name: 'All Items', url: '/history' },
+  { name: 'First Filters', url: '/search' },
 ]
 const mockCollections = [
-  { id: '1', name: 'Collection 1', url: '/import' },
-  { id: '2', name: 'UX Collection', url: '/datastore/create' },
+  { name: 'Collection 1', url: '/import' },
+  { name: 'UX Collection', url: '/datastore/create' },
 ]
 
 const FAVORITES_URL = '/'

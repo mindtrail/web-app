@@ -5,6 +5,7 @@ import { DataSrc } from '@prisma/client'
 import { Cross1Icon, GlobeIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type HistoryItem = DataSrc & {
   tags?: string[]
@@ -39,7 +40,7 @@ export const HistoryEntry = ({
   handleTagListClick,
   handleHistoryDelete,
 }: HistoryItemProps) => {
-  const { id, name, tags, displayName } = historyItem
+  const { id, name, tags, displayName, summary, createdAt } = historyItem
 
   const processedTags = useMemo(() => {
     const filterList = filters?.map((filter) => filter.value)
@@ -55,45 +56,56 @@ export const HistoryEntry = ({
     },
     [handleHistoryDelete, historyItem],
   )
+  console.log(historyItem)
 
   return (
-    <Link
-      target='_blank'
-      href={addHttpsIfMissing(name)}
-      className='flex group justify-between items-center relative'
-    >
-      <span className='flex gap-2 items-center '>
-        <GlobeIcon className='text-green-500' />
-        <span className='max-w-md lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
+    <div className='flex flex-col w-full group border rounded-md px-4 py-2'>
+      <div className='flex gap-2 items-center'>
+        <Checkbox className='invisible group-hover:visible' />
+
+        <span className='max-w-xs text-ellipsis overflow-hidden whitespace-nowrap'>
           {displayName}
         </span>
-      </span>
+      </div>
 
-      <span className='flex items-center gap-2 absolute right-0'>
-        {processedTags?.map(({ value, selected }, index) => (
-          <Button
-            key={index}
-            variant='secondary'
-            size='sm'
-            className={`invisible group-hover:visible hover:bg-slate-200
+      <Link
+        target='_blank'
+        href={addHttpsIfMissing(name)}
+        className='flex group justify-between items-center relative'
+      >
+        <span className='flex gap-2 items-center '>
+          <GlobeIcon className='text-green-500' />
+          <span className='max-w-md lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
+            {displayName}
+          </span>
+        </span>
+
+        <span className='flex items-center gap-2 absolute right-0'>
+          {processedTags?.map(({ value, selected }, index) => (
+            <Button
+              key={index}
+              variant='secondary'
+              size='sm'
+              className={`invisible group-hover:visible hover:bg-slate-200
               ${selected && 'bg-slate-200'}
             `}
-            data-value={value} // Set a data attribute
-            onClick={handleTagListClick}
+              data-value={value} // Set a data attribute
+              onClick={handleTagListClick}
+            >
+              {value}
+            </Button>
+          ))}
+          <Button
+            variant='ghost'
+            size='sm'
+            className='invisible group-hover:visible'
+            data-id={id} // Set a data attribute
+            onClick={handleDelete}
           >
-            {value}
+            <Cross1Icon />
           </Button>
-        ))}
-        <Button
-          variant='ghost'
-          size='sm'
-          className='invisible group-hover:visible'
-          data-id={id} // Set a data attribute
-          onClick={handleDelete}
-        >
-          <Cross1Icon />
-        </Button>
-      </span>
-    </Link>
+        </span>
+      </Link>
+    </div>
   )
 }
