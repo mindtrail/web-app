@@ -17,7 +17,8 @@ import { useToast } from '@/components/ui/use-toast'
 
 import { SearchBar } from '@/components/history/search-bar'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
-import { HistoryTable } from '@/components/history/table'
+import { HistoryTable, DataTable } from '@/components/history/table'
+import { columns } from '@/components/history/columns'
 
 type Tags = {
   [key: string]: string
@@ -27,7 +28,6 @@ const DEFAULT_COLUMNS: HistoryFilter[] = [
   { value: 'displayName', label: 'Website' },
   { value: 'summary', label: 'Summary' },
   { value: 'tags', label: 'Tags' },
-  { value: 'actions', label: 'Actions' },
 ]
 
 const getRouteWithoutProtocol = (url: string) => {
@@ -152,19 +152,13 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   }, [itemToDelete, toast])
 
   return (
-    <div className='flex flex-1 flex-col gap-2 px-4 py-4 md:px-8 md:py-8'>
+    <div className='flex flex-1 flex-col gap-2 px-4 py-4 md:px-8 md:pt-8'>
       <div className='flex flex-col w-full gap-4'>
         <SearchBar />
         <HistoryBreadcrumbs />
       </div>
 
-      <HistoryTable
-        items={filteredItems}
-        filters={filters}
-        handleTagListClick={handleTagListClick}
-        handleHistoryDelete={handleHistoryDelete}
-        columns={DEFAULT_COLUMNS}
-      />
+      <DataTable columns={columns} data={filteredItems} />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

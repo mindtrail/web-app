@@ -2,7 +2,7 @@ import { MouseEvent, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 
 import { DataSrc } from '@prisma/client'
-import { Cross1Icon, GlobeIcon } from '@radix-ui/react-icons'
+import { Cross1Icon, Link1Icon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -52,16 +52,13 @@ export const HistoryEntry = ({
 
   return (
     <div className={`${gridStyle} w-full group border rounded-md py-2`}>
-      <div className='flex flex-col gap-2 items-center'>
-        <div className='flex'>
-          <Checkbox className='invisible group-hover:visible' />
-
+      <div className='flex flex-col gap-2 relative'>
+        <div className='flex w-full'>
           <span className='max-w-xs text-ellipsis overflow-hidden whitespace-nowrap'>
-            <GlobeIcon className='text-green-500' />
             <Link
               target='_blank'
               href={addHttpsIfMissing(name)}
-              className='flex group justify-between items-center'
+              className='flex group justify-between items-center gap-2'
             >
               {displayName}
             </Link>
@@ -70,9 +67,7 @@ export const HistoryEntry = ({
         <div className='w-full h-20 bg-slate-100'></div>
       </div>
 
-      <div className='max-w-md lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
-        {summary}
-      </div>
+      <div className='max-w-md lg:max-w-lg'>{summary}</div>
 
       <div className='flex gap-2 flex-wrap'>
         {processedTags?.map(({ value, selected }, index) => (
@@ -90,6 +85,7 @@ export const HistoryEntry = ({
           </Button>
         ))}
       </div>
+      <span>Action</span>
       <span>Action</span>
     </div>
   )
