@@ -7,19 +7,11 @@ import { Cross1Icon, GlobeIcon } from '@radix-ui/react-icons'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 
-type HistoryItem = DataSrc & {
-  tags?: string[]
-  displayName?: string
-}
-
-type TagList = {
-  label: string
-  value: string
-}
-
 type HistoryItemProps = {
   historyItem: HistoryItem
-  filters?: TagList[]
+  filters?: HistoryFilter[]
+  columns: HistoryFilter[]
+  gridStyle: string
   handleTagListClick: (event: MouseEvent<HTMLButtonElement>) => void
   handleHistoryDelete: (
     event: MouseEvent<HTMLButtonElement>,
@@ -37,6 +29,7 @@ const addHttpsIfMissing = (url: string) => {
 export const HistoryEntry = ({
   historyItem,
   filters,
+  gridStyle,
   handleTagListClick,
   handleHistoryDelete,
 }: HistoryItemProps) => {
@@ -56,56 +49,48 @@ export const HistoryEntry = ({
     },
     [handleHistoryDelete, historyItem],
   )
-  console.log(historyItem)
 
   return (
-    <div className='flex flex-col w-full group border rounded-md px-4 py-2'>
-      <div className='flex gap-2 items-center'>
-        <Checkbox className='invisible group-hover:visible' />
+    <div className={`${gridStyle} w-full group border rounded-md py-2`}>
+      <div className='flex flex-col gap-2 items-center'>
+        <div className='flex'>
+          <Checkbox className='invisible group-hover:visible' />
 
-        <span className='max-w-xs text-ellipsis overflow-hidden whitespace-nowrap'>
-          {displayName}
-        </span>
+          <span className='max-w-xs text-ellipsis overflow-hidden whitespace-nowrap'>
+            <GlobeIcon className='text-green-500' />
+            <Link
+              target='_blank'
+              href={addHttpsIfMissing(name)}
+              className='flex group justify-between items-center'
+            >
+              {displayName}
+            </Link>
+          </span>
+        </div>
+        <div className='w-full h-20 bg-slate-100'></div>
       </div>
 
-      <Link
-        target='_blank'
-        href={addHttpsIfMissing(name)}
-        className='flex group justify-between items-center relative'
-      >
-        <span className='flex gap-2 items-center '>
-          <GlobeIcon className='text-green-500' />
-          <span className='max-w-md lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
-            {displayName}
-          </span>
-        </span>
+      <div className='max-w-md lg:max-w-lg text-ellipsis overflow-hidden whitespace-nowrap'>
+        {summary}
+      </div>
 
-        <span className='flex items-center gap-2 absolute right-0'>
-          {processedTags?.map(({ value, selected }, index) => (
-            <Button
-              key={index}
-              variant='secondary'
-              size='sm'
-              className={`invisible group-hover:visible hover:bg-slate-200
+      <div className='flex gap-2 flex-wrap'>
+        {processedTags?.map(({ value, selected }, index) => (
+          <Button
+            key={index}
+            variant='secondary'
+            size='sm'
+            className={`hover:bg-slate-200
               ${selected && 'bg-slate-200'}
             `}
-              data-value={value} // Set a data attribute
-              onClick={handleTagListClick}
-            >
-              {value}
-            </Button>
-          ))}
-          <Button
-            variant='ghost'
-            size='sm'
-            className='invisible group-hover:visible'
-            data-id={id} // Set a data attribute
-            onClick={handleDelete}
+            data-value={value} // Set a data attribute
+            onClick={handleTagListClick}
           >
-            <Cross1Icon />
+            {value}
           </Button>
-        </span>
-      </Link>
+        ))}
+      </div>
+      <span>Action</span>
     </div>
   )
 }

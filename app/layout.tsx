@@ -39,7 +39,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <main className='flex flex-1'>
             <div className='flex flex-1 '>{children}</div>
             <Separator orientation='vertical' />
-            <SidebarRight />
+            {/* <SidebarRight /> */}
           </main>
           <TailwindIndicator />
           <Toaster />
