@@ -23,9 +23,17 @@ type Tags = {
   [key: string]: string
 }
 
+const DEFAULT_COLUMNS: HistoryFilter[] = [
+  { value: 'displayName', label: 'Website' },
+  { value: 'summary', label: 'Summary' },
+  { value: 'tags', label: 'Tags' },
+  { value: 'actions', label: 'Actions' },
+]
+
 const getRouteWithoutProtocol = (url: string) => {
-  const match = url.match(/^(?:https?:\/\/)?([^?]+)?/)
-  return match ? match[1] : ''
+  const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^?]+)?/)
+  const route = match ? match[1] : ''
+  return route.replace(/\/$/, '')
 }
 
 export function HistoryView({ historyItems }: HistoryViewProps) {
@@ -155,6 +163,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
         filters={filters}
         handleTagListClick={handleTagListClick}
         handleHistoryDelete={handleHistoryDelete}
+        columns={DEFAULT_COLUMNS}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
