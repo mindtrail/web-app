@@ -2,15 +2,15 @@
 
 import { MouseEvent, useMemo, useRef, useState } from 'react'
 
-import { useVirtualizer } from '@tanstack/react-virtual'
 import { Button } from '@/components/ui/button'
 
 import {
-  ColumnDef,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   useReactTable,
+  ColumnDef,
+  VisibilityState,
+  Row,
 } from '@tanstack/react-table'
 
 import {
@@ -54,14 +54,6 @@ export function DataTable<TData, TValue>({
   const { rows } = table.getRowModel()
   const visibleCols = table.getVisibleFlatColumns()
 
-  const tableParentRef = useRef<HTMLDivElement>(null)
-  const virtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableParentRef.current,
-    estimateSize: () => 32,
-    overscan: 20,
-  })
-
   return (
     <>
       <div className='flex items-center py-4'>
@@ -92,17 +84,17 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div ref={tableParentRef} className='rounded-md border'>
+      <div className={`rounded-md border`}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className={`w-full grid grid-cols-${visibleCols.length}`}
+                className={`w-full grid lg:gap-2 grid-cols-${visibleCols.length}`}
               >
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className='flex items-center'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -116,30 +108,32 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className='w-full grid grid-cols-4'
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+            {rows?.length ? (
+              rows?.map((row) => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className={`w-full grid lg:gap-2 grid-cols-${visibleCols.length}`}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )
+              })
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  Loading...
                 </TableCell>
               </TableRow>
             )}

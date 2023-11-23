@@ -25,14 +25,10 @@ export const columns: ColumnDef<HistoryItem>[] = [
   {
     accessorKey: 'displayName',
     header: 'Website',
-    // cell: ({ getValue, table }) => {
-    //   const value = getValue() as string
-    //   return (
-    //     <div className='overflow-hidden whitespace-nowrap text-ellipsis'>
-    //       {value}
-    //     </div>
-    //   )
-    // },
+    cell: ({ getValue, table }) => {
+      const value = getValue() as string
+      return <div className='break-words'>{value}</div>
+    },
   },
   {
     accessorKey: 'summary',
