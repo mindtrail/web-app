@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 
 export function HistoryBreadcrumbs() {
   return (
-    <div className='flex justify-between'>
+    <div className='flex justify-between items-center'>
       All Items
       <div>
         <Button size='sm' variant='ghost'>
