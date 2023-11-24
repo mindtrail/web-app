@@ -1,15 +1,6 @@
 'use client'
 
-import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-// export type HistoryItem = {
-//   displayName: string
-//   summary: number
-//   // status: 'pending' | 'processing' | 'success' | 'failed'
-//   tags: 'pending' | 'processing' | 'success' | 'failed'
-// }
+import { ColumnDef } from '@tanstack/react-table'
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Button } from '@/components/ui/button'
@@ -47,6 +38,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
     enableHiding: false,
   },
   {
+    id: 'displayName',
     accessorKey: 'displayName',
     header: () => 'Website',
     cell: ({ getValue, table }) => {
@@ -55,10 +47,12 @@ export const columns: ColumnDef<HistoryItem>[] = [
     },
   },
   {
+    id: 'summary',
     accessorKey: 'summary',
     header: 'Summary',
   },
   {
+    id: 'tags',
     accessorKey: 'tags',
     header: 'Tags',
   },
