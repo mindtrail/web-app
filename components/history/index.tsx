@@ -17,7 +17,7 @@ import { useToast } from '@/components/ui/use-toast'
 
 import { SearchBar } from '@/components/history/search-bar'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
-import { HistoryTable, DataTable } from '@/components/history/table'
+import { DataTable } from '@/components/history/table'
 import { columns } from '@/components/history/columns'
 
 type Tags = {
@@ -152,13 +152,13 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   }, [itemToDelete, toast])
 
   return (
-    <div className='flex flex-1 flex-col gap-2 px-4 py-4 md:px-8 md:pt-8'>
-      <div className='flex flex-col w-full gap-4'>
+    <div className='flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8'>
+      <div className='flex flex-col gap-4'>
         <SearchBar />
         <HistoryBreadcrumbs />
       </div>
 
-      <DataTable columns={columns} data={filteredItems} />
+      <DataTable columns={columns} data={filteredItems.slice(0, 10)} />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

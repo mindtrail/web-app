@@ -3,14 +3,16 @@
 import { MouseEvent, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 import {
+  ColumnDef,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
-  ColumnDef,
-  VisibilityState,
-  Row,
 } from '@tanstack/react-table'
 
 import {
@@ -40,28 +42,32 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [rowSelection, setRowSelection] = useState({})
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
     state: {
       columnVisibility,
+      rowSelection,
+      sorting,
     },
   })
 
   const { rows } = table.getRowModel()
-  const visibleCols = table.getVisibleFlatColumns()
 
   return (
     <>
       <div className='flex items-center py-4'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='ml-auto'>
-              Columns
-            </Button>
+            <Button variant='outline'>Columns</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             {table
@@ -84,17 +90,26 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className={`rounded-md border`}>
-        <Table>
+
+      <div className='rounded-md border w-full'>
+        <Table className='table-fixed cursor-default'>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className={`w-full grid lg:gap-2 grid-cols-${visibleCols.length}`}
-              >
-                {headerGroup.headers.map((header) => {
+              <TableRow key={headerGroup.id} className={``}>
+                {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead key={header.id} className='flex items-center'>
+                    <TableHead
+                      key={header.id}
+                      className={
+                        index === 0
+                          ? 'w-12'
+                          : index === 2
+                          ? 'w-[35%]'
+                          : index === 4
+                          ? 'w-16'
+                          : ''
+                      }
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -107,65 +122,30 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
+          {/* <ScrollArea className={`max-h-[calc(100vh-300px)]`}> */}
           <TableBody>
-            {rows?.length ? (
-              rows?.map((row) => {
-                return (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
-                    className={`w-full grid lg:gap-2 grid-cols-${visibleCols.length}`}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                )
-              })
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
+            {rows?.map((row) => {
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className='border-collapse'
                 >
-                  Loading...
-                </TableCell>
-              </TableRow>
-            )}
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )
+            })}
           </TableBody>
+          {/* </ScrollArea> */}
         </Table>
       </div>
     </>
   )
-}
-
-interface HistoryTableProps {
-  items: HistoryItem[]
-  filters?: HistoryFilter[]
-  columns: HistoryFilter[]
-  handleTagListClick: (event: MouseEvent<HTMLButtonElement>) => void
-  handleHistoryDelete: (
-    event: MouseEvent<HTMLButtonElement>,
-    historyItem: HistoryItem,
-  ) => void
-}
-
-export function HistoryTable(props: HistoryTableProps) {
-  const { items, filters, columns, handleTagListClick, handleHistoryDelete } =
-    props
-
-  const gridStyle = useMemo(() => {
-    return `grid grid-cols-${
-      columns.length + 1
-    } cursor-default px-4 gap-2 lg:gap-4`
-  }, [columns])
-
-  if (!items?.length) {
-    return
-  }
 }
