@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 
 import {
   ColumnDef,
+  ColumnOrderState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -30,7 +31,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { filter } from 'cheerio/lib/api/traversing'
+
+import { DraggableHeader } from '@/components/history/draggable-header'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -45,15 +47,28 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
 
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
+    columns.map((column) => column.id as string), //must start out with populated columnOrder so we can splice
+  )
+
+  const resetOrder = () => {
+    setColumnOrder(columns.map((column) => column.id as string))
+  }
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    onColumnOrderChange: setColumnOrder,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
+    debugHeaders: true, // TODO: comment for production or use env variable
+    debugTable: true,
+    debugColumns: true,
     state: {
+      columnOrder,
       columnVisibility,
       rowSelection,
       sorting,
@@ -96,28 +111,35 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className={``}>
-                {headerGroup.headers.map((header, index) => {
+                {headerGroup.headers.map((header, _index) => {
                   return (
-                    <TableHead
+                    <DraggableHeader
                       key={header.id}
-                      className={
-                        index === 0
-                          ? 'w-12'
-                          : index === 2
-                          ? 'w-[35%]'
-                          : index === 4
-                          ? 'w-16'
-                          : ''
-                      }
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
+                      header={header}
+                      table={table}
+                    />
                   )
+                  // return (
+                  //   <TableHead
+                  //     key={header.id}
+                  //     className={
+                  //       index === 0
+                  //         ? 'w-12'
+                  //         : index === 2
+                  //         ? 'w-[35%]'
+                  //         : index === 4
+                  //         ? 'w-16'
+                  //         : ''
+                  //     }
+                  //   >
+                  //     {header.isPlaceholder
+                  //       ? null
+                  //       : flexRender(
+                  //           header.column.columnDef.header,
+                  //           header.getContext(),
+                  //         )}
+                  //   </TableHead>
+                  // )
                 })}
               </TableRow>
             ))}

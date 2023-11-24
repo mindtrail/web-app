@@ -8,12 +8,17 @@ import { GlobalStateProvider } from '@/context/global-state'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+
 export function Providers({ children }: ThemeProviderProps) {
   return (
     <NextThemesProvider>
       <TooltipProvider>
         <SessionProvider>
-          <GlobalStateProvider>{children}</GlobalStateProvider>
+          <GlobalStateProvider>
+            <DndProvider backend={HTML5Backend}>{children}</DndProvider>
+          </GlobalStateProvider>
         </SessionProvider>
       </TooltipProvider>
     </NextThemesProvider>
