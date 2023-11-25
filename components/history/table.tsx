@@ -111,12 +111,13 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className={``}>
-                {headerGroup.headers.map((header, _index) => {
+                {headerGroup.headers.map((header, index) => {
                   return (
                     <DraggableHeader
                       key={header.id}
                       header={header}
                       table={table}
+                      index={index}
                     />
                   )
                   // return (

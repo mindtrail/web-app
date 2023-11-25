@@ -9,14 +9,18 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 
+import { TableHead } from '@/components/ui/table'
+
 interface DraggableHeaderProps<HistoryItem, TValue> {
   header: Header<HistoryItem, TValue>
   table: Table<HistoryItem>
+  index: number
 }
 
 export function DraggableHeader<TData, TValue>({
   header,
   table,
+  index,
 }: DraggableHeaderProps<TData, TValue>) {
   const { getState, setColumnOrder } = table
   const { columnOrder } = getState()
@@ -43,18 +47,41 @@ export function DraggableHeader<TData, TValue>({
   })
 
   return (
-    <th
-      ref={dropRef}
-      colSpan={header.colSpan}
-      style={{ opacity: isDragging ? 0.5 : 1 }}
-    >
-      <div ref={previewRef}>
-        {header.isPlaceholder
-          ? null
-          : flexRender(header.column.columnDef.header, header.getContext())}
-        <button ref={dragRef}>🟰</button>
-      </div>
-    </th>
+    <>
+      <TableHead
+        ref={dropRef}
+        key={header.id}
+        className={`${isDragging ? 'opacity-50' : ''}
+          ${
+            index === 0
+              ? 'w-12'
+              : index === 2
+              ? 'w-[35%]'
+              : index === 4
+              ? 'w-16'
+              : ''
+          }`}
+      >
+        <div ref={previewRef} className={`${isDragging ? 'bg-red-600' : ''}`}>
+          {header.isPlaceholder
+            ? null
+            : flexRender(header.column.columnDef.header, header.getContext())}
+          <button ref={dragRef}>🟰</button>
+        </div>
+      </TableHead>
+      {/* <th
+        ref={dropRef}
+        colSpan={header.colSpan}
+        style={{ opacity: isDragging ? 0.5 : 1 }}
+      >
+        <div ref={previewRef}>
+          {header.isPlaceholder
+            ? null
+            : flexRender(header.column.columnDef.header, header.getContext())}
+          <button ref={dragRef}>🟰</button>
+        </div>
+      </th> */}
+    </>
   )
 }
 
