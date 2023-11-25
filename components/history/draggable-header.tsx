@@ -1,6 +1,7 @@
 'use client'
 
 import { useDrag, useDrop } from 'react-dnd'
+import { DragHandleDots2Icon } from '@radix-ui/react-icons'
 import {
   Column,
   ColumnOrderState,
@@ -10,6 +11,7 @@ import {
 } from '@tanstack/react-table'
 
 import { TableHead } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 
 interface DraggableHeaderProps<HistoryItem, TValue> {
   header: Header<HistoryItem, TValue>
@@ -62,11 +64,24 @@ export function DraggableHeader<TData, TValue>({
               : ''
           }`}
       >
-        <div ref={previewRef} className={`${isDragging ? 'bg-red-600' : ''}`}>
+        <div
+          ref={previewRef}
+          className={`flex items-center group ${
+            isDragging ? 'bg-red-600' : ''
+          }`}
+        >
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
-          <button ref={dragRef}>🟰</button>
+          {index !== 0 && index !== 4 && (
+            <Button
+              ref={dragRef}
+              variant='ghost'
+              className='px-2 invisible group-hover:visible cursor-grab'
+            >
+              <DragHandleDots2Icon />
+            </Button>
+          )}
         </div>
       </TableHead>
       {/* <th
@@ -90,6 +105,8 @@ const reorderColumn = (
   targetColumnId: string,
   columnOrder: string[],
 ): ColumnOrderState => {
+  // if (targetColumnId === '')
+  console.log('reorderColumn', draggedColumnId, targetColumnId, columnOrder)
   columnOrder.splice(
     columnOrder.indexOf(targetColumnId),
     0,

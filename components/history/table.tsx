@@ -64,9 +64,9 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    debugHeaders: true, // TODO: comment for production or use env variable
+    // debugHeaders: true, // TODO: comment for production or use env variable
     debugTable: true,
-    debugColumns: true,
+    // debugColumns: true,
     state: {
       columnOrder,
       columnVisibility,
