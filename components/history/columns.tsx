@@ -64,7 +64,10 @@ export const columns: ColumnDef<HistoryItem>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0 hover:shadow-sm'>
+            <Button
+              variant='ghost'
+              className='h-8 w-8 p-0 hover:shadow-sm ml-auto mr-auto'
+            >
               <span className='sr-only'>Open menu</span>
               <DotsHorizontalIcon />
             </Button>

@@ -32,7 +32,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { DraggableHeader } from '@/components/history/draggable-header'
+import {
+  DraggableHeader,
+  FIXED_COLUMNS,
+} from '@/components/history/draggable-header'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -131,12 +134,12 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                   className='border-collapse'
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                  {row.getVisibleCells().map(({ id, column, getContext }) => (
+                    <TableCell
+                      key={id}
+                      className={`${column.id === 'actions' && 'text-center'}`}
+                    >
+                      {flexRender(column.columnDef.cell, getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
