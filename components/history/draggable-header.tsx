@@ -19,7 +19,7 @@ interface DraggableHeaderProps<HistoryItem, TValue> {
   index: number
 }
 
-const FIXED_COLUMNS = ['select', 'actions']
+export const FIXED_COLUMNS = ['select', 'actions']
 
 export function DraggableHeader<TData, TValue>({
   header,
