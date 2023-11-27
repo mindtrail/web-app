@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { DataSrcStatus } from '@prisma/client'
 
-import Typography from '@/components/typography'
+import { Typography } from '@/components/typography'
 import { DataStoreForm } from '@/components/datastore/create/form'
 import { DataStoreFormValues } from '@/components/datastore/utils'
 import { useToast } from '@/components/ui/use-toast'

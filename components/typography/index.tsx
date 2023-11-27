@@ -2,11 +2,11 @@ import { cn } from '@/lib/utils'
 import * as React from 'react'
 
 type TypographyProps = {
-  variant: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'small'
+  variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'small'
 } & React.HTMLAttributes<HTMLElement>
 
-const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
-  function Typography({ variant, className, ...props }, ref) {
+export const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
+  function Typography({ variant = 'p', className, ...props }, ref) {
     const Component = variant
     return (
       <Component
@@ -32,5 +32,3 @@ const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
     )
   },
 )
-
-export default Typography

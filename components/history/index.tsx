@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
 import { SearchBar } from '@/components/history/search-bar'
-import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DataTable } from '@/components/history/table'
 import { columns } from '@/components/history/columns'
 
@@ -153,10 +152,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
 
   return (
     <div className='flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8'>
-      <div className='flex flex-col gap-4'>
-        <SearchBar />
-        <HistoryBreadcrumbs />
-      </div>
+      <SearchBar />
 
       <DataTable columns={columns} data={filteredItems.slice(0, 10)} />
 

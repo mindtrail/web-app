@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { PlusIcon } from '@radix-ui/react-icons'
 
-import Typography from '@/components/typography'
+import { Typography } from '@/components/typography'
 import { DataStoreListItem } from '@/components/datastore/dataStoreItem'
 import { deleteDataStoreApiCall } from '@/lib/api/dataStore'
 
