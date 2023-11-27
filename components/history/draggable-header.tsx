@@ -19,6 +19,8 @@ interface DraggableHeaderProps<HistoryItem, TValue> {
   index: number
 }
 
+const FIXED_COLUMNS = ['select', 'actions']
+
 export function DraggableHeader<TData, TValue>({
   header,
   table,
@@ -27,6 +29,15 @@ export function DraggableHeader<TData, TValue>({
   const { getState, setColumnOrder } = table
   const { columnOrder } = getState()
   const { column } = header
+
+  const [{ isDragging }, dragRef, previewRef] = useDrag({
+    item: () => column,
+    type: 'column',
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+    canDrag: () => !FIXED_COLUMNS.includes(column.id),
+  })
 
   const [, dropRef] = useDrop({
     accept: 'column',
@@ -38,14 +49,7 @@ export function DraggableHeader<TData, TValue>({
       )
       setColumnOrder(newColumnOrder)
     },
-  })
-
-  const [{ isDragging }, dragRef, previewRef] = useDrag({
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-    item: () => column,
-    type: 'column',
+    canDrop: () => !FIXED_COLUMNS.includes(column.id),
   })
 
   return (
@@ -64,38 +68,22 @@ export function DraggableHeader<TData, TValue>({
               : ''
           }`}
       >
-        <div
-          ref={previewRef}
-          className={`flex items-center group ${
-            isDragging ? 'bg-red-600' : ''
-          }`}
-        >
+        <div className={`flex items-center group`}>
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
-          {index !== 0 && index !== 4 && (
-            <Button
-              ref={dragRef}
-              variant='ghost'
-              className='px-2 invisible group-hover:visible cursor-grab'
-            >
-              <DragHandleDots2Icon />
-            </Button>
-          )}
+
+          <Button
+            ref={dragRef}
+            variant='ghost'
+            className={`px-2 invisible group-hover:visible cursor-grab ${
+              FIXED_COLUMNS.includes(column.id) ? 'hidden' : ''
+            }`}
+          >
+            <DragHandleDots2Icon />
+          </Button>
         </div>
       </TableHead>
-      {/* <th
-        ref={dropRef}
-        colSpan={header.colSpan}
-        style={{ opacity: isDragging ? 0.5 : 1 }}
-      >
-        <div ref={previewRef}>
-          {header.isPlaceholder
-            ? null
-            : flexRender(header.column.columnDef.header, header.getContext())}
-          <button ref={dragRef}>🟰</button>
-        </div>
-      </th> */}
     </>
   )
 }
@@ -105,12 +93,11 @@ const reorderColumn = (
   targetColumnId: string,
   columnOrder: string[],
 ): ColumnOrderState => {
-  // if (targetColumnId === '')
-  console.log('reorderColumn', draggedColumnId, targetColumnId, columnOrder)
   columnOrder.splice(
     columnOrder.indexOf(targetColumnId),
     0,
     columnOrder.splice(columnOrder.indexOf(draggedColumnId), 1)[0] as string,
   )
+  console.log(columnOrder)
   return [...columnOrder]
 }
