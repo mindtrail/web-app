@@ -8,7 +8,7 @@ import { ChatPanel } from '@/components/chat/chat-panel'
 import { EmptyChat } from '@/components/chat/empty-chat'
 import { ChatScrollAnchor } from '@/components/chat/chat-scroll-anchor'
 import { useLocalStorage } from '@/lib/hooks/use-local-storage'
-import Typography from '@/components/typography'
+import { Typography } from '@/components/typography'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

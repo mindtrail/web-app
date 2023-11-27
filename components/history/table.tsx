@@ -1,9 +1,14 @@
 'use client'
 
-import { MouseEvent, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
+import {
+  Share2Icon,
+  CaretSortIcon,
+  ListBulletIcon,
+} from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 
 import {
   ColumnDef,
@@ -32,10 +37,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import {
-  DraggableHeader,
-  FIXED_COLUMNS,
-} from '@/components/history/draggable-header'
+import { DraggableHeader } from '@/components/history/draggable-header'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -80,33 +82,50 @@ export function DataTable<TData, TValue>({
 
   const { rows } = table.getRowModel()
 
+  const tableFields = table
+    .getAllColumns()
+    .filter((column) => column.getCanHide())
+    .map((column) => {
+      return (
+        <DropdownMenuCheckboxItem
+          key={column.id}
+          className='capitalize'
+          checked={column.getIsVisible()}
+          onCheckedChange={(value) => column.toggleVisibility(!!value)}
+        >
+          {column.id}
+        </DropdownMenuCheckboxItem>
+      )
+    })
+
   return (
     <>
-      <div className='flex items-center py-4'>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline'>Columns</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className='capitalize'
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className='flex items-center justify-between py-4'>
+        <HistoryBreadcrumbs />
+
+        <div className='flex items-center'>
+          <Button size='sm' variant='ghost'>
+            <ListBulletIcon className='h-5 w-5' />
+          </Button>
+
+          <Button size='sm' variant='ghost'>
+            <CaretSortIcon className='h-5 w-5' />
+            A-Z
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' size='sm'>
+                Fields
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>{tableFields}</DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button size='sm' variant='ghost'>
+            <Share2Icon className='h-5 w-5' />
+          </Button>
+        </div>
       </div>
 
       <div className='rounded-md border w-full'>
