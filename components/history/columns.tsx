@@ -70,14 +70,10 @@ export const columns: ColumnDef<HistoryItem>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(history.id)}
-            >
-              Copy history ID
-            </DropdownMenuItem>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Delete</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View history details</DropdownMenuItem>
+            <DropdownMenuItem>Add to Collection</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

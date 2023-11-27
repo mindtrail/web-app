@@ -111,37 +111,14 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className={``}>
-                {headerGroup.headers.map((header, index) => {
-                  return (
-                    <DraggableHeader
-                      key={header.id}
-                      header={header}
-                      table={table}
-                      index={index}
-                    />
-                  )
-                  // return (
-                  //   <TableHead
-                  //     key={header.id}
-                  //     className={
-                  //       index === 0
-                  //         ? 'w-12'
-                  //         : index === 2
-                  //         ? 'w-[35%]'
-                  //         : index === 4
-                  //         ? 'w-16'
-                  //         : ''
-                  //     }
-                  //   >
-                  //     {header.isPlaceholder
-                  //       ? null
-                  //       : flexRender(
-                  //           header.column.columnDef.header,
-                  //           header.getContext(),
-                  //         )}
-                  //   </TableHead>
-                  // )
-                })}
+                {headerGroup.headers.map((header, index) => (
+                  <DraggableHeader
+                    key={header.id}
+                    header={header}
+                    table={table}
+                    index={index}
+                  />
+                ))}
               </TableRow>
             ))}
           </TableHeader>
