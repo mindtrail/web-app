@@ -1,6 +1,12 @@
 'use client'
 
-import { useMemo, useEffect, useCallback, useState } from 'react'
+import {
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+  MouseEventHandler,
+} from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
@@ -94,28 +100,27 @@ export function DraggableHeader<TData, TValue>({
     previewRef(getEmptyImage(), { captureDraggingState: true })
   }, [previewRef])
 
-  console.log(dropIndicator)
+  const isResizing = column.getIsResizing()
+
+  const handleResize: MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      event.preventDefault()
+      header.getResizeHandler()
+    },
+    [header],
+  )
 
   return (
     <>
       <TableHead
         ref={dropRef}
         key={header.id}
-        className={`relative ${isDragging ? 'opacity-50' : ''}
-          ${
-            index === 0
-              ? 'w-12'
-              : index === 2
-              ? 'w-[35%]'
-              : index === 4
-              ? 'w-16'
-              : ''
-          }`}
+        className={`relative ${isDragging ? 'opacity-50' : ''}`}
       >
         <div className={`flex items-center group `} ref={dragRef}>
           {header.isPlaceholder
             ? null
-            : flexRender(header.column.columnDef.header, header.getContext())}
+            : flexRender(column.columnDef.header, header.getContext())}
 
           {draggableColumn && (
             <Button
@@ -128,9 +133,20 @@ export function DraggableHeader<TData, TValue>({
           {dropIndicator && (
             <Separator
               orientation='vertical'
-              className={`absolute w-[2px] bg-primary ${dropIndicator}-1`}
+              className={`absolute w-1 bg-blue-300 ${dropIndicator}-0`}
             />
           )}
+        </div>
+        <div
+          onMouseDown={header.getResizeHandler()}
+          className={`group absolute flex justify-center -right-2 w-4 top-0 h-[100%] cursor-col-resize
+              select-none touch-none  mx-1`}
+        >
+          <Separator
+            orientation='vertical'
+            className={`w-1 bg-border opacity-0 group-hover:opacity-100
+              ${isResizing ? 'bg-blue-300 opacity-100' : ''}`}
+          />
         </div>
       </TableHead>
     </>
