@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { DraggableHeader } from '@/components/history/draggable-header'
+import { ColumnDragLayer } from '@/components/history/drag-layer'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -128,11 +129,11 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <div className='rounded-md border w-full'>
-        <Table className='table-fixed cursor-default'>
+      <div className='rounded-md border w-full relative'>
+        <Table className='table-fixed'>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className={``}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => (
                   <DraggableHeader
                     key={header.id}
@@ -167,6 +168,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
           {/* </ScrollArea> */}
         </Table>
+        <ColumnDragLayer />
       </div>
     </>
   )

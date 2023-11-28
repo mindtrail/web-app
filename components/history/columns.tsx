@@ -40,7 +40,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'displayName',
     accessorKey: 'displayName',
-    header: () => 'Website',
+    header: 'Website',
     cell: ({ getValue, table }) => {
       const value = getValue() as string
       return <div className='break-words'>{value}</div>

@@ -37,10 +37,10 @@ export function LeftSidebar({ className }: SidebarNavProps) {
       <Tabs defaultValue='data' className='w-full flex flex-col flex-1 gap-2'>
         <TabsList className='grid grid-cols-2 mx-2'>
           <TabsTrigger value='data' className={TAB_STYLE}>
-            Research
+            Folders
           </TabsTrigger>
           <TabsTrigger value='tag-board' className={TAB_STYLE}>
-            Tag Board
+            Tags
           </TabsTrigger>
         </TabsList>
 

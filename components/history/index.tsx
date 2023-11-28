@@ -2,6 +2,7 @@
 
 import { MouseEvent, useCallback, useEffect, useState } from 'react'
 import { deleteDataSrc } from '@/lib/serverActions/history'
+import { useDrop, useDragLayer } from 'react-dnd'
 
 import {
   AlertDialog,
@@ -43,6 +44,14 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   const [filters, setFilters] = useState<HistoryFilter[]>()
   const [itemToDelete, setItemToDelete] = useState<HistoryItem | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const [, dropRef] = useDrop({
+    accept: 'column',
+  })
+
+  const { isDragging } = useDragLayer((monitor) => ({
+    isDragging: monitor.isDragging(),
+  }))
 
   const { toast } = useToast()
 
@@ -151,7 +160,10 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   }, [itemToDelete, toast])
 
   return (
-    <div className='flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8'>
+    <div
+      ref={dropRef}
+      className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8`}
+    >
       <SearchBar />
 
       <DataTable columns={columns} data={filteredItems.slice(0, 10)} />
