@@ -1,6 +1,9 @@
 'use client'
 
+import { useMemo, useEffect } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
+import { getEmptyImage } from 'react-dnd-html5-backend'
+
 import { DragHandleDots2Icon } from '@radix-ui/react-icons'
 import {
   Column,
@@ -20,6 +23,7 @@ interface DraggableHeaderProps<HistoryItem, TValue> {
 }
 
 export const FIXED_COLUMNS = ['select', 'actions']
+const DRAG_ITEM_TYPE = 'column'
 
 export function DraggableHeader<TData, TValue>({
   header,
@@ -30,17 +34,23 @@ export function DraggableHeader<TData, TValue>({
   const { columnOrder } = getState()
   const { column } = header
 
+  const draggableColumn = useMemo(
+    () => !FIXED_COLUMNS.includes(column.id),
+    [column],
+  )
+
   const [{ isDragging }, dragRef, previewRef] = useDrag({
     item: () => column,
-    type: 'column',
+    type: DRAG_ITEM_TYPE,
+    canDrag: () => draggableColumn,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-    canDrag: () => !FIXED_COLUMNS.includes(column.id),
   })
 
   const [, dropRef] = useDrop({
-    accept: 'column',
+    accept: DRAG_ITEM_TYPE,
+    canDrop: () => draggableColumn,
     drop: (draggedColumn: Column<HistoryItem>) => {
       const newColumnOrder = reorderColumn(
         draggedColumn.id,
@@ -49,8 +59,11 @@ export function DraggableHeader<TData, TValue>({
       )
       setColumnOrder(newColumnOrder)
     },
-    canDrop: () => !FIXED_COLUMNS.includes(column.id),
   })
+
+  useEffect(() => {
+    previewRef(getEmptyImage(), { captureDraggingState: true })
+  }, [previewRef])
 
   return (
     <>
@@ -68,20 +81,19 @@ export function DraggableHeader<TData, TValue>({
               : ''
           }`}
       >
-        <div className={`flex items-center group`}>
+        <div className={`flex items-center group`} ref={dragRef}>
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
 
-          <Button
-            ref={dragRef}
-            variant='ghost'
-            className={`px-2 invisible group-hover:visible cursor-grab ${
-              FIXED_COLUMNS.includes(column.id) ? 'hidden' : ''
-            }`}
-          >
-            <DragHandleDots2Icon />
-          </Button>
+          {draggableColumn && (
+            <Button
+              variant='ghost'
+              className={`px-2 invisible group-hover:visible cursor-grab`}
+            >
+              <DragHandleDots2Icon />
+            </Button>
+          )}
         </div>
       </TableHead>
     </>
@@ -93,6 +105,10 @@ const reorderColumn = (
   targetColumnId: string,
   columnOrder: string[],
 ): ColumnOrderState => {
+  if (draggedColumnId === targetColumnId) {
+    return columnOrder
+  }
+
   columnOrder.splice(
     columnOrder.indexOf(targetColumnId),
     0,
