@@ -56,13 +56,10 @@ export function DataTable<TData, TValue>({
     columns.map((column) => column.id as string), //must start out with populated columnOrder so we can splice
   )
 
-  const resetOrder = () => {
-    setColumnOrder(columns.map((column) => column.id as string))
-  }
-
   const table = useReactTable({
     data,
     columns,
+    columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onColumnOrderChange: setColumnOrder,
@@ -129,7 +126,10 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className='rounded-md border w-full relative'>
-        <Table className='table-fixed relative'>
+        <Table
+          className='table-fixed relative'
+          style={{ width: table.getTotalSize() }}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
