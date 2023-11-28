@@ -1,10 +1,11 @@
 'use client'
 
-import { useMemo, useEffect } from 'react'
+import { useMemo, useEffect, useCallback, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
 import { DragHandleDots2Icon } from '@radix-ui/react-icons'
+import { Separator } from '@/components/ui/separator'
 import {
   Column,
   ColumnOrderState,
@@ -25,6 +26,7 @@ interface DraggableHeaderProps<HistoryItem, TValue> {
 }
 
 const DRAG_ITEM_TYPE = 'column'
+type DropIndicator = 'left' | 'right' | null
 
 export function DraggableHeader<TData, TValue>({
   header,
@@ -32,7 +34,10 @@ export function DraggableHeader<TData, TValue>({
   index,
 }: DraggableHeaderProps<TData, TValue>) {
   const { getState, setColumnOrder } = table
+
+  const [dropIndicator, setDropIndicator] = useState<DropIndicator>(null)
   const { columnOrder } = getState()
+
   const { column } = header
 
   const draggableColumn = useMemo(
@@ -49,7 +54,7 @@ export function DraggableHeader<TData, TValue>({
     }),
   })
 
-  const [, dropRef] = useDrop({
+  const [{ isOver, item }, dropRef] = useDrop({
     accept: DRAG_ITEM_TYPE,
     canDrop: () => draggableColumn,
     drop: (draggedColumn: Column<HistoryItem>) => {
@@ -60,18 +65,43 @@ export function DraggableHeader<TData, TValue>({
       )
       setColumnOrder(newColumnOrder)
     },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      item: monitor.getItem(),
+    }),
   })
+
+  useEffect(() => {
+    if (!isOver) {
+      setDropIndicator(null)
+      return
+    }
+
+    const draggedColumnIndex = columnOrder.indexOf(item.id)
+    const targetColumnIndex = columnOrder.indexOf(column.id)
+
+    if (draggedColumnIndex === targetColumnIndex) {
+      return
+    }
+
+    setDropIndicator(draggedColumnIndex > targetColumnIndex ? 'left' : 'right')
+
+    console.log(item?.id, item)
+    console.log(column?.id, column)
+  }, [isOver, dropRef, column, item, columnOrder])
 
   useEffect(() => {
     previewRef(getEmptyImage(), { captureDraggingState: true })
   }, [previewRef])
+
+  console.log(dropIndicator)
 
   return (
     <>
       <TableHead
         ref={dropRef}
         key={header.id}
-        className={`sticky top-0 ${isDragging ? 'opacity-50' : ''}
+        className={`relative ${isDragging ? 'opacity-50' : ''}
           ${
             index === 0
               ? 'w-12'
@@ -95,6 +125,12 @@ export function DraggableHeader<TData, TValue>({
               <DragHandleDots2Icon />
             </Button>
           )}
+          {dropIndicator && (
+            <Separator
+              orientation='vertical'
+              className={`absolute w-[2px] bg-primary ${dropIndicator}-1`}
+            />
+          )}
         </div>
       </TableHead>
     </>
@@ -115,6 +151,6 @@ const reorderColumn = (
     0,
     columnOrder.splice(columnOrder.indexOf(draggedColumnId), 1)[0] as string,
   )
-  console.log(columnOrder)
+
   return [...columnOrder]
 }
