@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+export const FIXED_COLUMNS = ['select']
+
 export const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'select',
@@ -56,30 +58,30 @@ export const columns: ColumnDef<HistoryItem>[] = [
     accessorKey: 'tags',
     header: 'Tags',
   },
-  {
-    id: 'actions',
-    cell: ({ row }) => {
-      const history = row.original
+  // {
+  //   id: 'actions',
+  //   cell: ({ row }) => {
+  //     const history = row.original
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant='ghost'
-              className='h-8 w-8 p-0 hover:shadow-sm ml-auto mr-auto'
-            >
-              <span className='sr-only'>Open menu</span>
-              <DotsHorizontalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Add to Collection</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
+  //     return (
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button
+  //             variant='ghost'
+  //             className='h-8 w-8 p-0 hover:shadow-sm ml-auto mr-auto'
+  //           >
+  //             <span className='sr-only'>Open menu</span>
+  //             <DotsHorizontalIcon />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align='end'>
+  //           <DropdownMenuItem>Edit</DropdownMenuItem>
+  //           <DropdownMenuItem>Delete</DropdownMenuItem>
+  //           <DropdownMenuSeparator />
+  //           <DropdownMenuItem>Add to Collection</DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     )
+  //   },
+  // },
 ]

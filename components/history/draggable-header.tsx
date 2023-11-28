@@ -16,13 +16,14 @@ import {
 import { TableHead } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 
+import { FIXED_COLUMNS } from '@/components/history/columns'
+
 interface DraggableHeaderProps<HistoryItem, TValue> {
   header: Header<HistoryItem, TValue>
   table: Table<HistoryItem>
   index: number
 }
 
-export const FIXED_COLUMNS = ['select', 'actions']
 const DRAG_ITEM_TYPE = 'column'
 
 export function DraggableHeader<TData, TValue>({
@@ -70,7 +71,7 @@ export function DraggableHeader<TData, TValue>({
       <TableHead
         ref={dropRef}
         key={header.id}
-        className={`${isDragging ? 'opacity-50' : ''}
+        className={`sticky top-0 ${isDragging ? 'opacity-50' : ''}
           ${
             index === 0
               ? 'w-12'
@@ -81,7 +82,7 @@ export function DraggableHeader<TData, TValue>({
               : ''
           }`}
       >
-        <div className={`flex items-center group`} ref={dragRef}>
+        <div className={`flex items-center group `} ref={dragRef}>
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}

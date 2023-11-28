@@ -1,14 +1,11 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   Share2Icon,
   CaretSortIcon,
   ListBulletIcon,
 } from '@radix-ui/react-icons'
-
-import { Button } from '@/components/ui/button'
-import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 
 import {
   ColumnDef,
@@ -25,10 +22,12 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
+import { Button } from '@/components/ui/button'
+import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 
 import {
   DropdownMenu,
@@ -130,7 +129,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className='rounded-md border w-full relative'>
-        <Table className='table-fixed'>
+        <Table className='table-fixed relative'>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -145,14 +144,12 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          {/* <ScrollArea className={`max-h-[calc(100vh-300px)]`}> */}
           <TableBody>
             {rows?.map((row) => {
               return (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='border-collapse'
                 >
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
@@ -166,10 +163,9 @@ export function DataTable<TData, TValue>({
               )
             })}
           </TableBody>
-          {/* </ScrollArea> */}
         </Table>
-        <ColumnDragLayer />
       </div>
+      <ColumnDragLayer />
     </>
   )
 }
