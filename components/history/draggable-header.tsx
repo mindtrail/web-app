@@ -40,6 +40,7 @@ export function DraggableHeader<TData, TValue>({
   index,
 }: DraggableHeaderProps<TData, TValue>) {
   const { getState, setColumnOrder } = table
+  console.log(header.getSize())
 
   const [dropIndicator, setDropIndicator] = useState<DropIndicator>(null)
   const { columnOrder } = getState()
@@ -102,20 +103,13 @@ export function DraggableHeader<TData, TValue>({
 
   const isResizing = column.getIsResizing()
 
-  const handleResize: MouseEventHandler<HTMLDivElement> = useCallback(
-    (event) => {
-      event.preventDefault()
-      header.getResizeHandler()
-    },
-    [header],
-  )
-
   return (
     <>
       <TableHead
         ref={dropRef}
         key={header.id}
         className={`relative ${isDragging ? 'opacity-50' : ''}`}
+        style={{ width: header.getSize() }}
       >
         <div className={`flex items-center group `} ref={dragRef}>
           {header.isPlaceholder
@@ -133,19 +127,19 @@ export function DraggableHeader<TData, TValue>({
           {dropIndicator && (
             <Separator
               orientation='vertical'
-              className={`absolute w-1 bg-blue-300 ${dropIndicator}-0`}
+              className={`absolute w-[2px] h-[70%] bg-primary rounded-lg ${dropIndicator}-0`}
             />
           )}
         </div>
         <div
           onMouseDown={header.getResizeHandler()}
-          className={`group absolute flex justify-center -right-2 w-4 top-0 h-[100%] cursor-col-resize
-              select-none touch-none  mx-1`}
+          className={`group absolute flex justify-center items-center w-4
+            -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}
         >
           <Separator
             orientation='vertical'
-            className={`w-1 bg-border opacity-0 group-hover:opacity-100
-              ${isResizing ? 'bg-blue-300 opacity-100' : ''}`}
+            className={`w-[2px] bg-primary opacity-0 group-hover:opacity-100 h-[70%] rounded-lg
+              ${isResizing && 'opacity-100'}`}
           />
         </div>
       </TableHead>
