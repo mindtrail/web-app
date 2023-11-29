@@ -43,20 +43,37 @@ export const columns: ColumnDef<HistoryItem>[] = [
     id: 'displayName',
     accessorKey: 'displayName',
     header: 'Website',
+    size: 250,
+    minSize: 150,
+    maxSize: 400,
     cell: ({ getValue, table }) => {
       const value = getValue() as string
-      return <div className='break-words'>{value}</div>
+      let rootDomain = value
+
+      try {
+        const url = new URL(value.includes('://') ? value : 'http://' + value)
+        rootDomain = url.hostname
+      } catch (e) {
+        console.error(e)
+      }
+      return <div className='break-words'>{rootDomain}</div>
     },
   },
   {
     id: 'summary',
     accessorKey: 'summary',
     header: 'Summary',
+    size: 500,
+    minSize: 150,
+    maxSize: 700,
   },
   {
     id: 'tags',
     accessorKey: 'tags',
     header: 'Tags',
+    size: 150,
+    minSize: 100,
+    maxSize: 300,
   },
   // {
   //   id: 'actions',

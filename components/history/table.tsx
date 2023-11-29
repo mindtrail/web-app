@@ -132,7 +132,10 @@ export function DataTable<TData, TValue>({
         >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                // className='flex w-fit'
+              >
                 {headerGroup.headers.map((header, index) => (
                   <DraggableHeader
                     key={header.id}
@@ -150,6 +153,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  // className='flex w-fit'
                 >
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
