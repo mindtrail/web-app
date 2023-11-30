@@ -50,10 +50,6 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     accept: 'column',
   })
 
-  // const { isDragging } = useDragLayer((monitor) => ({
-  //   isDragging: monitor.isDragging(),
-  // }))
-
   const { toast } = useToast()
 
   useEffect(() => {

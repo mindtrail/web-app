@@ -63,9 +63,7 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    // debugHeaders: true, // TODO: comment for production or use env variable
     debugTable: true,
-    // debugColumns: true,
     state: {
       columnOrder,
       columnVisibility,
@@ -100,10 +98,6 @@ export function DataTable<TData, TValue>({
         <HistoryBreadcrumbs />
 
         <div className='flex items-center gap-2'>
-          {/* <Button size='sm' variant='ghost'>
-            <ListBulletIcon className='h-5 w-5' />
-          </Button> */}
-
           <Button size='sm' variant='ghost'>
             <CaretSortIcon className='h-5 w-5' />
             A-Z
@@ -117,16 +111,12 @@ export function DataTable<TData, TValue>({
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>{tableFields}</DropdownMenuContent>
           </DropdownMenu>
-
-          {/* <Button size='sm' variant='ghost'>
-            <Share2Icon className='h-5 w-5' />
-          </Button> */}
         </div>
       </div>
       <div className='rounded-md border cursor-default relative'>
         <div
-          className={`absolute invisible w-full h-10 flex items-center first-letter:top-0
-            px-4 z-10 gap-4 rounded-t-md bg-background ${
+          className={`absolute invisible w-full h-10 flex items-center
+            first-letter:top-0 px-4 z-10 gap-4 rounded-t-md bg-background ${
               areRowsSelected && '!visible'
             }`}
         >
@@ -141,8 +131,12 @@ export function DataTable<TData, TValue>({
             aria-label='Select all'
           />
           <div className='flex items-center gap-2'>
-            <Button variant='ghost'>Edit</Button>
-            <Button variant='ghost'>Delete</Button>
+            {/* <Button variant='outline' size='sm'>
+              Edit
+            </Button> */}
+            <Button variant='outline' size='sm'>
+              Delete
+            </Button>
           </div>
         </div>
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
