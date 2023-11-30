@@ -9,9 +9,10 @@ import {
   BookmarkIcon,
   Pencil2Icon,
   ExternalLinkIcon,
+  ReaderIcon,
 } from '@radix-ui/react-icons'
 
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
@@ -56,11 +57,11 @@ export const columns: ColumnDef<HistoryItem>[] = [
         <Link1Icon /> Website
       </div>
     ),
-    size: 250,
+    size: 200,
     minSize: 150,
     maxSize: 400,
     enableHiding: false,
-    cell: ({ getValue, row }) => {
+    cell: ({ row }) => {
       const isRowSelected = row.getIsSelected()
 
       const { original } = row
@@ -75,7 +76,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
       }
 
       return (
-        <div className='flex flex-col items-center gap-2 py-1 relative'>
+        <div className='flex flex-col items-center gap-2 relative -mt-6'>
           <div className='flex justify-center items-center group/link pr-4'>
             <div className='break-words relative flex items-center'>
               <Link
@@ -98,14 +99,39 @@ export const columns: ColumnDef<HistoryItem>[] = [
             />
           </div>
 
-          <div className='bg-slate-300 w-full h-32 rounded-md flex flex-col justify-between p-2'>
-            <Typography className='self-end' variant='small'>
+          <div className='bg-slate-300 w-full h-32 rounded-md flex flex-col justify-between p-2 group/card'>
+            <Typography
+              className={`self-end invisible group-hover/card:visible`}
+              variant='small'
+            >
               {updatedDate}
             </Typography>
             <Typography className='line-clamp-2' variant='small'>
               {pageTitle}
             </Typography>
           </div>
+        </div>
+      )
+    },
+  },
+  {
+    id: 'Description',
+    accessorKey: 'metaDescription',
+    header: () => (
+      <div className='flex items-center gap-2 px-2'>
+        <ReaderIcon /> Description
+      </div>
+    ),
+    size: 300,
+    minSize: 150,
+    maxSize: 700,
+    cell: ({ getValue }) => {
+      const description = getValue() as string
+      return (
+        <div className='flex items-center gap-2 px-2'>
+          <Typography className='line-clamp-5'>
+            {description || 'No description'}
+          </Typography>
         </div>
       )
     },
@@ -118,9 +144,17 @@ export const columns: ColumnDef<HistoryItem>[] = [
         <Pencil2Icon /> Summary
       </div>
     ),
-    size: 400,
+    size: 350,
     minSize: 150,
     maxSize: 700,
+    cell: ({ getValue }) => {
+      const summary = getValue() as string
+      return (
+        <div className='flex items-center gap-2 px-2'>
+          <Typography className='line-clamp-5'>{summary}</Typography>
+        </div>
+      )
+    },
   },
   {
     id: 'tags',
@@ -133,6 +167,28 @@ export const columns: ColumnDef<HistoryItem>[] = [
     size: 150,
     minSize: 100,
     maxSize: 300,
+    cell: ({ getValue }) => {
+      const tagList = getValue() as string[]
+      console.log(tagList)
+      if (!tagList.length) {
+        return null
+      }
+
+      return (
+        <div className='flex flex-wrap gap-2 px-2'>
+          {tagList.map((tag, index) => (
+            <Button
+              key={index}
+              variant='outline'
+              size='sm'
+              className='shrink-0 max-w-full'
+            >
+              {tag}
+            </Button>
+          ))}
+        </div>
+      )
+    },
   },
   // {
   //   id: 'actions',

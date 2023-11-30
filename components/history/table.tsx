@@ -1,11 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Share2Icon,
-  CaretSortIcon,
-  ListBulletIcon,
-} from '@radix-ui/react-icons'
+import { CaretSortIcon } from '@radix-ui/react-icons'
 
 import {
   ColumnDef,
@@ -179,7 +175,9 @@ export function DataTable<TData, TValue>({
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
                       key={id}
-                      className={`${column.id === 'actions' && 'text-center'}`}
+                      className={`align-top pt-8 ${
+                        column.id === 'actions' && 'text-center'
+                      }`}
                     >
                       {flexRender(column.columnDef.cell, getContext())}
                     </TableCell>
