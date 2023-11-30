@@ -16,7 +16,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-import { SearchBar } from '@/components/history/search-bar'
+// import { SearchAdvanced } from '@/components/search/advanced'
+import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
 import { columns } from '@/components/history/columns'
 
@@ -36,7 +37,7 @@ const getRouteWithoutProtocol = (url: string) => {
   return route.replace(/\/$/, '')
 }
 
-export function HistoryView({ historyItems }: HistoryViewProps) {
+export function HistoryView({ historyItems, userId }: HistoryViewProps) {
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>([])
 
@@ -168,8 +169,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
       className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8 overflow-auto
       overflow-x-scroll`}
     >
-      <SearchBar />
-
+      <SearchBasic userId={userId} />
       <DataTable columns={columns} data={filteredItems} />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

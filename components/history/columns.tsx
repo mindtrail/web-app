@@ -61,13 +61,15 @@ export const columns: ColumnDef<HistoryItem>[] = [
     minSize: 150,
     maxSize: 400,
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({ row, getValue }) => {
       const isRowSelected = row.getIsSelected()
 
       const { original } = row
       // @TODO: Store the hostname in the database in the first place
       // @ts-ignore
       const { hostName, updatedAt, pageTitle, name } = original
+
+      const host = getHostName(getValue() as string)
 
       const updatedDate = new Date(updatedAt).toLocaleDateString('en-US')
 
@@ -87,7 +89,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
               >
                 <ExternalLinkIcon />
               </Link>
-              {hostName}
+              {host}
             </div>
             <Checkbox
               className={`absolute left-2 invisible group-hover/row:visible ${
@@ -106,7 +108,10 @@ export const columns: ColumnDef<HistoryItem>[] = [
             >
               {updatedDate}
             </Typography>
-            <Typography className='line-clamp-2' variant='small'>
+            <Typography
+              className='line-clamp-2 text-foreground/70 group-hover/row:text-foreground'
+              variant='small'
+            >
               {pageTitle}
             </Typography>
           </div>
