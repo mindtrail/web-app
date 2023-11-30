@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
@@ -29,13 +30,6 @@ export const columns: ColumnDef<HistoryItem>[] = [
   //       aria-label='Select all'
   //     />
   //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //       aria-label='Select row'
-  //     />
-  //   ),
   //   enableSorting: false,
   //   enableHiding: false,
   // },
@@ -46,17 +40,32 @@ export const columns: ColumnDef<HistoryItem>[] = [
     size: 250,
     minSize: 150,
     maxSize: 400,
-    cell: ({ getValue, table }) => {
+    cell: ({ getValue, row }) => {
       const value = getValue() as string
-      let rootDomain = value
+      const rowIsSelected = row.getIsSelected()
 
-      try {
-        const url = new URL(value.includes('://') ? value : 'http://' + value)
-        rootDomain = url.hostname
-      } catch (e) {
-        console.error(e)
-      }
-      return <div className='break-words'>{rootDomain}</div>
+      // @TODO: Store the hostname in the database in the first place
+      const rootDomain = getHostName(value)
+
+      return (
+        <div className='flex flex-col items-center gap-2 py-1 group'>
+          <div className='flex justify-center items-center relative w-full '>
+            <Checkbox
+              className={`absolute left-2 invisible group-hover:visible ${
+                rowIsSelected && 'visible'
+              }`}
+              checked={rowIsSelected}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label='Select row'
+            />
+
+            <div className='break-words'>{rootDomain}</div>
+          </div>
+          <div className='bg-slate-300 w-full h-32 rounded-md'>
+            {/* <Image alt='test' src='' /> */}
+          </div>
+        </div>
+      )
     },
   },
   {
@@ -102,3 +111,15 @@ export const columns: ColumnDef<HistoryItem>[] = [
   //   },
   // },
 ]
+
+const getHostName = (urlString: string) => {
+  try {
+    const url = new URL(
+      urlString.includes('://') ? urlString : 'https://' + urlString,
+    )
+    return url.hostname
+  } catch (e) {
+    console.error(e)
+    return urlString
+  }
+}
