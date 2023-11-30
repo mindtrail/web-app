@@ -40,7 +40,6 @@ export function DraggableHeader<TData, TValue>({
   index,
 }: DraggableHeaderProps<TData, TValue>) {
   const { getState, setColumnOrder } = table
-  console.log(header.getSize())
 
   const [dropIndicator, setDropIndicator] = useState<DropIndicator>(null)
   const { columnOrder } = getState()
@@ -92,9 +91,6 @@ export function DraggableHeader<TData, TValue>({
     }
 
     setDropIndicator(draggedColumnIndex > targetColumnIndex ? 'left' : 'right')
-
-    console.log(item?.id, item)
-    console.log(column?.id, column)
   }, [isOver, dropRef, column, item, columnOrder])
 
   useEffect(() => {

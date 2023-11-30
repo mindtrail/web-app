@@ -1,10 +1,16 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { ColumnDef } from '@tanstack/react-table'
 
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Button } from '@/components/ui/button'
+import {
+  Link1Icon,
+  BookmarkIcon,
+  Pencil2Icon,
+  ExternalLinkIcon,
+} from '@radix-ui/react-icons'
+import { buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 
 import {
@@ -14,6 +20,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+
+const addHttpsIfMissing = (url: string) => {
+  if (!/^https?:\/\//i.test(url)) {
+    return 'https://' + url
+  }
+  return url
+}
 
 export const FIXED_COLUMNS = ['select']
 
@@ -36,34 +49,50 @@ export const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'displayName',
     accessorKey: 'displayName',
-    header: 'Website',
+    header: () => (
+      <div className='flex items-center gap-2 px-2'>
+        <Link1Icon /> Website
+      </div>
+    ),
     size: 250,
     minSize: 150,
     maxSize: 400,
     cell: ({ getValue, row }) => {
-      const value = getValue() as string
-      const rowIsSelected = row.getIsSelected()
+      const websiteLink = getValue() as string
+      const isRowSelected = row.getIsSelected()
+
+      if (!websiteLink) {
+        return null
+      }
 
       // @TODO: Store the hostname in the database in the first place
-      const rootDomain = getHostName(value)
+      const rootDomain = getHostName(websiteLink)
 
       return (
-        <div className='flex flex-col items-center gap-2 py-1 group'>
-          <div className='flex justify-center items-center relative w-full '>
+        <div className='flex flex-col items-center gap-2 py-1 relative'>
+          <div className='flex justify-center items-center group/link pr-4'>
+            <div className='break-words relative flex items-center'>
+              <Link
+                href={addHttpsIfMissing(websiteLink)}
+                target='_blank'
+                className={`absolute -right-8 invisible group-hover/link:visible
+                ${buttonVariants({ variant: 'link', size: 'sm' })}`}
+              >
+                <ExternalLinkIcon />
+              </Link>
+              {rootDomain}
+            </div>
             <Checkbox
-              className={`absolute left-2 invisible group-hover:visible ${
-                rowIsSelected && 'visible'
+              className={`absolute left-2 invisible group-hover/row:visible ${
+                isRowSelected && 'visible'
               }`}
-              checked={rowIsSelected}
+              checked={isRowSelected}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label='Select row'
             />
+          </div>
 
-            <div className='break-words'>{rootDomain}</div>
-          </div>
-          <div className='bg-slate-300 w-full h-32 rounded-md'>
-            {/* <Image alt='test' src='' /> */}
-          </div>
+          <div className='bg-slate-300 w-full h-32 rounded-md'></div>
         </div>
       )
     },
@@ -71,15 +100,23 @@ export const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'summary',
     accessorKey: 'summary',
-    header: 'Summary',
-    size: 500,
+    header: () => (
+      <div className='flex items-center gap-2 px-2'>
+        <Pencil2Icon /> Summary
+      </div>
+    ),
+    size: 400,
     minSize: 150,
     maxSize: 700,
   },
   {
     id: 'tags',
     accessorKey: 'tags',
-    header: 'Tags',
+    header: () => (
+      <div className='flex items-center gap-2 px-2'>
+        <BookmarkIcon /> Tags
+      </div>
+    ),
     size: 150,
     minSize: 100,
     maxSize: 300,
