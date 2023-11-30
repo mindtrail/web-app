@@ -46,7 +46,6 @@ export function LeftSidebar({ className }: SidebarNavProps) {
 
         <TabsContent value='data' className='flex-1'>
           <DataHistory />
-          <div className='flex mt-96 flex-col px-2 items-stretch'></div>
         </TabsContent>
         <TabsContent value='tag-board' className='flex-1'>
           <TagBoard />

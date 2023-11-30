@@ -103,10 +103,10 @@ export function DataTable<TData, TValue>({
       <div className='flex items-center justify-between py-4'>
         <HistoryBreadcrumbs />
 
-        <div className='flex items-center'>
-          <Button size='sm' variant='ghost'>
+        <div className='flex items-center gap-2'>
+          {/* <Button size='sm' variant='ghost'>
             <ListBulletIcon className='h-5 w-5' />
-          </Button>
+          </Button> */}
 
           <Button size='sm' variant='ghost'>
             <CaretSortIcon className='h-5 w-5' />
@@ -122,9 +122,9 @@ export function DataTable<TData, TValue>({
             <DropdownMenuContent align='end'>{tableFields}</DropdownMenuContent>
           </DropdownMenu>
 
-          <Button size='sm' variant='ghost'>
+          {/* <Button size='sm' variant='ghost'>
             <Share2Icon className='h-5 w-5' />
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className='rounded-md border cursor-default relative'>

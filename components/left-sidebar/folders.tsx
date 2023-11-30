@@ -1,12 +1,17 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { StarIcon, FileIcon } from '@radix-ui/react-icons'
+import {
+  StarIcon,
+  MagnifyingGlassIcon,
+  UploadIcon,
+} from '@radix-ui/react-icons'
 import { cn } from '@/lib/utils'
 
 import { buttonVariants } from '@/components/ui/button'
 import { Section } from '@/components/left-sidebar/section'
 import { FilterIcon } from '@/components/ui/icons/custom'
+import { Separator } from '@/components/ui/separator'
 
 const mockFilters = [
   { name: 'All Items', url: '/history' },
@@ -46,6 +51,30 @@ export default function ResearchHistory() {
 
       <div className='flex flex-col px-2 items-stretch'>
         <Section title='Collections' items={mockCollections} />
+      </div>
+
+      <div className='flex mt-[550px] flex-col px-2 items-stretch'>
+        <Separator className='mb-2' />
+        <Link
+          href={'/search'}
+          className={cn(
+            SIDEBAR_BUTTON,
+            pathname === FAVORITES_URL && ACTIVE_SIDEBAR_BUTTON,
+          )}
+        >
+          <MagnifyingGlassIcon />
+          Search
+        </Link>
+        <Link
+          href={'/import'}
+          className={cn(
+            SIDEBAR_BUTTON,
+            pathname === FAVORITES_URL && ACTIVE_SIDEBAR_BUTTON,
+          )}
+        >
+          <UploadIcon />
+          Import
+        </Link>
       </div>
     </div>
   )
