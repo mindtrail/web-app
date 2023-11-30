@@ -210,7 +210,7 @@ export function DataStoreForm(props: FormProps) {
           />
           <Tabs defaultValue={defaultTab}>
             <TabsList className='grid w-full grid-cols-2 relative'>
-              <TabsTrigger value='files'>Documents</TabsTrigger>
+              <TabsTrigger value='files'>Files</TabsTrigger>
               <TabsTrigger value='urls'>Website</TabsTrigger>
               {filesOrUrlsError && (
                 <span className='text-[0.8rem] font-medium text-destructive absolute top-14 right-0'>

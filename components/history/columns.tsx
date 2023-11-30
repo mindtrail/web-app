@@ -169,7 +169,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
     maxSize: 300,
     cell: ({ getValue }) => {
       const tagList = getValue() as string[]
-      console.log(tagList)
+
       if (!tagList.length) {
         return null
       }

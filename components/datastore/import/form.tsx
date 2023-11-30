@@ -180,8 +180,8 @@ export function ImportForm(props: FormProps) {
         <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
           <Tabs defaultValue='files'>
             <TabsList className='grid w-full grid-cols-2 relative'>
-              <TabsTrigger value='files'>Documents</TabsTrigger>
-              <TabsTrigger value='urls'>Website</TabsTrigger>
+              <TabsTrigger value='urls'>URLs</TabsTrigger>
+              <TabsTrigger value='files'>Files</TabsTrigger>
               {filesOrUrlsError && (
                 <span className='text-[0.8rem] font-medium text-destructive absolute top-14 right-0'>
                   {filesOrUrlsError?.message}
@@ -253,7 +253,7 @@ export function ImportForm(props: FormProps) {
                         <FormLabel
                           className={filesOrUrlsError && 'text-destructive'}
                         >
-                          Website
+                          URL List
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -268,7 +268,7 @@ export function ImportForm(props: FormProps) {
                   <div className='flex items-center gap-4 mt-4'>
                     <Switch
                       id='autoCrawl'
-                      disabled={true}
+                      // disabled={true}
                       checked={autoCrawl}
                       onCheckedChange={() => setAutoCrawl(!autoCrawl)}
                     />
