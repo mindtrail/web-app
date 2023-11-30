@@ -36,7 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className='flex min-h-screen'>
         <Providers>
           <LeftSidebar className='' />
-          <main className='flex flex-1'>
+          <main className='flex flex-1 overflow-auto'>
             {children}
             {/* <Separator orientation='vertical' /> */}
             {/* <SidebarRight /> */}

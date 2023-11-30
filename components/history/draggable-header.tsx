@@ -78,7 +78,7 @@ export function DraggableHeader<TData, TValue>({
   })
 
   useEffect(() => {
-    if (!isOver) {
+    if (!isOver || !draggableColumn) {
       setDropIndicator(null)
       return
     }
@@ -91,7 +91,7 @@ export function DraggableHeader<TData, TValue>({
     }
 
     setDropIndicator(draggedColumnIndex > targetColumnIndex ? 'left' : 'right')
-  }, [isOver, dropRef, column, item, columnOrder])
+  }, [isOver, dropRef, column, item, columnOrder, draggableColumn])
 
   useEffect(() => {
     previewRef(getEmptyImage(), { captureDraggingState: true })

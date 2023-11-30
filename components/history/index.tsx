@@ -162,7 +162,8 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   return (
     <div
       ref={dropRef}
-      className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8`}
+      className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8 overflow-auto
+      overflow-x-scroll`}
     >
       <SearchBar />
 

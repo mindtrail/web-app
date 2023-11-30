@@ -3,7 +3,9 @@ import { Document } from 'langchain/document'
 import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
 
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
+import { metadata } from '@/app/layout'
 
+const DEFAULT_COLLECTION = 'bookmark-ai'
 const SIMILARITY_THRESHOLD = 0.78
 
 const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
@@ -106,4 +108,57 @@ export const getCollections = async () => {
   const result = await client.getCollections()
   console.log('List of collections:', result.collections)
   return result.collections
+}
+
+export const getVectorItemsByDataSrcId = async (
+  dataSrcId: string,
+  collectionName?: string,
+): Promise<[] | undefined> => {
+  const client = new QdrantClient({
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
+  })
+
+  if (!dataSrcId) {
+    return
+  }
+
+  try {
+    const { points } = await client.scroll(DEFAULT_COLLECTION, {
+      filter: {
+        must: [
+          {
+            key: 'metadata.dataSrcId',
+            match: {
+              value: dataSrcId,
+            },
+          },
+        ],
+      },
+      limit: 1,
+      with_payload: true,
+      with_vector: false,
+    })
+
+    if (!points?.length) {
+      return
+    }
+
+    const response = points.map((point) => {
+      const {
+        metadata: { metaDescription, pageTitle },
+      } = point?.payload
+
+      return {
+        metaDescription,
+        pageTitle,
+      }
+    })
+
+    console.log(response)
+
+    return response
+  } catch (err) {
+    console.error(err)
+  }
 }

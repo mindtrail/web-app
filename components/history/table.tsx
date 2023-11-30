@@ -129,8 +129,10 @@ export function DataTable<TData, TValue>({
       </div>
       <div className='rounded-md border cursor-default relative'>
         <div
-          className={`absolute invisible  w-full h-10 flex items-center top-0 px-4
-            z-10 rounded-t-md bg-background ${areRowsSelected && '!visible'}`}
+          className={`absolute invisible w-full h-10 flex items-center first-letter:top-0
+            px-4 z-10 gap-4 rounded-t-md bg-background ${
+              areRowsSelected && '!visible'
+            }`}
         >
           <Checkbox
             checked={
@@ -142,6 +144,10 @@ export function DataTable<TData, TValue>({
             }
             aria-label='Select all'
           />
+          <div className='flex items-center gap-2'>
+            <Button variant='ghost'>Edit</Button>
+            <Button variant='ghost'>Delete</Button>
+          </div>
         </div>
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader>

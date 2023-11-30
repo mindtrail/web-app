@@ -24,7 +24,7 @@ export const ColumnDragLayer = () => {
       className={`fixed pointer-events-none z-50 left-0 top-0 h-10 px-2 flex items-center text-sm font-medium text-muted-foreground bg-white border rounded-sm`}
       style={getItemStyles(initialOffset, currentOffset)}
     >
-      {item?.columnDef?.header}
+      {item?.columnDef?.header()}
       <Button variant='ghost' className='px-2'>
         <DragHandleDots2Icon />
       </Button>

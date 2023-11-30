@@ -3,9 +3,11 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
-import { HistoryView } from '@/components/history'
 import { authOptions } from '@/lib/authOptions'
 import { getDataSrcList } from '@/lib/db/dataSrc'
+import { getVectorItemsByDataSrcId } from '@/lib/qdrant'
+
+import { HistoryView } from '@/components/history'
 
 interface UserWithId {
   id: string | null
@@ -32,8 +34,10 @@ export default async function ChatPage() {
   }
 
   const userId = session.user.id
-  const historyItems = (await getDataSrcList(userId)).slice(0, 20)
-  console.log(historyItems)
+  const historyItems = (await getDataSrcList(userId)).slice(0, 10)
+  const historyItemsIds = historyItems.map((item) => item.id)
+
+  const vectorItems = await getVectorItemsByDataSrcId(historyItemsIds[0])
 
   return <HistoryView userId={userId} historyItems={historyItems} />
 }
