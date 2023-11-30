@@ -6,10 +6,10 @@ import '@yaireo/tagify/dist/tagify.css' // Tagify CSS
 import { FilterIcon } from '@/components/ui/icons/custom'
 import { Button } from '@/components/ui/button'
 
-export const SearchBar = () => {
+export const SearchAdvanced = () => {
   return (
     <div className='flex w-full items-center justify-between'>
-      <Tags className='flex-1' autoFocus={true} placeholder='Search' />
+      <Tags className='rounded' autoFocus={true} placeholder='Search' />
       <div>
         <Button size='sm' variant='ghost'>
           <FilterIcon className='h-6 w-6' />

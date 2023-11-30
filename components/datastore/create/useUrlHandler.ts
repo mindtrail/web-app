@@ -21,10 +21,6 @@ export function useUrlHandler(initialUrls: URLScrapped[] = []) {
     }
   }, [])
 
-  const toggleAutoCrawl = useCallback(() => {
-    setAutoCrawl((prevAutoCrawl) => !prevAutoCrawl)
-  }, [])
-
   const handleURLDelete: DeleteHandler = useCallback((event, file) => {
     event.preventDefault()
     if (!file) {

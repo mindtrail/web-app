@@ -15,10 +15,10 @@ import { Separator } from '@/components/ui/separator'
 
 const mockFilters = [
   { name: 'All Items', url: '/history' },
-  { name: 'First Filters', url: '/search' },
+  // { name: 'First Filters', url: '/search' },
 ]
 const mockCollections = [
-  { name: 'Collection 1', url: '/import' },
+  { name: 'Collection 1', url: '/' },
   { name: 'UX Collection', url: '/datastore/create' },
 ]
 
@@ -26,7 +26,7 @@ const FAVORITES_URL = '/'
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_SIDEBAR_BUTTON = 'text-primary font-semibold hover:text-primary'
 
-export default function ResearchHistory() {
+export default function FolderItems() {
   const pathname = usePathname()
   return (
     <div className='flex flex-col'>
