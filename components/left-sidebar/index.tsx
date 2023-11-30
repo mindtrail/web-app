@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import DataHistory from '@/components/left-sidebar/research'
+import DataHistory from '@/components/left-sidebar/folders'
 import TagBoard from '@/components/left-sidebar/tag-board'
 
 type SidebarNavProps = {
@@ -46,6 +46,7 @@ export function LeftSidebar({ className }: SidebarNavProps) {
 
         <TabsContent value='data' className='flex-1'>
           <DataHistory />
+          <div className='flex mt-96 flex-col px-2 items-stretch'></div>
         </TabsContent>
         <TabsContent value='tag-board' className='flex-1'>
           <TagBoard />

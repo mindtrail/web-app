@@ -28,7 +28,7 @@ const addHttpsIfMissing = (url: string) => {
   return url
 }
 
-export const FIXED_COLUMNS = ['select']
+export const FIXED_COLUMNS = ['displayName']
 
 export const columns: ColumnDef<HistoryItem>[] = [
   // {
@@ -57,6 +57,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
     size: 250,
     minSize: 150,
     maxSize: 400,
+    enableHiding: false,
     cell: ({ getValue, row }) => {
       const websiteLink = getValue() as string
       const isRowSelected = row.getIsSelected()
