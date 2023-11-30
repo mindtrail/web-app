@@ -41,6 +41,7 @@ export default async function ChatPage() {
 
   if (metadata) {
     historyItems = historyItems.map((item) => {
+      // @ts-ignore
       const itemMetadata = metadata[item.id]
 
       return {

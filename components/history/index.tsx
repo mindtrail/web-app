@@ -58,6 +58,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
   useEffect(() => {
     const tags: Tags = {}
     const processedHistory = historyItems.map((item) => {
+      
       const elementTags =
         item?.thumbnail?.split(',').map((tag) => tag.trim()) || []
 
