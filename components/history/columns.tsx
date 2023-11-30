@@ -16,14 +16,6 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-
 const addHttpsIfMissing = (url: string) => {
   if (!/^https?:\/\//i.test(url)) {
     return 'https://' + url
@@ -34,27 +26,22 @@ const addHttpsIfMissing = (url: string) => {
 export const FIXED_COLUMNS = ['displayName']
 
 export const columns: ColumnDef<HistoryItem>[] = [
-  // {
-  //   id: 'select',
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() ||
-  //         (table.getIsSomePageRowsSelected() && 'indeterminate')
-  //       }
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label='Select all'
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
   {
     id: 'displayName',
     accessorKey: 'displayName',
-    header: () => (
-      <div className='flex items-center gap-2 px-2'>
-        <Link1Icon /> Website
+    header: ({ table }) => (
+      <div className='flex items-center gap-2 px-2 group/website'>
+        <Link1Icon className='group-hover/website:invisible' />
+        <Checkbox
+          className='absolute hidden group-hover/website:block'
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label='Select all'
+        />
+        Website
       </div>
     ),
     size: 200,
@@ -195,32 +182,6 @@ export const columns: ColumnDef<HistoryItem>[] = [
       )
     },
   },
-  // {
-  //   id: 'actions',
-  //   cell: ({ row }) => {
-  //     const history = row.original
-
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button
-  //             variant='ghost'
-  //             className='h-8 w-8 p-0 hover:shadow-sm ml-auto mr-auto'
-  //           >
-  //             <span className='sr-only'>Open menu</span>
-  //             <DotsHorizontalIcon />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align='end'>
-  //           <DropdownMenuItem>Edit</DropdownMenuItem>
-  //           <DropdownMenuItem>Delete</DropdownMenuItem>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem>Add to Collection</DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     )
-  //   },
-  // },
 ]
 
 const getHostName = (urlString: string) => {
