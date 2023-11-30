@@ -27,7 +27,11 @@ import {
 } from '@/components/ui/table'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
+import { DraggableHeader } from '@/components/history/draggable-header'
+import { ColumnDragLayer } from '@/components/history/drag-layer'
 
 import {
   DropdownMenu,
@@ -35,9 +39,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
-import { DraggableHeader } from '@/components/history/draggable-header'
-import { ColumnDragLayer } from '@/components/history/drag-layer'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -78,6 +79,8 @@ export function DataTable<TData, TValue>({
   })
 
   const { rows } = table.getRowModel()
+  const areRowsSelected =
+    table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
   const tableFields = table
     .getAllColumns()
@@ -124,12 +127,23 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       </div>
-
-      <div className='rounded-md border w-full relative'>
-        <Table
-          className='table-fixed relative'
-          style={{ width: table.getTotalSize() }}
+      <div className='rounded-md border cursor-default relative'>
+        <div
+          className={`absolute invisible  w-full h-10 flex items-center top-0 px-4
+            z-10 rounded-t-md bg-background ${areRowsSelected && '!visible'}`}
         >
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && 'indeterminate')
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label='Select all'
+          />
+        </div>
+        <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
@@ -153,6 +167,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className='group/row'
                   // className='flex w-fit'
                 >
                   {row.getVisibleCells().map(({ id, column, getContext }) => (

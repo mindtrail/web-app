@@ -166,7 +166,7 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
     >
       <SearchBar />
 
-      <DataTable columns={columns} data={filteredItems.slice(0, 10)} />
+      <DataTable columns={columns} data={filteredItems} />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

@@ -32,7 +32,8 @@ export default async function ChatPage() {
   }
 
   const userId = session.user.id
-  const historyItems = await getDataSrcList(userId)
+  const historyItems = (await getDataSrcList(userId)).slice(0, 20)
+  console.log(historyItems)
 
   return <HistoryView userId={userId} historyItems={historyItems} />
 }
