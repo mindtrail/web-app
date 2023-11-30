@@ -1,6 +1,7 @@
 import { QdrantClient, Schemas } from '@qdrant/js-client-rest'
 import { Document } from 'langchain/document'
 import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
+import { DataSrc } from '@prisma/client'
 
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { metadata } from '@/app/layout'
@@ -38,10 +39,16 @@ interface CreateAndStoreVectors {
 
 type QdrantSearchResponse = Schemas['ScoredPoint'] & {
   payload: {
-    metadata: object
+    metadata: {
+      metaDescription: string
+      pageTitle: string
+      hostName: string
+    }
     content: string
   }
 }
+
+type QueryPointsResponse = Schemas['ScrollResult']
 
 export const getVectorStore = (collectionName: string) => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
@@ -111,7 +118,7 @@ export const getCollections = async () => {
 }
 
 export const getVectorItemsByDataSrcId = async (
-  dataSrcId: string,
+  dataSrcIdList: string[],
   collectionName?: string,
 ): Promise<[] | undefined> => {
   const client = new QdrantClient({
@@ -119,46 +126,52 @@ export const getVectorItemsByDataSrcId = async (
     apiKey: process.env.QDRANT_API_KEY,
   })
 
-  if (!dataSrcId) {
+  if (!dataSrcIdList?.length) {
     return
   }
 
   try {
-    const { points } = await client.scroll(DEFAULT_COLLECTION, {
-      filter: {
-        must: [
-          {
-            key: 'metadata.dataSrcId',
-            match: {
-              value: dataSrcId,
-            },
+    console.time('getVectorItemsByDataSrcId')
+    const result = {}
+
+    await Promise.all(
+      dataSrcIdList.map(async (dataSrcId) => {
+        const { points } = await client.scroll(DEFAULT_COLLECTION, {
+          filter: {
+            must: [
+              {
+                key: 'metadata.dataSrcId',
+                match: {
+                  value: dataSrcId,
+                },
+              },
+            ],
           },
-        ],
-      },
-      limit: 1,
-      with_payload: true,
-      with_vector: false,
-    })
+          limit: 1,
+          with_payload: true,
+          with_vector: false,
+        })
 
-    if (!points?.length) {
-      return
-    }
+        if (!points?.length) {
+          return null
+        }
 
-    const response = points.map((point) => {
-      const {
-        metadata: { metaDescription, pageTitle },
-      } = point?.payload
+        const point = points[0] as QdrantSearchResponse
+        const { metaDescription, pageTitle, hostName } =
+          point?.payload?.metadata
 
-      return {
-        metaDescription,
-        pageTitle,
-      }
-    })
+        // @ts-ignore
+        result[dataSrcId] = {
+          hostName,
+          metaDescription,
+          pageTitle,
+        }
+        return null
+      }),
+    )
+    console.timeEnd('getVectorItemsByDataSrcId')
 
-    console.log(response)
-
-    return response
-  } catch (err) {
-    console.error(err)
-  }
+    // @ts-ignore
+    return result
+  } catch (err) {}
 }

@@ -41,7 +41,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             {/* <Separator orientation='vertical' /> */}
             {/* <SidebarRight /> */}
           </main>
-          <TailwindIndicator />
+          {/* <TailwindIndicator /> */}
           <Toaster />
         </Providers>
       </body>

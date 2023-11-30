@@ -10,8 +10,10 @@ import {
   Pencil2Icon,
   ExternalLinkIcon,
 } from '@radix-ui/react-icons'
+
 import { buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Typography } from '@/components/typography'
 
 import {
   DropdownMenu,
@@ -59,29 +61,32 @@ export const columns: ColumnDef<HistoryItem>[] = [
     maxSize: 400,
     enableHiding: false,
     cell: ({ getValue, row }) => {
-      const websiteLink = getValue() as string
       const isRowSelected = row.getIsSelected()
 
-      if (!websiteLink) {
+      const { original } = row
+      // @TODO: Store the hostname in the database in the first place
+      // @ts-ignore
+      const { hostName, updatedAt, pageTitle, name } = original
+
+      const updatedDate = new Date(updatedAt).toLocaleDateString('en-US')
+
+      if (!name) {
         return null
       }
-
-      // @TODO: Store the hostname in the database in the first place
-      const rootDomain = getHostName(websiteLink)
 
       return (
         <div className='flex flex-col items-center gap-2 py-1 relative'>
           <div className='flex justify-center items-center group/link pr-4'>
             <div className='break-words relative flex items-center'>
               <Link
-                href={addHttpsIfMissing(websiteLink)}
+                href={addHttpsIfMissing(name)}
                 target='_blank'
                 className={`absolute -right-8 invisible group-hover/link:visible
                 ${buttonVariants({ variant: 'link', size: 'sm' })}`}
               >
                 <ExternalLinkIcon />
               </Link>
-              {rootDomain}
+              {hostName}
             </div>
             <Checkbox
               className={`absolute left-2 invisible group-hover/row:visible ${
@@ -93,7 +98,14 @@ export const columns: ColumnDef<HistoryItem>[] = [
             />
           </div>
 
-          <div className='bg-slate-300 w-full h-32 rounded-md'></div>
+          <div className='bg-slate-300 w-full h-32 rounded-md flex flex-col justify-between p-2'>
+            <Typography className='self-end' variant='small'>
+              {updatedDate}
+            </Typography>
+            <Typography className='line-clamp-2' variant='small'>
+              {pageTitle}
+            </Typography>
+          </div>
         </div>
       )
     },

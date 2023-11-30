@@ -34,10 +34,21 @@ export default async function ChatPage() {
   }
 
   const userId = session.user.id
-  const historyItems = (await getDataSrcList(userId)).slice(0, 10)
-  const historyItemsIds = historyItems.map((item) => item.id)
 
-  const vectorItems = await getVectorItemsByDataSrcId(historyItemsIds[0])
+  let historyItems = (await getDataSrcList(userId)).slice(0, 10)
+  const historyItemsIds = historyItems.map((item) => item.id)
+  const metadata = await getVectorItemsByDataSrcId(historyItemsIds)
+
+  if (metadata) {
+    historyItems = historyItems.map((item) => {
+      const itemMetadata = metadata[item.id]
+
+      return {
+        ...item, //@ts-ignore
+        ...metadata[item.id],
+      }
+    })
+  }
 
   return <HistoryView userId={userId} historyItems={historyItems} />
 }

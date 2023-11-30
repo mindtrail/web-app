@@ -49,9 +49,9 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
     accept: 'column',
   })
 
-  const { isDragging } = useDragLayer((monitor) => ({
-    isDragging: monitor.isDragging(),
-  }))
+  // const { isDragging } = useDragLayer((monitor) => ({
+  //   isDragging: monitor.isDragging(),
+  // }))
 
   const { toast } = useToast()
 
@@ -116,6 +116,8 @@ export function HistoryView({ historyItems }: HistoryViewProps) {
       return newFilters
     })
   }, [])
+
+  console.log(filteredItems)
 
   const handleHistoryDelete = useCallback(
     (event: MouseEvent<HTMLElement>, historyItem: HistoryItem) => {
