@@ -36,6 +36,7 @@ export const SearchBasic = ({ userId }: SearchProps) => {
       },
     })
     const websites = await result.json()
+    console.log(websites)
 
     setFoundWebsite(websites)
     setProcessing(false)

@@ -148,7 +148,7 @@ export const getVectorItemsByDataSrcId = async (
             ],
           },
           limit: 1,
-          with_payload: true,
+          with_payload: ['metadata'],
           with_vector: false,
         })
 

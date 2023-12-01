@@ -16,7 +16,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-// import { SearchAdvanced } from '@/components/search/advanced'
+import { SearchAdvanced } from '@/components/search/advanced'
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
 import { columns } from '@/components/history/columns'
