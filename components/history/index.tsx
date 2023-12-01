@@ -2,8 +2,10 @@
 
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { deleteDataSrc } from '@/lib/serverActions/history'
-import { useDrop, useDragLayer } from 'react-dnd'
+import { useDrop } from 'react-dnd'
 
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -13,8 +15,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
 
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
@@ -172,6 +172,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
       overflow-x-scroll`}
     >
       <SearchBasic userId={userId} />
+
       <DataTable
         columns={columns}
         data={filteredItems}
