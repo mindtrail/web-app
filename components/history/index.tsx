@@ -1,8 +1,17 @@
 'use client'
 
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  MouseEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+
 import { deleteDataSrc } from '@/lib/serverActions/history'
 import { useDrop } from 'react-dnd'
+import { Document } from 'langchain/document'
 
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
@@ -24,6 +33,7 @@ import { getHostName } from '@/lib/utils'
 type Tags = {
   [key: string]: string
 }
+type WebsiteSearchResult = Document['metadata'] | null
 
 const getRouteWithoutProtocol = (url: string) => {
   const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^?]+)?/)
@@ -39,6 +49,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
   const [filters, setFilters] = useState<HistoryFilter[]>()
   const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [processing, setProcessing] = useState(false)
 
   const [, dropRef] = useDrop({
     accept: 'column',
@@ -165,18 +176,35 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     [itemsToDelete],
   )
 
+  const handleSearch = async (searchQuery: string) => {
+    setProcessing(true)
+
+    const result = await fetch('/api/history', {
+      method: 'POST',
+      body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const websites = await result.json()
+    console.log(222, websites)
+
+    setProcessing(false)
+  }
+
   return (
     <div
       ref={dropRef}
-      className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8 overflow-auto
-      overflow-x-scroll`}
+      className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8
+        overflow-auto`}
     >
-      <SearchBasic userId={userId} />
+      <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
         columns={columns}
         data={filteredItems}
         handleHistoryDelete={handleHistoryDelete}
+        processing={processing}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

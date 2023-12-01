@@ -1,46 +1,25 @@
 'use client'
-
-import { useState, MouseEvent, KeyboardEvent, useEffect } from 'react'
-import { Document } from 'langchain/document'
+import { useState, MouseEvent, KeyboardEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-type WebsiteSearchResult = Document['metadata'] | null
-
 type SearchProps = {
-  userId: string
+  handleSearch: (searchQuery: string) => void
 }
 
-export const SearchBasic = ({ userId }: SearchProps) => {
-  const [searchPerfromed, setSearchPerfromed] = useState(false)
+export const SearchBasic = ({ handleSearch }: SearchProps) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const [processing, setProcessing] = useState(false)
-  const [foundWebsite, setFoundWebsite] = useState<WebsiteSearchResult>()
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      handleSearch(event)
+      handleSearch(searchQuery)
     }
   }
 
-  const handleSearch = async (event: MouseEvent | KeyboardEvent) => {
+  const onSearchClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    setProcessing(true)
-
-    const result = await fetch('/api/history', {
-      method: 'POST',
-      body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const websites = await result.json()
-    console.log(websites)
-
-    setFoundWebsite(websites)
-    setProcessing(false)
-    setSearchPerfromed(true)
+    handleSearch(searchQuery)
   }
 
   return (
@@ -53,7 +32,7 @@ export const SearchBasic = ({ userId }: SearchProps) => {
         onKeyDown={handleKeyDown}
         placeholder='A website about travel'
       />
-      <Button onClick={handleSearch} disabled={!searchQuery}>
+      <Button onClick={onSearchClick} disabled={!searchQuery}>
         Search
       </Button>
     </div>
