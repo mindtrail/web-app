@@ -24,6 +24,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { IconSpinner } from '@/components/ui/icons/next-icons'
 
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
@@ -40,12 +41,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   handleHistoryDelete: (ids: HistoryItem[]) => void
+  processing?: boolean
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   handleHistoryDelete,
+  processing,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -194,6 +197,14 @@ export function DataTable<TData, TValue>({
             })}
           </TableBody>
         </Table>
+
+        {processing && (
+          <div className='absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52'>
+            <div className='flex items-center gap-2 h-8'>
+              <IconSpinner /> Searching...
+            </div>
+          </div>
+        )}
       </div>
       <ColumnDragLayer />
     </>
