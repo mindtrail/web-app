@@ -59,7 +59,7 @@ export default function FolderItems() {
           href={'/search'}
           className={cn(
             SIDEBAR_BUTTON,
-            pathname === FAVORITES_URL && ACTIVE_SIDEBAR_BUTTON,
+            pathname === '/search' && ACTIVE_SIDEBAR_BUTTON,
           )}
         >
           <MagnifyingGlassIcon />
@@ -69,7 +69,7 @@ export default function FolderItems() {
           href={'/import'}
           className={cn(
             SIDEBAR_BUTTON,
-            pathname === FAVORITES_URL && ACTIVE_SIDEBAR_BUTTON,
+            pathname === '/import' && ACTIVE_SIDEBAR_BUTTON,
           )}
         >
           <UploadIcon />
