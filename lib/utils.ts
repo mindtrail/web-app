@@ -19,3 +19,17 @@ export function formatDate(input: string | number | Date): string {
     year: 'numeric',
   })
 }
+
+
+export const getHostName = (urlString: string) => {
+  try {
+    const url = new URL(
+      urlString.includes('://') ? urlString : 'https://' + urlString,
+    )
+    return url.hostname
+  } catch (e) {
+    console.error(e)
+    return urlString
+  }
+}
+

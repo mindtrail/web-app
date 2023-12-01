@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+// import Image from 'next/image'
 import Link from 'next/link'
 import { ColumnDef } from '@tanstack/react-table'
 
@@ -15,6 +15,7 @@ import {
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
+import { getHostName } from '@/lib/utils'
 
 const addHttpsIfMissing = (url: string) => {
   if (!/^https?:\/\//i.test(url)) {
@@ -177,15 +178,3 @@ export const columns: ColumnDef<HistoryItem>[] = [
     },
   },
 ]
-
-const getHostName = (urlString: string) => {
-  try {
-    const url = new URL(
-      urlString.includes('://') ? urlString : 'https://' + urlString,
-    )
-    return url.hostname
-  } catch (e) {
-    console.error(e)
-    return urlString
-  }
-}

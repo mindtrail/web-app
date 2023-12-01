@@ -39,11 +39,13 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  handleHistoryDelete: (ids: HistoryItem[]) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  handleHistoryDelete,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -92,6 +94,18 @@ export function DataTable<TData, TValue>({
       )
     })
 
+  const onDelete = () => {
+    const selectedRows = table.getSelectedRowModel()
+
+    const itemsToDelete = selectedRows.rows.map(
+      ({ original }) => original as HistoryItem,
+    )
+
+    console.log(selectedRows, itemsToDelete)
+    handleHistoryDelete(itemsToDelete)
+    table.resetRowSelection()
+  }
+
   return (
     <>
       <div className='flex items-center justify-between py-4'>
@@ -131,7 +145,7 @@ export function DataTable<TData, TValue>({
             aria-label='Select all'
           />
           <div className='flex items-center gap-2'>
-            <Button variant='outline' size='sm'>
+            <Button variant='outline' size='sm' onClick={onDelete}>
               Delete
             </Button>
           </div>
@@ -156,12 +170,14 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {rows?.map((row) => {
+              const isRowSelected = row.getIsSelected()
               return (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className='group/row text-foreground/70 hover:text-foreground'
-                  // className='flex w-fit'
+                  data-state={isRowSelected && 'selected'}
+                  className={`group/row text-foreground/70 hover:text-foreground ${
+                    isRowSelected && 'text-foreground'
+                  }`}
                 >
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell

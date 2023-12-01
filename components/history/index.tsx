@@ -1,6 +1,6 @@
 'use client'
 
-import { MouseEvent, useCallback, useEffect, useState } from 'react'
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { deleteDataSrc } from '@/lib/serverActions/history'
 import { useDrop, useDragLayer } from 'react-dnd'
 
@@ -16,20 +16,14 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-import { SearchAdvanced } from '@/components/search/advanced'
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
 import { columns } from '@/components/history/columns'
+import { getHostName } from '@/lib/utils'
 
 type Tags = {
   [key: string]: string
 }
-
-const DEFAULT_COLUMNS: HistoryFilter[] = [
-  { value: 'displayName', label: 'Website' },
-  { value: 'summary', label: 'Summary' },
-  { value: 'tags', label: 'Tags' },
-]
 
 const getRouteWithoutProtocol = (url: string) => {
   const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^?]+)?/)
@@ -43,7 +37,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
 
   const [categories, setCategories] = useState<HistoryFilter[]>([])
   const [filters, setFilters] = useState<HistoryFilter[]>()
-  const [itemToDelete, setItemToDelete] = useState<HistoryItem | null>(null)
+  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const [, dropRef] = useDrop({
@@ -55,7 +49,6 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
   useEffect(() => {
     const tags: Tags = {}
     const processedHistory = historyItems.map((item) => {
-      console.log(item)
       const elementTags =
         item?.thumbnail?.split(',').map((tag) => tag.trim()) || []
 
@@ -115,49 +108,60 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     })
   }, [])
 
-  console.log(filteredItems)
-
-  const handleHistoryDelete = useCallback(
-    (event: MouseEvent<HTMLElement>, historyItem: HistoryItem) => {
-      event.preventDefault()
-
-      if (!historyItem) {
-        return
-      }
-      setItemToDelete(historyItem)
-      setDeleteDialogOpen(true)
-    },
-    [],
-  )
-
-  const confirmHistoryDelete = useCallback(async () => {
-    if (!itemToDelete) {
+  const handleHistoryDelete = useCallback((itemsToDelete: HistoryItem[]) => {
+    if (!itemsToDelete?.length) {
       return
     }
-    const { id, displayName } = itemToDelete
+
+    setItemsToDelete(itemsToDelete)
+    setDeleteDialogOpen(true)
+  }, [])
+
+  const confirmHistoryDelete = useCallback(async () => {
+    if (!itemsToDelete?.length) {
+      return
+    }
+
+    const entryNames = itemsToDelete
+      .map(({ displayName }) => displayName)
+      .join(', ')
 
     try {
-      await deleteDataSrc({ dataSrcId: id })
+      // await deleteDataSrc({ dataSrcId: id })
 
       toast({
-        title: 'File deleted',
-        description: `${displayName} has been deleted`,
+        title: 'Delete History Entry',
+        description: `${entryNames} has been deleted`,
       })
 
       setDeleteDialogOpen(false)
-      setItemToDelete(null)
+      setItemsToDelete(null)
     } catch (err) {
       toast({
         title: 'Error',
         variant: 'destructive',
-        description: `Something went wrong while deleting ${displayName}`,
+        description: `Something went wrong while deleting ${entryNames}`,
       })
       console.log(err)
 
       setDeleteDialogOpen(false)
-      setItemToDelete(null)
+      setItemsToDelete(null)
     }
-  }, [itemToDelete, toast])
+  }, [itemsToDelete, toast])
+
+  const entryNames = useMemo(
+    () =>
+      itemsToDelete?.length &&
+      itemsToDelete.map(({ displayName = '' }, index) => (
+        <li
+          key={index}
+          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'
+        >
+          {getHostName(displayName)}
+        </li>
+      )),
+    [itemsToDelete],
+  )
 
   return (
     <div
@@ -166,19 +170,23 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
       overflow-x-scroll`}
     >
       <SearchBasic userId={userId} />
-      <DataTable columns={columns} data={filteredItems} />
+      <DataTable
+        columns={columns}
+        data={filteredItems}
+        handleHistoryDelete={handleHistoryDelete}
+      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent content=''>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will delete the file and the associated data. The action
-              cannot be undone and will permanently delete{' '}
-              <b>{itemToDelete?.displayName}</b>.
+            <AlertDialogDescription className='break-words'>
+              This will delete the history entries and the associated data. The
+              action cannot be undone and will permanently delete:
+              <ul className='mt-4 mb-2 list-disc list-inside '>{entryNames}</ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className='max-w-l'>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <Button variant='destructive' onClick={confirmHistoryDelete}>
               Delete
