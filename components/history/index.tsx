@@ -123,11 +123,13 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     }
 
     const entryNames = itemsToDelete
-      .map(({ displayName }) => displayName)
+      .map(({ displayName = '' }) => getHostName(displayName))
       .join(', ')
 
     try {
-      // await deleteDataSrc({ dataSrcId: id })
+      await Promise.all(
+        itemsToDelete.map(({ id }) => deleteDataSrc({ dataSrcId: id })),
+      )
 
       toast({
         title: 'Delete History Entry',
