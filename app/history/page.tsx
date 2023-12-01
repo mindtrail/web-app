@@ -35,9 +35,9 @@ export default async function ChatPage() {
 
   const userId = session.user.id
 
-  let historyItems = (await getDataSrcList(userId)).slice(0, 10)
+  let historyItems = (await getDataSrcList(userId)).slice(0, 5)
   const historyItemsIds = historyItems.map((item) => item.id)
-  const metadata = null //await getVectorItemsByDataSrcId(historyItemsIds)
+  const metadata = await getVectorItemsByDataSrcId(historyItemsIds)
 
   if (metadata) {
     historyItems = historyItems.map((item) => {

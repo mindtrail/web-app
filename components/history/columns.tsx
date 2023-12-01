@@ -58,47 +58,41 @@ export const columns: ColumnDef<HistoryItem>[] = [
 
       const host = getHostName(getValue() as string)
 
-      const updatedDate = new Date(updatedAt).toLocaleDateString('en-US')
+      const updatedDate = new Date(updatedAt).toDateString()
 
       if (!name) {
         return null
       }
 
       return (
-        <div className='flex flex-col items-center gap-2 relative -mt-6'>
-          <div className='flex justify-center items-center group/link pr-4'>
-            <div className='break-words relative flex items-center'>
-              <Link
-                href={addHttpsIfMissing(name)}
-                target='_blank'
-                className={`absolute -right-8 invisible group-hover/link:visible
-                ${buttonVariants({ variant: 'link', size: 'sm' })}`}
-              >
-                <ExternalLinkIcon />
-              </Link>
-              {host}
-            </div>
-            <Checkbox
-              className={`absolute left-2 invisible group-hover/row:visible ${
-                isRowSelected && 'visible'
-              }`}
-              checked={isRowSelected}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label='Select row'
+        <div className='flex flex-col items-center gap-3 relative -mt-6'>
+          <Link
+            className={`flex justify-center items-center relative group/website px-4
+              hover:underline`}
+            href={addHttpsIfMissing(name)}
+            target='_blank'
+          >
+            <Typography className='line-clamp-1 text-center'>{host}</Typography>
+            <ExternalLinkIcon
+              className={`absolute -right-1 invisible group-hover/website:visible`}
             />
-          </div>
-
-          <div className='bg-slate-300 w-full h-32 rounded-md flex flex-col justify-between p-2 group/card'>
+          </Link>
+          <Checkbox
+            className={`absolute mt-[2px] left-2 invisible group-hover/row:visible ${
+              isRowSelected && 'visible'
+            }`}
+            checked={isRowSelected}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label='Select row'
+          />
+          <div className='bg-slate-300 w-full h-32 rounded-md flex flex-col justify-between p-3 group/card'>
             <Typography
-              className={`self-end invisible group-hover/card:visible`}
+              className={`self-end invisible group-hover/row:visible`}
               variant='small'
             >
               {updatedDate}
             </Typography>
-            <Typography
-              className='line-clamp-2 text-foreground/70 group-hover/row:text-foreground'
-              variant='small'
-            >
+            <Typography className='line-clamp-2' variant='small'>
               {pageTitle}
             </Typography>
           </div>

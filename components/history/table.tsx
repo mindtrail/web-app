@@ -131,9 +131,6 @@ export function DataTable<TData, TValue>({
             aria-label='Select all'
           />
           <div className='flex items-center gap-2'>
-            {/* <Button variant='outline' size='sm'>
-              Edit
-            </Button> */}
             <Button variant='outline' size='sm'>
               Delete
             </Button>
@@ -163,13 +160,13 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='group/row'
+                  className='group/row text-foreground/70 hover:text-foreground'
                   // className='flex w-fit'
                 >
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
                       key={id}
-                      className={`align-top pt-8 ${
+                      className={`align-top pt-10 ${
                         column.id === 'actions' && 'text-center'
                       }`}
                     >
