@@ -48,24 +48,3 @@ export const deleteDataSourceApiCall = async (fileId: string) => {
 
   return response.json()
 }
-
-export const scrapeURLsApiCall = async (
-  urls: string[],
-  collectionId: string,
-) => {
-  const response = await fetch(SCRAPER_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    // @TODO: add limit to number of urls
-    body: JSON.stringify({ urls, collectionId }),
-  })
-
-  if (!response.ok) {
-    console.log('response', response)
-    throw new Error(`Failed to scrape URLs`)
-  }
-
-  return response.json()
-}

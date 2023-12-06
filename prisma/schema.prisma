@@ -132,8 +132,8 @@ model Collection {
 // https://github.com/prisma/prisma/issues/12332
 model DataSource {
   id        String           @id @default(cuid())
-  type      DataSourceType
   name      String
+  type      DataSourceType
   status    DataSourceStatus @default(unsynched)
 
   autoSave      Boolean? @default(false)

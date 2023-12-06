@@ -1,42 +1,46 @@
-import { NextResponse } from 'next/server'
+'use server'
+
 import { getServerSession } from 'next-auth/next'
+import { revalidateTag } from 'next/cache'
 import { authOptions } from '@/lib/authOptions'
 
 const env = process.env.NODE_ENV
-
 const SCRAPER_SERVICE_URL =
   env === 'development'
     ? process.env.LOCAL_SCRAPER_SERVICE_URL
     : process.env.SCRAPER_SERVICE_URL
 
-// Method to initiate scraping
-export async function POST(req: Request) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
+type deletePayload = {
+  dataSourceId: string
+}
+export const scrapeURLs = async (urls: string[], collectionId: string) => {
+  console.log('scrapeURLs', urls, collectionId)
 
+  const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
+
   if (!userId) {
-    return new NextResponse('Unauthorized', {
+    console.error('Unauthorized')
+
+    return {
       status: 401,
-    })
+    }
   }
 
-  const body = await req.json()
-  let { urls, collectionId } = body
-  urls = typeof urls === 'string' ? [urls] : urls
+  if (!urls?.length) {
+    console.error('Invalid request, No URL  provided')
 
-  if (!urls?.length || !collectionId) {
-    return new NextResponse(
-      'Invalid request, No URL or collectionId provided',
-      {
-        status: 400,
-      },
-    )
+    return {
+      status: 400,
+      message: 'Invalid request, No URL  provided',
+    }
   }
 
   if (!SCRAPER_SERVICE_URL) {
-    return new NextResponse('Scraper service URL not set', {
+    return {
       status: 500,
-    })
+      message: 'Scraper service URL not set',
+    }
   }
 
   try {
@@ -45,23 +49,24 @@ export async function POST(req: Request) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ urls, collectionId, userId, limit: 10 }),
+      body: JSON.stringify({ urls, collectionId, userId, limit: 5 }),
     })
 
     if (!result.ok) {
       console.log('Scrapper service Error', result.status)
-      return new Response('Failed to scrape', {
+      return {
         status: 500,
-      })
+      }
     }
 
     const res = await result?.json()
     console.log('Scraper ---', res)
 
-    return NextResponse.json(res)
+    return res
   } catch (e) {
     console.log('error', e)
-    return new NextResponse('Failed to scrape', {
+
+    return new Response('Failed to scrape', {
       status: 500,
     })
   }

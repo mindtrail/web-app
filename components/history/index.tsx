@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  MouseEvent,
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { deleteDataSource } from '@/lib/serverActions/history'
 import { useDrop } from 'react-dnd'
@@ -33,7 +26,6 @@ import { getHostName } from '@/lib/utils'
 type Tags = {
   [key: string]: string
 }
-type WebsiteSearchResult = Document['metadata'] | null
 
 const getRouteWithoutProtocol = (url: string) => {
   const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^?]+)?/)
