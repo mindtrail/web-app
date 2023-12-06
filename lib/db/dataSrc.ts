@@ -1,43 +1,44 @@
-import { DataSrcStatus, DataSrc } from '@prisma/client'
+import { DataSourceStatus, DataSource } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 
-export const getDataSrcList = async (userId: string, datastoreId?: string) => {
-  const dataSrcList = await prisma.dataSrc.findMany({
+export const getDataSrcList = async (userId: string, collectionId?: string) => {
+  const dataSourceList = await prisma.dataSource.findMany({
     where: {
-      ownerId: userId,
-      dataStoreId: datastoreId,
+      // @TODO: this was a 1-m relationship, now it's a m-m relationship, update it
+      // ownerId: userId,
+      // collectionId: collectionId,
     },
     orderBy: {
       createdAt: 'desc',
     },
   })
 
-  return dataSrcList
+  return dataSourceList
 }
 
-type CreateDataSrcPayload = Pick<
-  DataSrc,
-  'name' | 'dataStoreId' | 'ownerId' | 'type' | 'nbChunks' | 'textSize'
->
-
 export const getDataSrcById = async (dataSrcId: string) => {
-  const dataSrc = await prisma.dataSrc.findUnique({
+  const dataSource = await prisma.dataSource.findUnique({
     where: {
       id: dataSrcId,
     },
   })
 
-  return dataSrc
+  return dataSource
 }
 
+type CreateDataSourcePayload = Pick<
+  DataSource,
+  'name' | 'collectionId' | 'ownerId' | 'type' | 'nbChunks' | 'textSize'
+>
+
 export const createDataSrc = async (
-  payload: CreateDataSrcPayload,
+  payload: CreateDataSourcePayload,
   uniqueName = false,
 ) => {
-  const { name, dataStoreId, ownerId, ...rest } = payload
+  const { name, collectionId, ownerId, ...rest } = payload
 
   if (uniqueName) {
-    const existingDataSrc = await prisma.dataSrc.findFirst({
+    const existingDataSrc = await prisma.dataSource.findFirst({
       where: { name },
     })
     if (existingDataSrc) {
@@ -46,37 +47,37 @@ export const createDataSrc = async (
     }
   }
 
-  const dataSrc = await prisma.dataSrc.create({
+  const dataSource = await prisma.dataSource.create({
     data: {
       ...rest,
       name,
-      owner: {
-        connect: {
-          // @ts-ignore - ownerId is already checked before calling this function
-          id: ownerId,
-        },
-      },
-      dataStore: {
-        connect: {
-          // @ts-ignore - dataStoreId is already checked before calling this function
-          id: dataStoreId,
-        },
+      // owner: {
+      //   connect: {
+      //     // @ts-ignore - ownerId is already checked before calling this function
+      //     id: ownerId,
+      //   },
+      // },
+      collectionDataSource: {
+        // connect: {
+          // @ts-ignore - collectionId is already checked before calling this function
+          // id: collectionId,
+        // },
       },
     },
   })
 
-  return dataSrc
+  return dataSource
 }
 
-type updateDataSrcPayload = Partial<CreateDataSrcPayload> & {
+type UpdateDataSourcePayload = Partial<CreateDataSourcePayload> & {
   id: string
-  status?: DataSrcStatus
+  status?: DataSourceStatus
 }
 
-export const updateDataSrc = async (payload: updateDataSrcPayload) => {
+export const updateDataSrc = async (payload: UpdateDataSourcePayload) => {
   const { id, ...rest } = payload
 
-  const dataSrc = await prisma.dataSrc.update({
+  const dataSource = await prisma.dataSource.update({
     where: {
       id,
     },
@@ -85,16 +86,17 @@ export const updateDataSrc = async (payload: updateDataSrcPayload) => {
     },
   })
 
-  return dataSrc
+  return dataSource
 }
 
 export const deleteDataSrcDbOp = async (userId: string, dataSrcId: string) => {
-  const dataSrc = await prisma.dataSrc.delete({
+  const dataSource = await prisma.dataSource.delete({
     where: {
       id: dataSrcId,
-      ownerId: userId,
+      // @TODO ....
+      // ownerId: userId,
     },
   })
 
-  return dataSrc
+  return dataSource
 }

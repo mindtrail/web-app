@@ -14,7 +14,7 @@ import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSrc'
 
 interface ImportDataSrc extends React.ComponentProps<'div'> {
   userId: string
-  dataStore: DataStoreExtended
+  dataStore: CollectionExtended
 }
 
 export function ImportDataSrc({

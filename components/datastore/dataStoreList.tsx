@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/alert-dialog'
 
 interface DataStoreListProps extends React.ComponentProps<'div'> {
-  dataStoreList: DataStoreExtended[]
+  dataStoreList: CollectionExtended[]
 }
 
 interface KbToDelete {

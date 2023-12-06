@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { CreateDataStore } from '@/components/datastore'
+import { CreateCollection } from '@/components/datastore'
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -28,7 +28,7 @@ export default async function CreateDS() {
 
   return (
     <>
-      <CreateDataStore userId={userId} />
+      <CreateCollection userId={userId} />
     </>
   )
 }

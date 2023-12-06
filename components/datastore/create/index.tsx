@@ -18,10 +18,10 @@ import {
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   userId: string
-  dataStore?: DataStoreExtended
+  dataStore?: CollectionExtended
 }
 
-export function CreateDataStore({
+export function CreateCollection({
   userId,
   dataStore: existingDataStore,
 }: DataStoreProps) {
@@ -101,7 +101,7 @@ export function CreateDataStore({
     )
 
     // We only add the name and description if they are different from the existing ones
-    const dsPayload = { userId } as Partial<CreateDataStore>
+    const dsPayload = { userId } as Partial<CreateCollection>
     if (name !== existingName) {
       dsPayload.name = name
     }

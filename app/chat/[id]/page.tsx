@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
-import { getDataStoreById } from '@/lib/db/dataStore'
+import { getCollectionDbOp } from '@/lib/db/collection'
 import { authOptions } from '@/lib/authOptions'
 import { Chat } from '@/components/chat'
 
@@ -41,10 +41,10 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const userId = session.user.id
   const chatId = TEST_DATA_STORE
 
-  const dataStore = (await getDataStoreById({
+  const dataStore = (await getCollectionDbOp({
     userId,
     dataStoreId: chatId,
-  })) as DataStoreExtended
+  })) as CollectionExtended
 
   if (!dataStore) {
     redirect(`/datastore?notFound=${chatId}`)

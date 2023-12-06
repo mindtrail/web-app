@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataStoreListDbOp } from '@/lib/db/dataStore'
+import { getCollectionListDbOp } from '@/lib/db/collection'
 
 import { DataStoreList } from '@/components/datastore'
 
@@ -38,9 +38,9 @@ export default async function DataStorePage(params: DSProps) {
   const refresh = params?.searchParams?.refresh
 
   const userId = session?.user?.id
-  const dataStoreList = await getDataStoreListDbOp({
+  const dataStoreList = await getCollectionListDbOp({
     userId,
-    includeDataSrc: true,
+    includeDataSource: true,
   })
 
   if (!dataStoreList?.length) {

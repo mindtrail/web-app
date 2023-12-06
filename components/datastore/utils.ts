@@ -5,7 +5,7 @@ import { formatDate } from '@/lib/utils'
 import { MAX_FILE_SIZE } from '@/components/datastore/constants'
 
 export const getFormInitialValues = (
-  dataStore?: DataStoreExtended,
+  dataStore?: CollectionExtended,
 ): DataStoreFormValues => {
   if (dataStore) {
     return {

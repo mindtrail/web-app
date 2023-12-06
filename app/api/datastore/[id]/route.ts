@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataStoreDbOp, updateDataStoreDbOp } from '@/lib/db/dataStore'
+import { deleteCollectionDbOp, updateCollectionDbOp } from '@/lib/db/collection'
 
 type EditRouteParams = { params: { id: string } }
 
@@ -18,7 +18,7 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
     })
   }
   try {
-    const datastoreList = await deleteDataStoreDbOp(userId, dataStoreId)
+    const datastoreList = await deleteCollectionDbOp(userId, dataStoreId)
     return NextResponse.json({ datastoreList })
   } catch (error) {
     return new NextResponse('DataStore not found', { status: 404 })
@@ -37,7 +37,7 @@ export async function PATCH(req: Request, { params }: EditRouteParams) {
     })
   }
 
-  const body = (await req.json()) as Partial<CreateDataStore>
+  const body = (await req.json()) as Partial<CreateCollection>
   const { userId: clientUserId, ...rest } = body
 
   if (clientUserId !== userId) {
@@ -47,7 +47,7 @@ export async function PATCH(req: Request, { params }: EditRouteParams) {
   }
 
   try {
-    const dataStore = await updateDataStoreDbOp({
+    const dataStore = await updateCollectionDbOp({
       dataStoreId,
       userId,
       ...rest,
