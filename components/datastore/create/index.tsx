@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { DataSrcStatus } from '@prisma/client'
+import { DataSourceStatus } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { DataStoreForm } from '@/components/datastore/create/form'
@@ -97,7 +97,7 @@ export function CreateCollection({
     } = existingDataStore
 
     const unsynchedFiles = files?.filter(
-      ({ status }) => status === DataSrcStatus.unsynched,
+      ({ status }) => status === DataSourceStatus.unsynched,
     )
 
     // We only add the name and description if they are different from the existing ones

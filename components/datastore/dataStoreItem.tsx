@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { DataSrcStatus, DataSrcType } from '@prisma/client'
+import { DataSourceStatus, DataSourceType } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { StatusIcon } from '@/components/datastore/statusIcon'
@@ -54,11 +54,11 @@ export function DataStoreListItem(props: itemProps) {
                   </TooltipTrigger>
                   <TooltipContent
                     className={
-                      status !== DataSrcStatus.synched ? 'bg-gray-500' : ''
+                      status !== DataSourceStatus.synched ? 'bg-gray-500' : ''
                     }
                   >
                     <p className='flex flex-col gap-2'>
-                      {status !== DataSrcStatus.synched && (
+                      {status !== DataSourceStatus.synched && (
                         <span className='flex gap-1 items-center capitalize'>
                           {status}
                         </span>

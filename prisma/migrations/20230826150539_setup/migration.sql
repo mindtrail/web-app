@@ -2,10 +2,10 @@
 CREATE TYPE "DataStoreVisibility" AS ENUM ('public', 'private');
 
 -- CreateEnum
-CREATE TYPE "DataSrcStatus" AS ENUM ('unsynched', 'pending', 'running', 'synched', 'error', 'usage_limit_reached');
+CREATE TYPE "DataSourceStatus" AS ENUM ('unsynched', 'pending', 'running', 'synched', 'error', 'usage_limit_reached');
 
 -- CreateEnum
-CREATE TYPE "DataSrcType" AS ENUM ('web_page', 'web_site', 'text', 'file', 'google_drive_file', 'google_drive_folder', 'notion');
+CREATE TYPE "DataSourceType" AS ENUM ('web_page', 'web_site', 'text', 'file', 'google_drive_file', 'google_drive_folder', 'notion');
 
 -- CreateEnum
 CREATE TYPE "DataStoreType" AS ENUM ('qdrant');
@@ -119,9 +119,9 @@ CREATE TABLE "DataStores" (
 -- CreateTable
 CREATE TABLE "DataSrcs" (
     "id" TEXT NOT NULL,
-    "type" "DataSrcType" NOT NULL,
+    "type" "DataSourceType" NOT NULL,
     "name" TEXT NOT NULL,
-    "status" "DataSrcStatus" NOT NULL DEFAULT 'unsynched',
+    "status" "DataSourceStatus" NOT NULL DEFAULT 'unsynched',
     "config" JSONB,
     "dataStoreId" TEXT,
     "ownerId" TEXT,

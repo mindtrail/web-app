@@ -5,7 +5,7 @@ import { Cross1Icon, FileTextIcon, GlobeIcon } from '@radix-ui/react-icons'
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
-import { DataSrcStatus, DataSrcType } from '@prisma/client'
+import { DataSourceStatus, DataSourceType } from '@prisma/client'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 import {
@@ -15,16 +15,16 @@ import {
 } from '@/components/ui/tooltip'
 
 const colorMap = {
-  [DataSrcStatus.unsynched]: 'text-grey-500',
-  [DataSrcStatus.synched]: 'text-green-500',
-  [DataSrcStatus.error]: 'text-red-500',
-  [DataSrcStatus.running]: 'text-yellow-500',
-  [DataSrcStatus.pending]: 'text-gray-900',
-  [DataSrcStatus.usage_limit_reached]: 'text-gray-800',
+  [DataSourceStatus.unsynched]: 'text-grey-500',
+  [DataSourceStatus.synched]: 'text-green-500',
+  [DataSourceStatus.error]: 'text-red-500',
+  [DataSourceStatus.running]: 'text-yellow-500',
+  [DataSourceStatus.pending]: 'text-gray-900',
+  [DataSourceStatus.usage_limit_reached]: 'text-gray-800',
 }
 
 interface DataSrcList {
-  type: DataSrcType
+  type: DataSourceType
   acceptedItems: AcceptedFile[] | URLScrapped[]
   rejectedItems?: RejectedFile[]
   charCount: number
@@ -42,7 +42,8 @@ export function DataSrcList(props: DataSrcList) {
     handleFileDelete,
   } = props
 
-  const IconElement = type === DataSrcType.web_page ? GlobeIcon : FileTextIcon
+  const IconElement =
+    type === DataSourceType.web_page ? GlobeIcon : FileTextIcon
 
   // @TODO: update the name of the file in the DataSrc to don't need the regex
   const acceptedDataSrcList = useMemo(() => {
@@ -64,7 +65,9 @@ export function DataSrcList(props: DataSrcList) {
               </div>
             </TooltipTrigger>
             <TooltipContent
-              className={status !== DataSrcStatus.synched ? 'bg-gray-500' : ''}
+              className={
+                status !== DataSourceStatus.synched ? 'bg-gray-500' : ''
+              }
             >
               {status}
             </TooltipContent>
@@ -98,7 +101,7 @@ export function DataSrcList(props: DataSrcList) {
 
   return (
     <>
-      {type === DataSrcType.file && (
+      {type === DataSourceType.file && (
         <div className='flex justify-between items-center'>
           <span className='text-ellipsis max-w-sm'>
             {`${acceptedItems.length} of ${MAX_NR_OF_FILES} uploaded`}

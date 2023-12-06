@@ -1,18 +1,18 @@
-import { DataSrcStatus } from '@prisma/client'
+import { DataSourceStatus } from '@prisma/client'
 import { useMemo } from 'react'
 
 interface StatusIcon {
-  status?: DataSrcStatus
+  status?: DataSourceStatus
   size?: 'sm' | 'md' | 'lg'
 }
 
 const colorMap = {
-  [DataSrcStatus.unsynched]: 'bg-gray-500',
-  [DataSrcStatus.synched]: 'bg-green-500',
-  [DataSrcStatus.error]: 'bg-red-500',
-  [DataSrcStatus.running]: 'bg-yellow-500',
-  [DataSrcStatus.pending]: 'bg-gray-900',
-  [DataSrcStatus.usage_limit_reached]: 'bg-gray-800',
+  [DataSourceStatus.unsynched]: 'bg-gray-500',
+  [DataSourceStatus.synched]: 'bg-green-500',
+  [DataSourceStatus.error]: 'bg-red-500',
+  [DataSourceStatus.running]: 'bg-yellow-500',
+  [DataSourceStatus.pending]: 'bg-gray-900',
+  [DataSourceStatus.usage_limit_reached]: 'bg-gray-800',
 }
 
 export function StatusIcon(props: StatusIcon) {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
-import { DataSrcType, DataSrcStatus } from '@prisma/client'
+import { DataSourceType, DataSourceStatus } from '@prisma/client'
 import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       name: fileName,
       dataStoreId: TEST_DATASTORE_ID,
       ownerId: TEST_USER_ID,
-      type: DataSrcType.web_page,
+      type: DataSourceType.web_page,
       nbChunks,
       textSize,
       summary,
@@ -103,7 +103,7 @@ export async function POST(req: Request) {
     // Update the dataSrc status to synched for each doc
     documents.map(({ metadata }) => {
       const { dataSrcId } = metadata
-      updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
+      updateDataSrc({ id: dataSrcId, status: DataSourceStatus.synched })
     })
 
     return NextResponse.json({
