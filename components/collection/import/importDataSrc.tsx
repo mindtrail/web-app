@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { DataSourceStatus } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
-import { ImportForm } from '@/components/datastore/import/form'
-import { DataStoreFormValues } from '@/components/datastore/utils'
+import { ImportForm } from '@/components/collection/import/form'
+import { DataStoreFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
 

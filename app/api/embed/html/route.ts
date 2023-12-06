@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
-import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
+import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'

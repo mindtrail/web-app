@@ -28,14 +28,18 @@ export const getDataSrcById = async (dataSrcId: string) => {
 
 type CreateDataSourcePayload = Pick<
   DataSource,
-  'name' | 'collectionId' | 'ownerId' | 'type' | 'nbChunks' | 'textSize'
+  'name' | 'type' | 'nbChunks' | 'textSize'
 >
 
 export const createDataSrc = async (
   payload: CreateDataSourcePayload,
   uniqueName = false,
 ) => {
-  const { name, collectionId, ownerId, ...rest } = payload
+  const {
+    name,
+    //collectionId, ownerId,
+    ...rest
+  } = payload
 
   if (uniqueName) {
     const existingDataSrc = await prisma.dataSource.findFirst({
@@ -59,8 +63,8 @@ export const createDataSrc = async (
       // },
       collectionDataSource: {
         // connect: {
-          // @ts-ignore - collectionId is already checked before calling this function
-          // id: collectionId,
+        // @ts-ignore - collectionId is already checked before calling this function
+        // id: collectionId,
         // },
       },
     },

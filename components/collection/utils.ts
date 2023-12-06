@@ -2,7 +2,7 @@ import * as z from 'zod'
 import { DataSourceStatus, DataSourceType } from '@prisma/client'
 
 import { formatDate } from '@/lib/utils'
-import { MAX_FILE_SIZE } from '@/components/datastore/constants'
+import { MAX_FILE_SIZE } from '@/components/collection/constants'
 
 export const getFormInitialValues = (
   dataStore?: CollectionExtended,

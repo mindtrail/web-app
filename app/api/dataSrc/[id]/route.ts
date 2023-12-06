@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataSrcDbOp } from '@/lib/db/dataSrc'
+import { deleteDataSrcDbOp } from '@/lib/db/dataSource'
 import { deleteFileFromGCS } from '@/lib/cloudStorage'
 
 export async function DELETE(

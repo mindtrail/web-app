@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataSrcList } from '@/lib/db/dataSrc'
+import { getDataSrcList } from '@/lib/db/dataSource'
 import { getVectorItemsByDataSrcId } from '@/lib/qdrant'
 
 import { HistoryView } from '@/components/history'

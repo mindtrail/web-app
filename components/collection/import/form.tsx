@@ -4,9 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
 
-import { DataSrcList } from '@/components/datastore/create/dataSrcList'
-import { useFileHandler } from '@/components/datastore/create/useFileHandler'
-import { useUrlHandler } from '@/components/datastore/create/useUrlHandler'
+import { DataSourceList } from '@/components/collection/create/dataSourceList'
+import { useFileHandler } from '@/components/collection/create/useFileHandler'
+import { useUrlHandler } from '@/components/collection/create/useUrlHandler'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,13 +38,13 @@ import {
 import {
   ACCEPTED_FILE_REACT_DROPZONE,
   DROPZONE_STYLES,
-} from '@/components/datastore/constants'
+} from '@/components/collection/constants'
 
 import {
   dataStoreFormSchema,
   getFormInitialValues,
   DataStoreFormValues,
-} from '@/components/datastore/utils'
+} from '@/components/collection/utils'
 import { DataSourceType } from '@prisma/client'
 
 type FormProps = {
@@ -53,7 +53,7 @@ type FormProps = {
   existingDataStore?: CollectionExtended
 }
 
-export function DataStoreForm(props: FormProps) {
+export function ImportForm(props: FormProps) {
   const { onSubmit, existingDataStore, onScrapeWebsite } = props
 
   const defaultValues: DataStoreFormValues = useMemo(
@@ -145,7 +145,7 @@ export function DataStoreForm(props: FormProps) {
 
     if (onScrapeWebsite) {
       // const url = window.prompt('Enter a URL to scrape')
-      onScrapeWebsite('https://www.fuer-gruender.de/')
+      // onScrapeWebsite('https://www.fuer-gruender.de/')
     }
   }
 
@@ -174,44 +174,14 @@ export function DataStoreForm(props: FormProps) {
       : DROPZONE_STYLES.DEFAULT
   }, [isDragAccept, isDragReject])
 
-  const defaultTab = useMemo(() => {
-    return urls?.length && !files?.length ? 'urls' : 'files'
-  }, [urls, files])
-
   return (
     <>
       <Form {...form}>
         <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
-          <FormField
-            control={control}
-            name='name'
-            render={({ field }) => (
-              <FormItem className='relative'>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder='Knowledge Base Name' {...field} />
-                </FormControl>
-                <FormMessage className='absolute' />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name='description'
-            render={({ field }) => (
-              <FormItem className='relative'>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input placeholder='What the KB contains' {...field} />
-                </FormControl>
-                <FormMessage className='absolute' />
-              </FormItem>
-            )}
-          />
-          <Tabs defaultValue={defaultTab}>
+          <Tabs defaultValue='urls'>
             <TabsList className='grid w-full grid-cols-2 relative'>
+              <TabsTrigger value='urls'>URLs</TabsTrigger>
               <TabsTrigger value='files'>Files</TabsTrigger>
-              <TabsTrigger value='urls'>Website</TabsTrigger>
               {filesOrUrlsError && (
                 <span className='text-[0.8rem] font-medium text-destructive absolute top-14 right-0'>
                   {filesOrUrlsError?.message}
@@ -262,7 +232,7 @@ export function DataStoreForm(props: FormProps) {
                     </FormItem>
                   )}
                 />
-                <DataSrcList
+                <DataSourceList
                   type={DataSourceType.file}
                   acceptedItems={files}
                   rejectedItems={rejectedFiles}
@@ -283,7 +253,7 @@ export function DataStoreForm(props: FormProps) {
                         <FormLabel
                           className={filesOrUrlsError && 'text-destructive'}
                         >
-                          Website
+                          URL List
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -298,7 +268,7 @@ export function DataStoreForm(props: FormProps) {
                   <div className='flex items-center gap-4 mt-4'>
                     <Switch
                       id='autoCrawl'
-                      disabled={true}
+                      // disabled={true}
                       checked={autoCrawl}
                       onCheckedChange={() => setAutoCrawl(!autoCrawl)}
                     />
@@ -324,7 +294,7 @@ export function DataStoreForm(props: FormProps) {
                     Fetch Links
                   </Button>
                 )}
-                <DataSrcList
+                <DataSourceList
                   type={DataSourceType.web_page}
                   acceptedItems={urls}
                   charCount={charCount}
@@ -338,7 +308,7 @@ export function DataStoreForm(props: FormProps) {
           <div className='flex justify-between w-full'>
             <Button type='submit' size='lg' disabled={processing}>
               {processing && <IconSpinner className='mr-2' />}
-              {existingDataStore ? 'Save Changes' : 'Create'}
+              Import
             </Button>
           </div>
         </form>

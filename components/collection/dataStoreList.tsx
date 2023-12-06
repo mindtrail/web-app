@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { PlusIcon } from '@radix-ui/react-icons'
 
 import { Typography } from '@/components/typography'
-import { DataStoreListItem } from '@/components/datastore/dataStoreItem'
+import { DataStoreListItem } from '@/components/collection/dataStoreItem'
 import { deleteDataStoreApiCall } from '@/lib/api/dataStore'
 
 import { Button, buttonVariants } from '@/components/ui/button'

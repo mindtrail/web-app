@@ -4,7 +4,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { DataSourceStatus, DataSourceType } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
-import { StatusIcon } from '@/components/datastore/statusIcon'
+import { StatusIcon } from '@/components/collection/statusIcon'
 import { Button } from '@/components/ui/button'
 
 import {
