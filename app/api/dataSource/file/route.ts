@@ -70,8 +70,8 @@ export async function POST(req: Request) {
 
   const dataSourcePayload = {
     name: fileName,
-    collectionId,
-    ownerId: userId,
+    // collectionId,
+    // ownerId: userId,
     type: DataSourceType.file,
     nbChunks,
     textSize,
