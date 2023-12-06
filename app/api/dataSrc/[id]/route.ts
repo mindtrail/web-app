@@ -26,6 +26,6 @@ export async function DELETE(
 
     return NextResponse.json({ dataSrc })
   } catch (error) {
-    return new NextResponse('DataStore not found', { status: 404 })
+    return new NextResponse('Collection not found', { status: 404 })
   }
 }

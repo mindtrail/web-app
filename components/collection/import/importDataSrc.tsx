@@ -10,16 +10,16 @@ import { DataStoreFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
 
-import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSrc'
+import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSource'
 
 interface ImportDataSrc extends React.ComponentProps<'div'> {
   userId: string
-  dataStore: CollectionExtended
+  collection: CollectionExtended
 }
 
 export function ImportDataSrc({
   userId,
-  dataStore: existingDataStore,
+  collection: existingDataStore,
 }: ImportDataSrc) {
   const [state, dispatch] = useContext(GlobalStateContext)
 

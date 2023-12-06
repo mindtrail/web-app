@@ -1,6 +1,6 @@
-export const DATASTORE_ENDPOINT = '/api/datastore'
+export const DATASTORE_ENDPOINT = '/api/collection'
 
-export async function createDataStoreApiCall(data: CreateCollection) {
+export async function createCollectionApiCall(data: CreateCollection) {
   const response = await fetch(DATASTORE_ENDPOINT, {
     method: 'POST',
     headers: {
@@ -11,13 +11,13 @@ export async function createDataStoreApiCall(data: CreateCollection) {
 
   const newDataStore = await response.json()
   if (!newDataStore) {
-    throw new Error('Failed to create DataStore')
+    throw new Error('Failed to create Collection')
   }
 
   return newDataStore
 }
 
-export async function updateDataStoreApiCall(
+export async function updateCollectionApiCall(
   dataStoreId: string,
   data: Partial<CreateCollection>,
 ) {
@@ -31,13 +31,13 @@ export async function updateDataStoreApiCall(
 
   const updatedDataStore = await response.json()
   if (!updatedDataStore) {
-    throw new Error('Failed to update DataStore')
+    throw new Error('Failed to update Collection')
   }
 
   return updatedDataStore
 }
 
-export const deleteDataStoreApiCall = async (dataStoreId: string) => {
+export const deleteCollectionApiCall = async (dataStoreId: string) => {
   const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
     method: 'DELETE',
   })

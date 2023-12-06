@@ -21,15 +21,15 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 type itemProps = {
-  dataStore: CollectionExtended
+  collection: CollectionExtended
   handleEdit: (id: string) => void
   handleDelete: (id: string, name: string) => void
   handleClick: (id: string) => void
 }
 
 export function DataStoreListItem(props: itemProps) {
-  const { dataStore, handleEdit, handleDelete, handleClick } = props
-  const { id, name, description, dataSrcs } = dataStore
+  const { collection, handleEdit, handleDelete, handleClick } = props
+  const { id, name, description, dataSrcs } = collection
 
   return (
     <div

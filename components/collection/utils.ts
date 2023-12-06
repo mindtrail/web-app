@@ -5,13 +5,13 @@ import { formatDate } from '@/lib/utils'
 import { MAX_FILE_SIZE } from '@/components/collection/constants'
 
 export const getFormInitialValues = (
-  dataStore?: CollectionExtended,
+  collection?: CollectionExtended,
 ): DataStoreFormValues => {
-  if (dataStore) {
+  if (collection) {
     return {
-      name: dataStore.name,
-      description: dataStore.description || '',
-      files: dataStore.dataSrcs
+      name: collection.name,
+      description: collection.description || '',
+      files: collection.dataSrcs
         .filter((file) => file.type === DataSourceType.file)
         .map((file) => ({
           file,
@@ -19,7 +19,7 @@ export const getFormInitialValues = (
           status: file.status,
           charCount: file.textSize,
         })),
-      urls: dataStore.dataSrcs
+      urls: collection.dataSrcs
         .filter((file) => file.type === DataSourceType.web_page)
         .map((url) => ({
           file: url,

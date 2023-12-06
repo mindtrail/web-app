@@ -24,7 +24,7 @@ export async function Header() {
           Mind Trail
         </Link>
 
-        {/* {user && <Link href='/datastore'>Knowledge Bases</Link>} */}
+        {/* {user && <Link href='/collection'>Knowledge Bases</Link>} */}
 
         <div className='flex justify-end items-center w-40 relative'>
           {user ? (

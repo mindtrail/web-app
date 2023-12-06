@@ -34,14 +34,14 @@ export default async function ChatPage() {
   }
   const userId = session.user.id
 
-  const dataStore = await getCollectionDbOp({
+  const collection = await getCollectionDbOp({
     userId,
     dataStoreId: TEST_DATA_STORE,
   })
 
-  if (!dataStore) {
-    redirect('/datastore?error=not-found')
+  if (!collection) {
+    redirect('/collection?error=not-found')
   }
 
-  return <ImportDataSrc userId={userId} dataStore={dataStore} />
+  return <ImportDataSrc userId={userId} collection={collection} />
 }

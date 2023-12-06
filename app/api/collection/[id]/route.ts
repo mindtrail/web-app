@@ -21,7 +21,7 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
     const datastoreList = await deleteCollectionDbOp(userId, dataStoreId)
     return NextResponse.json({ datastoreList })
   } catch (error) {
-    return new NextResponse('DataStore not found', { status: 404 })
+    return new NextResponse('Collection not found', { status: 404 })
   }
 }
 
@@ -47,16 +47,16 @@ export async function PATCH(req: Request, { params }: EditRouteParams) {
   }
 
   try {
-    const dataStore = await updateCollectionDbOp({
+    const collection = await updateCollectionDbOp({
       dataStoreId,
       userId,
       ...rest,
     })
 
-    return NextResponse.json(dataStore)
+    return NextResponse.json(collection)
   } catch (error) {
     console.error(error)
-    return new Response('Error creating datastore', {
+    return new Response('Error creating collection', {
       status: 500,
     })
   }

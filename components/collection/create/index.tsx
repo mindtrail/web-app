@@ -10,20 +10,17 @@ import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
 import { useContext } from 'react'
 
-import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSrc'
-import {
-  createDataStoreApiCall,
-  updateDataStoreApiCall,
-} from '@/lib/api/dataStore'
+import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSource'
+import { create, updateCollectionApiCall } from '@/lib/api/collection'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   userId: string
-  dataStore?: CollectionExtended
+  collection?: CollectionExtended
 }
 
 export function CreateCollection({
   userId,
-  dataStore: existingDataStore,
+  collection: existingDataStore,
 }: DataStoreProps) {
   const [state, dispatch] = useContext(GlobalStateContext)
 
@@ -58,7 +55,7 @@ export function CreateCollection({
     const { name, description, files, newURL } = data
     const dsPayload = { userId, name, description }
 
-    const newDataStore = await createDataStoreApiCall(dsPayload)
+    const newDataStore = await createCollectionApiCall(dsPayload)
     const dataStoreId = newDataStore.id
 
     if (newURL) {
@@ -109,9 +106,9 @@ export function CreateCollection({
       dsPayload.description = description
     }
 
-    // We only update the datastore if there are changes
+    // We only update the collection if there are changes
     if (dsPayload.name || dsPayload.description) {
-      await updateDataStoreApiCall(dataStoreId, dsPayload)
+      await updateCollectionApiCall(dataStoreId, dsPayload)
     }
 
     if (newURL) {

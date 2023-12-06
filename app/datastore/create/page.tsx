@@ -21,7 +21,7 @@ export default async function CreateDS() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/datastore/create`)
+    redirect(`/api/auth/signin?callbackUrl=/collection/create`)
   }
 
   const userId = session?.user?.id

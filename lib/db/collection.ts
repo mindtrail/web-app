@@ -49,7 +49,7 @@ export const createCollectionDbOp = async ({
   name,
   description,
 }: CreateCollection) => {
-  // Check if a datastore with the specified name already exists for the user
+  // Check if a collection with the specified name already exists for the user
   const nameExists = await prisma.collection.findFirst({
     where: {
       name,
@@ -111,7 +111,7 @@ export const deleteCollectionDbOp = async (
   userId: string,
   collectionId: string,
 ) => {
-  // Delete all data sources for the datastore
+  // Delete all data sources for the collection
   const collection = await prisma.collection.delete({
     where: {
       id: collectionId,

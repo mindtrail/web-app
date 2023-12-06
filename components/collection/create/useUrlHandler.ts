@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { DataSrc } from '@prisma/client'
-import { deleteDataSrcApiCall } from '@/lib/api/dataSrc'
+import { deleteDataSrcApiCall } from '@/lib/api/dataSource'
 import { useToast } from '@/components/ui/use-toast'
 
 export function useUrlHandler(initialUrls: URLScrapped[] = []) {

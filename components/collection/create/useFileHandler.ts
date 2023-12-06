@@ -3,7 +3,10 @@ import { DataSourceStatus, DataSrc } from '@prisma/client'
 
 import { useToast } from '@/components/ui/use-toast'
 import { MAX_NR_OF_FILES } from '@/components/collection/constants'
-import { getFileMetadataApiCall, deleteDataSrcApiCall } from '@/lib/api/dataSrc'
+import {
+  getFileMetadataApiCall,
+  deleteDataSrcApiCall,
+} from '@/lib/api/dataSource'
 
 import {
   filterFiles,

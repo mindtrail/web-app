@@ -31,25 +31,25 @@ export default async function EditDS({ params }: EditDSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/datastore/${params.id}`)
+    redirect(`/api/auth/signin?callbackUrl=/collection/${params.id}`)
   }
 
   const userId = session?.user?.id
   const dataStoreId = params.id
 
-  const dataStore = await getCollectionDbOp({ userId, dataStoreId })
+  const collection = await getCollectionDbOp({ userId, dataStoreId })
 
-  if (!dataStore) {
-    redirect('/datastore?error=not-found')
+  if (!collection) {
+    redirect('/collection?error=not-found')
   }
 
   return (
     <>
-      {!dataStore ? (
+      {!collection ? (
         <div>Knowledge Base Not Found...</div>
       ) : (
         <>
-          <CreateCollection userId={userId} dataStore={dataStore} />
+          <CreateCollection userId={userId} collection={collection} />
         </>
       )}
     </>
