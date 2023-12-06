@@ -50,7 +50,7 @@ import { DataSrcType } from '@prisma/client'
 type FormProps = {
   onScrapeWebsite?: (url: string) => Promise<void>
   onSubmit: (data: DataStoreFormValues) => Promise<void>
-  existingDataStore?: DataStoreExtended
+  existingDataStore?: CollectionExtended
 }
 
 export function DataStoreForm(props: FormProps) {

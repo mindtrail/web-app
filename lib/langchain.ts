@@ -7,7 +7,7 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { Document } from 'langchain/document'
 import { PromptTemplate } from 'langchain/prompts'
 
-import { searchSimilarText } from '@/lib/db/dataStore'
+import { searchSimilarText } from '@/lib/db/collection'
 
 const CHAT_SYSTEM = process.env.CHAT_SYSTEM || ''
 const CHAT_PROMPT = process.env.CHAT_PROMPT || ''

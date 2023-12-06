@@ -1,6 +1,6 @@
 export const DATASTORE_ENDPOINT = '/api/datastore'
 
-export async function createDataStoreApiCall(data: CreateDataStore) {
+export async function createDataStoreApiCall(data: CreateCollection) {
   const response = await fetch(DATASTORE_ENDPOINT, {
     method: 'POST',
     headers: {
@@ -19,7 +19,7 @@ export async function createDataStoreApiCall(data: CreateDataStore) {
 
 export async function updateDataStoreApiCall(
   dataStoreId: string,
-  data: Partial<CreateDataStore>,
+  data: Partial<CreateCollection>,
 ) {
   const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
     method: 'PATCH',

@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 type itemProps = {
-  dataStore: DataStoreExtended
+  dataStore: CollectionExtended
   handleEdit: (id: string) => void
   handleDelete: (id: string, name: string) => void
   handleClick: (id: string) => void

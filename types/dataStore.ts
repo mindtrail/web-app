@@ -1,21 +1,21 @@
-import { DataStore, DataSrc, DataSrcStatus } from '@prisma/client'
+import { Collection, DataSource, DataSourceStatus } from '@prisma/client'
 
 declare global {
-  type DataStoreExtended = DataStore & {
-    dataSrcs: DataSrc[]
+  type CollectionExtended = Collection & {
+    dataSources: DataSource[]
   }
 
   type AcceptedFile = {
-    file: File | DataSrc
+    file: File | DataSource
     source?: 'local' | 'remote'
-    status?: DataSrcStatus
+    status?: DataSourceStatus
     charCount?: number
   }
 
   type URLScrapped = {
-    file: DataSrc
+    file: DataSource
     source?: 'local' | 'remote'
-    status?: DataSrcStatus
+    status?: DataSourceStatus
     charCount?: number
   }
 
@@ -35,14 +35,14 @@ declare global {
     type: string
   }
 
-  type CreateDataStore = {
+  type CreateCollection = {
     userId: string
     name: string
     description: string
   }
 
-  type UpdateDataStore = Partial<CreateDataStore> & {
-    dataStoreId: string
+  type UpdateCollection = Partial<CreateCollection> & {
+    collectionId: string
   }
 
   type DeleteHandler = (

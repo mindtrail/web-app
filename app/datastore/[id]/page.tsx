@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataStoreById } from '@/lib/db/dataStore'
+import { getCollectionDbOp } from '@/lib/db/collection'
 
-import { CreateDataStore } from '@/components/datastore'
+import { CreateCollection } from '@/components/datastore'
 
 export interface EditDSProps {
   params: {
@@ -37,7 +37,7 @@ export default async function EditDS({ params }: EditDSProps) {
   const userId = session?.user?.id
   const dataStoreId = params.id
 
-  const dataStore = await getDataStoreById({ userId, dataStoreId })
+  const dataStore = await getCollectionDbOp({ userId, dataStoreId })
 
   if (!dataStore) {
     redirect('/datastore?error=not-found')
@@ -49,7 +49,7 @@ export default async function EditDS({ params }: EditDSProps) {
         <div>Knowledge Base Not Found...</div>
       ) : (
         <>
-          <CreateDataStore userId={userId} dataStore={dataStore} />
+          <CreateCollection userId={userId} dataStore={dataStore} />
         </>
       )}
     </>

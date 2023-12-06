@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataStoreById } from '@/lib/db/dataStore'
+import { getCollectionDbOp } from '@/lib/db/collection'
 import { ImportDataSrc } from '@/components/datastore/import/importDataSrc'
 
 const TEST_DATA_STORE = process.env.TEST_DATASTORE_ID || ''
@@ -34,7 +34,7 @@ export default async function ChatPage() {
   }
   const userId = session.user.id
 
-  const dataStore = await getDataStoreById({
+  const dataStore = await getCollectionDbOp({
     userId,
     dataStoreId: TEST_DATA_STORE,
   })
@@ -43,5 +43,5 @@ export default async function ChatPage() {
     redirect('/datastore?error=not-found')
   }
 
-  return <ImportDataSrc userId={userId}  dataStore={dataStore} />
+  return <ImportDataSrc userId={userId} dataStore={dataStore} />
 }

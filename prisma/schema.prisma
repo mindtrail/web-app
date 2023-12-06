@@ -104,7 +104,7 @@ model Collection {
 
   name        String
   description String?
-  type        CollectionType
+  type        CollectionType?
   visibility  CollectionVisibility @default(private)
   config Json?
 
