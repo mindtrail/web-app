@@ -27,13 +27,13 @@ export async function searchHistory(searchQuery: string) {
     }
 
     const { dataSrcId, fileName: url } = websiteFound
-    const dataSrc = await getDataSrcById(dataSrcId)
+    const dataSource = await getDataSrcById(dataSrcId)
     const image = await getOGImage(url)
 
     return NextResponse.json({
       ...websiteFound,
       image,
-      summary: dataSrc?.summary || '',
+      summary: dataSource?.summary || '',
     })
   } catch (error) {
     console.error('An error occurred:', error)

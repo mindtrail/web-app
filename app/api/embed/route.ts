@@ -73,8 +73,8 @@ export async function POST(req: Request) {
           thumbnail: category,
         }
 
-        const dataSrc = await createDataSrc(dataSrcPayload)
-        const dataSrcId = dataSrc?.id
+        const dataSource = await createDataSrc(dataSrcPayload)
+        const dataSrcId = dataSource?.id
 
         if (!dataSrcId) {
           return new NextResponse('Empty docs', {
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
       collectionName: `${userId}-${dataStoreId}`,
     })
 
-    // Update the dataSrc status to synched for each doc
+    // Update the dataSource status to synched for each doc
     filteredDocs.map(({ metadata }) => {
       const { dataSrcId } = metadata
       updateDataSrc({ id: dataSrcId, status: DataSourceStatus.synched })

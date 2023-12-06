@@ -20,11 +20,11 @@ export async function DELETE(
     })
   }
   try {
-    const dataSrc = await deleteDataSrcDbOp(userId, dataSrcId)
-    // Delete dataSrc from Qdrant and GCS
-    const res = await deleteFileFromGCS(dataSrc)
+    const dataSource = await deleteDataSrcDbOp(userId, dataSrcId)
+    // Delete dataSource from Qdrant and GCS
+    const res = await deleteFileFromGCS(dataSource)
 
-    return NextResponse.json({ dataSrc })
+    return NextResponse.json({ dataSource })
   } catch (error) {
     return new NextResponse('Collection not found', { status: 404 })
   }

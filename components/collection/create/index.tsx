@@ -11,7 +11,10 @@ import { GlobalStateContext } from '@/context/global-state'
 import { useContext } from 'react'
 
 import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSource'
-import { create, updateCollectionApiCall } from '@/lib/api/collection'
+import {
+  createCollectionApiCall,
+  updateCollectionApiCall,
+} from '@/lib/api/collection'
 
 interface DataStoreProps extends React.ComponentProps<'div'> {
   userId: string

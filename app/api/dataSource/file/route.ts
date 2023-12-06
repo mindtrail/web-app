@@ -77,8 +77,8 @@ export async function POST(req: Request) {
     textSize,
   }
 
-  const dataSrc = await createDataSrc(dataSrcPayload)
-  const dataSrcId = dataSrc?.id
+  const dataSource = await createDataSrc(dataSrcPayload)
+  const dataSrcId = dataSource?.id
 
   if (!dataSrcId) {
     return new Response(`Failed to save File. Try again`, {

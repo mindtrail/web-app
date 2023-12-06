@@ -42,13 +42,13 @@ export async function POST(req: Request) {
     }
 
     const { dataSrcId, fileName: url } = websiteFound
-    const dataSrc = await getDataSrcById(dataSrcId)
+    const dataSource = await getDataSrcById(dataSrcId)
     const image = await getOGImage(url)
 
     return Response.json({
       ...websiteFound,
       image,
-      summary: dataSrc?.summary || '',
+      summary: dataSource?.summary || '',
     })
     // return callLangchainChat({ searchQuery, chatId, userId })
   } catch (error) {

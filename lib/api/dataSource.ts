@@ -1,6 +1,6 @@
-export const DATA_SRC = '/api/dataSrc'
-export const UPLOAD_ENDPOINT = '/api/dataSrc/file'
-export const METADATA_ENDPOINT = '/api/dataSrc/metadata'
+export const DATA_SRC = '/api/dataSource'
+export const UPLOAD_ENDPOINT = '/api/dataSource/file'
+export const METADATA_ENDPOINT = '/api/dataSource/metadata'
 export const SCRAPER_ENDPOINT = '/api/scraper'
 
 export async function uploadFileApiCall(file: File, dataStoreId: string) {
@@ -37,7 +37,7 @@ export async function getFileMetadataApiCall(file: File) {
   return response.json()
 }
 
-export const deleteDataSrcApiCall = async (fileId: string) => {
+export const deleteDataSourceApiCall = async (fileId: string) => {
   const response = await fetch(`${DATA_SRC}/${fileId}`, {
     method: 'DELETE',
   })

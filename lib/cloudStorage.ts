@@ -76,8 +76,8 @@ export async function uploadToGCS(props: UploadToGCSProps) {
   }
 }
 
-export async function deleteFileFromGCS(dataSrc: DataSrc) {
-  const { id: dataSrcId, dataStoreId, ownerId: userId, type, name } = dataSrc
+export async function deleteFileFromGCS(dataSource: DataSrc) {
+  const { id: dataSrcId, dataStoreId, ownerId: userId, type, name } = dataSource
 
   try {
     const bucket = storage.bucket(bucketName)
