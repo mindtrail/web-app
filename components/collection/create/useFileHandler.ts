@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { DataSourceStatus, DataSrc } from '@prisma/client'
+import { DataSourceStatus, DataSource } from '@prisma/client'
 
 import { useToast } from '@/components/ui/use-toast'
 import { MAX_NR_OF_FILES } from '@/components/collection/constants'
@@ -106,7 +106,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
     }
 
     try {
-      const { id, name } = fileToDelete.file as DataSrc
+      const { id, name } = fileToDelete.file as DataSource
       await deleteDataSourceApiCall(id)
 
       toast({

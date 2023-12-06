@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { DataSrc } from '@prisma/client'
+import { DataSource } from '@prisma/client'
 import { deleteDataSourceApiCall } from '@/lib/api/dataSource'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -37,7 +37,7 @@ export function useUrlHandler(initialUrls: URLScrapped[] = []) {
     }
 
     try {
-      const { id, name } = urlToDelete.file as DataSrc
+      const { id, name } = urlToDelete.file as DataSource
       await deleteDataSourceApiCall(id)
 
       toast({

@@ -21,13 +21,16 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  let { urls, dataStoreId } = body
+  let { urls, collectionId } = body
   urls = typeof urls === 'string' ? [urls] : urls
 
-  if (!urls?.length || !dataStoreId) {
-    return new NextResponse('Invalid request, No URL or dataStoreId provided', {
-      status: 400,
-    })
+  if (!urls?.length || !collectionId) {
+    return new NextResponse(
+      'Invalid request, No URL or collectionId provided',
+      {
+        status: 400,
+      },
+    )
   }
 
   if (!SCRAPER_SERVICE_URL) {
@@ -42,7 +45,7 @@ export async function POST(req: Request) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ urls, dataStoreId, userId, limit: 10 }),
+      body: JSON.stringify({ urls, collectionId, userId, limit: 10 }),
     })
 
     if (!result.ok) {

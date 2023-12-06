@@ -4,14 +4,14 @@ import { getServerSession } from 'next-auth/next'
 import { revalidateTag } from 'next/cache'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataSrcDbOp } from '@/lib/db/dataSource'
+import { deleteDataSourceDbOp } from '@/lib/db/dataSource'
 import { deleteFileFromGCS } from '@/lib/cloudStorage'
 
 type deletePayload = {
-  dataSrcId: string
+  dataSourceId: string
 }
-export async function deleteDataSrc(props: deletePayload) {
-  const { dataSrcId } = props
+export async function deleteDataSource(props: deletePayload) {
+  const { dataSourceId } = props
 
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
@@ -23,7 +23,7 @@ export async function deleteDataSrc(props: deletePayload) {
   }
 
   try {
-    const dataSource = await deleteDataSrcDbOp(userId, dataSrcId)
+    const dataSource = await deleteDataSourceDbOp(userId, dataSourceId)
 
     // Delete dataSource from Qdrant and GCS
     // deleteFileFromGCS(dataSource)

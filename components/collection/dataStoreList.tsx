@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { PlusIcon } from '@radix-ui/react-icons'
 
 import { Typography } from '@/components/typography'
-import { DataStoreListItem } from '@/components/collection/dataStoreItem'
+import { CollectionListItem } from '@/components/collection/collectionItem'
 import { deleteCollectionApiCall } from '@/lib/api/collection'
 
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -22,8 +22,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 
-interface DataStoreListProps extends React.ComponentProps<'div'> {
-  dataStoreList: CollectionExtended[]
+interface CollectionListProps extends React.ComponentProps<'div'> {
+  collectionList: CollectionExtended[]
 }
 
 interface KbToDelete {
@@ -31,7 +31,7 @@ interface KbToDelete {
   name: string
 }
 
-export function DataStoreList({ dataStoreList }: DataStoreListProps) {
+export function CollectionList({ collectionList }: CollectionListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [kbToDelete, setKbToDelete] = useState<KbToDelete | null>(null)
   const { toast } = useToast()
@@ -88,8 +88,8 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
         </Link>
       </div>
       <div className='flex flex-wrap w-full'>
-        {dataStoreList.map((collection, index) => (
-          <DataStoreListItem
+        {collectionList.map((collection, index) => (
+          <CollectionListItem
             key={index}
             collection={collection}
             handleDelete={handleDelete}

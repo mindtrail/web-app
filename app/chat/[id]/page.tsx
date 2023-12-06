@@ -43,7 +43,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
 
   const collection = (await getCollectionDbOp({
     userId,
-    dataStoreId: chatId,
+    collectionId: chatId,
   })) as CollectionExtended
 
   if (!collection) {

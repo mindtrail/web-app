@@ -1,7 +1,7 @@
 import { QdrantClient, Schemas } from '@qdrant/js-client-rest'
 import { Document } from 'langchain/document'
 import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
-import { DataSrc } from '@prisma/client'
+import { DataSource } from '@prisma/client'
 
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { metadata } from '@/app/layout'
@@ -33,8 +33,8 @@ const QDRANT_ARGS: QdrantLibArgs = {
 interface CreateAndStoreVectors {
   docs: Document[]
   userId: string
-  dataStoreId: string
-  dataSrcId: string
+  collectionId: string
+  dataSourceId: string
 }
 
 type QdrantSearchResponse = Schemas['ScoredPoint'] & {
@@ -58,7 +58,7 @@ export const getVectorStore = (collectionName: string) => {
 }
 
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
-  const { docs, userId, dataStoreId, dataSrcId } = props
+  const { docs, userId, collectionId, dataSourceId } = props
 
   const collectionName = `bookmark-ai`
 
@@ -68,8 +68,8 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
       pageContent,
       metadata: {
         ...metadata,
-        dataStoreId,
-        dataSrcId,
+        collectionId,
+        dataSourceId,
         userId,
       },
     }
@@ -117,8 +117,8 @@ export const getCollections = async () => {
   return result.collections
 }
 
-export const getVectorItemsByDataSrcId = async (
-  dataSrcIdList: string[],
+export const getVectorItemsByDataSourceId = async (
+  dataSourceIdList: string[],
   collectionName?: string,
 ): Promise<[] | undefined> => {
   const client = new QdrantClient({
@@ -126,23 +126,23 @@ export const getVectorItemsByDataSrcId = async (
     apiKey: process.env.QDRANT_API_KEY,
   })
 
-  if (!dataSrcIdList?.length) {
+  if (!dataSourceIdList?.length) {
     return
   }
 
   try {
-    console.time('getVectorItemsByDataSrcId')
+    console.time('getVectorItemsByDataSourceId')
     const result = {}
 
     await Promise.all(
-      dataSrcIdList.map(async (dataSrcId) => {
+      dataSourceIdList.map(async (dataSourceId) => {
         const { points } = await client.scroll(DEFAULT_COLLECTION, {
           filter: {
             must: [
               {
-                key: 'metadata.dataSrcId',
+                key: 'metadata.dataSourceId',
                 match: {
-                  value: dataSrcId,
+                  value: dataSourceId,
                 },
               },
             ],
@@ -161,7 +161,7 @@ export const getVectorItemsByDataSrcId = async (
           point?.payload?.metadata
 
         // @ts-ignore
-        result[dataSrcId] = {
+        result[dataSourceId] = {
           hostName,
           metaDescription,
           pageTitle,
@@ -169,7 +169,7 @@ export const getVectorItemsByDataSrcId = async (
         return null
       }),
     )
-    console.timeEnd('getVectorItemsByDataSrcId')
+    console.timeEnd('getVectorItemsByDataSourceId')
 
     // @ts-ignore
     return result

@@ -30,7 +30,7 @@ declare global {
     metaDescription: string
     userId: string
     hostname: string
-    dataStoreId: string
+    collectionId: string
   }
 
   interface HTMLFile {

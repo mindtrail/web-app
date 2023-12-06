@@ -37,7 +37,7 @@ export const getCollectionDbOp = async ({
     where: { ownerId: userId, id: collectionId },
     include: {
       // @TODO: retrieve dataSources from the DB
-      // dataSrcs: true,
+      // dataSources: true,
     },
   })
 
@@ -97,7 +97,7 @@ export const updateCollectionDbOp = async ({
   return collection
 }
 
-export const deleteAllDataStoresForUser = async (userId: string) => {
+export const deleteAllCollectionsForUser = async (userId: string) => {
   const collection = await prisma.collection.deleteMany({
     where: {
       ownerId: userId,

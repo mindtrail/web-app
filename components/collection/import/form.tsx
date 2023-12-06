@@ -41,24 +41,24 @@ import {
 } from '@/components/collection/constants'
 
 import {
-  dataStoreFormSchema,
+  collectionFormSchema,
   getFormInitialValues,
-  DataStoreFormValues,
+  CollectionFormValues,
 } from '@/components/collection/utils'
 import { DataSourceType } from '@prisma/client'
 
 type FormProps = {
   onScrapeWebsite?: (url: string) => Promise<void>
-  onSubmit: (data: DataStoreFormValues) => Promise<void>
-  existingDataStore?: CollectionExtended
+  onSubmit: (data: CollectionFormValues) => Promise<void>
+  existingCollection?: CollectionExtended
 }
 
 export function ImportForm(props: FormProps) {
-  const { onSubmit, existingDataStore, onScrapeWebsite } = props
+  const { onSubmit, existingCollection, onScrapeWebsite } = props
 
-  const defaultValues: DataStoreFormValues = useMemo(
-    () => getFormInitialValues(existingDataStore),
-    [existingDataStore],
+  const defaultValues: CollectionFormValues = useMemo(
+    () => getFormInitialValues(existingCollection),
+    [existingCollection],
   )
 
   const [processing, setProcessing] = useState(false)
@@ -88,8 +88,8 @@ export function ImportForm(props: FormProps) {
     setDeleteURLOpen,
   } = useUrlHandler(defaultValues?.urls)
 
-  const form = useForm<DataStoreFormValues>({
-    resolver: zodResolver(dataStoreFormSchema),
+  const form = useForm<CollectionFormValues>({
+    resolver: zodResolver(collectionFormSchema),
     defaultValues,
     mode: 'onChange',
     shouldFocusError: false, // Prevents auto focusing on the first error, which can trigger error displays immediately.
@@ -132,7 +132,7 @@ export function ImportForm(props: FormProps) {
     return null
   }
 
-  const onFormSumbit = async (data: DataStoreFormValues) => {
+  const onFormSumbit = async (data: CollectionFormValues) => {
     setProcessing(true)
     await onSubmit(data)
     setProcessing(false)

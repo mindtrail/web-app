@@ -102,11 +102,11 @@ model Usage {
 model Collection {
   id String @id @default(cuid())
 
-  name        String
-  description String?
-  type        CollectionType?
-  visibility  CollectionVisibility @default(private)
-  config Json?
+  name          String
+  description   String?
+  vectorStore   VectorStore? @default(qdrant)
+  visibility    CollectionVisibility @default(private)
+  config        Json?
 
   // Self-relation fields
   parentId String?
@@ -343,7 +343,7 @@ enum DataSourceType {
   notion
 }
 
-enum CollectionType {
+enum VectorStore {
   qdrant
 }
 

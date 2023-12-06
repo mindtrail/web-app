@@ -6,29 +6,29 @@ import { DataSourceStatus } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { ImportForm } from '@/components/collection/import/form'
-import { DataStoreFormValues } from '@/components/collection/utils'
+import { CollectionFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
 
 import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSource'
 
-interface ImportDataSrc extends React.ComponentProps<'div'> {
+interface ImportDataSource extends React.ComponentProps<'div'> {
   userId: string
   collection: CollectionExtended
 }
 
-export function ImportDataSrc({
+export function ImportDataSource({
   userId,
-  collection: existingDataStore,
-}: ImportDataSrc) {
+  collection: existingCollection,
+}: ImportDataSource) {
   const [state, dispatch] = useContext(GlobalStateContext)
 
   const { toast } = useToast()
   const router = useRouter()
 
-  const onSubmit = async (data: DataStoreFormValues) => {
+  const onSubmit = async (data: CollectionFormValues) => {
     try {
-      await updateDataStore(data)
+      await updateCollection(data)
 
       router.push('/search?refresh=true')
     } catch (err) {
@@ -48,13 +48,13 @@ export function ImportDataSrc({
     console.log(data)
   }
 
-  const updateDataStore = async (data: DataStoreFormValues) => {
+  const updateCollection = async (data: CollectionFormValues) => {
     const { name, description, files, urls, newURL } = data
     const {
-      id: dataStoreId,
+      id: collectionId,
       name: existingName,
       description: existingDescription,
-    } = existingDataStore
+    } = existingCollection
 
     const unsynchedFiles = files?.filter(
       ({ status }) => status === DataSourceStatus.unsynched,
@@ -63,18 +63,18 @@ export function ImportDataSrc({
     if (newURL) {
       // @TODO: If I will add https:// automatically, it should be done here
       const urlList = newURL.split(',').map((url) => url.trim())
-      scrapeURLsApiCall(urlList, dataStoreId)
+      scrapeURLsApiCall(urlList, collectionId)
     }
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {
-      await uploadFiles(unsynchedFiles, dataStoreId)
+      await uploadFiles(unsynchedFiles, collectionId)
     }
 
     // Those are the only async operations
     if (urls?.length || unsynchedFiles?.length) {
       dispatch({
         type: 'ADD_UNSYNCED_DATA_STORE',
-        payload: { id: dataStoreId },
+        payload: { id: collectionId },
       })
     }
 
@@ -84,9 +84,9 @@ export function ImportDataSrc({
     })
   }
 
-  const uploadFiles = async (files: AcceptedFile[], dataStoreId: string) => {
+  const uploadFiles = async (files: AcceptedFile[], collectionId: string) => {
     const fileUploadPromises = files.map(async ({ file }) => {
-      return await uploadFileApiCall(file as File, dataStoreId)
+      return await uploadFileApiCall(file as File, collectionId)
     })
     const res = await Promise.allSettled(fileUploadPromises)
     return res
@@ -100,7 +100,7 @@ export function ImportDataSrc({
       <div className='max-w-xl w-full'>
         <ImportForm
           onSubmit={onSubmit}
-          existingDataStore={existingDataStore}
+          existingCollection={existingCollection}
           onScrapeWebsite={onScrapeWebsite}
         />
       </div>

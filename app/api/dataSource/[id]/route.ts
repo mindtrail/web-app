@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataSrcDbOp } from '@/lib/db/dataSource'
+import { deleteDataSourceDbOp } from '@/lib/db/dataSource'
 import { deleteFileFromGCS } from '@/lib/cloudStorage'
 
 export async function DELETE(
@@ -12,7 +12,7 @@ export async function DELETE(
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const dataSrcId = params.id
+  const dataSourceId = params.id
 
   if (!userId) {
     return new NextResponse('Unauthorized', {
@@ -20,7 +20,7 @@ export async function DELETE(
     })
   }
   try {
-    const dataSource = await deleteDataSrcDbOp(userId, dataSrcId)
+    const dataSource = await deleteDataSourceDbOp(userId, dataSourceId)
     // Delete dataSource from Qdrant and GCS
     const res = await deleteFileFromGCS(dataSource)
 

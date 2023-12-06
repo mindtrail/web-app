@@ -10,7 +10,7 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const dataStoreId = params.id
+  const collectionId = params.id
 
   if (!userId) {
     return new NextResponse('Unauthorized', {
@@ -18,8 +18,8 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
     })
   }
   try {
-    const datastoreList = await deleteCollectionDbOp(userId, dataStoreId)
-    return NextResponse.json({ datastoreList })
+    const collectionList = await deleteCollectionDbOp(userId, collectionId)
+    return NextResponse.json({ collectionList })
   } catch (error) {
     return new NextResponse('Collection not found', { status: 404 })
   }
@@ -29,7 +29,7 @@ export async function PATCH(req: Request, { params }: EditRouteParams) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const dataStoreId = params.id
+  const collectionId = params.id
 
   if (!userId) {
     return new NextResponse('Unauthorized', {
@@ -48,7 +48,7 @@ export async function PATCH(req: Request, { params }: EditRouteParams) {
 
   try {
     const collection = await updateCollectionDbOp({
-      dataStoreId,
+      collectionId,
       userId,
       ...rest,
     })

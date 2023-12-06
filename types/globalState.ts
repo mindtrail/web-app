@@ -2,15 +2,15 @@ import {} from '@prisma/client'
 
 declare global {
   // globalState.ts
-  type DataStoreToSync = {
+  type CollectionToSync = {
     id: string
   }
 
   type GlobalState = {
-    unsyncedDataStores: DataStoreToSync[]
+    unsyncedCollections: CollectionToSync[]
   }
 
   type Action =
-    | { type: 'ADD_UNSYNCED_DATA_STORE'; payload: DataStoreToSync }
-    | { type: 'REMOVE_SYNCED_DATA_STORE'; payload: DataStoreToSync } // payload is the id of the Collection
+    | { type: 'ADD_UNSYNCED_DATA_STORE'; payload: CollectionToSync }
+    | { type: 'REMOVE_SYNCED_DATA_STORE'; payload: CollectionToSync } // payload is the id of the Collection
 }

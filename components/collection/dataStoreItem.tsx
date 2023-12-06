@@ -27,9 +27,9 @@ type itemProps = {
   handleClick: (id: string) => void
 }
 
-export function DataStoreListItem(props: itemProps) {
+export function CollectionListItem(props: itemProps) {
   const { collection, handleEdit, handleDelete, handleClick } = props
-  const { id, name, description, dataSrcs } = collection
+  const { id, name, description, dataSources } = collection
 
   return (
     <div
@@ -42,7 +42,7 @@ export function DataStoreListItem(props: itemProps) {
           <span className='w-32 shrink-0 overflow-hidden whitespace-nowrap text-ellipsis'>
             {description}
           </span>
-          {dataSrcs.map(({ status, name }, index) => (
+          {dataSources.map(({ status, name }, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
               <StatusIcon status={status} />
               <div className='text-sm text-muted-foreground '>

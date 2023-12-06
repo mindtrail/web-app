@@ -4,8 +4,8 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataSrcList } from '@/lib/db/dataSource'
-import { getVectorItemsByDataSrcId } from '@/lib/qdrant'
+import { getDataSourceList } from '@/lib/db/dataSource'
+import { getVectorItemsByDataSourceId } from '@/lib/qdrant'
 
 import { HistoryView } from '@/components/history'
 
@@ -35,9 +35,9 @@ export default async function ChatPage() {
 
   const userId = session.user.id
 
-  let historyItems = (await getDataSrcList(userId)).slice(0, 5)
+  let historyItems = (await getDataSourceList(userId)).slice(0, 5)
   const historyItemsIds = historyItems.map((item) => item.id)
-  const metadata = await getVectorItemsByDataSrcId(historyItemsIds)
+  const metadata = await getVectorItemsByDataSourceId(historyItemsIds)
 
   if (metadata) {
     historyItems = historyItems.map((item) => {

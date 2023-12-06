@@ -35,9 +35,9 @@ export default async function EditDS({ params }: EditDSProps) {
   }
 
   const userId = session?.user?.id
-  const dataStoreId = params.id
+  const collectionId = params.id
 
-  const collection = await getCollectionDbOp({ userId, dataStoreId })
+  const collection = await getCollectionDbOp({ userId, collectionId })
 
   if (!collection) {
     redirect('/collection?error=not-found')
