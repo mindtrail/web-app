@@ -23,15 +23,15 @@ export async function deleteDataSrc(props: deletePayload) {
   }
 
   try {
-    const dataSrc = await deleteDataSrcDbOp(userId, dataSrcId)
+    const dataSource = await deleteDataSrcDbOp(userId, dataSrcId)
 
-    // Delete dataSrc from Qdrant and GCS
-    // deleteFileFromGCS(dataSrc)
+    // Delete dataSource from Qdrant and GCS
+    // deleteFileFromGCS(dataSource)
 
     // @TODO delete points from Qdrant -> Dimitri
 
     revalidateTag('history')
-    return { dataSrc }
+    return { dataSource }
   } catch (error) {
     return { status: 404 }
   }

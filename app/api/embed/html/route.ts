@@ -70,8 +70,8 @@ export async function POST(req: Request) {
     }
 
     const uniqueName = true
-    const dataSrc = await createDataSrc(dataSrcPayload, uniqueName)
-    const dataSrcId = dataSrc?.id
+    const dataSource = await createDataSrc(dataSrcPayload, uniqueName)
+    const dataSrcId = dataSource?.id
 
     if (!dataSrcId) {
       return new NextResponse('Empty docs', {
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
       collectionName: `bookmark-ai`,
     })
 
-    // Update the dataSrc status to synched for each doc
+    // Update the dataSource status to synched for each doc
     documents.map(({ metadata }) => {
       const { dataSrcId } = metadata
       updateDataSrc({ id: dataSrcId, status: DataSourceStatus.synched })
