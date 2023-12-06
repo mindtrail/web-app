@@ -72,8 +72,10 @@ model User {
   hasOptInEmail Boolean? @default(false)
 
   collections   Collection[]
-  // dataSources   DataSource[]
   dataSourceUsers DataSourceUser[] // Relation to DataSourceUser for data sources
+
+  filters Filter[] // Relation to Filter, assuming users can create/save filters
+
 
   subscriptions Subscription[]  @relation("user")
   usage         Usage?
@@ -105,10 +107,18 @@ model Collection {
   description String?
   type        CollectionType
   visibility  CollectionVisibility @default(private)
+  config Json?
 
+  // Self-relation fields
+  parentId String?
+  parent   Collection? @relation("ParentChild", fields: [parentId], references: [id])
+  children Collection[] @relation("ParentChild")
+
+  // Many-to-Many relation with DataSource
   collectionDataSource CollectionDataSource[]
 
-  config Json?
+  // One-to-Many relation with Filter
+  filters Filter[]
 
   ownerId String?
   owner   User?   @relation(fields: [ownerId], references: [id])
@@ -151,10 +161,12 @@ model DataSource {
 
 // New join table for DataSource and User many-to-many relationship
 model DataSourceUser {
-  dataSourceId String
-  userId String
-  dataSource DataSource @relation(fields: [dataSourceId], references: [id])
-  user        User @relation(fields: [userId], references: [id])
+  dataSourceId  String
+  userId        String
+
+  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
+  user          User @relation(fields: [userId], references: [id])
+
   @@id([dataSourceId, userId])
 }
 
@@ -187,6 +199,22 @@ model DataSourceTag {
   dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
   tag           Tag @relation(fields: [tagId], references: [id])
   @@id([dataSourceId, tagId])
+}
+
+model Filter {
+  id String @id @default(cuid())
+  name String
+  criteria Json // Field to store various filter criteria like tags, keywords, etc.
+
+  // Relationship with User (if users can save filters)
+  ownerId String?
+  owner User? @relation(fields: [ownerId], references: [id])
+
+  collectionId String? // Nullable field
+  collection Collection? @relation(fields: [collectionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Conversation {
