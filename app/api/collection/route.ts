@@ -44,16 +44,16 @@ export async function POST(req: Request) {
   }
 
   try {
-    const dataStore = await createCollectionDbOp({
+    const collection = await createCollectionDbOp({
       userId,
       name,
       description,
     })
 
-    return NextResponse.json(dataStore)
+    return NextResponse.json(collection)
   } catch (error) {
     console.error(error)
-    return new Response('Error creating datastore', {
+    return new Response('Error creating collection', {
       status: 500,
     })
   }

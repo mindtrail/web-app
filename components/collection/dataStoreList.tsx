@@ -7,7 +7,7 @@ import { PlusIcon } from '@radix-ui/react-icons'
 
 import { Typography } from '@/components/typography'
 import { DataStoreListItem } from '@/components/collection/dataStoreItem'
-import { deleteDataStoreApiCall } from '@/lib/api/dataStore'
+import { deleteCollectionApiCall } from '@/lib/api/collection'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
@@ -50,7 +50,7 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
     const { id, name } = kbToDelete
 
     try {
-      await deleteDataStoreApiCall(id)
+      await deleteCollectionApiCall(id)
       toast({
         title: 'KB deleted',
         description: `${name} has been deleted`,
@@ -67,7 +67,7 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
   }
 
   const handleEdit = (id: string) => {
-    router.push(`/datastore/${id}`)
+    router.push(`/collection/${id}`)
   }
 
   const openChat = (id: string) => {
@@ -80,7 +80,7 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
         <Typography variant='h2'>Knowledge Bases</Typography>
 
         <Link
-          href='/datastore/create'
+          href='/collection/create'
           className={buttonVariants({ variant: 'default' })}
         >
           <PlusIcon className='mr-2' />
@@ -88,10 +88,10 @@ export function DataStoreList({ dataStoreList }: DataStoreListProps) {
         </Link>
       </div>
       <div className='flex flex-wrap w-full'>
-        {dataStoreList.map((dataStore, index) => (
+        {dataStoreList.map((collection, index) => (
           <DataStoreListItem
             key={index}
-            dataStore={dataStore}
+            collection={collection}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
             handleClick={openChat}

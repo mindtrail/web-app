@@ -30,7 +30,7 @@ export default async function DataStorePage(params: DSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/datastore`)
+    redirect(`/api/auth/signin?callbackUrl=/collection`)
   }
 
   // @TODO: send a notification to the user that the chat was not found
@@ -44,7 +44,7 @@ export default async function DataStorePage(params: DSProps) {
   })
 
   if (!dataStoreList?.length) {
-    redirect(`/datastore/create`)
+    redirect(`/collection/create`)
   }
 
   return (

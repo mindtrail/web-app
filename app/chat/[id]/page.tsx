@@ -41,16 +41,16 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const userId = session.user.id
   const chatId = TEST_DATA_STORE
 
-  const dataStore = (await getCollectionDbOp({
+  const collection = (await getCollectionDbOp({
     userId,
     dataStoreId: chatId,
   })) as CollectionExtended
 
-  if (!dataStore) {
-    redirect(`/datastore?notFound=${chatId}`)
+  if (!collection) {
+    redirect(`/collection?notFound=${chatId}`)
   }
 
-  const { name, description } = dataStore
+  const { name, description } = collection
 
   return (
     <Chat

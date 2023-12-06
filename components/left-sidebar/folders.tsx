@@ -19,7 +19,7 @@ const mockFilters = [
 ]
 const mockCollections = [
   { name: 'Collection 1', url: '/' },
-  { name: 'UX Collection', url: '/datastore/create' },
+  { name: 'UX Collection', url: '/collection/create' },
 ]
 
 const FAVORITES_URL = '/'

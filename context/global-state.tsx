@@ -22,9 +22,9 @@ export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     const unsubscribeList: Function[] = []
-    // Loop through each unsynced dataStore and set up a Firestore listener
-    state.unsyncedDataStores.forEach((dataStore) => {
-      console.log(dataStore)
+    // Loop through each unsynced collection and set up a Firestore listener
+    state.unsyncedDataStores.forEach((collection) => {
+      console.log(collection)
     })
   }, [state])
 
