@@ -138,7 +138,9 @@ export const columns: ColumnDef<HistoryItem>[] = [
       const summary = getValue() as string
       return (
         <div className='flex items-center gap-2 px-2'>
-          <Typography className='line-clamp-5'>{summary}</Typography>
+          <Typography className='line-clamp-5'>
+            {summary || 'No summary'}
+          </Typography>
         </div>
       )
     },
@@ -157,22 +159,20 @@ export const columns: ColumnDef<HistoryItem>[] = [
     cell: ({ getValue }) => {
       const tagList = getValue() as string[]
 
-      if (!tagList.length) {
-        return null
-      }
-
       return (
         <div className='flex flex-wrap gap-2 px-2'>
-          {tagList.map((tag, index) => (
-            <Button
-              key={index}
-              variant='outline'
-              size='sm'
-              className='shrink-0 max-w-full'
-            >
-              {tag}
-            </Button>
-          ))}
+          {tagList?.length
+            ? tagList.map((tag, index) => (
+                <Button
+                  key={index}
+                  variant='outline'
+                  size='sm'
+                  className='shrink-0 max-w-full'
+                >
+                  {tag}
+                </Button>
+              ))
+            : 'No tags'}
         </div>
       )
     },

@@ -1,5 +1,6 @@
 'use client'
 
+import { useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import { DataSourceStatus } from '@prisma/client'
 
@@ -8,9 +9,10 @@ import { CollectionForm } from '@/components/collection/create/form'
 import { CollectionFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
-import { useContext } from 'react'
 
-import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSource'
+import { scrapeURLs } from '@/lib/serverActions/dataSource'
+
+import { uploadFileApiCall } from '@/lib/api/dataSource'
 import {
   createCollectionApiCall,
   updateCollectionApiCall,
@@ -39,7 +41,7 @@ export function CreateCollection({
     try {
       await functionToCall(data)
 
-      router.push('/search?refresh=true')
+      // router.push('/search?refresh=true')
     } catch (err) {
       console.log(err)
 
@@ -66,7 +68,7 @@ export function CreateCollection({
     if (newURL) {
       // @TODO: If I will add https:// automatically, it should be done here
       const urlList = newURL.split(',').map((url) => url.trim())
-      scrapeURLsApiCall(urlList, collectionId)
+      scrapeURLs(urlList, collectionId)
     }
 
     if (files?.length) {
@@ -119,7 +121,7 @@ export function CreateCollection({
     if (newURL) {
       // @TODO: If I will add https:// automatically, it should be done here
       const urlList = newURL.split(',').map((url) => url.trim())
-      scrapeURLsApiCall(urlList, collectionId)
+      scrapeURLs(urlList, collectionId)
     }
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {
