@@ -71,8 +71,10 @@ model User {
   picture       String?
   hasOptInEmail Boolean? @default(false)
 
-  dataStores    DataStore[]
-  dataSrcs      DataSrc[]
+  collections   Collection[]
+  // dataSources   DataSource[]
+  dataSourceUsers DataSourceUser[] // Relation to DataSourceUser for data sources
+
   subscriptions Subscription[]  @relation("user")
   usage         Usage?
   conversations Conversation[]
@@ -96,14 +98,15 @@ model Usage {
   nbModelTokens         Int @default(0)
 }
 
-model DataStore {
+model Collection {
   id String @id @default(cuid())
 
   name        String
   description String?
-  type        DataStoreType
-  dataSrcs    DataSrc[]
-  visibility  DataStoreVisibility @default(private)
+  type        CollectionType
+  visibility  CollectionVisibility @default(private)
+
+  collectionDataSource CollectionDataSource[]
 
   config Json?
 
@@ -113,28 +116,26 @@ model DataStore {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  @@map("DataStores")
+  @@map("Collections")
 }
 
-// Naming the model DataSrc conflicts with prisma
+// Naming the model DataSource conflicts with prisma
 // https://github.com/prisma/prisma/issues/12332
-model DataSrc {
+model DataSource {
   id     String           @id @default(cuid())
-  type   DataSrcType
+  type   DataSourceType
   name   String
-  status DataSrcStatus @default(unsynched)
+  status DataSourceStatus @default(unsynched)
 
   summary String?
   thumbnail String?
 
+  dataSourceTags DataSourceTag[]
+  collectionDataSource CollectionDataSource[]
+  dataSourceUsers DataSourceUser[] // Relation to DataSourceUser for data sources
+
+
   config Json?
-
-  dataStoreId String?
-  dataStore   DataStore? @relation(fields: [dataStoreId], references: [id], onDelete: Cascade)
-
-  ownerId     String?
-  owner       User?   @relation(fields: [ownerId], references: [id])
-
   nbChunks  Int? @default(0)
   textSize  Int? @default(0)
 
@@ -145,7 +146,47 @@ model DataSrc {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
 
-  @@map("DataSrcs")
+  @@map("DataSources")
+}
+
+// New join table for DataSource and User many-to-many relationship
+model DataSourceUser {
+  dataSourceId String
+  userId String
+  dataSource DataSource @relation(fields: [dataSourceId], references: [id])
+  user        User @relation(fields: [userId], references: [id])
+  @@id([dataSourceId, userId])
+}
+
+// Join table for the many-to-many relationship
+model CollectionDataSource {
+  collectionId String
+  dataSourceId String
+
+  collection  Collection @relation(fields: [collectionId], references: [id])
+  dataSource  DataSource @relation(fields: [dataSourceId], references: [id])
+
+  @@id([collectionId, dataSourceId])
+}
+
+// New Tag model
+model Tag {
+  id String @id @default(cuid())
+  name String
+  domain String
+
+  dataSourceTags DataSourceTag[] // Relation to DataSourceTag for data sources
+  @@map("Tags")
+}
+
+// Join table for DataSource and Tag many-to-many relationship
+model DataSourceTag {
+  dataSourceId  String
+  tagId         String
+
+  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
+  tag           Tag @relation(fields: [tagId], references: [id])
+  @@id([dataSourceId, tagId])
 }
 
 model Conversation {
@@ -245,12 +286,12 @@ model Subscription {
 }
 
 
-enum DataStoreVisibility {
+enum CollectionVisibility {
   public
   private
 }
 
-enum DataSrcStatus {
+enum DataSourceStatus {
   unsynched
   pending
   running
@@ -259,7 +300,7 @@ enum DataSrcStatus {
   usage_limit_reached
 }
 
-enum DataSrcType {
+enum DataSourceType {
   web_page
   web_site
   text
@@ -269,7 +310,7 @@ enum DataSrcType {
   notion
 }
 
-enum DataStoreType {
+enum CollectionType {
   qdrant
 }
 
