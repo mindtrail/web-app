@@ -110,7 +110,6 @@ export const updateFilesWithMetadata = (
   filesMetadata.forEach((metadata) => {
     filesMetadataMap[metadata.name] = metadata
   })
-  console.log('filesMetadataMap', filesMetadataMap)
 
   // @TODO - map
   const newFiles = prevFiles.map((item) => {

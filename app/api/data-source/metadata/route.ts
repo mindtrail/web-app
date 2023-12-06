@@ -55,10 +55,3 @@ export async function POST(req: Request) {
   const { name, type } = uploadedFile
   return NextResponse.json({ charCount, name, type })
 }
-
-export async function DELETE(req: Request) {
-  // const body = await req.json()
-
-  console.log('delete ')
-  return NextResponse.json({ success: true })
-}
