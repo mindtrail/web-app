@@ -45,7 +45,7 @@ import {
   getFormInitialValues,
   DataStoreFormValues,
 } from '@/components/datastore/utils'
-import { DataSrcType } from '@prisma/client'
+import { DataSourceType } from '@prisma/client'
 
 type FormProps = {
   onScrapeWebsite?: (url: string) => Promise<void>
@@ -263,7 +263,7 @@ export function DataStoreForm(props: FormProps) {
                   )}
                 />
                 <DataSrcList
-                  type={DataSrcType.file}
+                  type={DataSourceType.file}
                   acceptedItems={files}
                   rejectedItems={rejectedFiles}
                   charCount={charCount}
@@ -325,7 +325,7 @@ export function DataStoreForm(props: FormProps) {
                   </Button>
                 )}
                 <DataSrcList
-                  type={DataSrcType.web_page}
+                  type={DataSourceType.web_page}
                   acceptedItems={urls}
                   charCount={charCount}
                   charCountLoading={charCountLoading}

@@ -33,10 +33,10 @@ DROP TABLE "DataSrcs";
 DROP TABLE "DataStores";
 
 -- DropEnum
-DROP TYPE "DataSrcStatus";
+DROP TYPE "DataSourceStatus";
 
 -- DropEnum
-DROP TYPE "DataSrcType";
+DROP TYPE "DataSourceType";
 
 -- DropEnum
 DROP TYPE "DataStoreType";

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { DataSrcStatus, DataSrc } from '@prisma/client'
+import { DataSourceStatus, DataSrc } from '@prisma/client'
 
 import { useToast } from '@/components/ui/use-toast'
 import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
@@ -75,7 +75,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
     if (!file) {
       return
     }
-    if (file.status === DataSrcStatus.synched) {
+    if (file.status === DataSourceStatus.synched) {
       setFileToDelete(file)
       setDeleteDialogOpen(true)
       return

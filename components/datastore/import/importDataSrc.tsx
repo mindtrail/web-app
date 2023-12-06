@@ -2,7 +2,7 @@
 
 import { useContext } from 'react'
 import { useRouter } from 'next/navigation'
-import { DataSrcStatus } from '@prisma/client'
+import { DataSourceStatus } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { ImportForm } from '@/components/datastore/import/form'
@@ -57,7 +57,7 @@ export function ImportDataSrc({
     } = existingDataStore
 
     const unsynchedFiles = files?.filter(
-      ({ status }) => status === DataSrcStatus.unsynched,
+      ({ status }) => status === DataSourceStatus.unsynched,
     )
 
     if (newURL) {

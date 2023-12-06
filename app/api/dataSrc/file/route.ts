@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { DataSrcType, DataSrcStatus } from '@prisma/client'
+import { DataSourceType, DataSourceStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     name: fileName,
     dataStoreId,
     ownerId: userId,
-    type: DataSrcType.file,
+    type: DataSourceType.file,
     nbChunks,
     textSize,
   }
@@ -90,10 +90,10 @@ export async function POST(req: Request) {
 
   try {
     await uploadToGCS({ uploadedFile, userId, dataStoreId, dataSrcId })
-    updateDataSrc({ id: dataSrcId, status: DataSrcStatus.synched })
+    updateDataSrc({ id: dataSrcId, status: DataSourceStatus.synched })
   } catch (err) {
     // @TODO: return file upload success, and run the rest of the process in the background
-    updateDataSrc({ id: dataSrcId, status: DataSrcStatus.error })
+    updateDataSrc({ id: dataSrcId, status: DataSourceStatus.error })
     console.error(err)
   }
 
