@@ -1,7 +1,7 @@
-import { DataSrc } from '@prisma/client'
+import { DataSource } from '@prisma/client'
 
 declare global {
-  type HistoryItem = DataSrc & {
+  type HistoryItem = DataSource & {
     tags?: string[]
     displayName?: string
   }

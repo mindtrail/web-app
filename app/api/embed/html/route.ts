@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
-import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
+import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'
@@ -58,9 +58,9 @@ export async function POST(req: Request) {
     const summary = await sumarizePage(sumaryContent)
     const category = await getPageCategory(summary)
 
-    const dataSrcPayload = {
+    const dataSourcePayload = {
       name: fileName,
-      dataStoreId: TEST_DATASTORE_ID,
+      collectionId: TEST_DATASTORE_ID,
       ownerId: TEST_USER_ID,
       type: DataSourceType.web_page,
       nbChunks,
@@ -70,10 +70,10 @@ export async function POST(req: Request) {
     }
 
     const uniqueName = true
-    const dataSource = await createDataSrc(dataSrcPayload, uniqueName)
-    const dataSrcId = dataSource?.id
+    const dataSource = await createDataSource(dataSourcePayload, uniqueName)
+    const dataSourceId = dataSource?.id
 
-    if (!dataSrcId) {
+    if (!dataSourceId) {
       return new NextResponse('Empty docs', {
         status: 400,
       })
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
         pageContent,
         metadata: {
           ...metadata,
-          dataSrcId,
+          dataSourceId,
         },
       }))
       .filter((doc) => doc !== null) as Document[]
@@ -102,12 +102,12 @@ export async function POST(req: Request) {
 
     // Update the dataSource status to synched for each doc
     documents.map(({ metadata }) => {
-      const { dataSrcId } = metadata
-      updateDataSrc({ id: dataSrcId, status: DataSourceStatus.synched })
+      const { dataSourceId } = metadata
+      updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
     })
 
     return NextResponse.json({
-      result: `${documents.length} dataSrcs Created`,
+      result: `${documents.length} dataSources Created`,
     })
   } catch (err) {
     console.error('errr', err)

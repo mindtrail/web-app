@@ -1,7 +1,7 @@
 import { MouseEvent, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 
-import { DataSrc } from '@prisma/client'
+import { DataSource } from '@prisma/client'
 import { Cross1Icon, Link1Icon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'

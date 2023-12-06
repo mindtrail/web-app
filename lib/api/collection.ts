@@ -9,19 +9,19 @@ export async function createCollectionApiCall(data: CreateCollection) {
     body: JSON.stringify(data),
   })
 
-  const newDataStore = await response.json()
-  if (!newDataStore) {
+  const newCollection = await response.json()
+  if (!newCollection) {
     throw new Error('Failed to create Collection')
   }
 
-  return newDataStore
+  return newCollection
 }
 
 export async function updateCollectionApiCall(
-  dataStoreId: string,
+  collectionId: string,
   data: Partial<CreateCollection>,
 ) {
-  const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
+  const response = await fetch(`${DATASTORE_ENDPOINT}/${collectionId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -29,21 +29,21 @@ export async function updateCollectionApiCall(
     body: JSON.stringify(data),
   })
 
-  const updatedDataStore = await response.json()
-  if (!updatedDataStore) {
+  const updatedCollection = await response.json()
+  if (!updatedCollection) {
     throw new Error('Failed to update Collection')
   }
 
-  return updatedDataStore
+  return updatedCollection
 }
 
-export const deleteCollectionApiCall = async (dataStoreId: string) => {
-  const response = await fetch(`${DATASTORE_ENDPOINT}/${dataStoreId}`, {
+export const deleteCollectionApiCall = async (collectionId: string) => {
+  const response = await fetch(`${DATASTORE_ENDPOINT}/${collectionId}`, {
     method: 'DELETE',
   })
 
   if (!response.ok) {
-    throw new Error(`Failed to delete data store ${dataStoreId}`)
+    throw new Error(`Failed to delete data store ${collectionId}`)
   }
 
   return response.json()

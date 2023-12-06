@@ -1,2 +1,2 @@
 export { CreateCollection } from './create'
-export { DataStoreList } from './dataStoreList'
+export { CollectionList } from './collectionList'

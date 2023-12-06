@@ -8,7 +8,7 @@ interface Props {
 }
 
 const initialState: GlobalState = {
-  unsyncedDataStores: [],
+  unsyncedCollections: [],
 }
 
 export const GlobalStateContext = createContext<
@@ -23,7 +23,7 @@ export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     const unsubscribeList: Function[] = []
     // Loop through each unsynced collection and set up a Firestore listener
-    state.unsyncedDataStores.forEach((collection) => {
+    state.unsyncedCollections.forEach((collection) => {
       console.log(collection)
     })
   }, [state])

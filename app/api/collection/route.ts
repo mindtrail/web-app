@@ -18,9 +18,9 @@ export async function GET() {
     })
   }
 
-  const datastoreList = await getCollectionListDbOp({ userId })
+  const collectionList = await getCollectionListDbOp({ userId })
 
-  return NextResponse.json(datastoreList)
+  return NextResponse.json(collectionList)
 }
 
 export async function POST(req: Request) {

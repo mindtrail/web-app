@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { getCollectionListDbOp } from '@/lib/db/collection'
 
-import { DataStoreList } from '@/components/collection'
+import { CollectionList } from '@/components/collection'
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -26,7 +26,7 @@ export interface DSProps {
   }
 }
 
-export default async function DataStorePage(params: DSProps) {
+export default async function CollectionPage(params: DSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -38,18 +38,18 @@ export default async function DataStorePage(params: DSProps) {
   const refresh = params?.searchParams?.refresh
 
   const userId = session?.user?.id
-  const dataStoreList = await getCollectionListDbOp({
+  const collectionList = await getCollectionListDbOp({
     userId,
     includeDataSource: true,
   })
 
-  if (!dataStoreList?.length) {
+  if (!collectionList?.length) {
     redirect(`/collection/create`)
   }
 
   return (
     <>
-      <DataStoreList dataStoreList={dataStoreList} />
+      <CollectionList collectionList={collectionList} />
     </>
   )
 }

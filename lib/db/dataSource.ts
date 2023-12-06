@@ -1,7 +1,10 @@
 import { DataSourceStatus, DataSource } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 
-export const getDataSrcList = async (userId: string, collectionId?: string) => {
+export const getDataSourceList = async (
+  userId: string,
+  collectionId?: string,
+) => {
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
       // @TODO: this was a 1-m relationship, now it's a m-m relationship, update it
@@ -16,10 +19,10 @@ export const getDataSrcList = async (userId: string, collectionId?: string) => {
   return dataSourceList
 }
 
-export const getDataSrcById = async (dataSrcId: string) => {
+export const getDataSourceById = async (dataSourceId: string) => {
   const dataSource = await prisma.dataSource.findUnique({
     where: {
-      id: dataSrcId,
+      id: dataSourceId,
     },
   })
 
@@ -31,7 +34,7 @@ type CreateDataSourcePayload = Pick<
   'name' | 'type' | 'nbChunks' | 'textSize'
 >
 
-export const createDataSrc = async (
+export const createDataSource = async (
   payload: CreateDataSourcePayload,
   uniqueName = false,
 ) => {
@@ -42,12 +45,12 @@ export const createDataSrc = async (
   } = payload
 
   if (uniqueName) {
-    const existingDataSrc = await prisma.dataSource.findFirst({
+    const existingDataSource = await prisma.dataSource.findFirst({
       where: { name },
     })
-    if (existingDataSrc) {
-      const { id } = existingDataSrc
-      return updateDataSrc({ id, ...payload })
+    if (existingDataSource) {
+      const { id } = existingDataSource
+      return updateDataSource({ id, ...payload })
     }
   }
 
@@ -78,7 +81,7 @@ type UpdateDataSourcePayload = Partial<CreateDataSourcePayload> & {
   status?: DataSourceStatus
 }
 
-export const updateDataSrc = async (payload: UpdateDataSourcePayload) => {
+export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
   const { id, ...rest } = payload
 
   const dataSource = await prisma.dataSource.update({
@@ -93,10 +96,13 @@ export const updateDataSrc = async (payload: UpdateDataSourcePayload) => {
   return dataSource
 }
 
-export const deleteDataSrcDbOp = async (userId: string, dataSrcId: string) => {
+export const deleteDataSourceDbOp = async (
+  userId: string,
+  dataSourceId: string,
+) => {
   const dataSource = await prisma.dataSource.delete({
     where: {
-      id: dataSrcId,
+      id: dataSourceId,
       // @TODO ....
       // ownerId: userId,
     },

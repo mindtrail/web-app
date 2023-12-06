@@ -45,8 +45,8 @@ export function DataSourceList(props: DataSourceList) {
   const IconElement =
     type === DataSourceType.web_page ? GlobeIcon : FileTextIcon
 
-  // @TODO: update the name of the file in the DataSrc to don't need the regex
-  const acceptedDataSrcList = useMemo(() => {
+  // @TODO: update the name of the file in the DataSource to don't need the regex
+  const acceptedDataSourceList = useMemo(() => {
     acceptedItems.sort((a, b) => (a?.file?.name < b?.file?.name ? 1 : -1))
 
     return acceptedItems.map(
@@ -93,7 +93,7 @@ export function DataSourceList(props: DataSourceList) {
     )
   }, [acceptedItems, handleFileDelete, IconElement])
 
-  const rejectedDataSrcList = useMemo(() => {
+  const rejectedDataSourceList = useMemo(() => {
     return rejectedItems.map(({ file }: RejectedFile, index) => (
       <p key={index}>{file.name}</p>
     ))
@@ -114,15 +114,15 @@ export function DataSourceList(props: DataSourceList) {
         </div>
       )}
 
-      {acceptedDataSrcList.length > 0 && (
+      {acceptedDataSourceList.length > 0 && (
         <ScrollArea className='w-full flex-1 relative flex flex-col gap-1 max-h-[50vh] rounded-md border py-4 px-2'>
-          {acceptedDataSrcList}
+          {acceptedDataSourceList}
         </ScrollArea>
       )}
 
-      {rejectedDataSrcList.length > 0 && (
+      {rejectedDataSourceList.length > 0 && (
         <div className='w-full flex-1 relative flex flex-col gap-1 text-red-800'>
-          {rejectedDataSrcList}
+          {rejectedDataSourceList}
         </div>
       )}
     </>

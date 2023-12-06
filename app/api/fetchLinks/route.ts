@@ -23,7 +23,7 @@ export async function GET(req: Request) {
   const reqUrl = new URL(req.url)
 
   // const urls = reqUrl.searchParams.get('urls')
-  // const dataStoreId = reqUrl.searchParams.get('dataStoreId')
+  // const collectionId = reqUrl.searchParams.get('collectionId')
   const prefetchUrls = reqUrl.searchParams.get('prefetchUrls')
 
   if (prefetchUrls) {

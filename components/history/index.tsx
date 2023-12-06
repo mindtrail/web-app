@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react'
 
-import { deleteDataSrc } from '@/lib/serverActions/history'
+import { deleteDataSource } from '@/lib/serverActions/history'
 import { useDrop } from 'react-dnd'
 import { Document } from 'langchain/document'
 
@@ -139,7 +139,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
 
     try {
       await Promise.all(
-        itemsToDelete.map(({ id }) => deleteDataSrc({ dataSrcId: id })),
+        itemsToDelete.map(({ id }) => deleteDataSource({ dataSourceId: id })),
       )
 
       toast({

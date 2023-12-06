@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation'
 import { DataSourceStatus } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
-import { DataStoreForm } from '@/components/collection/create/form'
-import { DataStoreFormValues } from '@/components/collection/utils'
+import { CollectionForm } from '@/components/collection/create/form'
+import { CollectionFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
 import { useContext } from 'react'
@@ -16,23 +16,25 @@ import {
   updateCollectionApiCall,
 } from '@/lib/api/collection'
 
-interface DataStoreProps extends React.ComponentProps<'div'> {
+interface CollectionProps extends React.ComponentProps<'div'> {
   userId: string
   collection?: CollectionExtended
 }
 
 export function CreateCollection({
   userId,
-  collection: existingDataStore,
-}: DataStoreProps) {
+  collection: existingCollection,
+}: CollectionProps) {
   const [, dispatch] = useContext(GlobalStateContext)
 
   const { toast } = useToast()
   const router = useRouter()
 
-  const onSubmit = async (data: DataStoreFormValues) => {
-    const actionType = existingDataStore ? 'updated' : 'created'
-    const functionToCall = existingDataStore ? updateDataStore : createDataStore
+  const onSubmit = async (data: CollectionFormValues) => {
+    const actionType = existingCollection ? 'updated' : 'created'
+    const functionToCall = existingCollection
+      ? updateCollection
+      : createCollection
 
     try {
       await functionToCall(data)
@@ -54,26 +56,26 @@ export function CreateCollection({
     const data = await res.json()
   }
 
-  const createDataStore = async (data: DataStoreFormValues) => {
+  const createCollection = async (data: CollectionFormValues) => {
     const { name, description, files, newURL } = data
     const dsPayload = { userId, name, description }
 
-    const newDataStore = await createCollectionApiCall(dsPayload)
-    const dataStoreId = newDataStore.id
+    const newCollection = await createCollectionApiCall(dsPayload)
+    const collectionId = newCollection.id
 
     if (newURL) {
       // @TODO: If I will add https:// automatically, it should be done here
       const urlList = newURL.split(',').map((url) => url.trim())
-      scrapeURLsApiCall(urlList, dataStoreId)
+      scrapeURLsApiCall(urlList, collectionId)
     }
 
     if (files?.length) {
-      await uploadFiles(files, newDataStore.id)
+      await uploadFiles(files, newCollection.id)
     }
 
     dispatch({
       type: 'ADD_UNSYNCED_DATA_STORE',
-      payload: { id: dataStoreId },
+      payload: { id: collectionId },
     })
 
     toast({
@@ -81,20 +83,20 @@ export function CreateCollection({
       description: `${name} has been created`,
     })
 
-    return { id: dataStoreId }
+    return { id: collectionId }
   }
 
-  const updateDataStore = async (data: DataStoreFormValues) => {
-    if (!existingDataStore) {
+  const updateCollection = async (data: CollectionFormValues) => {
+    if (!existingCollection) {
       return
     }
 
     const { name, description, files, urls, newURL } = data
     const {
-      id: dataStoreId,
+      id: collectionId,
       name: existingName,
       description: existingDescription,
-    } = existingDataStore
+    } = existingCollection
 
     const unsynchedFiles = files?.filter(
       ({ status }) => status === DataSourceStatus.unsynched,
@@ -111,24 +113,24 @@ export function CreateCollection({
 
     // We only update the collection if there are changes
     if (dsPayload.name || dsPayload.description) {
-      await updateCollectionApiCall(dataStoreId, dsPayload)
+      await updateCollectionApiCall(collectionId, dsPayload)
     }
 
     if (newURL) {
       // @TODO: If I will add https:// automatically, it should be done here
       const urlList = newURL.split(',').map((url) => url.trim())
-      scrapeURLsApiCall(urlList, dataStoreId)
+      scrapeURLsApiCall(urlList, collectionId)
     }
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {
-      await uploadFiles(unsynchedFiles, dataStoreId)
+      await uploadFiles(unsynchedFiles, collectionId)
     }
 
     // Those are the only async operations
     if (urls?.length || unsynchedFiles?.length) {
       dispatch({
         type: 'ADD_UNSYNCED_DATA_STORE',
-        payload: { id: dataStoreId },
+        payload: { id: collectionId },
       })
     }
 
@@ -138,9 +140,9 @@ export function CreateCollection({
     })
   }
 
-  const uploadFiles = async (files: AcceptedFile[], dataStoreId: string) => {
+  const uploadFiles = async (files: AcceptedFile[], collectionId: string) => {
     const fileUploadPromises = files.map(async ({ file }) => {
-      return await uploadFileApiCall(file as File, dataStoreId)
+      return await uploadFileApiCall(file as File, collectionId)
     })
     const res = await Promise.allSettled(fileUploadPromises)
     return res
@@ -150,13 +152,13 @@ export function CreateCollection({
     <div className='flex flex-col flex-1 w-full items-center py-4 px-6 md:py-12 md:px-8 gap-8'>
       <div className='flex flex-col  max-w-2xl items-center gap-2'>
         <Typography variant='h2'>
-          {existingDataStore ? 'Edit' : ' Create'} Knowledge Base
+          {existingCollection ? 'Edit' : ' Create'} Knowledge Base
         </Typography>
       </div>
       <div className='max-w-xl w-full'>
-        <DataStoreForm
+        <CollectionForm
           onSubmit={onSubmit}
-          existingDataStore={existingDataStore}
+          existingCollection={existingCollection}
           onScrapeWebsite={onScrapeWebsite}
         />
       </div>

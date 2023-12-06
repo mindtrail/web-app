@@ -6,12 +6,12 @@ import { MAX_FILE_SIZE } from '@/components/collection/constants'
 
 export const getFormInitialValues = (
   collection?: CollectionExtended,
-): DataStoreFormValues => {
+): CollectionFormValues => {
   if (collection) {
     return {
       name: collection.name,
       description: collection.description || '',
-      files: collection.dataSrcs
+      files: collection.dataSources
         .filter((file) => file.type === DataSourceType.file)
         .map((file) => ({
           file,
@@ -19,7 +19,7 @@ export const getFormInitialValues = (
           status: file.status,
           charCount: file.textSize,
         })),
-      urls: collection.dataSrcs
+      urls: collection.dataSources
         .filter((file) => file.type === DataSourceType.web_page)
         .map((url) => ({
           file: url,
@@ -40,7 +40,7 @@ export const getFormInitialValues = (
   }
 }
 
-export const dataStoreFormSchema = z
+export const collectionFormSchema = z
   .object({
     name: z
       .string()
@@ -77,7 +77,7 @@ export const dataStoreFormSchema = z
     },
   )
 
-export type DataStoreFormValues = z.infer<typeof dataStoreFormSchema>
+export type CollectionFormValues = z.infer<typeof collectionFormSchema>
 
 export const filterFiles = (files: File[], remainingSlots: number) => {
   let count = 0

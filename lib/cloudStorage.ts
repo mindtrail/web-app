@@ -1,12 +1,12 @@
 import { Buffer } from 'buffer'
 import { Storage } from '@google-cloud/storage'
-import { DataSrc } from '@prisma/client'
+import { DataSource } from '@prisma/client'
 
 interface UploadToGCSProps {
   uploadedFile: File
   userId: string
-  dataStoreId: string
-  dataSrcId: string
+  collectionId: string
+  dataSourceId: string
 }
 
 const storage = new Storage()
@@ -48,8 +48,8 @@ export async function getFileFromGCS(fileName: string): Promise<Blob | null> {
 }
 
 export async function uploadToGCS(props: UploadToGCSProps) {
-  const { uploadedFile, userId, dataStoreId, dataSrcId } = props
-  const fileName = `${userId}/${dataStoreId}/${dataSrcId}-${uploadedFile.name}`
+  const { uploadedFile, userId, collectionId, dataSourceId } = props
+  const fileName = `${userId}/${collectionId}/${dataSourceId}-${uploadedFile.name}`
 
   const bucket = storage.bucket(bucketName)
   const newFile = bucket.file(fileName)
@@ -62,8 +62,8 @@ export async function uploadToGCS(props: UploadToGCSProps) {
       metadata: {
         customTime: new Date().toISOString(),
         metadata: {
-          dataSrcId,
-          dataStoreId,
+          dataSourceId,
+          collectionId,
           userId,
         },
       },
@@ -76,14 +76,20 @@ export async function uploadToGCS(props: UploadToGCSProps) {
   }
 }
 
-export async function deleteFileFromGCS(dataSource: DataSrc) {
-  const { id: dataSrcId, dataStoreId, ownerId: userId, type, name } = dataSource
+export async function deleteFileFromGCS(dataSource: DataSource) {
+  const {
+    id: dataSourceId,
+    collectionId,
+    ownerId: userId,
+    type,
+    name,
+  } = dataSource
 
   try {
     const bucket = storage.bucket(bucketName)
-    const path = `${userId}/${dataStoreId}`
+    const path = `${userId}/${collectionId}`
     const fileName =
-      type === 'file' ? `${path}/${dataSrcId}-${name}` : `${path}/${name}`
+      type === 'file' ? `${path}/${dataSourceId}-${name}` : `${path}/${name}`
 
     await bucket.file(fileName).delete()
     return 'File deleted successfully from GCS'

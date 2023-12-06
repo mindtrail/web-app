@@ -5,7 +5,7 @@ import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
 import { getCollectionDbOp } from '@/lib/db/collection'
-import { ImportDataSrc } from '@/components/collection/import/importDataSrc'
+import { ImportDataSource } from '@/components/collection/import/importDataSource'
 
 const TEST_DATA_STORE = process.env.TEST_DATASTORE_ID || ''
 
@@ -36,12 +36,12 @@ export default async function ChatPage() {
 
   const collection = await getCollectionDbOp({
     userId,
-    dataStoreId: TEST_DATA_STORE,
+    collectionId: TEST_DATA_STORE,
   })
 
   if (!collection) {
     redirect('/collection?error=not-found')
   }
 
-  return <ImportDataSrc userId={userId} collection={collection} />
+  return <ImportDataSource userId={userId} collection={collection} />
 }

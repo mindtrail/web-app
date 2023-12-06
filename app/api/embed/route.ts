@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getWebsiteData } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
-import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
+import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'
@@ -14,7 +14,7 @@ const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/ // Matches everything after the sec
 
 interface EmbeddingPayload {
   userId: string
-  dataStoreId: string
+  collectionId: string
   files: string[]
   bucket: string
 }
@@ -35,9 +35,9 @@ export async function POST(req: Request) {
     const body = (await req.json()) as EmbeddingPayload
 
     console.time(`Embed website ${timestamp}`)
-    const { userId, dataStoreId, files } = body
+    const { userId, collectionId, files } = body
 
-    console.log('--- >', dataStoreId, files.length, JSON.stringify(files))
+    console.log('--- >', collectionId, files.length, JSON.stringify(files))
     // Download the files from GCS
     const documents = await Promise.all(
       files.map(async (fileName) => {
@@ -62,9 +62,9 @@ export async function POST(req: Request) {
         const category = await getPageCategory(summary)
 
         const match = fileName.match(WEB_PAGE_REGEX)
-        const dataSrcPayload = {
+        const dataSourcePayload = {
           name: match ? match[1] : fileName,
-          dataStoreId,
+          collectionId,
           ownerId: userId,
           type: DataSourceType.web_page,
           nbChunks,
@@ -73,10 +73,10 @@ export async function POST(req: Request) {
           thumbnail: category,
         }
 
-        const dataSource = await createDataSrc(dataSrcPayload)
-        const dataSrcId = dataSource?.id
+        const dataSource = await createDataSource(dataSourcePayload)
+        const dataSourceId = dataSource?.id
 
-        if (!dataSrcId) {
+        if (!dataSourceId) {
           return new NextResponse('Empty docs', {
             status: 400,
           })
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
           pageContent,
           metadata: {
             ...metadata,
-            dataSrcId,
+            dataSourceId,
           },
         }))
       }),
@@ -104,17 +104,17 @@ export async function POST(req: Request) {
 
     await createAndStoreVectors({
       docs: filteredDocs,
-      collectionName: `${userId}-${dataStoreId}`,
+      collectionName: `${userId}-${collectionId}`,
     })
 
     // Update the dataSource status to synched for each doc
     filteredDocs.map(({ metadata }) => {
-      const { dataSrcId } = metadata
-      updateDataSrc({ id: dataSrcId, status: DataSourceStatus.synched })
+      const { dataSourceId } = metadata
+      updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
     })
 
     return NextResponse.json({
-      result: `${filteredDocs.length} dataSrcs Created`,
+      result: `${filteredDocs.length} dataSources Created`,
     })
   } catch (err) {
     console.error('errr', err)

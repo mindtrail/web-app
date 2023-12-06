@@ -4,7 +4,7 @@ import { DataSourceType, DataSourceStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
-import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
+import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { getChunksFromFile } from '@/lib/fileLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
 
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     })
   }
 
-  let dataStoreId = ''
+  let collectionId = ''
   let uploadedFile: File | null = null
 
   const userId = session.user?.id
@@ -38,14 +38,14 @@ export async function POST(req: Request) {
     if (typeof value == 'object') {
       uploadedFile = value
     }
-    // If its type is string then it's the dataStoreId
+    // If its type is string then it's the collectionId
     if (typeof value == 'string') {
-      dataStoreId = value
+      collectionId = value
     }
   }
 
-  if (!uploadedFile || !dataStoreId) {
-    return new Response(`Missing ${!uploadedFile ? 'file' : 'dataStoreId'}`, {
+  if (!uploadedFile || !collectionId) {
+    return new Response(`Missing ${!uploadedFile ? 'file' : 'collectionId'}`, {
       status: 400,
     })
   }
@@ -68,32 +68,32 @@ export async function POST(req: Request) {
   const nbChunks = docs.length
   const textSize = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
-  const dataSrcPayload = {
+  const dataSourcePayload = {
     name: fileName,
-    dataStoreId,
+    collectionId,
     ownerId: userId,
     type: DataSourceType.file,
     nbChunks,
     textSize,
   }
 
-  const dataSource = await createDataSrc(dataSrcPayload)
-  const dataSrcId = dataSource?.id
+  const dataSource = await createDataSource(dataSourcePayload)
+  const dataSourceId = dataSource?.id
 
-  if (!dataSrcId) {
+  if (!dataSourceId) {
     return new Response(`Failed to save File. Try again`, {
       status: 400,
     })
   }
 
-  createAndStoreVectors({ docs, userId, dataStoreId, dataSrcId })
+  createAndStoreVectors({ docs, userId, collectionId, dataSourceId })
 
   try {
-    await uploadToGCS({ uploadedFile, userId, dataStoreId, dataSrcId })
-    updateDataSrc({ id: dataSrcId, status: DataSourceStatus.synched })
+    await uploadToGCS({ uploadedFile, userId, collectionId, dataSourceId })
+    updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
   } catch (err) {
     // @TODO: return file upload success, and run the rest of the process in the background
-    updateDataSrc({ id: dataSrcId, status: DataSourceStatus.error })
+    updateDataSource({ id: dataSourceId, status: DataSourceStatus.error })
     console.error(err)
   }
 

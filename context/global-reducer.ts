@@ -10,12 +10,12 @@ export const globalReducer = (
     case 'ADD_UNSYNCED_DATA_STORE':
       return {
         ...state,
-        unsyncedDataStores: [...state.unsyncedDataStores, payload],
+        unsyncedCollections: [...state.unsyncedCollections, payload],
       }
     case 'REMOVE_SYNCED_DATA_STORE':
       return {
         ...state,
-        unsyncedDataStores: state.unsyncedDataStores.filter(
+        unsyncedCollections: state.unsyncedCollections.filter(
           (ds) => ds.id !== payload.id,
         ),
       }

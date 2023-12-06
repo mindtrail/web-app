@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio'
 import { NextResponse } from 'next/server'
 
 import { searchSimilarText } from '@/lib/qdrant-langchain'
-import { getDataSrcById } from '@/lib/db/dataSource'
+import { getDataSourceById } from '@/lib/db/dataSource'
 
 const TEST_COLLECTION = 'bookmark-ai'
 
@@ -26,8 +26,8 @@ export async function searchHistory(searchQuery: string) {
       })
     }
 
-    const { dataSrcId, fileName: url } = websiteFound
-    const dataSource = await getDataSrcById(dataSrcId)
+    const { dataSourceId, fileName: url } = websiteFound
+    const dataSource = await getDataSourceById(dataSourceId)
     const image = await getOGImage(url)
 
     return NextResponse.json({
