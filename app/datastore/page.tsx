@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { getCollectionListDbOp } from '@/lib/db/collection'
 
-import { DataStoreList } from '@/components/datastore'
+import { DataStoreList } from '@/components/collection'
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession

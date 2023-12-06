@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { getCollectionDbOp } from '@/lib/db/collection'
 
-import { CreateCollection } from '@/components/datastore'
+import { CreateCollection } from '@/components/collection'
 
 export interface EditDSProps {
   params: {

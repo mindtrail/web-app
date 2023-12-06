@@ -4,7 +4,7 @@ import { DataSourceType, DataSourceStatus } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
-import { createDataSrc, updateDataSrc } from '@/lib/db/dataSrc'
+import { createDataSrc, updateDataSrc } from '@/lib/db/dataSource'
 import { getChunksFromFile } from '@/lib/fileLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
 

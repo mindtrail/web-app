@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio'
 import { NextResponse } from 'next/server'
 
 import { searchSimilarText } from '@/lib/qdrant-langchain'
-import { getDataSrcById } from '@/lib/db/dataSrc'
+import { getDataSrcById } from '@/lib/db/dataSource'
 
 const TEST_COLLECTION = 'bookmark-ai'
 

@@ -4,7 +4,7 @@ import { Cross1Icon, FileTextIcon, GlobeIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
-import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
+import { MAX_NR_OF_FILES } from '@/components/collection/constants'
 import { DataSourceStatus, DataSourceType } from '@prisma/client'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
@@ -23,7 +23,7 @@ const colorMap = {
   [DataSourceStatus.usage_limit_reached]: 'text-gray-800',
 }
 
-interface DataSrcList {
+interface DataSourceList {
   type: DataSourceType
   acceptedItems: AcceptedFile[] | URLScrapped[]
   rejectedItems?: RejectedFile[]
@@ -32,7 +32,7 @@ interface DataSrcList {
   handleFileDelete: DeleteHandler
 }
 
-export function DataSrcList(props: DataSrcList) {
+export function DataSourceList(props: DataSourceList) {
   const {
     type,
     acceptedItems,

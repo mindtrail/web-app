@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { revalidateTag } from 'next/cache'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataSrcDbOp } from '@/lib/db/dataSrc'
+import { deleteDataSrcDbOp } from '@/lib/db/dataSource'
 import { deleteFileFromGCS } from '@/lib/cloudStorage'
 
 type deletePayload = {

@@ -5,7 +5,7 @@ import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
 import { getCollectionDbOp } from '@/lib/db/collection'
-import { ImportDataSrc } from '@/components/datastore/import/importDataSrc'
+import { ImportDataSrc } from '@/components/collection/import/importDataSrc'
 
 const TEST_DATA_STORE = process.env.TEST_DATASTORE_ID || ''
 

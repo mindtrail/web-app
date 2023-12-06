@@ -2,13 +2,13 @@ import { useState, useCallback } from 'react'
 import { DataSourceStatus, DataSrc } from '@prisma/client'
 
 import { useToast } from '@/components/ui/use-toast'
-import { MAX_NR_OF_FILES } from '@/components/datastore/constants'
+import { MAX_NR_OF_FILES } from '@/components/collection/constants'
 import { getFileMetadataApiCall, deleteDataSrcApiCall } from '@/lib/api/dataSrc'
 
 import {
   filterFiles,
   updateFilesWithMetadata,
-} from '@/components/datastore/utils'
+} from '@/components/collection/utils'
 
 const getFilesMetadata = async (files: AcceptedFile[]) => {
   const metadataPromises = files.map(async ({ file }) => {
