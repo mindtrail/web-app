@@ -1,6 +1,6 @@
-export const DATA_SRC = '/api/dataSource'
-export const UPLOAD_ENDPOINT = '/api/dataSource/file'
-export const METADATA_ENDPOINT = '/api/dataSource/metadata'
+export const DATA_SRC = '/api/data-source'
+export const UPLOAD_ENDPOINT = '/api/data-source/file'
+export const METADATA_ENDPOINT = '/api/data-source/metadata'
 export const SCRAPER_ENDPOINT = '/api/scraper'
 
 export async function uploadFileApiCall(file: File, collectionId: string) {
@@ -44,6 +44,27 @@ export const deleteDataSourceApiCall = async (fileId: string) => {
 
   if (!response.ok) {
     throw new Error(`Failed to delete file ${fileId}`)
+  }
+
+  return response.json()
+}
+
+export const scrapeURLsApiCall = async (
+  urls: string[],
+  collectionId: string,
+) => {
+  const response = await fetch(SCRAPER_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    // @TODO: add limit to number of urls
+    body: JSON.stringify({ urls, collectionId }),
+  })
+
+  if (!response.ok) {
+    console.log('response', response)
+    throw new Error(`Failed to scrape URLs`)
   }
 
   return response.json()

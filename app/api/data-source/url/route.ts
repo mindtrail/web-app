@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server'
+import { DataSourceType, DataSourceStatus } from '@prisma/client'
+import { Document } from 'langchain/document'
+
 import { getWebsiteData } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/htmlLoader'
-import { DataSourceType, DataSourceStatus } from '@prisma/client'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
-import { Document } from 'langchain/document'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'
+
+import { cleanContent } from '@/lib/htmlLoader'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/ // Matches everything after the second slash
@@ -35,12 +38,14 @@ export async function POST(req: Request) {
     const body = (await req.json()) as EmbeddingPayload
 
     console.time(`Embed website ${timestamp}`)
-    const { userId, collectionId, files } = body
+    const { userId, collectionId, files } = body as unknown as ScrapingResult
 
-    console.log('--- >', collectionId, files.length, JSON.stringify(files))
+    console.log(' Creating DataSources for Scrapped URLs --- >', files.length)
     // Download the files from GCS
     const documents = await Promise.all(
-      files.map(async (fileName) => {
+      files.map(async ({ fileName, metadata }) => {
+        const { url, content, ...restMetadata } = metadata
+
         const file = await getWebsiteData(fileName)
         if (!file) {
           return null
@@ -61,16 +66,18 @@ export async function POST(req: Request) {
         const summary = await sumarizePage(sumaryContent)
         const category = await getPageCategory(summary)
 
-        const match = fileName.match(WEB_PAGE_REGEX)
+        // const match = fileName.match(WEB_PAGE_REGEX)
         const dataSourcePayload = {
-          name: match ? match[1] : fileName,
-          collectionId,
-          ownerId: userId,
+          name: url,
+          // collectionId,
+          // ownerId: userId,
           type: DataSourceType.web_page,
           nbChunks,
           textSize,
           summary,
           thumbnail: category,
+          content: cleanContent(content),
+          ...restMetadata,
         }
 
         const dataSource = await createDataSource(dataSourcePayload)

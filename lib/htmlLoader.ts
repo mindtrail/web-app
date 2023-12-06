@@ -12,10 +12,7 @@ type HTMLResponse = {
   sumaryContent: string
 }
 
-export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
-  const { html, storageMetadata, fileName } = file
-  const { pageTitle = '', metaDescription = '' } = storageMetadata
-
+export const cleanContent = (html: string): string => {
   const $ = cheerio.load(html)
 
   $(ITEMS_TO_EXCLUDE).remove()
@@ -24,7 +21,15 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
   $('img').removeAttr('src')
 
   const cleanedHTML = $('body').html() || ''
-  const pageContent = htmlToText(cleanedHTML)
+
+  return htmlToText(cleanedHTML)
+}
+
+export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
+  const { html, storageMetadata, fileName } = file
+  const { pageTitle = '', metaDescription = '' } = storageMetadata
+
+  const pageContent = cleanContent(html)
 
   const sumaryContent = `${pageTitle} \n
     ${metaDescription} \n ${pageContent.substring(0, 1000)}`
