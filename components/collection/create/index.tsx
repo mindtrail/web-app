@@ -25,7 +25,7 @@ export function CreateCollection({
   userId,
   collection: existingDataStore,
 }: DataStoreProps) {
-  const [state, dispatch] = useContext(GlobalStateContext)
+  const [, dispatch] = useContext(GlobalStateContext)
 
   const { toast } = useToast()
   const router = useRouter()

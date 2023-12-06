@@ -136,13 +136,15 @@ model DataSource {
   name      String
   status    DataSourceStatus @default(unsynched)
 
-  autoSave        Boolean? @default(false)
-  metaDescription String?
-  pageTitle       String?
+  autoSave      Boolean? @default(false)
+  description   String?
+  title         String?
+  displayName   String?
+  image         String?
 
-  summary     String?
-  pageContent String?
-  thumbnail   String?
+  summary       String?
+  content       String?
+  thumbnail     String?
 
   dataSourceTags        DataSourceTag[]
   collectionDataSource  CollectionDataSource[]
