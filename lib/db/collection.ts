@@ -13,7 +13,7 @@ export const getCollectionListDbOp = async ({
 }: CollectionListProps) => {
   // Fetch data using Prisma based on the user
   const collectionList = await prisma.collection.findMany({
-    where: { ownerId: userId },
+    // where: { ownerId: userId },
     include: {
       // @TODO: retrieve dataSources from the DB
       collectionDataSource: includeDataSource,
@@ -33,15 +33,14 @@ export const getCollectionDbOp = async ({
   collectionId,
 }: GetCollectionProps) => {
   // Fetch data using Prisma based on the user
-  const collection = await prisma.collection.findUnique({
-    where: { ownerId: userId, id: collectionId },
-    include: {
-      // @TODO: retrieve dataSources from the DB
-      // dataSources: true,
-    },
-  })
-
-  return collection
+  // const collection = await prisma.collection.findUnique({
+  //   // where: { ownerId: userId, id: collectionId },
+  //   // include: {
+  //   // @TODO: retrieve dataSources from the DB
+  //   // dataSources: true,
+  //   // },
+  // })
+  // return collection
 }
 
 export const createCollectionDbOp = async ({

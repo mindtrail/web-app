@@ -39,9 +39,9 @@ export default async function ChatPage() {
     collectionId: TEST_DATA_STORE,
   })
 
-  if (!collection) {
-    redirect('/collection?error=not-found')
-  }
+  // if (!collection) {
+  //   redirect('/collection?error=not-found')
+  // }
 
   return <ImportDataSource userId={userId} collection={collection} />
 }

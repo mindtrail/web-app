@@ -43,13 +43,11 @@ export default async function CollectionPage(params: DSProps) {
     includeDataSource: true,
   })
 
+  console.log(collectionList)
+
   if (!collectionList?.length) {
     redirect(`/collection/create`)
   }
 
-  return (
-    <>
-      <CollectionList collectionList={collectionList} />
-    </>
-  )
+  return <CollectionList collectionList={collectionList} />
 }

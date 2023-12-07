@@ -12,15 +12,6 @@ import { cleanContent } from '@/lib/htmlLoader'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
-// THIS IS EMBEDDING FILES FROM GCS
-
-interface EmbeddingPayload {
-  userId: string
-  collectionId: string
-  files: string[]
-  bucket: string
-}
-
 export async function POST(req: Request) {
   // This will be a call from a Cloud Run service, from the same project & VPC
   // I want to make this call accessible only from the Cloud Run service
@@ -34,12 +25,12 @@ export async function POST(req: Request) {
   const timestamp = Date.now()
 
   try {
-    const body = (await req.json()) as EmbeddingPayload
+    const body = await req.json()
 
     console.time(`Embed website ${timestamp}`)
-    const { userId, collectionId, files } = body as unknown as ScrapingResult
+    const { userId, collectionId, files } = body as ScrapingResult
 
-    console.log(' Creating DataSources for Scrapped URLs --- >', files.length)
+    console.log('Creating DataSources for Scrapped URLs --- >', files.length)
     // Download the files from GCS
     const documents = await Promise.all(
       files.map(async ({ fileName, metadata }) => {
@@ -63,9 +54,8 @@ export async function POST(req: Request) {
           })
         }
         const summary = await sumarizePage(sumaryContent)
-        const category = await getPageCategory(summary)
+        // const category = await getPageCategory(summary)
 
-        // const match = fileName.match(WEB_PAGE_REGEX)
         const dataSourcePayload = {
           name: url,
           // collectionId,
@@ -74,7 +64,7 @@ export async function POST(req: Request) {
           nbChunks,
           textSize,
           summary,
-          thumbnail: category,
+          // thumbnail: category,
           content: cleanContent(content),
           ...restMetadata,
         }
