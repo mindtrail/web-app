@@ -79,15 +79,17 @@ export async function uploadToGCS(props: UploadToGCSProps) {
 export async function deleteFileFromGCS(dataSource: DataSource) {
   const {
     id: dataSourceId,
-    collectionId,
-    ownerId: userId,
+    // collectionId,
+    // ownerId: userId,
     type,
     name,
   } = dataSource
 
+  const userId = 'test'
+
   try {
     const bucket = storage.bucket(bucketName)
-    const path = `${userId}/${collectionId}`
+    const path = `${userId}`
     const fileName =
       type === 'file' ? `${path}/${dataSourceId}-${name}` : `${path}/${name}`
 

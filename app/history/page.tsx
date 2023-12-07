@@ -35,21 +35,7 @@ export default async function ChatPage() {
 
   const userId = session.user.id
 
-  let historyItems = (await getDataSourceList(userId)).slice(0, 5)
-  const historyItemsIds = historyItems.map((item) => item.id)
-  const metadata = await getVectorItemsByDataSourceId(historyItemsIds)
-
-  if (metadata) {
-    historyItems = historyItems.map((item) => {
-      // @ts-ignore
-      const itemMetadata = metadata[item.id]
-
-      return {
-        ...item, //@ts-ignore
-        ...metadata[item.id],
-      }
-    })
-  }
+  const historyItems = (await getDataSourceList(userId)).slice(0, 5)
 
   return <HistoryView userId={userId} historyItems={historyItems} />
 }

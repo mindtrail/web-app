@@ -5,8 +5,6 @@ import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/qdrant-langchain'
 import { getDataSourceById } from '@/lib/db/dataSource'
 
-const TEST_COLLECTION = 'bookmark-ai'
-
 type ResultItem = {
   title: string
   description: string
@@ -33,7 +31,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const websiteFound = await searchSimilarText(searchQuery, TEST_COLLECTION)
+    const websiteFound = await searchSimilarText(searchQuery)
 
     if (!websiteFound) {
       return new Response('No website found', {

@@ -11,7 +11,6 @@ import { sumarizePage, getPageCategory } from '@/lib/openAI'
 import { cleanContent } from '@/lib/htmlLoader'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
-const WEB_PAGE_REGEX = /(?:[^\/]+\/){2}(.+)/ // Matches everything after the second slash
 
 // THIS IS EMBEDDING FILES FROM GCS
 
@@ -111,7 +110,6 @@ export async function POST(req: Request) {
 
     await createAndStoreVectors({
       docs: filteredDocs,
-      collectionName: `${userId}-${collectionId}`,
     })
 
     // Update the dataSource status to synched for each doc

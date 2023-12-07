@@ -4,21 +4,9 @@ import { NextResponse } from 'next/server'
 import { searchSimilarText } from '@/lib/qdrant-langchain'
 import { getDataSourceById } from '@/lib/db/dataSource'
 
-const TEST_COLLECTION = 'bookmark-ai'
-
-type ResultItem = {
-  title: string
-  description: string
-  image: string
-}
-
-type props = {
-  searchQuery: string
-}
-
 export async function searchHistory(searchQuery: string) {
   try {
-    const websiteFound = await searchSimilarText(searchQuery, TEST_COLLECTION)
+    const websiteFound = await searchSimilarText(searchQuery)
 
     if (!websiteFound) {
       return new NextResponse('No website found', {

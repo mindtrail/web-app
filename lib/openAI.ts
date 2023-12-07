@@ -3,11 +3,11 @@ import { PromptTemplate } from 'langchain/prompts'
 import { SystemMessage, HumanMessage, AIMessageChunk } from 'langchain/schema'
 
 const SUMMARY_PROMPT = process.env.SUMMARY_PROMPT || ''
-const CATEGORY_PROMPT = process.env.CATEGORY_PROMPT || ''
+const GET_TAGS_PROMPT = process.env.GET_TAGS_PROMPT || ''
 
-const categoryPromptTemplate = PromptTemplate.fromTemplate(CATEGORY_PROMPT)
+const tagsPromptTemplate = PromptTemplate.fromTemplate(GET_TAGS_PROMPT)
 
-const EXISTING_CATEGORIES = [
+const EXISTING_TAGS = [
   'utils',
   'RAG',
   'AI',
@@ -48,8 +48,8 @@ export const getOpenAIConnection = () => {
 export const getPageCategory = async (pageDescription: string) => {
   const openAI = getOpenAIConnection()
 
-  const formattedPrompt = await categoryPromptTemplate.format({
-    categories: EXISTING_CATEGORIES.join(', '),
+  const formattedPrompt = await tagsPromptTemplate.format({
+    tags: EXISTING_TAGS.join(', '),
   })
 
   const systemMessage = new SystemMessage(formattedPrompt)
