@@ -44,7 +44,6 @@ declare global {
       description: string
       image: string
       url: string
-      userId: string
     }
   }
 

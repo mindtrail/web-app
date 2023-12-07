@@ -1,6 +1,6 @@
 'use client'
 
-// import Image from 'next/image'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ColumnDef } from '@tanstack/react-table'
 
@@ -22,6 +22,17 @@ const addHttpsIfMissing = (url: string) => {
     return 'https://' + url
   }
   return url
+}
+
+type LoaderProps = {
+  src: string
+  width: number
+  quality?: number
+}
+// Custom loader function
+const cloudinaryLoader = ({ src, width = 200, quality }: LoaderProps) => {
+  const cloudinaryBase = 'https://res.cloudinary.com/dea7r24ca/image/fetch/'
+  return `${cloudinaryBase}w_${width},q_${quality || 75}/${src}`
 }
 
 export const FIXED_COLUMNS = ['displayName']
@@ -53,9 +64,15 @@ export const columns: ColumnDef<HistoryItem>[] = [
       const isRowSelected = row.getIsSelected()
 
       const { original } = row
+      console.log(original)
       // @TODO: Store the hostname in the database in the first place
       // @ts-ignore
-      const { hostName, updatedAt, pageTitle, name } = original
+      const {
+        image = '',
+        title = 'Title',
+        updatedAt,
+        name,
+      } = original as HistoryItem
 
       const host = getHostName(getValue() as string)
 
@@ -86,15 +103,32 @@ export const columns: ColumnDef<HistoryItem>[] = [
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label='Select row'
           />
-          <div className='bg-slate-300 w-full h-32 rounded-md flex flex-col justify-between p-3 group/card'>
+          <div
+            className={`w-full h-32 rounded-md flex flex-col justify-between p-3 group/car relative`}
+          >
+            {image ? (
+              <Image
+                loader={cloudinaryLoader}
+                src={image as string}
+                alt={title as string}
+                width={200}
+                height={200}
+                className='absolute top-0 left-0 rounded-md border shadow-sm'
+              />
+            ) : (
+              <div className='absolute top-0 left-0 rounded-md border shadow-sm w-48 h-32 bg-gray-100'></div>
+            )}
             <Typography
-              className={`self-end invisible group-hover/row:visible`}
+              className={`self-end invisible group-hover/row:visible z-10`}
               variant='small'
             >
               {updatedDate}
             </Typography>
-            <Typography className='line-clamp-2' variant='small'>
-              {pageTitle}
+            <Typography
+              className='line-clamp-2 z-10 shadow-sm bg-white/50 rounded-md'
+              variant='small'
+            >
+              {title}
             </Typography>
           </div>
         </div>

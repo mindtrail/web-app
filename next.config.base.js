@@ -10,7 +10,13 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'avatars.githubusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/',
   },
 
   webpack: (config, { isServer }) => {

@@ -12,21 +12,25 @@ export const getFormInitialValues = (
       name: collection.name,
       description: collection.description || '',
       files: collection.dataSources
-        .filter((file) => file.type === DataSourceType.file)
-        .map((file) => ({
-          file,
-          source: 'remote',
-          status: file.status,
-          charCount: file.textSize,
-        })),
+        ? collection.dataSources
+            .filter((file) => file.type === DataSourceType.file)
+            .map((file) => ({
+              file,
+              source: 'remote',
+              status: file.status,
+              charCount: file.textSize,
+            }))
+        : [],
       urls: collection.dataSources
-        .filter((file) => file.type === DataSourceType.web_page)
-        .map((url) => ({
-          file: url,
-          source: 'remote',
-          status: url.status,
-          charCount: url.textSize,
-        })),
+        ? collection.dataSources
+            .filter((file) => file.type === DataSourceType.web_page)
+            .map((url) => ({
+              file: url,
+              source: 'remote',
+              status: url.status,
+              charCount: url.textSize,
+            }))
+        : [],
       newURL: '',
     }
   }

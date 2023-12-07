@@ -42,7 +42,7 @@ export function CollectionListItem(props: itemProps) {
           <span className='w-32 shrink-0 overflow-hidden whitespace-nowrap text-ellipsis'>
             {description}
           </span>
-          {dataSources.map(({ status, name }, index) => (
+          {dataSources?.map(({ status, name }, index) => (
             <div key={index} className='flex gap-1 items-center shrink-0'>
               <StatusIcon status={status} />
               <div className='text-sm text-muted-foreground '>
