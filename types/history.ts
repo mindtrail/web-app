@@ -2,7 +2,6 @@ import { DataSource } from '@prisma/client'
 
 declare global {
   type HistoryItem = DataSource & {
-    tags?: string[]
     displayName?: string
   }
 

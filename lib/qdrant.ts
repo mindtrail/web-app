@@ -6,7 +6,7 @@ import { DataSource } from '@prisma/client'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { metadata } from '@/app/layout'
 
-const DEFAULT_COLLECTION = 'bookmark-ai'
+const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION || ''
 const SIMILARITY_THRESHOLD = 0.78
 
 const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
@@ -136,7 +136,7 @@ export const getVectorItemsByDataSourceId = async (
 
     await Promise.all(
       dataSourceIdList.map(async (dataSourceId) => {
-        const { points } = await client.scroll(DEFAULT_COLLECTION, {
+        const { points } = await client.scroll(QDRANT_COLLECTION, {
           filter: {
             must: [
               {

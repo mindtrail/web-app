@@ -5,6 +5,7 @@ import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 
 const SIMILARITY_THRESHOLD = 0.78
+const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION || ''
 
 const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
   optimizers_config: {
@@ -19,11 +20,11 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
 const QDRANT_CLIENT_PROPS: QdrantLibArgs = {
   url: process.env.QDRANT_URL,
   apiKey: process.env.QDRANT_API_KEY,
+  collectionName: QDRANT_COLLECTION,
 }
 
 interface CreateAndStoreVectors {
   docs: Document[]
-  collectionName: string
 }
 
 type QdrantSearchResponse = Schemas['ScoredPoint'] & {
@@ -34,14 +35,13 @@ type QdrantSearchResponse = Schemas['ScoredPoint'] & {
 }
 
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
-  const { docs, collectionName } = props
+  const { docs } = props
 
   const vectorStore = await QdrantVectorStore.fromDocuments(
     docs,
     new OpenAIEmbeddings(),
     {
       ...QDRANT_CLIENT_PROPS,
-      collectionName,
       collectionConfig: COLLECTION_CONFIG,
     },
   )
@@ -49,10 +49,9 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
 
 export const searchSimilarText = async (
   message: string,
-  collectionName: string,
 ): Promise<Document['metadata'] | undefined> => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
-    collectionName,
+    collectionName: QDRANT_COLLECTION,
   })
 
   // console.log('--- message +++', message)
