@@ -52,8 +52,6 @@ export async function POST(req: Request) {
     })
   }
 
-  console.log('uploadedFile', uploadedFile)
-
   const { name: fileName = '' } = uploadedFile
 
   // Return nr of chunks & character count
@@ -76,9 +74,8 @@ export async function POST(req: Request) {
     type: DataSourceType.file,
     nbChunks,
     textSize,
-    // content: cleanContent(content),
-    // collectionId,
-    // ownerId: userId,
+    // content:  -> For docs we don't store the content,
+    //it can be really big, eg a 100page PDF
   }
 
   const dataSource = await createDataSource(dataSourcePayload)

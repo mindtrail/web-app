@@ -6,36 +6,25 @@ import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'
 
-const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
-const TEST_USER_ID = process.env.TEST_USER_ID || ''
-const TEST_DATASTORE_ID = process.env.TEST_DATASTORE_ID || ''
+import { cleanContent } from '@/lib/loaders/htmlLoader'
 
 // Function that processes the data received from the Browser Extension
-// We need to store to GCS and then process the data
+// TODO: Add authentication
 
 export async function POST(req: Request) {
-  // const secret = req.headers.get('X-Custom-Secret')
-  // if (secret !== EMBEDDING_SECRET) {
-  //   return new Response('Unauthorized', {
-  //     status: 401,
-  //   })
-  // }
-
   try {
     const body = (await req.json()) as BrowserExtensionData
+    const { url, content, ...metadata } = body
 
-    const timestamp = Date.now()
-    console.time(`Embed website ${timestamp}`)
-    const { url: fileName } = body
+    console.log('--- Creating DataSources for URL ---> ', url)
 
-    const { url, title, description, content, image, autoSave } =
-      body as BrowserExtensionData
-
-    // Download the files from GCS
     const payload = {
-      fileName,
-      html,
-      storageMetadata,
+      fileName: url,
+      html: content,
+      metadata: {
+        url,
+        ...metadata,
+      },
     }
 
     const { chunks: docs, sumaryContent } = await getChunksFromHTML(payload)
@@ -52,17 +41,16 @@ export async function POST(req: Request) {
     }
 
     const summary = await sumarizePage(sumaryContent)
-    const category = await getPageCategory(summary)
+    // const category = await getPageCategory(summary)
 
     const dataSourcePayload = {
-      name: fileName,
-      collectionId: TEST_DATASTORE_ID,
-      ownerId: TEST_USER_ID,
+      name: url,
       type: DataSourceType.web_page,
       nbChunks,
       textSize,
       summary,
-      thumbnail: category,
+      content: cleanContent(content),
+      ...metadata,
     }
 
     const uniqueName = true
@@ -93,7 +81,6 @@ export async function POST(req: Request) {
 
     await createAndStoreVectors({
       docs: documents,
-      collectionName: `bookmark-ai`,
     })
 
     // Update the dataSource status to synched for each doc
@@ -103,7 +90,7 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({
-      result: `${documents.length} dataSources Created`,
+      result: `DataSource & ${documents.length} vectors Created`,
     })
   } catch (err) {
     console.error('errr', err)

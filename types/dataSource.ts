@@ -40,7 +40,7 @@ declare global {
     content: string
     title: string
     description: string
-    image: string
+    image?: string
     url: string
   }
 
@@ -57,12 +57,12 @@ declare global {
   }
 
   type BrowserExtensionData = WEB_Data & {
-    autoSave: boolean
+    autoSave?: boolean
   }
 
   interface HTMLFile {
     fileName: string
     html: string
-    metadata: BrowserExtensionData
+    metadata: Partial<BrowserExtensionData>
   }
 }

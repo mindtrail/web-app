@@ -59,13 +59,10 @@ export async function POST(req: Request) {
 
         const dataSourcePayload = {
           name: url,
-          // collectionId,
-          // ownerId: userId,
           type: DataSourceType.web_page,
           nbChunks,
           textSize,
           summary,
-          // thumbnail: category,
           content: cleanContent(content),
           ...restMetadata,
         }
@@ -82,8 +79,8 @@ export async function POST(req: Request) {
         return chunks.map(({ pageContent, metadata }) => ({
           pageContent,
           metadata: {
-            ...metadata,
             dataSourceId,
+            ...metadata,
           },
         }))
       }),
