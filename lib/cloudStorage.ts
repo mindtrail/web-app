@@ -5,14 +5,13 @@ import { DataSource } from '@prisma/client'
 interface UploadToGCSProps {
   uploadedFile: File
   userId: string
-  collectionId: string
   dataSourceId: string
 }
 
 const storage = new Storage()
 const bucketName = process.env.GCS_BUCKET_NAME || ''
 
-export async function getWebsiteData(
+export async function downloadFileGCS(
   fileName: string,
 ): Promise<HTMLFile | null> {
   const bucket = storage.bucket(bucketName)
@@ -24,7 +23,7 @@ export async function getWebsiteData(
     return {
       html,
       fileName,
-      storageMetadata: metadata?.metadata || {},
+      metadata: metadata?.metadata || {},
     }
   } catch (error) {
     console.error('Error downloading from GCS', error)
@@ -48,8 +47,8 @@ export async function getFileFromGCS(fileName: string): Promise<Blob | null> {
 }
 
 export async function uploadToGCS(props: UploadToGCSProps) {
-  const { uploadedFile, userId, collectionId, dataSourceId } = props
-  const fileName = `${userId}/${collectionId}/${dataSourceId}-${uploadedFile.name}`
+  const { uploadedFile, userId, dataSourceId } = props
+  const fileName = `${userId}/${dataSourceId}-${uploadedFile.name}`
 
   const bucket = storage.bucket(bucketName)
   const newFile = bucket.file(fileName)
@@ -63,7 +62,6 @@ export async function uploadToGCS(props: UploadToGCSProps) {
         customTime: new Date().toISOString(),
         metadata: {
           dataSourceId,
-          collectionId,
           userId,
         },
       },
@@ -79,7 +77,6 @@ export async function uploadToGCS(props: UploadToGCSProps) {
 export async function deleteFileFromGCS(dataSource: DataSource) {
   const {
     id: dataSourceId,
-    // collectionId,
     // ownerId: userId,
     type,
     name,

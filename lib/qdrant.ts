@@ -33,7 +33,6 @@ const QDRANT_ARGS: QdrantLibArgs = {
 interface CreateAndStoreVectors {
   docs: Document[]
   userId: string
-  collectionId: string
   dataSourceId: string
 }
 
@@ -58,7 +57,7 @@ export const getVectorStore = (collectionName: string) => {
 }
 
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
-  const { docs, userId, collectionId, dataSourceId } = props
+  const { docs, userId, dataSourceId } = props
 
   const collectionName = `bookmark-ai`
 
@@ -68,7 +67,6 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
       pageContent,
       metadata: {
         ...metadata,
-        collectionId,
         dataSourceId,
         userId,
       },

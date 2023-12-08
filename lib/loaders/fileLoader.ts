@@ -9,7 +9,7 @@ import { Document } from 'langchain/document'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 // import { EPubLoader } from 'langchain/document_loaders/fs/epub'
 
-const PDF_FILE = 'application/pdf'
+import { formatChunkForEmbedding } from '@/lib/loaders/utils'
 
 const LOADER: FILE_LOADER_PAIR = {
   'text/csv': CSVLoader,
@@ -36,7 +36,6 @@ const getFileLoader = (type: string) => {
   // Create the chunks from the non-split content.
   // But add the page numbers to the metadata from the page-split version
   // const options = { splitChapters: false, splitPages: false }
-
   return FileLoader
 }
 
@@ -77,20 +76,12 @@ export const getChunksFromFile = async (
     ).map(({ pageContent, metadata }) => {
       return {
         metadata,
-        pageContent: pageContent
-          .replace(/(?<!\n)\n(?!\n)/g, ' ') // Replace single newlines with spaces
-          .replace(/\s?-\s?/g, '-') // Fix spacing around dashes
-          .replace(/ \./g, '.') // Fix spacing around periods
-          .replace(/[‘’]/g, "'") // Normalize curly quotes to straight quotes
-          .replace(/[“”]/g, '"') // Normalize curly quotes to straight quotes
-          .replace(/ ' /g, "'") // Remove extra spaces around single straight quotes
-          .replace(/[ \t]{2,}/g, ' ') // Replace multiple spaces or tabs with a single space, without affecting newlines
-          .trim(), // Remove leading and trailing whitespace,
+        pageContent: formatChunkForEmbedding(pageContent),
       }
     })
 
     const chunkHeaderOptions = {
-      chunkHeader: `File ${fileName}. `,
+      chunkHeader: `${fileName}. `,
     }
 
     const chunks = (
@@ -101,14 +92,7 @@ export const getChunksFromFile = async (
           ...metadata,
           fileName,
         },
-        pageContent: pageContent
-          .replace(/\s{2,}/g, ' ') // Replace multiple whitespace characters with a single space
-          .toLowerCase() // Convert to lowercase
-          .replace(/(?<=[\.!?]\s)([a-z])|^([a-z])/g, (_, firstLetter) =>
-            firstLetter?.toUpperCase(),
-          )
-          // Capitalize first letter of each sentence
-          .trim(),
+        pageContent: formatChunkForEmbedding(pageContent),
       }
     })
 
@@ -119,25 +103,3 @@ export const getChunksFromFile = async (
     return error as Error
   }
 }
-
-// const UNSTRUCTURED_API_FILETYPES = [
-//   '.txt',
-//   '.text',
-//   '.pdf',
-//   '.docx',
-//   '.doc',
-//   '.jpg',
-//   '.jpeg',
-//   '.eml',
-//   '.html',
-//   '.htm',
-//   '.md',
-//   '.pptx',
-//   '.ppt',
-//   '.msg',
-//   '.rtf',
-//   '.xlsx',
-//   '.xls',
-//   '.odt',
-//   '.epub',
-// ]

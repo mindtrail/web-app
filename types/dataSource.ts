@@ -36,15 +36,17 @@ declare global {
     file: AcceptedFile | URLScrapped,
   ) => void
 
+  type WEB_Data = {
+    content: string
+    title: string
+    description: string
+    image: string
+    url: string
+  }
+
   type ScrapingFile = {
     fileName: string
-    metadata: {
-      content: string
-      title: string
-      description: string
-      image: string
-      url: string
-    }
+    metadata: WEB_Data
   }
 
   type ScrapingResult = {
@@ -52,5 +54,15 @@ declare global {
     userId: string
     collectionId?: string
     files: ScrapingFile[]
+  }
+
+  type BrowserExtensionData = WEB_Data & {
+    autoSave: boolean
+  }
+
+  interface HTMLFile {
+    fileName: string
+    html: string
+    metadata: BrowserExtensionData
   }
 }

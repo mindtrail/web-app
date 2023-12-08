@@ -24,18 +24,4 @@ declare global {
   }
 
   type ExtendedSession = Session & { user: UserWithId | null }
-
-  type StorageMetadata = {
-    pageTitle: string
-    metaDescription: string
-    userId: string
-    hostname: string
-    collectionId: string
-  }
-
-  interface HTMLFile {
-    fileName: string
-    html: string
-    storageMetadata: StorageMetadata
-  }
 }
