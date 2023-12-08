@@ -5,8 +5,10 @@ import { DataSourceType, DataSourceStatus } from '@prisma/client'
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
-import { getChunksFromFile } from '@/lib/fileLoader'
+import { getChunksFromFile } from '@/lib/loaders/fileLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
+
+// Upload file from the App
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -44,8 +46,8 @@ export async function POST(req: Request) {
     }
   }
 
-  if (!uploadedFile || !collectionId) {
-    return new Response(`Missing ${!uploadedFile ? 'file' : 'collectionId'}`, {
+  if (!uploadedFile) {
+    return new Response(`Missing file.`, {
       status: 400,
     })
   }
@@ -70,11 +72,13 @@ export async function POST(req: Request) {
 
   const dataSourcePayload = {
     name: fileName,
-    // collectionId,
-    // ownerId: userId,
+    title: fileName,
     type: DataSourceType.file,
     nbChunks,
     textSize,
+    // content: cleanContent(content),
+    // collectionId,
+    // ownerId: userId,
   }
 
   const dataSource = await createDataSource(dataSourcePayload)
@@ -86,10 +90,12 @@ export async function POST(req: Request) {
     })
   }
 
-  createAndStoreVectors({ docs, userId, collectionId, dataSourceId })
+  createAndStoreVectors({ docs, userId, dataSourceId })
 
   try {
-    await uploadToGCS({ uploadedFile, userId, collectionId, dataSourceId })
+    // Upload file to GCS
+    // @TODO: change collectionID ...
+    await uploadToGCS({ uploadedFile, userId, dataSourceId })
     updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
   } catch (err) {
     // @TODO: return file upload success, and run the rest of the process in the background

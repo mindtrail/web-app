@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getChunksFromHTML } from '@/lib/htmlLoader'
+import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
@@ -10,17 +10,10 @@ const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 const TEST_USER_ID = process.env.TEST_USER_ID || ''
 const TEST_DATASTORE_ID = process.env.TEST_DATASTORE_ID || ''
 
-interface EmbeddingDocPayload {
-  // userId: string
-  html: string
-  url: string
-  storageMetadata: StorageMetadata
-}
+// Function that processes the data received from the Browser Extension
+// We need to store to GCS and then process the data
 
 export async function POST(req: Request) {
-  // This will be a call from a Cloud Run service, from the same project & VPC
-  // I want to make this call accessible only from the Cloud Run service
-
   // const secret = req.headers.get('X-Custom-Secret')
   // if (secret !== EMBEDDING_SECRET) {
   //   return new Response('Unauthorized', {
@@ -29,11 +22,14 @@ export async function POST(req: Request) {
   // }
 
   try {
-    const body = (await req.json()) as EmbeddingDocPayload
+    const body = (await req.json()) as BrowserExtensionData
 
     const timestamp = Date.now()
     console.time(`Embed website ${timestamp}`)
-    const { html, url: fileName, storageMetadata } = body
+    const { url: fileName } = body
+
+    const { url, title, description, content, image, autoSave } =
+      body as BrowserExtensionData
 
     // Download the files from GCS
     const payload = {

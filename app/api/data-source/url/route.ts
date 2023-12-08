@@ -2,20 +2,21 @@ import { NextResponse } from 'next/server'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
 import { Document } from 'langchain/document'
 
-import { getWebsiteData } from '@/lib/cloudStorage'
-import { getChunksFromHTML } from '@/lib/htmlLoader'
+import { downloadFileGCS } from '@/lib/cloudStorage'
+import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'
 
-import { cleanContent } from '@/lib/htmlLoader'
+import { cleanContent } from '@/lib/loaders/htmlLoader'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
-export async function POST(req: Request) {
-  // This will be a call from a Cloud Run service, from the same project & VPC
-  // I want to make this call accessible only from the Cloud Run service
+// This processes the result from the scraper
+// This will be a call from a Cloud Run service, from the same project & VPC
+// I want to make this call accessible only from the Cloud Run service
 
+export async function POST(req: Request) {
   const secret = req.headers.get('X-Custom-Secret')
   if (secret !== EMBEDDING_SECRET) {
     return new Response('Unauthorized', {
@@ -25,10 +26,10 @@ export async function POST(req: Request) {
   const timestamp = Date.now()
 
   try {
-    const body = await req.json()
+    const body = (await req.json()) as ScrapingResult
 
     console.time(`Embed website ${timestamp}`)
-    const { userId, collectionId, files } = body as ScrapingResult
+    const { userId, collectionId, files } = body
 
     console.log('Creating DataSources for Scrapped URLs --- >', files.length)
     // Download the files from GCS
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
       files.map(async ({ fileName, metadata }) => {
         const { url, content, ...restMetadata } = metadata
 
-        const file = await getWebsiteData(fileName)
+        const file = await downloadFileGCS(fileName)
         if (!file) {
           return null
         }

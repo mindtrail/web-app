@@ -3,9 +3,11 @@ import { htmlToText } from 'html-to-text'
 import { Document } from 'langchain/document'
 import * as cheerio from 'cheerio'
 
-const ANCHORS_WITH_SIBINGS = 'a:has(a)'
-const ITEMS_TO_EXCLUDE =
-  'nav, header, footer, aside, menu, menuitem, .nav, .header, .footer, .aside, .menu, .menuitem, .navigation, .navBar, .nav-bar, .navbar, .sidebar, .topnav, .bottomnav, .breadcrumb, .pagination, .dropdown, .pageFooter, .footer, .sidenav, .main-menu, .submenu, .widget, script, style, noscript, iframe, link[rel="alternate svg image"]'
+import {
+  formatChunkForEmbedding,
+  ANCHORS_WITH_SIBINGS,
+  HTML_TAGS_TO_EXCLUDE,
+} from '@/lib/loaders/utils'
 
 type HTMLResponse = {
   chunks: Document[]
@@ -15,7 +17,7 @@ type HTMLResponse = {
 export const cleanContent = (html: string): string => {
   const $ = cheerio.load(html)
 
-  $(ITEMS_TO_EXCLUDE).remove()
+  $(HTML_TAGS_TO_EXCLUDE).remove()
   $(ANCHORS_WITH_SIBINGS).remove()
   $('a').removeAttr('href')
   $('img').removeAttr('src')
@@ -46,7 +48,7 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
 
   const document = new Document({ pageContent })
   const chunkHeaderOptions = {
-    chunkHeader: `${pageTitle}. ${metaDescription}. `,
+    chunkHeader: `${pageTitle}.`,
   }
   try {
     const chunks = (
@@ -71,31 +73,3 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
     throw new Error('Error splitting document')
   }
 }
-
-const formatChunkForEmbedding = (chunk: string): string => {
-  return chunk
-    .replace(/(?<!\n)\n(?!\n)/g, ' ') // Replace single newlines with spaces
-    .replace(/\s?-\s?/g, '-') // Fix spacing around dashes
-    .replace(/\.+/g, '.') // remove two consecutive periods
-    .replace(/ \./g, '.') // Remove spaces before periods
-    .replace(/\.(?=[a-zA-Z0-9])/g, '. ') // Ensure space after a period
-    .replace(/[‘’]/g, "'") // Normalize curly quotes to straight quotes
-    .replace(/[“”]/g, '"') // Normalize curly quotes to straight quotes
-    .replace(/ ' /g, "'") // Remove extra spaces around single straight quotes
-    .replace(/\s{2,}/g, ' ') // Replace multiple whitespace characters with a single space
-    .toLowerCase() // Convert to lowercase
-    .replace(
-      /(?<=[\.!?]\s)([a-z])|^(?<start>[a-z])/g,
-      (match, group1, start) => {
-        if (group1) {
-          return group1.toUpperCase()
-        } else if (start) {
-          return start.toUpperCase()
-        }
-        return match
-      },
-    ) // Capitalize first letter of each sentence
-    .trim()
-}
-
-// extension_id=eanggfilgoajaocelnaflolkadkeghjp
