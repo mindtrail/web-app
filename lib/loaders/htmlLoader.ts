@@ -14,27 +14,14 @@ type HTMLResponse = {
   sumaryContent: string
 }
 
-export const cleanContent = (html: string): string => {
-  const $ = cheerio.load(html)
-
-  $(HTML_TAGS_TO_EXCLUDE).remove()
-  $(ANCHORS_WITH_SIBINGS).remove()
-  $('a').removeAttr('href')
-  $('img').removeAttr('src')
-
-  const cleanedHTML = $('body').html() || ''
-
-  return htmlToText(cleanedHTML)
-}
-
 export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
-  const { html, storageMetadata, fileName } = file
-  const { pageTitle = '', metaDescription = '' } = storageMetadata
+  const { html, metadata, fileName } = file
+  const { title = '', description = '' } = metadata
 
   const pageContent = cleanContent(html)
 
-  const sumaryContent = `${pageTitle} \n
-    ${metaDescription} \n ${pageContent.substring(0, 1000)}`
+  const sumaryContent = `${title} \n
+    ${description} \n ${pageContent.substring(0, 1000)}`
 
   if (!pageContent) {
     throw new Error('Page has not content to read')
@@ -48,7 +35,7 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
 
   const document = new Document({ pageContent })
   const chunkHeaderOptions = {
-    chunkHeader: `${pageTitle}.`,
+    chunkHeader: `${title}.`,
   }
   try {
     const chunks = (
@@ -57,7 +44,7 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
       return {
         metadata: {
           ...metadata,
-          ...storageMetadata,
+          ...metadata,
           fileName,
         },
         pageContent: formatChunkForEmbedding(pageContent) || '',
@@ -72,4 +59,17 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
     console.error(err)
     throw new Error('Error splitting document')
   }
+}
+
+export const cleanContent = (html: string): string => {
+  const $ = cheerio.load(html)
+
+  $(HTML_TAGS_TO_EXCLUDE).remove()
+  $(ANCHORS_WITH_SIBINGS).remove()
+  $('a').removeAttr('href')
+  $('img').removeAttr('src')
+
+  const cleanedHTML = $('body').html() || ''
+
+  return htmlToText(cleanedHTML)
 }

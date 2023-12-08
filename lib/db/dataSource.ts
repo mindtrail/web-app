@@ -38,11 +38,7 @@ export const createDataSource = async (
   payload: CreateDataSourcePayload,
   uniqueName = false,
 ) => {
-  const {
-    name,
-    //collectionId, ownerId,
-    ...rest
-  } = payload
+  const { name, ...rest } = payload
 
   if (uniqueName) {
     const existingDataSource = await prisma.dataSource.findFirst({
