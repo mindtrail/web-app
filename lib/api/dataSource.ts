@@ -3,11 +3,11 @@ export const UPLOAD_ENDPOINT = '/api/data-source/file'
 export const METADATA_ENDPOINT = '/api/data-source/metadata'
 export const SCRAPER_ENDPOINT = '/api/scraper'
 
-export async function uploadFileApiCall(file: File, collectionId: string) {
+export async function uploadFileApiCall(file: File) {
   const formData = new FormData()
 
   formData.append('files', file)
-  formData.append('collectionId', collectionId)
+  // formData.append('collectionId', collectionId)
 
   const response = await fetch(UPLOAD_ENDPOINT, {
     method: 'POST',
@@ -51,7 +51,7 @@ export const deleteDataSourceApiCall = async (fileId: string) => {
 
 export const scrapeURLsApiCall = async (
   urls: string[],
-  collectionId: string,
+  collectionId?: string,
 ) => {
   const response = await fetch(SCRAPER_ENDPOINT, {
     method: 'POST',

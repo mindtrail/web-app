@@ -29,14 +29,15 @@ export async function POST(req: Request) {
     const body = (await req.json()) as ScrapingResult
 
     console.time(`Embed website ${timestamp}`)
-    const { userId, collectionId, files } = body
+    const { userId, collectionId, websites } = body
 
-    console.log('Creating DataSources for Scrapped URLs --- >', files.length)
-    // Download the files from GCS
+    console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
+
     const documents = await Promise.all(
-      files.map(async ({ fileName, metadata }) => {
+      websites.map(async ({ fileName, metadata }) => {
         const { url, content, ...restMetadata } = metadata
 
+        // Download the files from GCS
         const file = await downloadFileGCS(fileName)
         if (!file) {
           return null

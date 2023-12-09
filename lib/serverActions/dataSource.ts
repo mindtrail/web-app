@@ -13,7 +13,7 @@ const SCRAPER_SERVICE_URL =
 type deletePayload = {
   dataSourceId: string
 }
-export const scrapeURLs = async (urls: string[], collectionId: string) => {
+export const scrapeURLs = async (urls: string[], collectionId?: string) => {
   console.log('scrapeURLs', urls, collectionId)
 
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -49,7 +49,7 @@ export const scrapeURLs = async (urls: string[], collectionId: string) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ urls, collectionId, userId, limit: 5 }),
+      body: JSON.stringify({ urls, collectionId, userId, limit: 2 }),
     })
 
     if (!result.ok) {

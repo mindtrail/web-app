@@ -10,17 +10,14 @@ import { CollectionFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
 import { GlobalStateContext } from '@/context/global-state'
 
-import { uploadFileApiCall, scrapeURLsApiCall } from '@/lib/api/dataSource'
+import { uploadFileApiCall } from '@/lib/api/dataSource'
+import { scrapeURLs } from '@/lib/serverActions/dataSource'
 
 interface ImportDataSource extends React.ComponentProps<'div'> {
   userId: string
-  collection: CollectionExtended
 }
 
-export function ImportDataSource({
-  userId,
-  collection: existingCollection,
-}: ImportDataSource) {
+export function ImportDataSource({ userId }: ImportDataSource) {
   const [state, dispatch] = useContext(GlobalStateContext)
 
   const { toast } = useToast()
@@ -50,11 +47,13 @@ export function ImportDataSource({
 
   const updateCollection = async (data: CollectionFormValues) => {
     const { name, description, files, urls, newURL } = data
-    const {
-      id: collectionId,
-      name: existingName,
-      description: existingDescription,
-    } = existingCollection
+
+    // TODO: Add dropdown to select collection
+    // const {
+    //   id: collectionId,
+    //   name: existingName,
+    //   description: existingDescription,
+    // } = existingCollection
 
     const unsynchedFiles = files?.filter(
       ({ status }) => status === DataSourceStatus.unsynched,
@@ -63,19 +62,19 @@ export function ImportDataSource({
     if (newURL) {
       // @TODO: If I will add https:// automatically, it should be done here
       const urlList = newURL.split(',').map((url) => url.trim())
-      scrapeURLsApiCall(urlList, collectionId)
+      scrapeURLs(urlList)
     }
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {
-      await uploadFiles(unsynchedFiles, collectionId)
+      await uploadFiles(unsynchedFiles)
     }
 
     // Those are the only async operations
     if (urls?.length || unsynchedFiles?.length) {
-      dispatch({
-        type: 'ADD_UNSYNCED_DATA_STORE',
-        payload: { id: collectionId },
-      })
+      // dispatch({
+      // type: 'ADD_UNSYNCED_DATA_STORE',
+      // payload: { id: collectionId },
+      // })
     }
 
     toast({
@@ -84,9 +83,9 @@ export function ImportDataSource({
     })
   }
 
-  const uploadFiles = async (files: AcceptedFile[], collectionId: string) => {
+  const uploadFiles = async (files: AcceptedFile[], collectionId?: string) => {
     const fileUploadPromises = files.map(async ({ file }) => {
-      return await uploadFileApiCall(file as File, collectionId)
+      return await uploadFileApiCall(file as File)
     })
     const res = await Promise.allSettled(fileUploadPromises)
     return res
@@ -100,7 +99,7 @@ export function ImportDataSource({
       <div className='max-w-xl w-full'>
         <ImportForm
           onSubmit={onSubmit}
-          existingCollection={existingCollection}
+          // existingCollection={existingCollection}
           onScrapeWebsite={onScrapeWebsite}
         />
       </div>

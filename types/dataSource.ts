@@ -50,10 +50,9 @@ declare global {
   }
 
   type ScrapingResult = {
-    bucket: string
     userId: string
     collectionId?: string
-    files: ScrapingFile[]
+    websites: ScrapingFile[]
   }
 
   type BrowserExtensionData = WEB_Data & {
