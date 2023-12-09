@@ -15,7 +15,7 @@ type HTMLResponse = {
 }
 
 export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
-  const { html, metadata, fileName } = file
+  const { html, fileName, metadata } = file
   const { title = '', description = '' } = metadata
 
   const pageContent = cleanContent(html)

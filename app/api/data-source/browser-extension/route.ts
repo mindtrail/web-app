@@ -18,20 +18,9 @@ import { cleanContent } from '@/lib/loaders/htmlLoader'
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as BrowserExtensionData
-    const { url, content, ...metadata } = body
+    const { url, html, ...metadata } = body
 
     console.log('--- Creating DataSources for URL ---> ', url)
-
-    console.log(cleanContent(content)?.length)
-
-    const payload = {
-      fileName: url,
-      html: content,
-      metadata: {
-        url,
-        ...metadata,
-      },
-    }
 
     if (await dataSourceExists(url)) {
       return NextResponse.json({
@@ -40,7 +29,13 @@ export async function POST(req: Request) {
       })
     }
 
-    const { chunks: docs, sumaryContent } = await getChunksFromHTML(payload)
+    const file = {
+      fileName: url,
+      html,
+      metadata,
+    }
+
+    const { chunks: docs, sumaryContent } = await getChunksFromHTML(file)
     const nbChunks = docs.length
     const textSize = docs.reduce(
       (acc, doc) => acc + doc?.pageContent?.length,
@@ -62,7 +57,7 @@ export async function POST(req: Request) {
       nbChunks,
       textSize,
       summary,
-      content: cleanContent(content),
+      content: cleanContent(html),
       ...metadata,
     }
 

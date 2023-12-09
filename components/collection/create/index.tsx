@@ -144,7 +144,7 @@ export function CreateCollection({
 
   const uploadFiles = async (files: AcceptedFile[], collectionId: string) => {
     const fileUploadPromises = files.map(async ({ file }) => {
-      return await uploadFileApiCall(file as File, collectionId)
+      return await uploadFileApiCall(file as File)
     })
     const res = await Promise.allSettled(fileUploadPromises)
     return res
