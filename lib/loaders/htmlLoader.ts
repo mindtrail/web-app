@@ -44,7 +44,6 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<HTMLResponse> {
       return {
         metadata: {
           ...metadata,
-          ...metadata,
           fileName,
         },
         pageContent: formatChunkForEmbedding(pageContent) || '',
