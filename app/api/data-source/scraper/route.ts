@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
 import { Document } from 'langchain/document'
 
-import { downloadFileGCS } from '@/lib/cloudStorage'
+import { downloadWebsiteGCS } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
@@ -29,16 +29,19 @@ export async function POST(req: Request) {
     const body = (await req.json()) as ScrapingResult
 
     console.time(`Embed website ${timestamp}`)
-    const { userId, collectionId, websites } = body
+    const { userId, websites } = body
 
     console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
+    console.log(websites[0].metadata)
 
     const documents = await Promise.all(
-      websites.map(async ({ fileName, metadata }) => {
-        const { url, content, ...restMetadata } = metadata
+      websites.map(async ({ fileName: storageFileName, metadata }) => {
+        const { url, ...restMetadata } = metadata
 
         // Download the files from GCS
-        const file = await downloadFileGCS(fileName)
+        const file = (await downloadWebsiteGCS(storageFileName)) as HTMLFile
+        file.metadata = restMetadata
+
         if (!file) {
           return null
         }
@@ -58,13 +61,14 @@ export async function POST(req: Request) {
         const summary = await sumarizePage(sumaryContent)
         // const category = await getPageCategory(summary)
 
+        // We store the dataSource in the DB. Trying to store the content too, see how large it can be
         const dataSourcePayload = {
           name: url,
           type: DataSourceType.web_page,
           nbChunks,
           textSize,
           summary,
-          content: cleanContent(content),
+          content: cleanContent(file.html),
           ...restMetadata,
         }
 
@@ -80,8 +84,8 @@ export async function POST(req: Request) {
         return chunks.map(({ pageContent, metadata }) => ({
           pageContent,
           metadata: {
-            dataSourceId,
             ...metadata,
+            dataSourceId,
           },
         }))
       }),
