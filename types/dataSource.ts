@@ -37,7 +37,6 @@ declare global {
   ) => void
 
   type WEB_Data = {
-    content: string
     title: string
     description: string
     image?: string
@@ -57,6 +56,7 @@ declare global {
 
   type BrowserExtensionData = WEB_Data & {
     autoSave?: boolean
+    html: string
   }
 
   interface HTMLFile {
