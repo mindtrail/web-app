@@ -111,9 +111,8 @@ export const columns: ColumnDef<HistoryItem>[] = [
                 loader={cloudinaryLoader}
                 src={image as string}
                 alt={title as string}
-                width={200}
-                height={200}
-                className='absolute top-0 left-0 rounded-md border shadow-sm'
+                layout='fill'
+                className='absolute top-0 left-0 rounded-md border shadow-sm object-contain'
               />
             ) : (
               <div className='absolute top-0 left-0 rounded-md border shadow-sm w-48 h-32 bg-gray-100'></div>
@@ -125,7 +124,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
               {updatedDate}
             </Typography>
             <Typography
-              className='line-clamp-2 z-10 shadow-sm bg-white/50 rounded-md'
+              className='line-clamp-2 invisible group-hover/row:visible z-10 shadow-sm bg-white/50 rounded-md'
               variant='small'
             >
               {title}

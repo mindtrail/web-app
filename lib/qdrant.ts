@@ -1,10 +1,8 @@
 import { QdrantClient, Schemas } from '@qdrant/js-client-rest'
 import { Document } from 'langchain/document'
 import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
-import { DataSource } from '@prisma/client'
 
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { metadata } from '@/app/layout'
 
 const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION || ''
 const SIMILARITY_THRESHOLD = 0.78
@@ -59,8 +57,6 @@ export const getVectorStore = (collectionName: string) => {
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   const { docs, userId, dataSourceId } = props
 
-  const collectionName = `bookmark-ai`
-
   const payload = docs.map((doc) => {
     const { pageContent, metadata } = doc
     return {
@@ -75,7 +71,7 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
 
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     ...QDRANT_ARGS,
-    collectionName,
+    collectionName: QDRANT_COLLECTION,
   })
 
   const result = await vectorStore.addDocuments(payload)
@@ -84,11 +80,10 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
 
 export const searchSimilarText = async (
   message: string,
-  collectionName: string,
 ): Promise<Document[]> => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     ...QDRANT_ARGS,
-    collectionName: 'bookmark-ai',
+    collectionName: QDRANT_COLLECTION,
   })
 
   const result = await vectorStore.similaritySearchWithScore(message, 10)
