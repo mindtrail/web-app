@@ -1,40 +1,37 @@
 'use client'
 
-import { useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import { DataSourceStatus } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
-import { ImportForm } from '@/components/collection/import/form'
-import { CollectionFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
-import { GlobalStateContext } from '@/context/global-state'
 
 import { uploadFileApiCall } from '@/lib/api/dataSource'
 import { scrapeURLs } from '@/lib/serverActions/dataSource'
+
+import { ImportForm } from '@/components/import/form'
+import { ImportFormValues } from '@/components/import/utils'
 
 interface ImportDataSource extends React.ComponentProps<'div'> {
   userId: string
 }
 
 export function ImportDataSource({ userId }: ImportDataSource) {
-  const [state, dispatch] = useContext(GlobalStateContext)
-
   const { toast } = useToast()
   const router = useRouter()
 
-  const onSubmit = async (data: CollectionFormValues) => {
+  const onSubmit = async (data: ImportFormValues) => {
     try {
-      await updateCollection(data)
+      await processImportData(data)
 
-      router.push('/search?refresh=true')
+      router.push('/history?refresh=true')
     } catch (err) {
       console.log(err)
 
       toast({
         title: 'Error',
         variant: 'destructive',
-        description: `Something went wrong. Data was not imported properly`,
+        description: `${err}. Please try again!`,
       })
     }
   }
@@ -45,15 +42,9 @@ export function ImportDataSource({ userId }: ImportDataSource) {
     console.log(data)
   }
 
-  const updateCollection = async (data: CollectionFormValues) => {
-    const { name, description, files, urls, newURL } = data
-
+  const processImportData = async (data: ImportFormValues) => {
     // TODO: Add dropdown to select collection
-    // const {
-    //   id: collectionId,
-    //   name: existingName,
-    //   description: existingDescription,
-    // } = existingCollection
+    const { files, urls, newURL } = data
 
     const unsynchedFiles = files?.filter(
       ({ status }) => status === DataSourceStatus.unsynched,
@@ -62,24 +53,21 @@ export function ImportDataSource({ userId }: ImportDataSource) {
     if (newURL) {
       // @TODO: If I will add https:// automatically, it should be done here
       const urlList = newURL.split(',').map((url) => url.trim())
-      scrapeURLs(urlList)
+      const scrapeResult = await scrapeURLs(urlList)
+
+      if (scrapeResult?.error) {
+        throw new Error(scrapeResult?.error?.message)
+      }
     }
+
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {
       await uploadFiles(unsynchedFiles)
     }
 
-    // Those are the only async operations
-    if (urls?.length || unsynchedFiles?.length) {
-      // dispatch({
-      // type: 'ADD_UNSYNCED_DATA_STORE',
-      // payload: { id: collectionId },
-      // })
-    }
-
     toast({
-      title: 'Data imported',
-      description: `Data Store has been updated`,
+      title: 'Data import started',
+      description: `Import started. Data will be updated a few moments after the import is complete`,
     })
   }
 
@@ -87,8 +75,7 @@ export function ImportDataSource({ userId }: ImportDataSource) {
     const fileUploadPromises = files.map(async ({ file }) => {
       return await uploadFileApiCall(file as File)
     })
-    const res = await Promise.allSettled(fileUploadPromises)
-    return res
+    return await Promise.all(fileUploadPromises)
   }
 
   return (
