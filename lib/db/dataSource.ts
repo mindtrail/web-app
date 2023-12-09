@@ -34,6 +34,16 @@ type CreateDataSourcePayload = Pick<
   'name' | 'type' | 'nbChunks' | 'textSize'
 >
 
+export const dataSourceExists = async (name: string) => {
+  const dataSource = await prisma.dataSource.findFirst({
+    where: {
+      name,
+    },
+  })
+
+  return dataSource
+}
+
 export const createDataSource = async (
   payload: CreateDataSourcePayload,
   uniqueName = false,

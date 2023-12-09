@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
-import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
+import {
+  createDataSource,
+  updateDataSource,
+  dataSourceExists,
+} from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant-langchain'
 import { Document } from 'langchain/document'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'
@@ -18,6 +22,8 @@ export async function POST(req: Request) {
 
     console.log('--- Creating DataSources for URL ---> ', url)
 
+    console.log(cleanContent(content)?.length)
+
     const payload = {
       fileName: url,
       html: content,
@@ -25,6 +31,13 @@ export async function POST(req: Request) {
         url,
         ...metadata,
       },
+    }
+
+    if (await dataSourceExists(url)) {
+      return NextResponse.json({
+        status: 200,
+        message: 'DataSource already exists',
+      })
     }
 
     const { chunks: docs, sumaryContent } = await getChunksFromHTML(payload)
@@ -54,6 +67,8 @@ export async function POST(req: Request) {
     }
 
     const uniqueName = true
+    // @TODO: check if the dataSource already exists, and if the content has changed
+    // If not, don't create a new dataSource, only update it, and keep the same vectors
     const dataSource = await createDataSource(dataSourcePayload, uniqueName)
     const dataSourceId = dataSource?.id
 
