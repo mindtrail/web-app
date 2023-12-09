@@ -4,9 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
-import { ImportDataSource } from '@/components/collection/import/importDataSource'
-
-const TEST_DATA_STORE = process.env.TEST_DATASTORE_ID || ''
+import { ImportDataSource } from '@/components/import/importDataSource'
 
 interface UserWithId {
   id: string | null
@@ -32,11 +30,6 @@ export default async function ChatPage() {
     redirect(`/api/auth/signin?callbackUrl=/chat/`)
   }
   const userId = session.user.id
-
-  // const collection = await getCollectionDbOp({
-  //   userId,
-  //   collectionId: TEST_DATA_STORE,
-  // })
 
   return <ImportDataSource userId={userId} />
 }

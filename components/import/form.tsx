@@ -3,10 +3,11 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
+import { DataSourceType } from '@prisma/client'
 
 import { DataSourceList } from '@/components/collection/create/dataSourceList'
-import { useFileHandler } from '@/components/collection/create/useFileHandler'
-import { useUrlHandler } from '@/components/collection/create/useUrlHandler'
+import { useFileHandler } from '@/components/import/useFileHandler'
+import { useUrlHandler } from '@/components/import/useUrlHandler'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,24 +42,23 @@ import {
 } from '@/components/collection/constants'
 
 import {
-  collectionFormSchema,
+  importFormSchema,
   getFormInitialValues,
-  CollectionFormValues,
-} from '@/components/collection/utils'
-import { DataSourceType } from '@prisma/client'
+  ImportFormValues,
+} from '@/components/import/utils'
 
 type FormProps = {
   onScrapeWebsite?: (url: string) => Promise<void>
-  onSubmit: (data: CollectionFormValues) => Promise<void>
+  onSubmit: (data: ImportFormValues) => Promise<void>
   existingCollection?: CollectionExtended
 }
 
 export function ImportForm(props: FormProps) {
   const { onSubmit, existingCollection, onScrapeWebsite } = props
 
-  const defaultValues: CollectionFormValues = useMemo(
-    () => getFormInitialValues(existingCollection),
-    [existingCollection],
+  const defaultValues: ImportFormValues = useMemo(
+    () => getFormInitialValues(),
+    [],
   )
 
   const [processing, setProcessing] = useState(false)
@@ -88,8 +88,8 @@ export function ImportForm(props: FormProps) {
     setDeleteURLOpen,
   } = useUrlHandler(defaultValues?.urls)
 
-  const form = useForm<CollectionFormValues>({
-    resolver: zodResolver(collectionFormSchema),
+  const form = useForm<ImportFormValues>({
+    resolver: zodResolver(importFormSchema),
     defaultValues,
     mode: 'onChange',
     shouldFocusError: false, // Prevents auto focusing on the first error, which can trigger error displays immediately.
@@ -132,7 +132,7 @@ export function ImportForm(props: FormProps) {
     return null
   }
 
-  const onFormSumbit = async (data: CollectionFormValues) => {
+  const onFormSumbit = async (data: ImportFormValues) => {
     setProcessing(true)
     await onSubmit(data)
     setProcessing(false)

@@ -4,6 +4,8 @@ import { DataSourceStatus, DataSourceType } from '@prisma/client'
 import { formatDate } from '@/lib/utils'
 import { MAX_FILE_SIZE } from '@/components/collection/constants'
 
+export type CollectionFormValues = z.infer<typeof collectionFormSchema>
+
 export const getFormInitialValues = (
   collection?: CollectionExtended,
 ): CollectionFormValues => {
@@ -80,8 +82,6 @@ export const collectionFormSchema = z
       path: ['filesOrUrls'],
     },
   )
-
-export type CollectionFormValues = z.infer<typeof collectionFormSchema>
 
 export const filterFiles = (files: File[], remainingSlots: number) => {
   let count = 0

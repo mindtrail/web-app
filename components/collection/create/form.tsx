@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
 
 import { DataSourceList } from '@/components/collection/create/dataSourceList'
-import { useFileHandler } from '@/components/collection/create/useFileHandler'
-import { useUrlHandler } from '@/components/collection/create/useUrlHandler'
+import { useFileHandler } from '@/components/import/useFileHandler'
+import { useUrlHandler } from '@/components/import/useUrlHandler'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
