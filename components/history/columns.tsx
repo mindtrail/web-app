@@ -16,6 +16,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 import { getHostName } from '@/lib/utils'
+import { DataSourceType } from '@prisma/client'
 
 const addHttpsIfMissing = (url: string) => {
   if (!/^https?:\/\//i.test(url)) {
@@ -60,11 +61,11 @@ export const columns: ColumnDef<HistoryItem>[] = [
     minSize: 150,
     maxSize: 400,
     enableHiding: false,
-    cell: ({ row, getValue }) => {
+    cell: ({ row }) => {
       const isRowSelected = row.getIsSelected()
 
       const { original } = row
-      console.log(original)
+
       // @TODO: Store the hostname in the database in the first place
       // @ts-ignore
       const {
@@ -72,9 +73,11 @@ export const columns: ColumnDef<HistoryItem>[] = [
         title = 'Title',
         updatedAt,
         name,
+        type,
+        displayName,
       } = original as HistoryItem
 
-      const host = decodeURIComponent(getHostName(getValue() as string))
+      const host = displayName
 
       const updatedDate = new Date(updatedAt).toDateString()
 

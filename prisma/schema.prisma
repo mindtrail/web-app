@@ -136,10 +136,10 @@ model DataSource {
   type      DataSourceType
   status    DataSourceStatus @default(unsynched)
 
+  displayName   String
   autoSave      Boolean? @default(false)
   description   String?
   title         String?
-  displayName   String?
   image         String?
 
   summary       String?
@@ -168,8 +168,8 @@ model DataSourceUser {
   dataSourceId  String
   userId        String
 
-  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
-  user          User @relation(fields: [userId], references: [id])
+  dataSource    DataSource @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([dataSourceId, userId])
 }
@@ -200,8 +200,8 @@ model DataSourceTag {
   dataSourceId  String
   tagId         String
 
-  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
-  tag           Tag @relation(fields: [tagId], references: [id])
+  dataSource    DataSource @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+  tag           Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
   @@id([dataSourceId, tagId])
 }
 
@@ -334,7 +334,7 @@ enum DataSourceStatus {
 
 enum DataSourceType {
   web_page
-  web_site
+  clipping
   text
   file
   google_drive_file

@@ -1,14 +1,14 @@
 -- CreateEnum
-CREATE TYPE "DataStoreVisibility" AS ENUM ('public', 'private');
+CREATE TYPE "CollectionVisibility" AS ENUM ('public', 'private');
 
 -- CreateEnum
 CREATE TYPE "DataSourceStatus" AS ENUM ('unsynched', 'pending', 'running', 'synched', 'error', 'usage_limit_reached');
 
 -- CreateEnum
-CREATE TYPE "DataSourceType" AS ENUM ('web_page', 'web_site', 'text', 'file', 'google_drive_file', 'google_drive_folder', 'notion');
+CREATE TYPE "DataSourceType" AS ENUM ('web_page', 'clipping', 'text', 'file', 'google_drive_file', 'google_drive_folder', 'notion');
 
 -- CreateEnum
-CREATE TYPE "DataStoreType" AS ENUM ('qdrant');
+CREATE TYPE "VectorStore" AS ENUM ('qdrant');
 
 -- CreateEnum
 CREATE TYPE "SubscriptionPlan" AS ENUM ('level_0', 'level_1', 'level_2', 'level_3');
@@ -102,29 +102,35 @@ CREATE TABLE "Usage" (
 );
 
 -- CreateTable
-CREATE TABLE "DataStores" (
+CREATE TABLE "Collections" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "type" "DataStoreType" NOT NULL,
-    "visibility" "DataStoreVisibility" NOT NULL DEFAULT 'private',
+    "vectorStore" "VectorStore" DEFAULT 'qdrant',
+    "visibility" "CollectionVisibility" NOT NULL DEFAULT 'private',
     "config" JSONB,
+    "parentId" TEXT,
     "ownerId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "DataStores_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Collections_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "DataSrcs" (
+CREATE TABLE "DataSources" (
     "id" TEXT NOT NULL,
-    "type" "DataSourceType" NOT NULL,
     "name" TEXT NOT NULL,
+    "type" "DataSourceType" NOT NULL,
     "status" "DataSourceStatus" NOT NULL DEFAULT 'unsynched',
+    "displayName" TEXT NOT NULL,
+    "autoSave" BOOLEAN DEFAULT false,
+    "description" TEXT,
+    "title" TEXT,
+    "image" TEXT,
+    "summary" TEXT,
+    "content" TEXT,
     "config" JSONB,
-    "dataStoreId" TEXT,
-    "ownerId" TEXT,
     "nbChunks" INTEGER DEFAULT 0,
     "textSize" INTEGER DEFAULT 0,
     "hash" TEXT,
@@ -133,7 +139,53 @@ CREATE TABLE "DataSrcs" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "DataSrcs_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DataSources_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DataSourceUser" (
+    "dataSourceId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "DataSourceUser_pkey" PRIMARY KEY ("dataSourceId","userId")
+);
+
+-- CreateTable
+CREATE TABLE "CollectionDataSource" (
+    "collectionId" TEXT NOT NULL,
+    "dataSourceId" TEXT NOT NULL,
+
+    CONSTRAINT "CollectionDataSource_pkey" PRIMARY KEY ("collectionId","dataSourceId")
+);
+
+-- CreateTable
+CREATE TABLE "Tags" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "domain" TEXT NOT NULL,
+
+    CONSTRAINT "Tags_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DataSourceTag" (
+    "dataSourceId" TEXT NOT NULL,
+    "tagId" TEXT NOT NULL,
+
+    CONSTRAINT "DataSourceTag_pkey" PRIMARY KEY ("dataSourceId","tagId")
+);
+
+-- CreateTable
+CREATE TABLE "Filters" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "criteria" JSONB NOT NULL,
+    "ownerId" TEXT,
+    "collectionId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Filters_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -252,13 +304,34 @@ ALTER TABLE "Sessions" ADD CONSTRAINT "Sessions_userId_fkey" FOREIGN KEY ("userI
 ALTER TABLE "Usage" ADD CONSTRAINT "Usage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DataStores" ADD CONSTRAINT "DataStores_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Collections" ADD CONSTRAINT "Collections_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Collections"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DataSrcs" ADD CONSTRAINT "DataSrcs_dataStoreId_fkey" FOREIGN KEY ("dataStoreId") REFERENCES "DataStores"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Collections" ADD CONSTRAINT "Collections_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DataSrcs" ADD CONSTRAINT "DataSrcs_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "DataSourceUser" ADD CONSTRAINT "DataSourceUser_dataSourceId_fkey" FOREIGN KEY ("dataSourceId") REFERENCES "DataSources"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DataSourceUser" ADD CONSTRAINT "DataSourceUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CollectionDataSource" ADD CONSTRAINT "CollectionDataSource_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "Collections"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CollectionDataSource" ADD CONSTRAINT "CollectionDataSource_dataSourceId_fkey" FOREIGN KEY ("dataSourceId") REFERENCES "DataSources"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DataSourceTag" ADD CONSTRAINT "DataSourceTag_dataSourceId_fkey" FOREIGN KEY ("dataSourceId") REFERENCES "DataSources"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DataSourceTag" ADD CONSTRAINT "DataSourceTag_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "Tags"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Filters" ADD CONSTRAINT "Filters_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Filters" ADD CONSTRAINT "Filters_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "Collections"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Conversations" ADD CONSTRAINT "Conversations_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
