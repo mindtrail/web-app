@@ -30,8 +30,7 @@ const QDRANT_ARGS: QdrantLibArgs = {
 
 interface CreateAndStoreVectors {
   docs: Document[]
-  userId: string
-  dataSourceId: string
+  metadata?: any
 }
 
 type QdrantSearchResponse = Schemas['ScoredPoint'] & {
@@ -55,7 +54,7 @@ export const getVectorStore = (collectionName: string) => {
 }
 
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
-  const { docs, userId, dataSourceId } = props
+  const { docs, metadata: vectorMetadata } = props
 
   const payload = docs.map((doc) => {
     const { pageContent, metadata } = doc
@@ -63,8 +62,7 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
       pageContent,
       metadata: {
         ...metadata,
-        dataSourceId,
-        userId,
+        ...vectorMetadata,
       },
     }
   })

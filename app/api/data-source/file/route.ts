@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     })
   }
 
-  createAndStoreVectors({ docs, userId, dataSourceId })
+  createAndStoreVectors({ docs, metadata: { userId, dataSourceId } })
 
   try {
     await uploadToGCS({ uploadedFile, userId, dataSourceId })
