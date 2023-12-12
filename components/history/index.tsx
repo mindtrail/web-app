@@ -43,50 +43,6 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
 
   const { toast } = useToast()
 
-  useEffect(() => {
-    const tags: Tags = {}
-    const processedHistory = historyItems.map((item) => {
-      const elementTags =
-        item?.thumbnail?.split(',').map((tag) => tag.trim()) || []
-
-      elementTags?.forEach((tag) => {
-        tags[tag] = tag
-      })
-
-      return {
-        ...item,
-        displayName: item.name,
-        tags: elementTags,
-      } as HistoryItem
-    })
-
-    const tagList = Object.keys(tags).map((tag) => ({
-      label: tag,
-      value: tag,
-    }))
-    setCategories(tagList)
-
-    setHistory([...processedHistory])
-  }, [historyItems])
-
-  useEffect(() => {
-    if (!filters?.length) {
-      setFilteredItems(history)
-      return
-    }
-
-    // Create a regex pattern that accounts for potential spaces
-    const pattern = new RegExp(
-      '\\b' + filters.map((f) => f.value).join('\\s*|\\s*') + '\\b',
-    )
-
-    const filteredHistory = history.filter((item) =>
-      pattern.test(item?.thumbnail || ''),
-    )
-
-    setFilteredItems(filteredHistory)
-  }, [filters, history])
-
   const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
     event.preventDefault()
     const newTag = event.currentTarget.dataset.value || ''

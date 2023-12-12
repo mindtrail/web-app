@@ -9,14 +9,17 @@ export const getDataSourceList = async (
 ) => {
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
-      // @TODO: this was a 1-m relationship, now it's a m-m relationship, update it
-      // ownerId: userId,
-      // collectionId: collectionId,
+      dataSourceUsers: {
+        some: {
+          userId: userId,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
     },
   })
+  console.log(dataSourceList.length)
 
   return dataSourceList
 }
