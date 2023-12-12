@@ -57,12 +57,11 @@ export const getPageTags = async (
   const systemMessage = new SystemMessage(formattedPrompt)
   const humanMessage = new HumanMessage(pageDescription)
 
-  console.log(humanMessage)
   const response = (await openAI
     .call([systemMessage, humanMessage])
     .catch(console.error)) as AIMessageChunk
 
-  console.log('AI TAGS ---- ---- --', response?.content)
+  // console.log('AI TAGS ---- ---- --', response?.content)
 
   if (!response?.content || response?.content === 'undefined') {
     return []
@@ -87,6 +86,6 @@ export const sumarizePage = async (text: string) => {
     .catch(console.error)) as AIMessageChunk
 
   const summary = response?.content
-  console.log('SUMMARY ---- ---- --', summary)
+  // console.log('SUMMARY ---- ---- --', summary)
   return summary
 }
