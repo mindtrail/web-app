@@ -27,12 +27,6 @@ type Tags = {
   [key: string]: string
 }
 
-const getRouteWithoutProtocol = (url: string) => {
-  const match = url.match(/^(?:https?:\/\/)?(?:www\.)?([^?]+)?/)
-  const route = match ? match[1] : ''
-  return route.replace(/\/$/, '')
-}
-
 export function HistoryView({ historyItems, userId }: HistoryViewProps) {
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>([])
@@ -61,7 +55,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
 
       return {
         ...item,
-        displayName: getRouteWithoutProtocol(item.name),
+        displayName: item.name,
         tags: elementTags,
       } as HistoryItem
     })

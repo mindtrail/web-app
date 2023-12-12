@@ -63,6 +63,7 @@ export async function POST(req: Request) {
 
         // We store the dataSource in the DB. Trying to store the content too, see how large it can be
         const dataSourcePayload = {
+          userId,
           name: url,
           type: DataSourceType.web_page,
           nbChunks,

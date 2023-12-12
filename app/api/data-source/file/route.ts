@@ -70,12 +70,11 @@ export async function POST(req: Request) {
 
   const dataSourcePayload = {
     name: fileName,
-    title: fileName,
     type: DataSourceType.file,
+    title: fileName,
     nbChunks,
     textSize,
-    // content:  -> For docs we don't store the content,
-    //it can be really big, eg a 100page PDF
+    userId,
   }
 
   const dataSource = await createDataSource(dataSourcePayload)
@@ -90,8 +89,6 @@ export async function POST(req: Request) {
   createAndStoreVectors({ docs, userId, dataSourceId })
 
   try {
-    // Upload file to GCS
-    // @TODO: change collectionID ...
     await uploadToGCS({ uploadedFile, userId, dataSourceId })
     updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
   } catch (err) {
