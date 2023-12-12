@@ -4,9 +4,11 @@ import { Document } from 'langchain/document'
 
 import { downloadWebsiteGCS } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
-import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 import { createAndStoreVectors } from '@/lib/qdrant'
-import { sumarizePage, getPageCategory } from '@/lib/openAI'
+import { sumarizePage, getPageTags } from '@/lib/openAI'
+
+import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
+import { createTags } from '@/lib/db/tags'
 
 import { cleanContent } from '@/lib/loaders/htmlLoader'
 
@@ -28,10 +30,10 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as ScrapingResult
 
-    console.time(`Embed website ${timestamp}`)
     const { userId, websites } = body
 
     console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
+    console.log(body)
 
     const documents = await Promise.all(
       websites.map(async ({ fileName: storageFileName, metadata }) => {
@@ -58,7 +60,7 @@ export async function POST(req: Request) {
           })
         }
         const summary = await sumarizePage(sumaryContent)
-        // const category = await getPageCategory(summary)
+        const tags = await getPageTags(summary)
 
         // We store the dataSource in the DB. Trying to store the content too, see how large it can be
         const dataSourcePayload = {
@@ -81,12 +83,15 @@ export async function POST(req: Request) {
           })
         }
 
+        await createTags({ tags, dataSourceId })
+
         return chunks.map(({ pageContent, metadata }) => ({
           pageContent,
           metadata: {
             ...metadata,
             dataSourceId,
             userId,
+            tags,
           },
         }))
       }),
