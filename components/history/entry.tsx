@@ -1,11 +1,8 @@
 import { MouseEvent, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 
-import { DataSource } from '@prisma/client'
-import { Cross1Icon, Link1Icon } from '@radix-ui/react-icons'
-
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { addHttpsIfMissing } from '@/lib/utils'
 
 type HistoryItemProps = {
   historyItem: HistoryItem
@@ -17,13 +14,6 @@ type HistoryItemProps = {
     event: MouseEvent<HTMLButtonElement>,
     historyItem: HistoryItem,
   ) => void
-}
-
-const addHttpsIfMissing = (url: string) => {
-  if (!/^https?:\/\//i.test(url)) {
-    return 'https://' + url
-  }
-  return url
 }
 
 export const HistoryEntry = ({
