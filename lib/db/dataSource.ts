@@ -19,7 +19,6 @@ export const getDataSourceList = async (
       createdAt: 'desc',
     },
   })
-  console.log(dataSourceList.length)
 
   return dataSourceList
 }
@@ -100,6 +99,7 @@ export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
     where: {
       id,
     },
+    // @ts-ignore
     data: {
       ...rest,
     },
@@ -109,16 +109,15 @@ export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
 }
 
 export const deleteDataSourceDbOp = async (
-  userId: string,
   dataSourceId: string,
+  userId: string,
 ) => {
   const dataSource = await prisma.dataSource.delete({
     where: {
       id: dataSourceId,
-      // @TODO ....
-      // ownerId: userId,
     },
   })
 
+  console.log(dataSource)
   return dataSource
 }

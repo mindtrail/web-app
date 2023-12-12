@@ -18,16 +18,18 @@ export async function deleteDataSource(props: deletePayload) {
 
   if (!userId) {
     return {
-      status: 401,
+      error: {
+        status: 401,
+        message: 'Unauthorized',
+      },
     }
   }
 
   try {
-    const dataSource = await deleteDataSourceDbOp(userId, dataSourceId)
+    const dataSource = await deleteDataSourceDbOp(dataSourceId, userId)
 
     // Delete dataSource from Qdrant and GCS
     // deleteFileFromGCS(dataSource)
-
     // @TODO delete points from Qdrant -> Dimitri
 
     revalidateTag('history')

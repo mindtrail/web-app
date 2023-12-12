@@ -4,7 +4,6 @@ import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { deleteDataSource } from '@/lib/serverActions/history'
 import { useDrop } from 'react-dnd'
-import { Document } from 'langchain/document'
 
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
@@ -29,7 +28,8 @@ type Tags = {
 
 export function HistoryView({ historyItems, userId }: HistoryViewProps) {
   const [history, setHistory] = useState<HistoryItem[]>([])
-  const [filteredItems, setFilteredItems] = useState<HistoryItem[]>([])
+  const [filteredItems, setFilteredItems] =
+    useState<HistoryItem[]>(historyItems)
 
   const [categories, setCategories] = useState<HistoryFilter[]>([])
   const [filters, setFilters] = useState<HistoryFilter[]>()
@@ -156,7 +156,9 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
             <AlertDialogDescription className='break-words'>
               This will delete the history entries and the associated data. The
               action cannot be undone and will permanently delete:
-              <ul className='mt-4 mb-2 list-disc list-inside '>{entryNames}</ul>
+              <span className='block mt-4 mb-2 list-disc list-inside '>
+                {entryNames}
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className='max-w-l'>
