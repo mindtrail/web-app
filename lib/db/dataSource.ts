@@ -33,10 +33,13 @@ export const getDataSourceById = async (dataSourceId: string) => {
   return dataSource
 }
 
-type CreateDataSourcePayload = Partial<DataSource> & {
-  userId: string
-  name: string
-}
+type CreateDataSourcePayload = Pick<
+  DataSource,
+  'type' | 'name' | 'nbChunks' | 'textSize'
+> &
+  Partial<Pick<DataSource, 'summary' | 'displayName' | 'status'>> & {
+    userId: string
+  }
 
 export const dataSourceExists = async (name: string) => {
   const dataSource = await prisma.dataSource.findFirst({
@@ -87,10 +90,9 @@ export const createDataSource = async (
   return dataSource
 }
 
-type UpdateDataSourcePayload = Partial<CreateDataSourcePayload> & {
+type UpdateDataSourcePayload = {
   id: string
-  status?: DataSourceStatus
-}
+} & Partial<CreateDataSourcePayload>
 
 export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
   const { id, ...rest } = payload
@@ -99,7 +101,6 @@ export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
     where: {
       id,
     },
-    // @ts-ignore
     data: {
       ...rest,
     },
