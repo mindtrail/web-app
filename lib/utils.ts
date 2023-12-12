@@ -45,3 +45,10 @@ export const getURLDisplayName = (urlString: string): string => {
     return urlString
   }
 }
+
+export const addHttpsIfMissing = (url: string) => {
+  if (!/^https?:\/\//i.test(url)) {
+    return 'https://' + url
+  }
+  return url
+}

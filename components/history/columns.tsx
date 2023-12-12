@@ -12,18 +12,10 @@ import {
   ReaderIcon,
 } from '@radix-ui/react-icons'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
-import { getHostName } from '@/lib/utils'
-import { DataSourceType } from '@prisma/client'
-
-const addHttpsIfMissing = (url: string) => {
-  if (!/^https?:\/\//i.test(url)) {
-    return 'https://' + url
-  }
-  return url
-}
+import { addHttpsIfMissing } from '@/lib/utils'
 
 type LoaderProps = {
   src: string
