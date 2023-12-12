@@ -5,7 +5,6 @@ import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
 import { getDataSourceList } from '@/lib/db/dataSource'
-import { getVectorItemsByDataSourceId } from '@/lib/qdrant'
 
 import { HistoryView } from '@/components/history'
 

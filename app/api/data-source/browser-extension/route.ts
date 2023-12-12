@@ -1,21 +1,34 @@
 import { NextResponse } from 'next/server'
-import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
+import { Document } from 'langchain/document'
+import { getServerSession } from 'next-auth/next'
+
+import { authOptions } from '@/lib/authOptions'
+import { createAndStoreVectors } from '@/lib/qdrant-langchain'
+import { sumarizePage } from '@/lib/openAI'
+import { cleanContent } from '@/lib/loaders/htmlLoader'
+
+import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import {
   createDataSource,
   updateDataSource,
   dataSourceExists,
 } from '@/lib/db/dataSource'
-import { createAndStoreVectors } from '@/lib/qdrant-langchain'
-import { Document } from 'langchain/document'
-import { sumarizePage, getPageCategory } from '@/lib/openAI'
-
-import { cleanContent } from '@/lib/loaders/htmlLoader'
 
 // Function that processes the data received from the Browser Extension
 // TODO: Add authentication
 
 export async function POST(req: Request) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return new Response('Unauthorized', {
+      status: 401,
+    })
+  }
+
   try {
     const body = (await req.json()) as BrowserExtensionData
     const { url, html, ...metadata } = body
@@ -52,6 +65,7 @@ export async function POST(req: Request) {
     // const category = await getPageCategory(summary)
 
     const dataSourcePayload = {
+      userId,
       name: url,
       type: DataSourceType.web_page,
       nbChunks,
@@ -62,8 +76,7 @@ export async function POST(req: Request) {
     }
 
     const uniqueName = true
-    // @TODO: check if the dataSource already exists, and if the content has changed
-    // If not, don't create a new dataSource, only update it, and keep the same vectors
+
     const dataSource = await createDataSource(dataSourcePayload, uniqueName)
     const dataSourceId = dataSource?.id
 

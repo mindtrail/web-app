@@ -140,10 +140,10 @@ model DataSource {
   description   String?
   title         String?
   displayName   String?
+  image         String?
 
   summary       String?
   content       String?
-  thumbnail     String?
 
   dataSourceTags        DataSourceTag[]
   collectionDataSource  CollectionDataSource[]
