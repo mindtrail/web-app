@@ -5,7 +5,7 @@ import { Document } from 'langchain/document'
 import { downloadWebsiteGCS } from '@/lib/cloudStorage'
 import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
-import { createAndStoreVectors } from '@/lib/qdrant-langchain'
+import { createAndStoreVectors } from '@/lib/qdrant'
 import { sumarizePage, getPageCategory } from '@/lib/openAI'
 
 import { cleanContent } from '@/lib/loaders/htmlLoader'
@@ -32,7 +32,6 @@ export async function POST(req: Request) {
     const { userId, websites } = body
 
     console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
-    console.log(websites[0].metadata)
 
     const documents = await Promise.all(
       websites.map(async ({ fileName: storageFileName, metadata }) => {
@@ -87,6 +86,7 @@ export async function POST(req: Request) {
           metadata: {
             ...metadata,
             dataSourceId,
+            userId,
           },
         }))
       }),

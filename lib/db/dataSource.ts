@@ -118,6 +118,5 @@ export const deleteDataSourceDbOp = async (
     },
   })
 
-  console.log(dataSource)
   return dataSource
 }

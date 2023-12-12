@@ -61,11 +61,11 @@ export const columns: ColumnDef<HistoryItem>[] = [
     minSize: 150,
     maxSize: 400,
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const isRowSelected = row.getIsSelected()
-
       const { original } = row
 
+      const showCheckbox = table.getIsSomePageRowsSelected()
       // @TODO: Store the hostname in the database in the first place
       // @ts-ignore
       const {
@@ -100,7 +100,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
           </Link>
           <Checkbox
             className={`absolute mt-[2px] left-2 invisible group-hover/row:visible ${
-              isRowSelected && 'visible'
+              (isRowSelected || showCheckbox) && 'visible'
             }`}
             checked={isRowSelected}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
