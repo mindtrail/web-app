@@ -2,7 +2,7 @@ import { DataSource } from '@prisma/client'
 
 declare global {
   type HistoryItem = DataSource & {
-    displayName?: string
+    displayName: string
   }
 
   type HistoryViewProps = {

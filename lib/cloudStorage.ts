@@ -13,7 +13,6 @@ const bucketName = process.env.GCS_BUCKET_NAME || ''
 
 export async function downloadWebsiteGCS(
   fileName: string,
-  includeMetadata = false,
 ): Promise<Partial<HTMLFile> | null> {
   const bucket = storage.bucket(bucketName)
   const file = bucket.file(fileName)
@@ -23,11 +22,6 @@ export async function downloadWebsiteGCS(
     const result: Partial<HTMLFile> = {
       html,
       fileName,
-    }
-
-    if (includeMetadata) {
-      const [metadata] = await file.getMetadata()
-      result.metadata = metadata?.metadata || {}
     }
 
     return result

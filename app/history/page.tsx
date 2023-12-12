@@ -35,7 +35,7 @@ export default async function ChatPage() {
 
   const userId = session.user.id
 
-  const historyItems = (await getDataSourceList(userId)).slice(0, 5)
+  const historyItems = (await getDataSourceList(userId)).slice(0, 50)
 
   return <HistoryView userId={userId} historyItems={historyItems} />
 }

@@ -1,5 +1,7 @@
-import { DataSourceStatus, DataSource } from '@prisma/client'
+import { DataSourceStatus, DataSource, DataSourceType } from '@prisma/client'
 import prisma from '@/lib/db/connection'
+
+import { getURLDisplayName } from '@/lib/utils'
 
 export const getDataSourceList = async (
   userId: string,
@@ -29,10 +31,10 @@ export const getDataSourceById = async (dataSourceId: string) => {
   return dataSource
 }
 
-type CreateDataSourcePayload = Pick<
-  DataSource,
-  'name' | 'type' | 'nbChunks' | 'textSize'
->
+type CreateDataSourcePayload = Partial<DataSource> & {
+  userId: string
+  name: string
+}
 
 export const dataSourceExists = async (name: string) => {
   const dataSource = await prisma.dataSource.findFirst({
@@ -48,7 +50,10 @@ export const createDataSource = async (
   payload: CreateDataSourcePayload,
   uniqueName = false,
 ) => {
-  const { name, ...rest } = payload
+  const { name, userId, ...rest } = payload
+
+  const displayName =
+    payload.type === DataSourceType.web_page ? getURLDisplayName(name) : name
 
   if (uniqueName) {
     const existingDataSource = await prisma.dataSource.findFirst({
@@ -56,25 +61,23 @@ export const createDataSource = async (
     })
     if (existingDataSource) {
       const { id } = existingDataSource
-      return updateDataSource({ id, ...payload })
+      return updateDataSource({ id, ...payload, displayName })
     }
   }
 
   const dataSource = await prisma.dataSource.create({
     data: {
       ...rest,
+      displayName,
       name,
-      // owner: {
-      //   connect: {
-      //     // @ts-ignore - ownerId is already checked before calling this function
-      //     id: ownerId,
-      //   },
-      // },
-      collectionDataSource: {
-        // connect: {
-        // @ts-ignore - collectionId is already checked before calling this function
-        // id: collectionId,
-        // },
+      dataSourceUsers: {
+        create: [
+          {
+            user: {
+              connect: { id: userId },
+            },
+          },
+        ],
       },
     },
   })

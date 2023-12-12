@@ -74,7 +74,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
         name,
       } = original as HistoryItem
 
-      const host = getHostName(getValue() as string)
+      const host = decodeURIComponent(getHostName(getValue() as string))
 
       const updatedDate = new Date(updatedAt).toDateString()
 
@@ -136,7 +136,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
   },
   {
     id: 'Description',
-    accessorKey: 'metaDescription',
+    accessorKey: 'status',
     header: () => (
       <div className='flex items-center gap-2 px-2'>
         <ReaderIcon /> Description

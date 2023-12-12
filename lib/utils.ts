@@ -20,7 +20,6 @@ export function formatDate(input: string | number | Date): string {
   })
 }
 
-
 export const getHostName = (urlString: string) => {
   try {
     const url = new URL(
@@ -33,3 +32,16 @@ export const getHostName = (urlString: string) => {
   }
 }
 
+export const getURLDisplayName = (urlString: string): string => {
+  try {
+    const url = new URL(urlString)
+    let hostname = url?.hostname?.startsWith('www.')
+      ? url.hostname.slice(4)
+      : url.hostname
+
+    return hostname
+  } catch (e) {
+    console.error(e)
+    return urlString
+  }
+}
