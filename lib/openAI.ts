@@ -45,7 +45,9 @@ export const getOpenAIConnection = () => {
   return openAIChat
 }
 
-export const getPageCategory = async (pageDescription: string) => {
+export const getPageTags = async (
+  pageDescription: string,
+): Promise<string[]> => {
   const openAI = getOpenAIConnection()
 
   const formattedPrompt = await tagsPromptTemplate.format({
@@ -55,12 +57,23 @@ export const getPageCategory = async (pageDescription: string) => {
   const systemMessage = new SystemMessage(formattedPrompt)
   const humanMessage = new HumanMessage(pageDescription)
 
+  console.log(humanMessage)
   const response = (await openAI
     .call([systemMessage, humanMessage])
     .catch(console.error)) as AIMessageChunk
 
-  const category = response?.content
-  return category
+  console.log('AI TAGS ---- ---- --', response?.content)
+
+  if (!response?.content || response?.content === 'undefined') {
+    return []
+  }
+
+  const tags = response?.content
+    ?.split(',')
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length)
+
+  return tags
 }
 
 export const sumarizePage = async (text: string) => {
@@ -74,5 +87,6 @@ export const sumarizePage = async (text: string) => {
     .catch(console.error)) as AIMessageChunk
 
   const summary = response?.content
+  console.log('SUMMARY ---- ---- --', summary)
   return summary
 }

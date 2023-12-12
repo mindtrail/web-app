@@ -187,9 +187,9 @@ model CollectionDataSource {
 
 // New Tag model
 model Tag {
-  id String @id @default(cuid())
-  name String
-  domain String
+  id      String @id @default(cuid())
+  name    String @unique
+  domain  String
 
   dataSourceTags DataSourceTag[] // Relation to DataSourceTag for data sources
   @@map("Tags")

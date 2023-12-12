@@ -1,4 +1,4 @@
-import { DataSourceStatus, DataSource, DataSourceType } from '@prisma/client'
+import { DataSource, DataSourceType } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 
 import { getURLDisplayName } from '@/lib/utils'
@@ -76,13 +76,11 @@ export const createDataSource = async (
       displayName,
       name,
       dataSourceUsers: {
-        create: [
-          {
-            user: {
-              connect: { id: userId },
-            },
+        create: {
+          user: {
+            connect: { id: userId },
           },
-        ],
+        },
       },
     },
   })
