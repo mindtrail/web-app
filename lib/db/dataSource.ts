@@ -18,6 +18,13 @@ export const getDataSourceList = async (
     orderBy: {
       createdAt: 'desc',
     },
+    include: {
+      dataSourceTags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
   })
 
   return dataSourceList

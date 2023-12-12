@@ -33,7 +33,6 @@ export async function POST(req: Request) {
     const { userId, websites } = body
 
     console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
-    console.log(body)
 
     const documents = await Promise.all(
       websites.map(async ({ fileName: storageFileName, metadata }) => {

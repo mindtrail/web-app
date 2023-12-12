@@ -175,7 +175,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
   },
   {
     id: 'tags',
-    accessorKey: 'tags',
+    accessorKey: 'dataSourceTags',
     header: () => (
       <div className='flex items-center gap-2 px-2'>
         <BookmarkIcon /> Tags
@@ -185,19 +185,20 @@ export const columns: ColumnDef<HistoryItem>[] = [
     minSize: 100,
     maxSize: 300,
     cell: ({ getValue }) => {
-      const tagList = getValue() as string[]
+      const tagList = getValue()
+      console.log(111, tagList)
 
       return (
         <div className='flex flex-wrap gap-2 px-2'>
           {tagList?.length
-            ? tagList.map((tag, index) => (
+            ? tagList.map(({ tag }, index) => (
                 <Button
                   key={index}
                   variant='outline'
                   size='sm'
                   className='shrink-0 max-w-full'
                 >
-                  {tag}
+                  {tag.name}
                 </Button>
               ))
             : 'No tags'}
