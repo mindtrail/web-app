@@ -128,6 +128,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
         'Content-Type': 'application/json',
       },
     })
+
     const websites = await result.json()
     console.log(222, websites)
 
