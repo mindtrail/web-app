@@ -92,8 +92,7 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
           <img
             src={cloudinaryLoader({ src: image, width: cellWidth })}
             alt={title as string}
-            width={cellWidth}
-            className='absolute top-0 left-0 rounded-md border shadow-sm object-cover h-full'
+            className='absolute top-0 left-0 rounded-md border shadow-sm object-cover w-full h-full'
           />
         ) : (
           <div className='absolute top-0 left-0 rounded-md border shadow-sm w-48 h-32 bg-gray-100'></div>
