@@ -92,6 +92,8 @@ export async function POST(req: Request) {
         metadata: {
           ...metadata,
           dataSourceId,
+          type: DataSourceType.web_page,
+          userId,
         },
       }))
       .filter((doc) => doc !== null) as Document[]

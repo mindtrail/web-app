@@ -79,11 +79,10 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
       .map(({ displayName = '' }) => getHostName(displayName))
       .join(', ')
 
-    try {
-      await Promise.all(
-        itemsToDelete.map(({ id }) => deleteDataSource({ dataSourceId: id })),
-      )
+    const dataSourceIdList = itemsToDelete.map(({ id }) => id)
 
+    try {
+      await deleteDataSource({ dataSourceIdList })
       toast({
         title: 'Delete History Entry',
         description: `${entryNames} has been deleted`,
@@ -129,8 +128,8 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
       },
     })
 
-    const websites = await result.json()
-    console.log(222, websites)
+    const dataSourceList = await result.json()
+    setFilteredItems(dataSourceList)
 
     setProcessing(false)
   }

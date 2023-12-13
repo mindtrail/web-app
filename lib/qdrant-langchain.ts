@@ -47,37 +47,31 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   )
 }
 
-export const searchSimilarText = async (
-  message: string,
-): Promise<Document['metadata'] | undefined> => {
+export const searchSimilarText = async (message: string): Promise<string[]> => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     collectionName: QDRANT_COLLECTION,
   })
 
-  // console.log('--- message +++', message)
-
   const allChunks = await vectorStore.similaritySearch(message, 10)
-  // console.log(allChunks)
-  const website = getWebsiteWithMostHits(allChunks)
+  const dataSourceList = getDataSourcesOrderByNrOfHits(allChunks)
 
-  return website
+  return dataSourceList
 }
 
-function getWebsiteWithMostHits(
-  dataArray: Document[],
-): Document['metadata'] | undefined {
-  const fileNameCounts: { [key: string]: number } = {}
-  let maxCount = 0
-  let websiteWithMostHits
+function getDataSourcesOrderByNrOfHits(dataArray: Document[]): string[] {
+  // dataSourceId: string
+
+  const websitesFound: { [key: string]: number } = {}
 
   for (const data of dataArray) {
-    const fileName = data.metadata.fileName
-    fileNameCounts[fileName] = (fileNameCounts[fileName] || 0) + 1
-    if (fileNameCounts[fileName] > maxCount) {
-      maxCount = fileNameCounts[fileName]
-      websiteWithMostHits = data.metadata as Document['metadata']
-    }
+    const { dataSourceId } = data.metadata
+    websitesFound[dataSourceId]++
   }
 
-  return websiteWithMostHits
+  // Sort the websitesFound object by the number of hits
+  const sortedWebsitesFound = Object.entries(websitesFound)
+    .sort(([, a], [, b]) => b - a)
+    .map(([website]) => website)
+
+  return sortedWebsitesFound
 }

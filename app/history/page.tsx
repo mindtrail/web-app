@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataSourceList } from '@/lib/db/dataSource'
+import { getDataSourceListForUser } from '@/lib/db/dataSource'
 
 import { HistoryView } from '@/components/history'
 
@@ -33,7 +33,7 @@ export default async function ChatPage() {
   }
 
   const userId = session.user.id
-  const historyItems = (await getDataSourceList(userId)).slice(0, 50)
+  const historyItems = (await getDataSourceListForUser(userId)).slice(0, 50)
 
   return <HistoryView userId={userId} historyItems={historyItems} />
 }
