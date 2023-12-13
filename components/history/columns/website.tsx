@@ -85,9 +85,7 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label='Select row'
       />
-      <div
-        className={`w-full h-32 rounded-md flex flex-col justify-between p-3 group/car relative`}
-      >
+      <div className={`w-full h-32 flex rounded-md group/car relative`}>
         {image ? (
           <img
             src={cloudinaryLoader({ src: image, width: cellWidth })}
@@ -97,18 +95,16 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
         ) : (
           <div className='absolute top-0 left-0 rounded-md border shadow-sm w-48 h-32 bg-gray-100'></div>
         )}
-        <Typography
-          className={`self-end invisible group-hover/row:visible z-10`}
-          variant='small'
+        <div
+          className={`rounded-md h-full flex flex-col justify-end py-2 bg-gradient-to-t from-white from-15% invisible group-hover/row:visible z-10`}
         >
-          {updatedDate}
-        </Typography>
-        <Typography
-          className='line-clamp-2 invisible group-hover/row:visible z-10 shadow-sm bg-white/50 rounded-md'
-          variant='small'
-        >
-          {title}
-        </Typography>
+          <Typography
+            className='line-clamp-2 invisible px-3 group-hover/row:visible rounded-md bottom-0'
+            variant='small'
+          >
+            {title}
+          </Typography>
+        </div>
       </div>
     </div>
   )
