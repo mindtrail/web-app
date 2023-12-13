@@ -1,5 +1,6 @@
 import { type Message } from 'ai'
 import { Session } from 'next-auth'
+import { Tag } from '@prisma/client'
 
 declare global {
   interface Chat extends Record<string, any> {
@@ -24,4 +25,6 @@ declare global {
   }
 
   type ExtendedSession = Session & { user: UserWithId | null }
+
+  type DataSourceTag = { tag: Tag }
 }
