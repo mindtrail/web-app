@@ -3,7 +3,7 @@ import * as cheerio from 'cheerio'
 
 import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/qdrant-langchain'
-import { getDataSourceById } from '@/lib/db/dataSource'
+import { getDataSourceListByIds } from '@/lib/db/dataSource'
 
 type ResultItem = {
   title: string
@@ -30,24 +30,18 @@ export async function POST(req: Request) {
     })
   }
 
+  console.log('searchQuery:::', searchQuery)
   try {
-    const websiteFound = await searchSimilarText(searchQuery)
+    const dataSourceList = await searchSimilarText(searchQuery)
 
-    if (!websiteFound) {
+    if (!dataSourceList) {
       return new Response('No website found', {
         status: 404,
       })
     }
+    const result = await getDataSourceListByIds(dataSourceList)
 
-    const { dataSourceId, fileName: url } = websiteFound
-    const dataSource = await getDataSourceById(dataSourceId)
-    const image = await getOGImage(url)
-
-    return Response.json({
-      ...websiteFound,
-      image,
-      summary: dataSource?.summary || '',
-    })
+    return Response.json(result)
     // return callLangchainChat({ searchQuery, chatId, userId })
   } catch (error) {
     console.error('An error occurred:', error)

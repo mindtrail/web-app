@@ -52,7 +52,7 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ urls, collectionId, userId, limit: 1 }),
+      body: JSON.stringify({ urls, collectionId, userId, limit: 10 }),
     })
 
     const res = await result?.json()

@@ -3,7 +3,7 @@ import prisma from '@/lib/db/connection'
 
 import { getURLDisplayName } from '@/lib/utils'
 
-export const getDataSourceList = async (
+export const getDataSourceListForUser = async (
   userId: string,
   collectionId?: string,
 ) => {
@@ -28,6 +28,38 @@ export const getDataSourceList = async (
   })
 
   return dataSourceList
+}
+
+export const getDataSourceListByIds = async (
+  dataSourceList: string[],
+  userId?: string,
+) => {
+  const result = await prisma.dataSource.findMany({
+    where: {
+      id: {
+        in: dataSourceList,
+      },
+      dataSourceUsers: {
+        some: {
+          userId: userId,
+        },
+      },
+    },
+    include: {
+      dataSourceTags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
+  })
+
+  // Sort the result based on the order in dataSourceList
+  const sortedResult = dataSourceList
+    .map((id) => result.find((dataSource) => dataSource.id === id))
+    .filter(Boolean)
+
+  return sortedResult
 }
 
 export const getDataSourceById = async (dataSourceId: string) => {
@@ -115,14 +147,31 @@ export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
 }
 
 export const deleteDataSourceDbOp = async (
-  dataSourceId: string,
+  dataSourceIdList: string[],
   userId: string,
 ) => {
-  const dataSource = await prisma.dataSource.delete({
+  // Step 1: Delete the m2m relationship between the user and the dataSource
+  const dataSourceForUser = await prisma.dataSourceUser.deleteMany({
     where: {
-      id: dataSourceId,
+      dataSourceId: {
+        in: dataSourceIdList,
+      },
+      userId,
     },
   })
 
-  return dataSource
+  // Step 2: Delete the dataSource if there are no more users associated with it
+
+  const dataSourceDeleted = await prisma.dataSource.deleteMany({
+    where: {
+      id: {
+        in: dataSourceIdList,
+      },
+      dataSourceUsers: {
+        none: {},
+      },
+    },
+  })
+  console.log('dataSourceDeleted:::', dataSourceDeleted)
+  return dataSourceDeleted
 }
