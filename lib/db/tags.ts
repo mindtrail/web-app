@@ -7,8 +7,6 @@ type CreateTagsPayload = {
 }
 
 export const createTags = async ({ tags, dataSourceId }: CreateTagsPayload) => {
-  console.log('TAGS', tags)
-
   // @TODO -> determine the domain of the tags. Add guardrails
   const tagsArray = tags.map((tag) => ({
     name: tag,

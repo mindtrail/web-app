@@ -10,6 +10,8 @@ import {
   WebsiteCell,
 } from '@/components/history/columns/website'
 
+import { formatDate } from '@/lib/utils'
+
 export const FIXED_COLUMNS = ['website']
 
 export const columns: ColumnDef<HistoryItem>[] = [
@@ -42,10 +44,24 @@ export const columns: ColumnDef<HistoryItem>[] = [
     cell: ({ getValue }) => <DefaultCell text={getValue() as string} />,
   },
   {
+    id: 'created',
+    accessorKey: 'createdAt',
+    header: () => <DefaultHeader text='created' />,
+    size: 150,
+    minSize: 100,
+    maxSize: 200,
+    cell: ({ getValue }) => (
+      <DefaultCell text={formatDate(getValue() as string)} />
+    ),
+
+    // },
+    // <DefaultCell text={getValue() as string} />,
+  },
+  {
     id: 'tags',
     accessorKey: 'dataSourceTags',
     header: () => <DefaultHeader text='tags' />,
-    size: 150,
+    size: 200,
     minSize: 100,
     maxSize: 300,
     cell: ({ getValue }) => (
