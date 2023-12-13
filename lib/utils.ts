@@ -52,3 +52,18 @@ export const addHttpsIfMissing = (url: string) => {
   }
   return url
 }
+
+type LoaderProps = {
+  src: string
+  width: number
+  quality?: number
+}
+
+export const cloudinaryLoader = ({
+  src,
+  width = 200,
+  quality = 75,
+}: LoaderProps) => {
+  const cloudinaryBase = 'https://res.cloudinary.com/dea7r24ca/image/fetch/'
+  return `${cloudinaryBase}w_${width},q_${quality || 75}/${src}`
+}

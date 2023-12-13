@@ -23,15 +23,7 @@ export const HistoryEntry = ({
   handleTagListClick,
   handleHistoryDelete,
 }: HistoryItemProps) => {
-  const { id, name, tags, displayName, summary, createdAt } = historyItem
-
-  const processedTags = useMemo(() => {
-    const filterList = filters?.map((filter) => filter.value)
-    return tags?.map((tag) => ({
-      value: tag,
-      selected: filterList?.includes(tag),
-    }))
-  }, [filters, tags])
+  const { id, name, displayName, summary, createdAt } = historyItem
 
   const handleDelete = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
@@ -59,22 +51,7 @@ export const HistoryEntry = ({
 
       <div className='max-w-md lg:max-w-lg'>{summary}</div>
 
-      <div className='flex gap-2 flex-wrap'>
-        {processedTags?.map(({ value, selected }, index) => (
-          <Button
-            key={index}
-            variant='secondary'
-            size='sm'
-            className={`hover:bg-slate-200
-              ${selected && 'bg-slate-200'}
-            `}
-            data-value={value} // Set a data attribute
-            onClick={handleTagListClick}
-          >
-            {value}
-          </Button>
-        ))}
-      </div>
+      <div className='flex gap-2 flex-wrap'></div>
       <span>Action</span>
       <span>Action</span>
     </div>
