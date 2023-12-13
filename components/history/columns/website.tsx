@@ -1,14 +1,7 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
+import { Link1Icon, ExternalLinkIcon } from '@radix-ui/react-icons'
 
-import {
-  Link1Icon,
-  BookmarkIcon,
-  Pencil2Icon,
-  ExternalLinkIcon,
-  ReaderIcon,
-} from '@radix-ui/react-icons'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
@@ -46,7 +39,7 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
 
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
-  const cellWidth = table.getColumn('displayName')?.getSize() || 200
+  const cellWidth = table.getColumn('website')?.getSize() || 200
 
   const {
     image = '',
