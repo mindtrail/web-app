@@ -15,21 +15,19 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
+import { DefaultHeader } from '@/components/history/columns/defaultHeader'
 import {
   WebsiteHeader,
   WebsiteCell,
 } from '@/components/history/columns/website'
 
-import {
-  DescriptionHeader,
-  DescriptionCell,
-} from '@/components/history/columns/description'
+import { DescriptionCell } from '@/components/history/columns/description'
 
-export const FIXED_COLUMNS = ['displayName']
+export const FIXED_COLUMNS = ['website']
 
 export const columns: ColumnDef<HistoryItem>[] = [
   {
-    id: 'displayName',
+    id: 'website',
     accessorKey: 'displayName',
     header: ({ table }) => <WebsiteHeader table={table} />,
     size: 200,
@@ -39,9 +37,9 @@ export const columns: ColumnDef<HistoryItem>[] = [
     cell: ({ row, table }) => <WebsiteCell row={row} table={table} />,
   },
   {
-    id: 'Description',
+    id: 'description',
     accessorKey: 'description',
-    header: () => <DescriptionHeader />,
+    header: () => <DefaultHeader text='description' />,
     size: 300,
     minSize: 150,
     maxSize: 700,
@@ -53,11 +51,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'summary',
     accessorKey: 'summary',
-    header: () => (
-      <div className='flex items-center gap-2 px-2'>
-        <Pencil2Icon /> Summary
-      </div>
-    ),
+    header: () => <DefaultHeader text='summary' />,
     size: 350,
     minSize: 150,
     maxSize: 700,
@@ -75,11 +69,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'tags',
     accessorKey: 'dataSourceTags',
-    header: () => (
-      <div className='flex items-center gap-2 px-2'>
-        <BookmarkIcon /> Tags
-      </div>
-    ),
+    header: () => <DefaultHeader text='tags' />,
     size: 150,
     minSize: 100,
     maxSize: 300,
