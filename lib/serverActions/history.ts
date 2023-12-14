@@ -10,6 +10,7 @@ import { deleteFileFromGCS } from '@/lib/cloudStorage'
 type deletePayload = {
   dataSourceIdList: string[]
 }
+
 export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
@@ -24,15 +25,16 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
   }
 
   try {
-    const dataSource = await deleteDataSourceDbOp(dataSourceIdList, userId)
+    const deletedDataSources = await deleteDataSourceDbOp(dataSourceIdList, userId)
 
-    // Delete dataSource from Qdrant and GCS
-    // deleteFileFromGCS(dataSource)
+    deleteFileFromGCS(deletedDataSources, userId)
     // @TODO delete points from Qdrant -> Dimitri
 
     revalidatePath('/history')
-    return { dataSource }
+    return { deletedDataSources }
   } catch (error) {
     return { status: 404 }
   }
 }
+
+

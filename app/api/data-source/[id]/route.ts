@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
 import { deleteDataSourceDbOp } from '@/lib/db/dataSource'
-import { deleteFileFromGCS } from '@/lib/cloudStorage'
 
 export async function DELETE(
   req: Request,
@@ -20,9 +19,9 @@ export async function DELETE(
     })
   }
   try {
-    const dataSource = await deleteDataSourceDbOp(userId, dataSourceId)
+    const dataSource = await deleteDataSourceDbOp([dataSourceId], userId)
     // Delete dataSource from Qdrant and GCS
-    const res = await deleteFileFromGCS(dataSource)
+    // const res = await deleteFileFromGCS(dataSource)
 
     return NextResponse.json({ dataSource })
   } catch (error) {
