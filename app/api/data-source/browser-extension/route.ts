@@ -3,11 +3,7 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { dataSourceExists } from '@/lib/db/dataSource'
-
-import {
-  processDataSourceCreation,
-  storeVectorsAndUpdateDataSource,
-} from '../utils'
+import { createDataSourceAndVectors } from '@/lib/loaders'
 
 // Function that processes the data received from the Browser Extension
 // TODO: Add authentication
@@ -41,15 +37,13 @@ export async function POST(req: Request) {
       metadata,
     }
 
-    const docs = await processDataSourceCreation(file, userId)
+    const docs = await createDataSourceAndVectors(file, userId)
 
     if (!docs?.length) {
       return new NextResponse('No docs', {
         status: 400,
       })
     }
-
-    await storeVectorsAndUpdateDataSource(docs)
 
     return NextResponse.json({
       result: `DataSource & ${docs.length} vectors Created`,

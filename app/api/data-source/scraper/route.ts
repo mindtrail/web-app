@@ -1,19 +1,13 @@
 import { NextResponse } from 'next/server'
 import { Document } from 'langchain/document'
 
+import { createDataSourceAndVectors } from '@/lib/loaders'
 import { downloadWebsiteGCS } from '@/lib/cloudStorage'
-
-import {
-  processDataSourceCreation,
-  storeVectorsAndUpdateDataSource,
-} from '../utils'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
-// This processes the result from the scraper
-// This will be a call from a Cloud Run service, from the same project & VPC
-// I want to make this call accessible only from the Cloud Run service
-
+// @TODO: call from a Cloud Run service, from the same project & VPC
+// Make this call accessible only from the same VPC
 export async function POST(req: Request) {
   const secret = req.headers.get('X-Custom-Secret')
   if (secret !== EMBEDDING_SECRET) {
@@ -28,7 +22,7 @@ export async function POST(req: Request) {
 
     console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
 
-    const documents = await Promise.all(
+    const docs = await Promise.all(
       websites.map(async ({ fileName: storageFileName, metadata }) => {
         const { url, ...restMetadata } = metadata
 
@@ -40,21 +34,19 @@ export async function POST(req: Request) {
           return null
         }
 
-        return await processDataSourceCreation(file, userId)
+        return await createDataSourceAndVectors(file, userId)
       }),
     )
 
-    const filteredDocs = documents
+    const filteredDocs = docs
       ?.flat()
       ?.filter((doc) => doc !== null) as Document[]
 
-    if (!documents?.length) {
+    if (!filteredDocs?.length) {
       return new NextResponse('No docs', {
         status: 400,
       })
     }
-
-    await storeVectorsAndUpdateDataSource(filteredDocs)
 
     return NextResponse.json({
       result: `${filteredDocs.length} dataSources Created`,
