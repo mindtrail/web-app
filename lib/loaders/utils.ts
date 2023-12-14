@@ -34,8 +34,8 @@ export const HTML_TAGS_TO_EXCLUDE =
 export const cleanHTMLContent = (html: string): string => {
   const $ = cheerio.load(html)
 
-  $(HTML_TAGS_TO_EXCLUDE).remove()
-  $(ANCHORS_WITH_SIBINGS).remove()
+  $(HTML_TAGS_TO_EXCLUDE)?.remove()
+  $(ANCHORS_WITH_SIBINGS)?.remove()
   $('a').removeAttr('href')
   $('img').removeAttr('src')
 

@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { DataSourceType } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
 
 import { createDataSourceAndVectors } from '@/lib/loaders'
+import { readFormData } from '@/lib/utils'
 
 // Upload local file flow
 export async function POST(req: Request) {
@@ -27,13 +29,18 @@ export async function POST(req: Request) {
   }
 
   const { file } = await readFormData(req)
+
   if (!file) {
     return new Response(`Missing file.`, {
       status: 400,
     })
   }
 
-  const docs = await createDataSourceAndVectors(file, userId)
+  const docs = await createDataSourceAndVectors({
+    file,
+    type: DataSourceType.file,
+    userId,
+  })
 
   if (docs instanceof Error) {
     // Handle the error case
@@ -51,24 +58,4 @@ export async function POST(req: Request) {
   // await uploadToGCS({ uploadedFile: file, userId, dataSourceId })
 
   return NextResponse.json({ docs })
-}
-
-const readFormData = async (req: Request) => {
-  const formData = await req.formData()
-  let file: File | null = null
-  let collectionId = ''
-
-  for (const value of Array.from(formData.values())) {
-    // FormDataEntryValue can either be type `Blob` or `string`.
-    // If its type is object then it's a Blob
-    if (typeof value == 'object') {
-      file = value
-    }
-    // If its type is string then it's the collectionId
-    if (typeof value == 'string') {
-      collectionId = value
-    }
-  }
-
-  return { file, collectionId }
 }

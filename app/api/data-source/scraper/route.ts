@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Document } from 'langchain/document'
+import { DataSourceType } from '@prisma/client'
 
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { downloadWebsiteGCS } from '@/lib/cloudStorage'
@@ -34,7 +35,11 @@ export async function POST(req: Request) {
           return null
         }
 
-        return await createDataSourceAndVectors(file, userId)
+        return await createDataSourceAndVectors({
+          file,
+          userId,
+          type: DataSourceType.web_page,
+        })
       }),
     )
 
