@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server'
-import { DataSourceType, DataSourceStatus } from '@prisma/client'
+import { DataSourceStatus } from '@prisma/client'
 import { Document } from 'langchain/document'
 
 import { downloadWebsiteGCS } from '@/lib/cloudStorage'
-import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
 import { createAndStoreVectors } from '@/lib/qdrant'
-import { sumarizePage, getPageTags } from '@/lib/openAI'
 
-import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
-import { createTags } from '@/lib/db/tags'
+import { updateDataSource } from '@/lib/db/dataSource'
 
-import { cleanContent } from '@/lib/loaders/htmlLoader'
+import { processHTMLPage, storeVectorsAndUpdateDataSource } from '../utils'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
@@ -28,7 +25,6 @@ export async function POST(req: Request) {
 
   try {
     const body = (await req.json()) as ScrapingResult
-
     const { userId, websites } = body
 
     console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
@@ -45,75 +41,21 @@ export async function POST(req: Request) {
           return null
         }
 
-        const { chunks, sumaryContent } = await getChunksFromHTML(file)
-        const nbChunks = chunks.length
-        const textSize = chunks.reduce(
-          (acc, doc) => acc + doc?.pageContent?.length,
-          0,
-        )
-
-        if (!nbChunks || !textSize) {
-          return new NextResponse('Empty docs', {
-            status: 400,
-          })
-        }
-        const summary = await sumarizePage(sumaryContent)
-        const tags = await getPageTags(summary)
-
-        // We store the dataSource in the DB. Trying to store the content too, see how large it can be
-        const dataSourcePayload = {
-          userId,
-          name: url,
-          type: DataSourceType.web_page,
-          nbChunks,
-          textSize,
-          summary,
-          content: cleanContent(file.html),
-          ...restMetadata,
-        }
-
-        const dataSource = await createDataSource(dataSourcePayload)
-        const dataSourceId = dataSource?.id
-
-        if (!dataSourceId) {
-          return new NextResponse('Empty docs', {
-            status: 400,
-          })
-        }
-
-        await createTags({ tags, dataSourceId })
-
-        return chunks.map(({ pageContent, metadata }) => ({
-          pageContent,
-          metadata: {
-            ...metadata,
-            dataSourceId,
-            userId,
-            tags,
-          },
-        }))
+        return await processHTMLPage(file, userId)
       }),
     )
 
-    if (!documents.length) {
+    const filteredDocs = documents
+      ?.flat()
+      ?.filter((doc) => doc !== null) as Document[]
+
+    if (!documents?.length) {
       return new NextResponse('No docs', {
         status: 400,
       })
     }
 
-    const filteredDocs = documents
-      .flat()
-      .filter((doc) => doc !== null) as Document[]
-
-    await createAndStoreVectors({
-      docs: filteredDocs,
-    })
-
-    // Update the dataSource status to synched for each doc
-    filteredDocs.map(({ metadata }) => {
-      const { dataSourceId } = metadata
-      updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
-    })
+    await storeVectorsAndUpdateDataSource(filteredDocs)
 
     return NextResponse.json({
       result: `${filteredDocs.length} dataSources Created`,
