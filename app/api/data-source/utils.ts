@@ -11,10 +11,26 @@ import { getChunksFromDoc } from '@/lib/loaders'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
 export const processDataSourceCreation = async (
-  file: HTMLFile,
+  file: File | HTMLFile,
   userId: string,
 ) => {
-  const { fileName, html, metadata } = file
+  let fileName = ''
+  let html = ''
+  let metadata = {}
+  let fileType: DataSourceType
+
+  if (file instanceof File) {
+    fileName = file.name
+    fileType = DataSourceType.file
+    metadata = {
+      title: fileName,
+    }
+  } else {
+    fileName = file.fileName
+    fileType = DataSourceType.web_page
+    html = file.html
+    metadata = file.metadata
+  }
 
   const { chunks, sumaryContent } = (await getChunksFromDoc({
     file,
@@ -38,7 +54,7 @@ export const processDataSourceCreation = async (
   const dataSourcePayload = {
     userId,
     name: fileName,
-    type: DataSourceType.web_page,
+    type: fileType,
     nbChunks,
     textSize,
     summary,
@@ -70,11 +86,20 @@ export const processDataSourceCreation = async (
 }
 
 export const storeVectorsAndUpdateDataSource = async (docs: Document[]) => {
-  await createAndStoreVectors({ docs })
+  try {
+    await createAndStoreVectors({ docs })
 
-  // Update the dataSource status to synched for each doc
-  docs.map(({ metadata }) => {
-    const { dataSourceId } = metadata
-    updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
-  })
+    // Update the dataSource status to synched for each doc
+    docs.map(({ metadata }) => {
+      const { dataSourceId } = metadata
+      updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
+    })
+  } catch (err) {
+    console.error(err)
+    // Update the dataSource status to error for each doc
+    docs.map(({ metadata }) => {
+      const { dataSourceId } = metadata
+      updateDataSource({ id: dataSourceId, status: DataSourceStatus.error })
+    })
+  }
 }
