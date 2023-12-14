@@ -71,7 +71,7 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
         />
       </Link>
       <Checkbox
-        className={`absolute mt-[2px] left-2 invisible group-hover/row:visible ${
+        className={`absolute mt-[2px] bg-white left-2 invisible group-hover/row:visible ${
           (isRowSelected || isCheckboxVisible) && 'visible'
         }`}
         checked={isRowSelected}
