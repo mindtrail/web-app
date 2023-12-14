@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
+import { Document } from 'langchain/document'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
-import { getChunksFromFile } from '@/lib/loaders/fileLoader'
+import { getChunksFromDoc } from '@/lib/loaders'
 import { createAndStoreVectors } from '@/lib/qdrant'
 
 // Upload file from the App
@@ -55,7 +56,10 @@ export async function POST(req: Request) {
   const { name: fileName = '' } = uploadedFile
 
   // Return nr of chunks & character count
-  const docs = await getChunksFromFile(uploadedFile)
+  const docs = (await getChunksFromDoc({
+    file: uploadedFile,
+    type: DataSourceType.file,
+  })) as Document[] | Error
 
   if (docs instanceof Error) {
     // Handle the error case

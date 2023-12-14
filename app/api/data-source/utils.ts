@@ -4,16 +4,23 @@ import { Document } from 'langchain/document'
 import { createAndStoreVectors } from '@/lib/qdrant'
 
 import { sumarizePage, getPageTags } from '@/lib/openAI'
-import { cleanContent } from '@/lib/loaders/htmlLoader'
+import { cleanHTMLContent } from '@/lib/loaders/utils'
 import { createTags } from '@/lib/db/tags'
 
-import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
+import { getChunksFromDoc } from '@/lib/loaders'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
-export const processHTMLPage = async (file: HTMLFile, userId: string) => {
+export const processDataSourceCreation = async (
+  file: HTMLFile,
+  userId: string,
+) => {
   const { fileName, html, metadata } = file
 
-  const { chunks, sumaryContent } = await getChunksFromHTML(file)
+  const { chunks, sumaryContent } = (await getChunksFromDoc({
+    file,
+    type: DataSourceType.web_page,
+  })) as HTMLChunkingResponse
+
   const nbChunks = chunks.length
   const textSize = chunks.reduce(
     (acc, doc) => acc + doc?.pageContent?.length,
@@ -35,7 +42,7 @@ export const processHTMLPage = async (file: HTMLFile, userId: string) => {
     nbChunks,
     textSize,
     summary,
-    content: cleanContent(html),
+    content: cleanHTMLContent(html),
     ...metadata,
   }
 

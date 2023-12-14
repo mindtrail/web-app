@@ -1,3 +1,6 @@
+import * as cheerio from 'cheerio'
+import { htmlToText } from 'html-to-text'
+
 export const formatChunkForEmbedding = (chunk: string): string => {
   return chunk
     .replace(/(?<!\n)\n(?!\n)/g, ' ') // Replace single newlines with spaces
@@ -27,3 +30,16 @@ export const formatChunkForEmbedding = (chunk: string): string => {
 export const ANCHORS_WITH_SIBINGS = 'a:has(a)'
 export const HTML_TAGS_TO_EXCLUDE =
   'nav, header, footer, aside, menu, menuitem, .nav, .header, .footer, .aside, .menu, .menuitem, .navigation, .navBar, .nav-bar, .navbar, .sidebar, .topnav, .bottomnav, .breadcrumb, .pagination, .dropdown, .pageFooter, .footer, .sidenav, .main-menu, .submenu, .widget, script, style, noscript, iframe, link[rel="alternate svg image"], code, meta'
+
+export const cleanHTMLContent = (html: string): string => {
+  const $ = cheerio.load(html)
+
+  $(HTML_TAGS_TO_EXCLUDE).remove()
+  $(ANCHORS_WITH_SIBINGS).remove()
+  $('a').removeAttr('href')
+  $('img').removeAttr('src')
+
+  const cleanedHTML = $('body').html() || ''
+
+  return htmlToText(cleanedHTML)
+}
