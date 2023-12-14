@@ -1,23 +1,13 @@
 import { NextResponse } from 'next/server'
-import { DataSourceType, DataSourceStatus } from '@prisma/client'
-import { Document } from 'langchain/document'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { createAndStoreVectors } from '@/lib/qdrant-langchain'
-import { sumarizePage } from '@/lib/openAI'
-import { cleanContent } from '@/lib/loaders/htmlLoader'
+import { dataSourceExists } from '@/lib/db/dataSource'
 
-import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
-import {
-  createDataSource,
-  updateDataSource,
-  dataSourceExists,
-} from '@/lib/db/dataSource'
+import { processHTMLPage, storeVectorsAndUpdateDataSource } from '../utils'
 
 // Function that processes the data received from the Browser Extension
 // TODO: Add authentication
-
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
@@ -48,74 +38,18 @@ export async function POST(req: Request) {
       metadata,
     }
 
-    const { chunks: docs, sumaryContent } = await getChunksFromHTML(file)
-    const nbChunks = docs.length
-    const textSize = docs.reduce(
-      (acc, doc) => acc + doc?.pageContent?.length,
-      0,
-    )
+    const docs = await processHTMLPage(file, userId)
 
-    if (!nbChunks || !textSize) {
-      return new NextResponse('Empty docs', {
-        status: 400,
-      })
-    }
-
-    const summary = await sumarizePage(sumaryContent)
-    // const category = await getPageCategory(summary)
-
-    const dataSourcePayload = {
-      userId,
-      name: url,
-      type: DataSourceType.web_page,
-      nbChunks,
-      textSize,
-      summary,
-      content: cleanContent(html),
-      ...metadata,
-    }
-
-    const uniqueName = true
-
-    const dataSource = await createDataSource(dataSourcePayload, uniqueName)
-    const dataSourceId = dataSource?.id
-
-    if (!dataSourceId) {
-      return new NextResponse('Empty docs', {
-        status: 400,
-      })
-    }
-
-    const documents = docs
-      .map(({ pageContent, metadata }) => ({
-        pageContent,
-        metadata: {
-          ...metadata,
-          dataSourceId,
-          type: DataSourceType.web_page,
-          userId,
-        },
-      }))
-      .filter((doc) => doc !== null) as Document[]
-
-    if (!documents.length) {
+    if (!docs?.length) {
       return new NextResponse('No docs', {
         status: 400,
       })
     }
 
-    await createAndStoreVectors({
-      docs: documents,
-    })
-
-    // Update the dataSource status to synched for each doc
-    documents.map(({ metadata }) => {
-      const { dataSourceId } = metadata
-      updateDataSource({ id: dataSourceId, status: DataSourceStatus.synched })
-    })
+    await storeVectorsAndUpdateDataSource(docs)
 
     return NextResponse.json({
-      result: `DataSource & ${documents.length} vectors Created`,
+      result: `DataSource & ${docs.length} vectors Created`,
     })
   } catch (err) {
     console.error('errr', err)
