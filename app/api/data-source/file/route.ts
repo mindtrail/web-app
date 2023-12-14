@@ -1,19 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { DataSourceStatus } from '@prisma/client'
-import { Document } from 'langchain/document'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
-import { updateDataSource } from '@/lib/db/dataSource'
 
-import {
-  processDataSourceCreation,
-  storeVectorsAndUpdateDataSource,
-} from '../utils'
+import { createDataSourceAndVectors } from '@/lib/loaders'
 
-// Upload file from the App
-
+// Upload local file flow
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
@@ -40,7 +33,7 @@ export async function POST(req: Request) {
     })
   }
 
-  const docs = await processDataSourceCreation(file, userId)
+  const docs = await createDataSourceAndVectors(file, userId)
 
   if (docs instanceof Error) {
     // Handle the error case
@@ -54,9 +47,6 @@ export async function POST(req: Request) {
       status: 400,
     })
   }
-
-  await storeVectorsAndUpdateDataSource(docs)
-
   // TODO: !!!!
   // await uploadToGCS({ uploadedFile: file, userId, dataSourceId })
 
