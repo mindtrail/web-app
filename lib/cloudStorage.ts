@@ -74,24 +74,27 @@ export async function uploadToGCS(props: UploadToGCSProps) {
   }
 }
 
-export async function deleteFileFromGCS(dataSource: DataSource) {
-  const {
-    id: dataSourceId,
-    // ownerId: userId,
-    type,
-    name,
-  } = dataSource
-
-  const userId = 'test'
-
+export async function deleteFileFromGCS(
+  dataSourceList: DataSource[],
+  userId: string,
+) {
   try {
-    const bucket = storage.bucket(bucketName)
-    const path = `${userId}`
-    const fileName =
-      type === 'file' ? `${path}/${dataSourceId}-${name}` : `${path}/${name}`
+    await Promise.all(
+      dataSourceList.map((dataSource) => {
+        const { id: dataSourceId, type, name } = dataSource
 
-    await bucket.file(fileName).delete()
-    return 'File deleted successfully from GCS'
+        const bucket = storage.bucket(bucketName)
+        const path = `${userId}`
+        const fileName =
+          type === 'file'
+            ? `${path}/${dataSourceId}-${name}`
+            : `${path}/${name}`
+
+        return bucket.file(fileName).delete()
+      }),
+    )
+
+    return 'Files deleted successfully from GCS'
   } catch (error) {
     console.error('Error deleting from GCS', error)
     return error

@@ -151,7 +151,7 @@ export const deleteDataSourceDbOp = async (
   userId: string,
 ) => {
   // Step 1: Delete the m2m relationship between the user and the dataSource
-  const dataSourceForUser = await prisma.dataSourceUser.deleteMany({
+  await prisma.dataSourceUser.deleteMany({
     where: {
       dataSourceId: {
         in: dataSourceIdList,
@@ -160,9 +160,7 @@ export const deleteDataSourceDbOp = async (
     },
   })
 
-  // Step 2: Delete the dataSource if there are no more users associated with it
-
-  const dataSourceDeleted = await prisma.dataSource.deleteMany({
+  const dataSourcesToDeleteFromDB = await prisma.dataSource.findMany({
     where: {
       id: {
         in: dataSourceIdList,
@@ -172,6 +170,20 @@ export const deleteDataSourceDbOp = async (
       },
     },
   })
-  console.log('dataSourceDeleted:::', dataSourceDeleted)
-  return dataSourceDeleted
+
+  // Step 2: Delete the dataSource if there are no more users associated with it
+
+  await prisma.dataSource.deleteMany({
+    where: {
+      id: {
+        in: dataSourcesToDeleteFromDB.map((dataSource) => dataSource.id),
+      },
+    },
+  })
+
+  console.log(
+    'dataSourceDeleted:::',
+    dataSourcesToDeleteFromDB.map((dataSource) => dataSource.id),
+  )
+  return dataSourcesToDeleteFromDB
 }
