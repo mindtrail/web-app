@@ -1,4 +1,5 @@
 import { DataSource, DataSourceStatus } from '@prisma/client'
+import { Document } from 'langchain/document'
 
 declare global {
   type AcceptedFile = {
@@ -63,5 +64,14 @@ declare global {
     fileName: string
     html: string
     metadata: Partial<BrowserExtensionData>
+  }
+
+  type HTMLChunkingResponse = {
+    chunks: Document[]
+    sumaryContent: string
+  }
+
+  type FileChunkingResponse = {
+    chunks: Document[]
   }
 }

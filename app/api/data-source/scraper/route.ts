@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server'
-import { DataSourceStatus } from '@prisma/client'
 import { Document } from 'langchain/document'
 
 import { downloadWebsiteGCS } from '@/lib/cloudStorage'
-import { createAndStoreVectors } from '@/lib/qdrant'
 
-import { updateDataSource } from '@/lib/db/dataSource'
-
-import { processHTMLPage, storeVectorsAndUpdateDataSource } from '../utils'
+import {
+  processDataSourceCreation,
+  storeVectorsAndUpdateDataSource,
+} from '../utils'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
           return null
         }
 
-        return await processHTMLPage(file, userId)
+        return await processDataSourceCreation(file, userId)
       }),
     )
 

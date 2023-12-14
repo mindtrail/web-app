@@ -59,11 +59,9 @@ export async function uploadToGCS(props: UploadToGCSProps) {
 
     await newFile.setMetadata({
       metadata: {
-        customTime: new Date().toISOString(),
-        metadata: {
-          dataSourceId,
-          userId,
-        },
+        title: uploadedFile.name,
+        dataSourceId,
+        userId,
       },
     })
 
