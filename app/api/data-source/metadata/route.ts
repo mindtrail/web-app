@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { DataSourceType } from '@prisma/client'
+import { Document } from 'langchain/document'
 
 import { authOptions } from '@/lib/authOptions'
-import { getChunksFromFile } from '@/lib/loaders/localFileLoader'
+
+import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
+import { readFormData } from '@/lib/utils'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
 
-  if (!session?.user?.id) {
+  if (!userId) {
     return new Response('Unauthorized', {
       status: 401,
     })
@@ -22,25 +27,19 @@ export async function POST(req: Request) {
     })
   }
 
-  let uploadedFile: File | null = null
+  const { file } = await readFormData(req)
 
-  const formData = await req.formData()
-  for (const value of Array.from(formData.values())) {
-    // FormDataEntryValue can either be type `Blob` or `string`.
-    // If its type is object then it's a Blob
-    if (typeof value == 'object') {
-      uploadedFile = value
-    }
-  }
-
-  if (!uploadedFile) {
-    return new Response('Bad Request', {
+  if (!file) {
+    return new Response(`Missing file.`, {
       status: 400,
     })
   }
 
   // Return nr of chunks & character count
-  const docs = await getChunksFromFile(uploadedFile)
+  const docs = (await getChunksFromDoc({
+    file,
+    type: DataSourceType.file,
+  })) as Document[] | Error
 
   if (docs instanceof Error) {
     // Handle the error case
@@ -52,6 +51,6 @@ export async function POST(req: Request) {
 
   const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
-  const { name, type } = uploadedFile
+  const { name, type } = file
   return NextResponse.json({ charCount, name, type })
 }

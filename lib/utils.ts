@@ -67,3 +67,23 @@ export const cloudinaryLoader = ({
   const cloudinaryBase = 'https://res.cloudinary.com/dea7r24ca/image/fetch/'
   return `${cloudinaryBase}w_${width},q_${quality || 75}/${src}`
 }
+
+export const readFormData = async (req: Request) => {
+  const formData = await req.formData()
+  let file: File | null = null
+  let collectionId = ''
+
+  for (const value of Array.from(formData.values())) {
+    // FormDataEntryValue can either be type `Blob` or `string`.
+    // If its type is object then it's a Blob
+    if (typeof value == 'object') {
+      file = value
+    }
+    // If its type is string then it's the collectionId
+    if (typeof value == 'string') {
+      collectionId = value
+    }
+  }
+
+  return { file, collectionId }
+}

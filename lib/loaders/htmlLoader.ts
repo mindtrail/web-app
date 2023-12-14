@@ -5,7 +5,7 @@ import { cleanHTMLContent } from '@/lib/loaders/utils'
 export async function getChunksFromHTML(
   file: HTMLFile,
 ): Promise<Document[] | Error> {
-  const { html, fileName, metadata } = file
+  const { html, fileName, metadata = {} } = file
   const { title = '', description = '' } = metadata
 
   const pageContent = cleanHTMLContent(html)

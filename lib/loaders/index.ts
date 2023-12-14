@@ -10,31 +10,39 @@ import { createTags } from '@/lib/db/tags'
 import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
-export const createDataSourceAndVectors = async (
-  file: File | HTMLFile,
-  userId: string,
-) => {
+type CreateDSProps = {
+  file: File | HTMLFile
+  type: DataSourceType
+  userId: string
+}
+
+export const createDataSourceAndVectors = async ({
+  file,
+  type,
+  userId,
+}: CreateDSProps) => {
   let fileName = ''
   let html = ''
   let metadata = {}
-  let fileType: DataSourceType
 
-  if (file instanceof File) {
+  if (type === DataSourceType.file) {
+    file = file as File
+
     fileName = file.name
-    fileType = DataSourceType.file
     metadata = {
       title: fileName,
     }
   } else {
+    file = file as HTMLFile
+
     fileName = file.fileName
-    fileType = DataSourceType.web_page
     html = file.html
     metadata = file.metadata
   }
 
-  const { chunks, sumaryContent } = (await getChunksFromDoc({
+  const { chunks, sumaryContent = '' } = (await getChunksFromDoc({
     file,
-    type: DataSourceType.web_page,
+    type,
   })) as HTMLChunkingResponse
 
   const nbChunks = chunks.length
@@ -54,7 +62,7 @@ export const createDataSourceAndVectors = async (
   const dataSourcePayload = {
     userId,
     name: fileName,
-    type: fileType,
+    type,
     nbChunks,
     textSize,
     summary,

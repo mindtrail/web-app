@@ -15,11 +15,7 @@ type GetChunksFromDocProps = {
 export const getChunksFromDoc = async ({
   file,
   type,
-}: GetChunksFromDocProps): Promise<
-  Document[] | Error | HTMLChunkingResponse
-> => {
-  console.log('getChunksFromDoc', file, type)
-
+}: GetChunksFromDocProps): Promise<Error | HTMLChunkingResponse> => {
   // const { html, fileName, metadata } = file
   // const { title = '', description = '' } = metadata
 
@@ -41,7 +37,7 @@ export const getChunksFromDoc = async ({
     })
 
     const chunkTextSpliter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000, // = 1500/5 = 300 tokens
+      chunkSize: 1250, // ~250 tokens (5 chars per token)
       chunkOverlap: 100,
       separators: ['\n\n', '.', '!', '?', '...'], // final split
     })
@@ -71,7 +67,9 @@ export const getChunksFromDoc = async ({
       }
     })
 
-    return chunks
+    console.log('chunks', chunks.length)
+
+    return { chunks }
   } catch (e: any) {
     console.error('ERRRRRR ----+++ ', e)
     return new Error(e)

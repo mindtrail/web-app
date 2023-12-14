@@ -68,7 +68,7 @@ declare global {
 
   type HTMLChunkingResponse = {
     chunks: Document[]
-    sumaryContent: string
+    sumaryContent?: string
   }
 
   type FileChunkingResponse = {

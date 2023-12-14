@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { DataSourceType } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
 import { dataSourceExists } from '@/lib/db/dataSource'
@@ -37,7 +38,11 @@ export async function POST(req: Request) {
       metadata,
     }
 
-    const docs = await createDataSourceAndVectors(file, userId)
+    const docs = await createDataSourceAndVectors({
+      file,
+      userId,
+      type: DataSourceType.web_page,
+    })
 
     if (!docs?.length) {
       return new NextResponse('No docs', {

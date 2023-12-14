@@ -114,7 +114,7 @@ export function ImportForm(props: FormProps) {
 
   const { getRootProps, getInputProps, isDragAccept, isDragReject } =
     useDropzone({
-      accept: ACCEPTED_FILE_REACT_DROPZONE,
+      // accept: ACCEPTED_FILE_REACT_DROPZONE,
       validator: formValidator,
       onDrop: handleFileDrop,
     })
