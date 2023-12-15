@@ -16,7 +16,7 @@ export const getChunksFromDoc = async ({
   file,
   type,
 }: GetChunksFromDocProps): Promise<Error | HTMLChunkingResponse> => {
-  // const { html, fileName, metadata } = file
+  // const { html, uri, metadata } = file
   // const { title = '', description = '' } = metadata
 
   try {
@@ -51,8 +51,10 @@ export const getChunksFromDoc = async ({
       }
     })
 
+    console.log(initialChunks)
+
     const chunkHeaderOptions = {
-      // chunkHeader: `${fileName}. `,
+      // chunkHeader: `${uri}. `,
     }
 
     const chunks = (
@@ -61,7 +63,7 @@ export const getChunksFromDoc = async ({
       return {
         metadata: {
           ...metadata,
-          // fileName,
+          // uri,
         },
         pageContent: formatChunkForEmbedding(pageContent),
       }

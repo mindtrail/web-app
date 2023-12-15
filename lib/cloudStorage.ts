@@ -1,27 +1,28 @@
 import { Buffer } from 'buffer'
 import { Storage } from '@google-cloud/storage'
-import { DataSource } from '@prisma/client'
+import { DataSource, DataSourceType } from '@prisma/client'
 
 interface UploadToGCSProps {
-  uploadedFile: File
+  uploadedFile: File | HTMLFile
   userId: string
   dataSourceId: string
+  type: DataSourceType
 }
 
 const storage = new Storage()
 const bucketName = process.env.GCS_BUCKET_NAME || ''
 
 export async function downloadWebsiteGCS(
-  fileName: string,
+  uri: string,
 ): Promise<Partial<HTMLFile> | null> {
   const bucket = storage.bucket(bucketName)
-  const file = bucket.file(fileName)
+  const file = bucket.file(uri)
   try {
     const html = (await file.download()).toString()
 
     const result: Partial<HTMLFile> = {
       html,
-      fileName,
+      uri,
     }
 
     return result
@@ -32,9 +33,9 @@ export async function downloadWebsiteGCS(
 }
 
 // Return Blob or null
-export async function getFileFromGCS(fileName: string): Promise<Blob | null> {
+export async function getFileFromGCS(uri: string): Promise<Blob | null> {
   const bucket = storage.bucket(bucketName)
-  const file = bucket.file(fileName)
+  const file = bucket.file(uri)
   try {
     const [fileBuffer] = await file.download()
     const blob = new Blob([fileBuffer], { type: 'text/html' })
@@ -48,10 +49,10 @@ export async function getFileFromGCS(fileName: string): Promise<Blob | null> {
 
 export async function uploadToGCS(props: UploadToGCSProps) {
   const { uploadedFile, userId, dataSourceId } = props
-  const fileName = `${userId}/${dataSourceId}-${uploadedFile.name}`
+  const uri = `${userId}/${dataSourceId}-${uploadedFile.name}`
 
   const bucket = storage.bucket(bucketName)
-  const newFile = bucket.file(fileName)
+  const newFile = bucket.file(uri)
 
   try {
     const buffer = Buffer.from(await uploadedFile.arrayBuffer())
@@ -83,12 +84,12 @@ export async function deleteFileFromGCS(
 
         const bucket = storage.bucket(bucketName)
         const path = `${userId}`
-        const fileName =
+        const uri =
           type === 'file'
             ? `${path}/${dataSourceId}-${name}`
             : `${path}/${name}`
 
-        return bucket.file(fileName).delete()
+        return bucket.file(uri).delete()
       }),
     )
 

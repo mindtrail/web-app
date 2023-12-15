@@ -74,7 +74,7 @@ export function Search({ userId }: HistoryLookupProps) {
 
         {foundWebsite?.summary ? (
           <div className='flex flex-col gap-4'>
-            <Link href={addHttpsIfMissing(foundWebsite?.fileName)}>
+            <Link href={addHttpsIfMissing(foundWebsite?.uri)}>
               <Typography variant='h5' className='text-gray-600'>
                 {foundWebsite?.hostName}
               </Typography>
@@ -82,7 +82,7 @@ export function Search({ userId }: HistoryLookupProps) {
             <Typography variant='p' className='text-gray-600'>
               {foundWebsite?.summary}
             </Typography>
-            <Link href={addHttpsIfMissing(foundWebsite?.fileName)}>
+            <Link href={addHttpsIfMissing(foundWebsite?.uri)}>
               <img
                 alt={foundWebsite?.metaDescription}
                 src={foundWebsite?.image}

@@ -132,7 +132,7 @@ model Collection {
 // https://github.com/prisma/prisma/issues/12332
 model DataSource {
   id        String           @id @default(cuid())
-  name      String
+  uri       String
   type      DataSourceType
   status    DataSourceStatus @default(unsynched)
 
