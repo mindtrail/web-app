@@ -45,7 +45,7 @@ declare global {
   }
 
   type ScrapingFile = {
-    uri: string
+    name: string
     metadata: WEB_Data
   }
 
@@ -61,7 +61,7 @@ declare global {
   }
 
   interface HTMLFile {
-    uri: string
+    name: string
     html: string
     metadata: Partial<BrowserExtensionData>
   }
