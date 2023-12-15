@@ -86,7 +86,7 @@ export const createDataSourceAndVectors = async ({
         ...metadata,
         dataSourceId,
         userId,
-        type: DataSourceType.web_page,
+        type,
         tags,
       },
     }))
