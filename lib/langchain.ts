@@ -67,7 +67,7 @@ export async function callLangchainChat({
   const sources = kbData.map(({ pageContent, metadata }) => {
     return {
       pageContent,
-      fileName: metadata.fileName,
+      uri: metadata.uri,
     }
   })
 

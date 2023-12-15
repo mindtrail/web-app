@@ -68,13 +68,10 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
       return
     }
     const fileExtension = programmingLanguages[language] || '.file'
-    const suggestedFileName = `file-${generateRandomString(
-      3,
-      true,
-    )}${fileExtension}`
-    const fileName = window.prompt('Enter file name' || '', suggestedFileName)
+    const suggesteduri = `file-${generateRandomString(3, true)}${fileExtension}`
+    const uri = window.prompt('Enter file name' || '', suggesteduri)
 
-    if (!fileName) {
+    if (!uri) {
       // User pressed cancel on prompt.
       return
     }
@@ -82,7 +79,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
     const blob = new Blob([value], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.download = fileName
+    link.download = uri
     link.href = url
     link.style.display = 'none'
     document.body.appendChild(link)

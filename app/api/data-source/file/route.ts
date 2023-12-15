@@ -58,9 +58,12 @@ export async function POST(req: Request) {
   }
 
   const { dataSourceId } = docs[0]?.metadata
-
-  // TODO: !!!!
-  await uploadToGCS({ uploadedFile: file, userId, dataSourceId })
+  await uploadToGCS({
+    uploadedFile: file,
+    userId,
+    dataSourceId,
+    type: DataSourceType.file,
+  })
 
   return NextResponse.json({ docs })
 }

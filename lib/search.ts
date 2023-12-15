@@ -14,7 +14,7 @@ export async function searchHistory(searchQuery: string) {
       })
     }
 
-    const { dataSourceId, fileName: url } = websiteFound
+    const { dataSourceId, uri: url } = websiteFound
     const dataSource = await getDataSourceById(dataSourceId)
     const image = await getOGImage(url)
 

@@ -5,6 +5,7 @@ import { DataSourceType } from '@prisma/client'
 import { authOptions } from '@/lib/authOptions'
 import { dataSourceExists } from '@/lib/db/dataSource'
 import { createDataSourceAndVectors } from '@/lib/loaders'
+import { uploadToGCS } from '@/lib/cloudStorage'
 
 // Function that processes the data received from the Browser Extension
 // TODO: Add authentication
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     const file = {
-      fileName: url,
+      uri: url,
       html,
       metadata,
     }
@@ -49,6 +50,14 @@ export async function POST(req: Request) {
         status: 400,
       })
     }
+
+    const { dataSourceId } = docs[0]?.metadata
+    await uploadToGCS({
+      uploadedFile: file,
+      userId,
+      dataSourceId,
+      type: DataSourceType.web_page,
+    })
 
     return NextResponse.json({
       result: `DataSource & ${docs.length} vectors Created`,
