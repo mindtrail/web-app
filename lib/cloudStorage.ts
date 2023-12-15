@@ -13,16 +13,16 @@ const storage = new Storage()
 const bucketName = process.env.GCS_BUCKET_NAME || ''
 
 export async function downloadWebsiteGCS(
-  uri: string,
+  name: string,
 ): Promise<Partial<HTMLFile> | null> {
   const bucket = storage.bucket(bucketName)
-  const file = bucket.file(uri)
+  const file = bucket.file(name)
   try {
     const html = (await file.download()).toString()
 
     const result: Partial<HTMLFile> = {
       html,
-      uri,
+      name,
     }
 
     return result
@@ -33,9 +33,9 @@ export async function downloadWebsiteGCS(
 }
 
 // Return Blob or null
-export async function getFileFromGCS(uri: string): Promise<Blob | null> {
+export async function getFileFromGCS(name: string): Promise<Blob | null> {
   const bucket = storage.bucket(bucketName)
-  const file = bucket.file(uri)
+  const file = bucket.file(name)
   try {
     const [fileBuffer] = await file.download()
     const blob = new Blob([fileBuffer], { type: 'text/html' })
@@ -49,10 +49,10 @@ export async function getFileFromGCS(uri: string): Promise<Blob | null> {
 
 export async function uploadToGCS(props: UploadToGCSProps) {
   const { uploadedFile, userId, dataSourceId } = props
-  const uri = `${userId}/${dataSourceId}-${uploadedFile.name}`
+  const name = `${userId}/${dataSourceId}-${uploadedFile.name}`
 
   const bucket = storage.bucket(bucketName)
-  const newFile = bucket.file(uri)
+  const newFile = bucket.file(name)
 
   try {
     const buffer = Buffer.from(await uploadedFile.arrayBuffer())
@@ -84,12 +84,12 @@ export async function deleteFileFromGCS(
 
         const bucket = storage.bucket(bucketName)
         const path = `${userId}`
-        const uri =
+        const gcName =
           type === 'file'
             ? `${path}/${dataSourceId}-${name}`
             : `${path}/${name}`
 
-        return bucket.file(uri).delete()
+        return bucket.file(gcName).delete()
       }),
     )
 

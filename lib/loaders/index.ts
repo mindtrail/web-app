@@ -21,21 +21,21 @@ export const createDataSourceAndVectors = async ({
   type,
   userId,
 }: CreateDSProps) => {
-  let uri = ''
+  let name = ''
   let html = ''
   let metadata = {}
 
   if (type === DataSourceType.file) {
     file = file as File
 
-    uri = file.name
+    name = file.name
     metadata = {
-      title: uri,
+      title: name,
     }
   } else {
     file = file as HTMLFile
 
-    uri = file.uri
+    name = file.name
     html = file.html
     metadata = file.metadata
   }
@@ -61,7 +61,7 @@ export const createDataSourceAndVectors = async ({
   // We store the dataSource in the DB. Trying to store the content too, see how large it can be
   const dataSourcePayload = {
     userId,
-    name: uri,
+    name: name,
     type,
     nbChunks,
     textSize,
