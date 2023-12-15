@@ -67,7 +67,7 @@ export const getChunksFromDoc = async ({
       }
     })
 
-    console.log('chunks', chunks.length)
+    console.log('Chunks', chunks.length)
 
     return { chunks }
   } catch (e: any) {

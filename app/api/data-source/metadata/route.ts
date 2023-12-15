@@ -36,20 +36,24 @@ export async function POST(req: Request) {
   }
 
   // Return nr of chunks & character count
-  const docs = (await getChunksFromDoc({
+  const response = await getChunksFromDoc({
     file,
     type: DataSourceType.file,
-  })) as Document[] | Error
+  })
 
-  if (docs instanceof Error) {
+  if (response instanceof Error) {
     // Handle the error case
-    console.error(docs.message)
+    console.error(response.message)
     return new NextResponse('Unsupported file type', {
       status: 400,
     })
   }
 
-  const charCount = docs.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
+  const { chunks } = response
+  const charCount = chunks.reduce(
+    (acc, doc) => acc + doc?.pageContent?.length,
+    0,
+  )
 
   const { name, type } = file
   return NextResponse.json({ charCount, name, type })

@@ -30,6 +30,8 @@ export async function POST(req: Request) {
 
   const { file } = await readFormData(req)
 
+  console.log(file)
+
   if (!file) {
     return new Response(`Missing file.`, {
       status: 400,
@@ -54,8 +56,11 @@ export async function POST(req: Request) {
       status: 400,
     })
   }
+
+  const { dataSourceId } = docs[0]?.metadata
+
   // TODO: !!!!
-  // await uploadToGCS({ uploadedFile: file, userId, dataSourceId })
+  await uploadToGCS({ uploadedFile: file, userId, dataSourceId })
 
   return NextResponse.json({ docs })
 }
