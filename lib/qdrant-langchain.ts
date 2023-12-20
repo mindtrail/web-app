@@ -69,35 +69,30 @@ export const searchSimilarText = async (message: string): Promise<string[]> => {
 export const deleteVectorsForDataSource = async (
   dataSourceIdList: string[],
 ) => {
-
-  const client = new QdrantClient({
-    url: process.env.QDRANT_URL,
-    apiKey: process.env.QDRANT_API_KEY,
-  })
-
   if (!dataSourceIdList?.length) {
     return
   }
 
-  
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     collectionName: QDRANT_COLLECTION,
   })
 
-  const result = await vectorStore.delete({
-    filter: {
-      must: [
-        {
-          key: 'metadata.dataSourceId',
-          match: {
-            any: dataSourceIdList,
-          },
+  const deleteFilter = {
+    must: [
+      {
+        key: 'metadata.dataSourceId',
+        match: {
+          any: dataSourceIdList,
         },
-      ],
-    },
+      },
+    ],
+  }
+
+  const res = await vectorStore.client.delete(QDRANT_COLLECTION, {
+    filter: deleteFilter,
   })
-  console.log('deleteVectorsForDataSource', result)
-  return result
+
+  return res
 }
 
 function getDataSourcesOrderByNrOfHits(dataArray: Document[]): string[] {
