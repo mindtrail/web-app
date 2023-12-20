@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { customAlphabet } from 'nanoid'
+import { DataSourceType } from '@prisma/client'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -86,4 +87,43 @@ export const readFormData = async (req: Request) => {
   }
 
   return { file, collectionId }
+}
+
+export enum GCS_ACTION_TYPE {
+  UPLOAD = 'upload',
+  DELETE = 'delete',
+  DOWNLOAD = 'download',
+}
+
+type BuildPath = {
+  userId: string
+  dataSourceId: string
+  name: string
+  type: DataSourceType
+  action?: GCS_ACTION_TYPE
+}
+
+export function buildFilePath({
+  userId,
+  dataSourceId,
+  name,
+  type,
+  action = GCS_ACTION_TYPE.UPLOAD,
+}: BuildPath) {
+  if (type === DataSourceType.file) {
+    return `${userId}/files/${name}/${dataSourceId}`
+  }
+
+  const builtPath = getGCSPathFromURL(name)
+  return `${userId}/websites/${builtPath}`
+}
+
+function getGCSPathFromURL(url: string) {
+  const urlObj = new URL(url)
+  const { hostname } = urlObj
+
+  let pathname = urlObj.pathname.substring(1).replace(/\s+|\//g, '-') || 'index'
+  pathname = pathname.endsWith('-') ? pathname.slice(0, -1) : pathname
+
+  return `${hostname}/${pathname}`
 }
