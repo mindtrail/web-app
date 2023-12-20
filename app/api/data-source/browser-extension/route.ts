@@ -58,8 +58,8 @@ export async function POST(req: Request) {
       uploadedFile: file,
       userId,
       dataSourceId,
-      type: DataSourceType.web_page,
       metadata,
+      type: DataSourceType.web_page,
     })
 
     return NextResponse.json({
@@ -75,3 +75,4 @@ export async function POST(req: Request) {
     })
   }
 }
+

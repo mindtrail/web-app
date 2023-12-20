@@ -7,7 +7,6 @@ import { uploadToGCS } from '@/lib/cloudStorage'
 
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { readFormData } from '@/lib/utils'
-import { metadata } from '@/app/layout'
 
 // Upload local file flow
 export async function POST(req: Request) {
@@ -39,10 +38,25 @@ export async function POST(req: Request) {
     })
   }
 
+  const payload = {
+    file,
+    userId,
+  }
+
+  processFileUpload(payload)
+  return NextResponse.json({ payload })
+}
+
+type ProcessFileUpload = {
+  file: File
+  userId: string
+}
+
+async function processFileUpload({ file, userId }: ProcessFileUpload) {
   const docs = await createDataSourceAndVectors({
     file,
-    type: DataSourceType.file,
     userId,
+    type: DataSourceType.file,
   })
 
   if (docs instanceof Error) {
@@ -66,11 +80,9 @@ export async function POST(req: Request) {
     uploadedFile: file,
     userId,
     dataSourceId,
-    type: DataSourceType.file,
     metadata: {
       title: file?.name,
     },
+    type: DataSourceType.file,
   })
-
-  return NextResponse.json({ docs })
 }
