@@ -16,10 +16,13 @@ export const getChunksFromDoc = async ({
   file,
   type,
 }: GetChunksFromDocProps): Promise<Error | HTMLChunkingResponse> => {
-  // const { html, name, metadata } = file
-  // const { title = '', description = '' } = metadata
-
   try {
+    const { name } = file
+
+    const metadata =
+      type === DataSourceType.web_page ? (file as HTMLFile).metadata : {}
+    const chunkHeader = `${metadata?.title || name}. `
+
     const loadedDoc =
       type === DataSourceType.web_page
         ? await getChunksFromHTML(file as HTMLFile)
@@ -51,17 +54,22 @@ export const getChunksFromDoc = async ({
       }
     })
 
-    const chunkHeaderOptions = {
-      // chunkHeader: `${name}. `,
-    }
+    const chunkHeaderOptions = { chunkHeader }
 
     const chunks = (
       await chunkTextSpliter.splitDocuments(initialChunks, chunkHeaderOptions)
     ).map(({ pageContent, metadata }) => {
+      // Remove blobType and source properties
+      // Create a copy of metadata to avoid mutating the original object
+      const metadataCopy = { ...metadata }
+
+      delete metadataCopy.blobType
+      delete metadataCopy.source
+
       return {
         metadata: {
-          ...metadata,
-          // name,
+          ...metadataCopy,
+          name,
         },
         pageContent: formatChunkForEmbedding(pageContent),
       }

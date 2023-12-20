@@ -39,7 +39,7 @@ export async function uploadToGCS(props: UploadToGCSProps) {
       uploadedFile = uploadedFile as File
 
       contentType = uploadedFile.type
-      gcFileName = `${userId}/files/${dataSourceId}/${name}`
+      gcFileName = `${userId}/files/${name}/${dataSourceId}`
       fileContent = Buffer.from(await uploadedFile.arrayBuffer())
     } else {
       uploadedFile = uploadedFile as HTMLFile
@@ -107,7 +107,7 @@ const buildFilePath = (
   type: DataSourceType,
 ) => {
   if (type === DataSourceType.file) {
-    return `${userId}/files/${dataSourceId}/${name}`
+    return `${userId}/files/${name}/${dataSourceId}`
   } else {
     return getGCSPathFromURL(name, userId)
   }
