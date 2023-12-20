@@ -59,11 +59,11 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
     <div className='flex flex-col items-center gap-3 relative -mt-6'>
       <Link
         className={`flex justify-center items-center relative group/website px-4
-              hover:underline`}
+              hover:underline max-w-[85%]`}
         href={addHttpsIfMissing(name)}
         target='_blank'
       >
-        <Typography className='line-clamp-1 text-center'>
+        <Typography className='text-ellipsis overflow-hidden max-w-full text-center'>
           {displayName}
         </Typography>
         <ExternalLinkIcon
@@ -89,10 +89,10 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
           <div className='absolute top-0 left-0 rounded-md border shadow-sm w-48 h-32 bg-gray-100'></div>
         )}
         <div
-          className={`rounded-md h-full flex flex-col justify-end py-2 bg-gradient-to-t from-white from-15% invisible group-hover/row:visible z-10`}
+          className={`rounded-md h-full w-full flex flex-col justify-end py-2 bg-gradient-to-t from-white from-15% invisible group-hover/row:visible z-10`}
         >
           <Typography
-            className='line-clamp-2 invisible px-3 group-hover/row:visible rounded-md bottom-0'
+            className='line-clamp-2 break-all invisible px-3 group-hover/row:visible rounded-md bottom-0'
             variant='small'
           >
             {title}
