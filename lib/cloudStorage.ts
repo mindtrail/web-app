@@ -2,13 +2,6 @@ import { Buffer } from 'buffer'
 import { Storage } from '@google-cloud/storage'
 import { DataSource, DataSourceType } from '@prisma/client'
 
-interface UploadToGCSProps {
-  uploadedFile: File | HTMLFile
-  userId: string
-  dataSourceId: string
-  type: DataSourceType
-}
-
 const storage = new Storage()
 const bucketName = process.env.GCS_BUCKET_NAME || ''
 
@@ -32,33 +25,43 @@ export async function downloadWebsiteGCS(
   }
 }
 
-// Return Blob or null
-export async function getFileFromGCS(name: string): Promise<Blob | null> {
-  const bucket = storage.bucket(bucketName)
-  const file = bucket.file(name)
-  try {
-    const [fileBuffer] = await file.download()
-    const blob = new Blob([fileBuffer], { type: 'text/html' })
-
-    return blob
-  } catch (error) {
-    console.error('Error downloading from GCS', error)
-    return null
-  }
+interface UploadToGCSProps {
+  uploadedFile: File | HTMLFile
+  userId: string
+  dataSourceId: string
+  type: DataSourceType
 }
 
 export async function uploadToGCS(props: UploadToGCSProps) {
-  const { uploadedFile, userId, dataSourceId } = props
-  const name = `${userId}/${dataSourceId}-${uploadedFile.name}`
+  let { uploadedFile, userId, dataSourceId, type } = props
+  const { name } = uploadedFile
 
-  const bucket = storage.bucket(bucketName)
-  const newFile = bucket.file(name)
+  let gcFileName = ''
+  let contentType = ''
+  let fileContent
 
   try {
-    const buffer = Buffer.from(await uploadedFile.arrayBuffer())
-    await newFile.save(buffer)
+    if (type === DataSourceType.file) {
+      uploadedFile = uploadedFile as File
+      console.log(uploadedFile)
+
+      contentType = uploadedFile.type
+      gcFileName = `${userId}/files/${dataSourceId}/${name}`
+      fileContent = Buffer.from(await uploadedFile.arrayBuffer())
+    } else {
+      uploadedFile = uploadedFile as HTMLFile
+
+      contentType = 'text/html'
+      gcFileName = getGCSPathFromURL(name, userId)
+      fileContent = uploadedFile.html
+    }
+
+    const bucket = storage.bucket(bucketName)
+    const newFile = bucket.file(gcFileName)
+    await newFile.save(fileContent)
 
     await newFile.setMetadata({
+      contentType,
       metadata: {
         title: uploadedFile.name,
         dataSourceId,
@@ -83,13 +86,9 @@ export async function deleteFileFromGCS(
         const { id: dataSourceId, type, name } = dataSource
 
         const bucket = storage.bucket(bucketName)
-        const path = `${userId}`
-        const gcName =
-          type === 'file'
-            ? `${path}/${dataSourceId}-${name}`
-            : `${path}/${name}`
+        const gcFileName = buildFilePath(userId, dataSourceId, name, type)
 
-        return bucket.file(gcName).delete()
+        return bucket.file(gcFileName).delete()
       }),
     )
 
@@ -98,4 +97,28 @@ export async function deleteFileFromGCS(
     console.error('Error deleting from GCS', error)
     return error
   }
+}
+
+const getGCSPathFromURL = (url: string, userId: string) => {
+  const urlObj = new URL(url)
+  const { hostname } = urlObj
+
+  let pathname = urlObj.pathname.substring(1).replace(/\s+|\//g, '-') || 'index'
+  pathname = pathname.endsWith('-') ? pathname.slice(0, -1) : pathname
+
+  return `${userId}/websites/${hostname}/${pathname}`
+}
+
+const buildFilePath = (
+  userId: string,
+  dataSourceId: string,
+  name: string,
+  type: DataSourceType,
+) => {
+  if (type === DataSourceType.file) {
+    return `${userId}/files/${dataSourceId}/${name}`
+  } else {
+    return getGCSPathFromURL(name, userId)
+  }
+  //`${userId}/websites/${name}`
 }

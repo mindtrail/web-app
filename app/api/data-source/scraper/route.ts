@@ -24,11 +24,11 @@ export async function POST(req: Request) {
     console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
 
     const docs = await Promise.all(
-      websites.map(async ({ name: storageuri, metadata }) => {
+      websites.map(async ({ name: gcFileName, metadata }) => {
         const { url, ...restMetadata } = metadata
 
         // Download the files from GCS
-        const file = (await downloadWebsiteGCS(storageuri)) as HTMLFile
+        const file = (await downloadWebsiteGCS(gcFileName)) as HTMLFile
         file.metadata = restMetadata
 
         if (!file) {

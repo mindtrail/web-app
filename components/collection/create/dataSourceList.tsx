@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-// import { Cross1Icon } from '@radix-ui/react-icons'
 import { Cross1Icon, FileTextIcon, GlobeIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
