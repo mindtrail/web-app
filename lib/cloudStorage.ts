@@ -80,7 +80,6 @@ export async function deleteFileFromGCS(
           dataSourceId,
           name,
           type,
-          action: GCS_ACTION_TYPE.DELETE,
         })
 
         console.log('detelet', gcFileName)

@@ -14,15 +14,15 @@ export async function searchHistory(searchQuery: string) {
       })
     }
 
-    const { dataSourceId, name: url } = websiteFound
-    const dataSource = await getDataSourceById(dataSourceId)
-    const image = await getOGImage(url)
+    const dataSourceList = websiteFound
+    // const dataSource = await getDataSourceById(dataSourceId)
+    // const image = await getOGImage(url)
 
-    return NextResponse.json({
-      ...websiteFound,
-      image,
-      summary: dataSource?.summary || '',
-    })
+    // return NextResponse.json({
+    //   ...websiteFound,
+    //   image,
+    //   summary: dataSource?.summary || '',
+    // })
   } catch (error) {
     console.error('An error occurred:', error)
 

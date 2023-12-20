@@ -118,6 +118,10 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
   )
 
   const handleSearch = async (searchQuery: string) => {
+    if (!searchQuery.trim()) {
+      setFilteredItems(historyItems)
+      return
+    }
     setProcessing(true)
 
     const result = await fetch('/api/history', {
