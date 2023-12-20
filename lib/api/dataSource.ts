@@ -5,9 +5,7 @@ export const SCRAPER_ENDPOINT = '/api/scraper'
 
 export async function uploadFileApiCall(file: File) {
   const formData = new FormData()
-
   formData.append('files', file)
-  // formData.append('collectionId', collectionId)
 
   const response = await fetch(UPLOAD_ENDPOINT, {
     method: 'POST',
@@ -23,6 +21,7 @@ export async function uploadFileApiCall(file: File) {
 
 export async function getFileMetadataApiCall(file: File) {
   const formData = new FormData()
+  formData.append('files', file)
 
   const response = await fetch(METADATA_ENDPOINT, {
     method: 'POST',

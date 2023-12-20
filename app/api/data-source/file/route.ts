@@ -30,8 +30,6 @@ export async function POST(req: Request) {
 
   const { file } = await readFormData(req)
 
-  console.log(file)
-
   if (!file) {
     return new Response(`Missing file.`, {
       status: 400,

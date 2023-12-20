@@ -67,7 +67,7 @@ export const getPageTags = async (
     return []
   }
 
-  const tags = response?.content
+  const tags = (response?.content as string)
     ?.split(',')
     .map((tag) => tag.trim())
     .filter((tag) => tag.length)
@@ -87,5 +87,5 @@ export const sumarizePage = async (text: string) => {
 
   const summary = response?.content
   // console.log('SUMMARY ---- ---- --', summary)
-  return summary
+  return summary as string
 }
