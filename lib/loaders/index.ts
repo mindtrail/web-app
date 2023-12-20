@@ -21,22 +21,21 @@ export const createDataSourceAndVectors = async ({
   type,
   userId,
 }: CreateDSProps) => {
-  let name = ''
-  let html = ''
+  const name = file.name
+
+  let dataSourceContent = ''
   let metadata = {}
 
   if (type === DataSourceType.file) {
     file = file as File
 
-    name = file.name
     metadata = {
       title: name,
     }
   } else {
     file = file as HTMLFile
 
-    name = file.name
-    html = file.html
+    dataSourceContent = cleanHTMLContent(file.html)
     metadata = file.metadata
   }
 
@@ -66,7 +65,7 @@ export const createDataSourceAndVectors = async ({
     nbChunks,
     textSize,
     summary,
-    content: cleanHTMLContent(html),
+    content: dataSourceContent,
     ...metadata,
   }
 

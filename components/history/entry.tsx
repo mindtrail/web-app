@@ -1,7 +1,6 @@
 import { MouseEvent, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 
-import { Button } from '@/components/ui/button'
 import { addHttpsIfMissing } from '@/lib/utils'
 
 type HistoryItemProps = {
