@@ -80,10 +80,16 @@ type CreateDataSourcePayload = Pick<
     userId: string
   }
 
-export const dataSourceExists = async (name: string) => {
+export const dataSourceExists = async (name: string, userId: string) => {
+  // check if datasource exists for the logged in user
   const dataSource = await prisma.dataSource.findFirst({
     where: {
       name,
+      dataSourceUsers: {
+        some: {
+          userId,
+        },
+      },
     },
   })
 

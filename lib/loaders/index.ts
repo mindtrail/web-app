@@ -21,7 +21,7 @@ export const createDataSourceAndVectors = async ({
   type,
   userId,
 }: CreateDSProps) => {
-  const name = file.name
+  const { name } = file
 
   let dataSourceContent = ''
   let metadata = {}
@@ -35,8 +35,10 @@ export const createDataSourceAndVectors = async ({
   } else {
     file = file as HTMLFile
 
+    const { url, ...restMetadata } = file.metadata
+    metadata = restMetadata
+
     dataSourceContent = cleanHTMLContent(file.html)
-    metadata = file.metadata
   }
 
   const { chunks, sumaryContent = '' } = (await getChunksFromDoc({
