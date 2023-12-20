@@ -100,16 +100,9 @@ type BuildPath = {
   dataSourceId: string
   name: string
   type: DataSourceType
-  action?: GCS_ACTION_TYPE
 }
 
-export function buildFilePath({
-  userId,
-  dataSourceId,
-  name,
-  type,
-  action = GCS_ACTION_TYPE.UPLOAD,
-}: BuildPath) {
+export function buildFilePath({ userId, dataSourceId, name, type }: BuildPath) {
   if (type === DataSourceType.file) {
     return `${userId}/files/${name}/${dataSourceId}`
   }

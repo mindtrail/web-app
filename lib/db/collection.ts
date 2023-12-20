@@ -1,7 +1,5 @@
 import prisma from '@/lib/db/connection'
 
-export { searchSimilarText } from '@/lib/qdrant'
-
 type CollectionListProps = {
   userId: string
   includeDataSource?: boolean

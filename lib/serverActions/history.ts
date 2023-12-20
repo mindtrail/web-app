@@ -28,6 +28,7 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
     const deletedDataSources = await deleteDataSourceDbOp(dataSourceIdList, userId)
 
     deleteFileFromGCS(deletedDataSources, userId)
+    
     // @TODO delete points from Qdrant -> Dimitri
 
     revalidatePath('/history')

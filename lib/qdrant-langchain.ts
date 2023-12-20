@@ -15,6 +15,11 @@ const COLLECTION_CONFIG: Schemas['CreateCollection'] = {
     size: 1536,
     distance: 'Cosine',
   },
+  // on_disk_payload: true, // @TODO" test for improved performance without this
+}
+
+const QDRANT_ARGS: QdrantLibArgs = {
+  collectionConfig: COLLECTION_CONFIG,
 }
 
 const QDRANT_CLIENT_PROPS: QdrantLibArgs = {
@@ -37,14 +42,13 @@ type QdrantSearchResponse = Schemas['ScoredPoint'] & {
 export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   const { docs } = props
 
-  const vectorStore = await QdrantVectorStore.fromDocuments(
-    docs,
-    new OpenAIEmbeddings(),
-    {
-      ...QDRANT_CLIENT_PROPS,
-      collectionConfig: COLLECTION_CONFIG,
-    },
-  )
+  const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
+    ...QDRANT_ARGS,
+    collectionName: QDRANT_COLLECTION,
+  })
+
+  const result = await vectorStore.addDocuments(docs)
+  return result
 }
 
 export const searchSimilarText = async (message: string): Promise<string[]> => {
@@ -52,8 +56,12 @@ export const searchSimilarText = async (message: string): Promise<string[]> => {
     collectionName: QDRANT_COLLECTION,
   })
 
-  const allChunks = await vectorStore.similaritySearch(message, 10)
-  const dataSourceList = getDataSourcesOrderByNrOfHits(allChunks)
+  const allChunks = await vectorStore.similaritySearchWithScore(message, 10)
+  const docs = allChunks
+    .filter((chunk) => chunk[1] > SIMILARITY_THRESHOLD)
+    .map((chunk) => chunk[0])
+
+  const dataSourceList = getDataSourcesOrderByNrOfHits(docs)
 
   return dataSourceList
 }

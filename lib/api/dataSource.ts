@@ -23,7 +23,6 @@ export async function uploadFileApiCall(file: File) {
 
 export async function getFileMetadataApiCall(file: File) {
   const formData = new FormData()
-  formData.append('file', file)
 
   const response = await fetch(METADATA_ENDPOINT, {
     method: 'POST',
