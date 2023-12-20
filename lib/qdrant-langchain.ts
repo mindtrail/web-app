@@ -1,4 +1,4 @@
-import { Schemas } from '@qdrant/js-client-rest'
+import { QdrantClient, Schemas } from '@qdrant/js-client-rest'
 import { Document } from 'langchain/document'
 import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
 
@@ -64,6 +64,40 @@ export const searchSimilarText = async (message: string): Promise<string[]> => {
   const dataSourceList = getDataSourcesOrderByNrOfHits(docs)
 
   return dataSourceList
+}
+
+export const deleteVectorsForDataSource = async (
+  dataSourceIdList: string[],
+) => {
+
+  const client = new QdrantClient({
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
+  })
+
+  if (!dataSourceIdList?.length) {
+    return
+  }
+
+  
+  const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
+    collectionName: QDRANT_COLLECTION,
+  })
+
+  const result = await vectorStore.delete({
+    filter: {
+      must: [
+        {
+          key: 'metadata.dataSourceId',
+          match: {
+            any: dataSourceIdList,
+          },
+        },
+      ],
+    },
+  })
+  console.log('deleteVectorsForDataSource', result)
+  return result
 }
 
 function getDataSourcesOrderByNrOfHits(dataArray: Document[]): string[] {

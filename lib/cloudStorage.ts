@@ -82,7 +82,7 @@ export async function deleteFileFromGCS(
           type,
         })
 
-        console.log('detelet', gcFileName)
+        console.log('Detelet GCS', gcFileName)
         const result = bucket.file(gcFileName).delete()
         // console.log('result', result)
         return result

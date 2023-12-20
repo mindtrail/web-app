@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/authOptions'
 
 import { deleteDataSourceDbOp } from '@/lib/db/dataSource'
 import { deleteFileFromGCS } from '@/lib/cloudStorage'
+import { deleteVectorsForDataSource } from '@/lib/qdrant-langchain'
 
 type deletePayload = {
   dataSourceIdList: string[]
@@ -25,10 +26,13 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
   }
 
   try {
-    const deletedDataSources = await deleteDataSourceDbOp(dataSourceIdList, userId)
+    const deletedDataSources = await deleteDataSourceDbOp(
+      dataSourceIdList,
+      userId,
+    )
 
     deleteFileFromGCS(deletedDataSources, userId)
-    
+    deleteVectorsForDataSource(dataSourceIdList)
     // @TODO delete points from Qdrant -> Dimitri
 
     revalidatePath('/history')
@@ -37,5 +41,3 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
     return { status: 404 }
   }
 }
-
-
