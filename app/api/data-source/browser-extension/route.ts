@@ -22,11 +22,12 @@ export async function POST(req: Request) {
 
   try {
     const body = (await req.json()) as BrowserExtensionData
-    const { url, html, ...metadata } = body
+    const { html, ...metadata } = body
+    const { url } = metadata
 
     console.log('--- Creating DataSources for URL ---> ', url)
 
-    if (await dataSourceExists(url)) {
+    if (await dataSourceExists(url, userId)) {
       return NextResponse.json({
         status: 200,
         message: 'DataSource already exists',
@@ -58,6 +59,7 @@ export async function POST(req: Request) {
       userId,
       dataSourceId,
       type: DataSourceType.web_page,
+      metadata,
     })
 
     return NextResponse.json({

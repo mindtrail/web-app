@@ -5,20 +5,13 @@ import { DataSource, DataSourceType } from '@prisma/client'
 const storage = new Storage()
 const bucketName = process.env.GCS_BUCKET_NAME || ''
 
-export async function downloadWebsiteGCS(
-  name: string,
-): Promise<Partial<HTMLFile> | null> {
+export async function downloadWebsiteFromGCS(
+  gcFileName: string,
+): Promise<Partial<string> | null> {
   const bucket = storage.bucket(bucketName)
-  const file = bucket.file(name)
+  const file = bucket.file(gcFileName)
   try {
-    const html = (await file.download()).toString()
-
-    const result: Partial<HTMLFile> = {
-      html,
-      name,
-    }
-
-    return result
+    return (await file.download()).toString()
   } catch (error) {
     console.error('Error downloading from GCS', error)
     return null
@@ -30,10 +23,11 @@ interface UploadToGCSProps {
   userId: string
   dataSourceId: string
   type: DataSourceType
+  metadata?: Partial<WEB_Data>
 }
 
 export async function uploadToGCS(props: UploadToGCSProps) {
-  let { uploadedFile, userId, dataSourceId, type } = props
+  let { uploadedFile, userId, dataSourceId, type, metadata } = props
   const { name } = uploadedFile
 
   let gcFileName = ''
@@ -43,7 +37,6 @@ export async function uploadToGCS(props: UploadToGCSProps) {
   try {
     if (type === DataSourceType.file) {
       uploadedFile = uploadedFile as File
-      console.log(uploadedFile)
 
       contentType = uploadedFile.type
       gcFileName = `${userId}/files/${dataSourceId}/${name}`
@@ -60,13 +53,11 @@ export async function uploadToGCS(props: UploadToGCSProps) {
     const newFile = bucket.file(gcFileName)
     await newFile.save(fileContent)
 
+    console.log(1111, gcFileName, metadata)
+
     await newFile.setMetadata({
       contentType,
-      metadata: {
-        title: uploadedFile.name,
-        dataSourceId,
-        userId,
-      },
+      metadata,
     })
 
     return 'File uploaded successfully'

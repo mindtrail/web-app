@@ -3,7 +3,7 @@ import { Document } from 'langchain/document'
 import { DataSourceType } from '@prisma/client'
 
 import { createDataSourceAndVectors } from '@/lib/loaders'
-import { downloadWebsiteGCS } from '@/lib/cloudStorage'
+import { downloadWebsiteFromGCS } from '@/lib/cloudStorage'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 
@@ -27,9 +27,13 @@ export async function POST(req: Request) {
       websites.map(async ({ name: gcFileName, metadata }) => {
         const { url, ...restMetadata } = metadata
 
-        // Download the files from GCS
-        const file = (await downloadWebsiteGCS(gcFileName)) as HTMLFile
-        file.metadata = restMetadata
+        // Download the html from GCS
+        const html = await downloadWebsiteFromGCS(gcFileName)
+        const file = {
+          name: url,
+          html,
+          metadata: restMetadata,
+        } as HTMLFile
 
         if (!file) {
           return null
