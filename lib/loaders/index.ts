@@ -46,10 +46,6 @@ export const createDataSourceAndVectors = async ({
     type,
   })) as HTMLChunkingResponse
 
-  console.log('Chunks', chunks[0])
-
-  // return chunks
-
   const nbChunks = chunks.length
   const textSize = chunks.reduce(
     (acc, doc) => acc + doc?.pageContent?.length,

@@ -70,9 +70,28 @@ async function processFileUpload({ file, userId }: ProcessFileUpload) {
     })
   }
 
+  // We get the dataSourceId from the first doc(chunk)
   const { dataSourceId, ...metadata } = docs[0]?.metadata
 
-  console.log('File Upload', metadata)
+  console.log('File Upload', metadata, file)
+
+  let fileMetadata = {}
+  if (file.type === 'application/pdf') {
+    const { info } = metadata.pdf
+
+    if (info) {
+      const description = info?.Subject || info?.Description
+      const author = info?.Author
+      const tags = info?.Keywords?.split(',').map((tag: string) => tag.trim())
+
+      // This way I only set the prop if there is a value
+      fileMetadata = {
+        ...(info?.Title ? { title: info?.Title } : {}),
+        ...(description || author ? { description: description + author } : {}),
+        ...(tags ? { tags: tags } : {}),
+      }
+    }
+  }
 
   await uploadToGCS({
     uploadedFile: file,

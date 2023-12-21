@@ -52,6 +52,7 @@ export async function POST(req: Request) {
       })
     }
 
+    // We get the dataSourceId from the first doc(chunk)
     const { dataSourceId } = docs[0]?.metadata
 
     await uploadToGCS({
