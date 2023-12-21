@@ -31,7 +31,7 @@ export async function getFileMetadataApiCall(file: File) {
   })
 
   if (!response.ok) {
-    if (response.status === 401) {
+    if (response.status === 400) {
       const response = { textSize: 0, name: file.name, type: file.type }
       return response
     }

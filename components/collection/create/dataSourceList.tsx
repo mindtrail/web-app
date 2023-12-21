@@ -51,7 +51,9 @@ export function DataSourceList(props: DataSourceList) {
     return acceptedItems.map(
       ({ file, textSize, status = 'unsynched' }, index) => (
         <div
-          className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100 '
+          className={`flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100 ${
+            textSize === 0 && 'text-red-700'
+          }`}
           key={index}
         >
           <Tooltip>
