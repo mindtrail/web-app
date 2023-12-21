@@ -99,11 +99,16 @@ type BuildPath = {
   userId: string
   dataSourceId: string
   name: string
-  type: DataSourceType
+  DSType: DataSourceType
 }
 
-export function buildFilePath({ userId, dataSourceId, name, type }: BuildPath) {
-  if (type === DataSourceType.file) {
+export function buildFilePath({
+  userId,
+  dataSourceId,
+  name,
+  DSType,
+}: BuildPath) {
+  if (DSType === DataSourceType.file) {
     return `${userId}/files/${name}/${dataSourceId}`
   }
 

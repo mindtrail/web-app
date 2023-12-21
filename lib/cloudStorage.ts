@@ -24,20 +24,20 @@ interface UploadToGCSProps {
   uploadedFile: File | HTMLFile
   userId: string
   dataSourceId: string
-  type: DataSourceType
+  DSType: DataSourceType
   metadata?: Partial<WEB_Data>
 }
 
 export async function uploadToGCS(props: UploadToGCSProps) {
   try {
-    const { uploadedFile, userId, dataSourceId, type, metadata } = props
+    const { uploadedFile, userId, dataSourceId, DSType, metadata } = props
     const { name } = uploadedFile
-    const gcFileName = buildFilePath({ userId, dataSourceId, name, type })
+    const gcFileName = buildFilePath({ userId, dataSourceId, name, DSType })
 
     let contentType = ''
     let fileContent
 
-    if (type === DataSourceType.file) {
+    if (DSType === DataSourceType.file) {
       const file = uploadedFile as File
 
       contentType = file.type
@@ -72,14 +72,14 @@ export async function deleteFileFromGCS(
   try {
     await Promise.all(
       dataSourceList.map((dataSource) => {
-        const { id: dataSourceId, type, name } = dataSource
+        const { id: dataSourceId, type: DSType, name } = dataSource
 
         const bucket = storage.bucket(bucketName)
         const gcFileName = buildFilePath({
           userId,
           dataSourceId,
           name,
-          type,
+          DSType,
         })
 
         console.log('Detelet GCS', gcFileName)

@@ -10,6 +10,8 @@ import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { readFormData } from '@/lib/utils'
 
+const DSType = DataSourceType.file
+
 // Upload local file flow
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
       })
     }
 
-    const chunks = await getChunksFromDoc({ file, DSType: DataSourceType.file })
+    const chunks = await getChunksFromDoc({ file, DSType })
 
     if (!chunks?.length) {
       return new NextResponse('File is empty', {
@@ -74,7 +76,7 @@ async function processFileUpload({ file, userId, chunks }: ProcessFileUpload) {
     file,
     userId,
     chunks,
-    DSType: DataSourceType.file,
+    DSType,
   })
 
   if (!docs?.length) {
@@ -90,10 +92,10 @@ async function processFileUpload({ file, userId, chunks }: ProcessFileUpload) {
     uploadedFile: file,
     userId,
     dataSourceId,
+    DSType,
     metadata: {
       title: file?.name,
       ...metadata,
     },
-    type: DataSourceType.file,
   })
 }

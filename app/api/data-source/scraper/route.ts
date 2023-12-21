@@ -6,6 +6,7 @@ import { createDataSourceAndVectors } from '@/lib/loaders'
 import { downloadWebsiteFromGCS } from '@/lib/cloudStorage'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
+const DSType = DataSourceType.web_page
 
 // @TODO: call from a Cloud Run service, from the same project & VPC
 // Make this call accessible only from the same VPC
@@ -42,7 +43,8 @@ export async function POST(req: Request) {
         return await createDataSourceAndVectors({
           file,
           userId,
-          type: DataSourceType.web_page,
+          DSType,
+          chunks: [],
         })
       }),
     )

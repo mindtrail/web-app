@@ -49,5 +49,6 @@ export default async function CollectionPage(params: DSProps) {
     redirect(`/collection/create`)
   }
 
-  return <CollectionList collectionList={collectionList} />
+  return <div>Collection List</div>
+  // return <CollectionList collectionList={collectionList} />
 }
