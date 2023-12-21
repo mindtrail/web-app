@@ -67,8 +67,8 @@ export function ImportForm(props: FormProps) {
     files,
     rejectedFiles,
     dropzoneUsed,
-    charCount,
-    charCountLoading,
+    textSize,
+    textSizeLoading,
     fileToDelete,
     deleteDialogOpen,
     handleFileDrop,
@@ -236,8 +236,8 @@ export function ImportForm(props: FormProps) {
                   type={DataSourceType.file}
                   acceptedItems={files}
                   rejectedItems={rejectedFiles}
-                  charCount={charCount}
-                  charCountLoading={charCountLoading}
+                  textSize={textSize}
+                  textSizeLoading={textSizeLoading}
                   handleFileDelete={handleFileDelete}
                 />
               </div>
@@ -297,8 +297,8 @@ export function ImportForm(props: FormProps) {
                 <DataSourceList
                   type={DataSourceType.web_page}
                   acceptedItems={urls}
-                  charCount={charCount}
-                  charCountLoading={charCountLoading}
+                  textSize={textSize}
+                  textSizeLoading={textSizeLoading}
                   handleFileDelete={handleURLDelete}
                 />
               </div>

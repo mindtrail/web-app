@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     return null
   }
 
-  const charCount = chunks.reduce(
+  const textSize = chunks.reduce(
     (acc, doc) => acc + doc?.pageContent?.length,
     0,
   )
@@ -81,5 +81,5 @@ export async function POST(req: Request) {
 
   console.log('File Metadata', fileMetadata)
 
-  return NextResponse.json({ charCount, name, type })
+  return NextResponse.json({ textSize, name, type })
 }

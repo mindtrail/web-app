@@ -34,28 +34,28 @@ export const importFormSchema = z
     },
   )
 
-  export const filterFiles = (files: File[], remainingSlots: number) => {
-    let count = 0
-    const acceptedFiles: AcceptedFile[] = []
-    const rejectedFiles: RejectedFile[] = []
+export const filterFiles = (files: File[], remainingSlots: number) => {
+  let count = 0
+  const acceptedFiles: AcceptedFile[] = []
+  const rejectedFiles: RejectedFile[] = []
 
-    files.forEach((file) => {
-      if (file.size <= MAX_FILE_SIZE && count < remainingSlots) {
-        acceptedFiles.push({
-          file,
-          status: DataSourceStatus.unsynched,
-        })
-        count++
-      } else {
-        rejectedFiles.push({
-          file,
-          error: file.size >= MAX_FILE_SIZE ? 'size' : 'limit',
-        })
-      }
-    })
+  files.forEach((file) => {
+    if (file.size <= MAX_FILE_SIZE && count < remainingSlots) {
+      acceptedFiles.push({
+        file,
+        status: DataSourceStatus.unsynched,
+      })
+      count++
+    } else {
+      rejectedFiles.push({
+        file,
+        error: file.size >= MAX_FILE_SIZE ? 'size' : 'limit',
+      })
+    }
+  })
 
-    return { acceptedFiles, rejectedFiles }
-  }
+  return { acceptedFiles, rejectedFiles }
+}
 
 export const updateFilesWithMetadata = (
   prevFiles: AcceptedFile[],
@@ -76,7 +76,7 @@ export const updateFilesWithMetadata = (
     if (metadata && (!type || type === metadata.type)) {
       return {
         ...item,
-        charCount: metadata.charCount,
+        textSize: metadata.textSize,
       }
     }
 
