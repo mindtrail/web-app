@@ -18,7 +18,6 @@ interface ImportDataSource extends React.ComponentProps<'div'> {
 
 export function ImportDataSource({ userId }: ImportDataSource) {
   const { toast } = useToast()
-  const router = useRouter()
 
   const onSubmit = async (data: ImportFormValues) => {
     try {

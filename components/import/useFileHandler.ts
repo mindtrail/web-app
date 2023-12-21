@@ -14,11 +14,24 @@ import {
 } from '@/components/collection/utils'
 
 const getFilesMetadata = async (files: AcceptedFile[]) => {
-  const metadataPromises = files.map(async ({ file }) => {
-    const droppedFile = file as File
-    return await getFileMetadataApiCall(droppedFile)
-  })
-  return await Promise.all(metadataPromises)
+  const metadataCall = await Promise.all(
+    files.map(async ({ file }) => {
+      const droppedFile = file as File
+      try {
+        // Attempt to get the metadata for each file
+        return await getFileMetadataApiCall(droppedFile)
+      } catch (error) {
+        // Log the error and return a default value for this file
+        console.error(
+          `Error getting metadata for file: ${droppedFile.name}`,
+          error,
+        )
+        return { file, textSize: 0 }
+      }
+    }),
+  )
+  console.log(111, metadataCall)
+  return metadataCall
 }
 
 export function useFileHandler(initialFiles: AcceptedFile[] = []) {

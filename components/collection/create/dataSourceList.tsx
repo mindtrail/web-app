@@ -107,7 +107,7 @@ export function DataSourceList(props: DataSourceList) {
           </span>
 
           <span className='flex items-center'>
-            {textSizeLoading ? <IconSpinner className='mr-2' /> : textSize}{' '}
+            {textSizeLoading ? <IconSpinner className='mr-2' /> : textSize}
             Chars
           </span>
         </div>

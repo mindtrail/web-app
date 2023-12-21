@@ -244,10 +244,10 @@ export function CollectionForm(props: FormProps) {
                           ) : (
                             <>
                               <p>
-                                Drop files or{' '}
+                                Drop files or
                                 <span className='underline text-neutral-500'>
                                   Click
-                                </span>{' '}
+                                </span>
                                 to browse
                               </p>
                               <p className='text-sm text-neutral-500'>
@@ -353,7 +353,7 @@ export function CollectionForm(props: FormProps) {
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
               This will delete the file and the associated data. The action
-              cannot be undone and will permanently delete{' '}
+              cannot be undone and will permanently delete
               <b>
                 {deleteDialogOpen
                   ? fileToDelete?.file?.name

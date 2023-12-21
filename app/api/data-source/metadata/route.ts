@@ -50,14 +50,16 @@ export async function POST(req: Request) {
 
   const { chunks } = response
 
-  if (!nbChunks || !textSize) {
-    return null
-  }
-
   const textSize = chunks.reduce(
     (acc, doc) => acc + doc?.pageContent?.length,
     0,
   )
+
+  if (!chunks?.length || !textSize) {
+    return new NextResponse('File is empty', {
+      status: 400,
+    })
+  }
 
   const { name, type } = file
 
@@ -70,11 +72,14 @@ export async function POST(req: Request) {
 
     if (info) {
       const description = info?.Subject || info?.Description
-      const author = info?.Author ? '. Author: ' + info?.Author : ''
+      const author = info?.Author
+      const tags = info?.Keywords?.split(',').map((tag: string) => tag.trim())
+
+      // This way I only set the prop if there is a value
       fileMetadata = {
-        title: info?.Title,
-        description: description + author,
-        tags: info?.Keywords?.split(',').map((tag: string) => tag.trim()),
+        ...(info?.Title ? { title: info?.Title } : {}),
+        ...(description || author ? { description: description + author } : {}),
+        ...(tags ? { tags: tags } : {}),
       }
     }
   }

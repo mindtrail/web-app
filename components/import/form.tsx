@@ -54,7 +54,7 @@ type FormProps = {
 }
 
 export function ImportForm(props: FormProps) {
-  const { onSubmit, existingCollection, onScrapeWebsite } = props
+  const { onSubmit, onScrapeWebsite } = props
 
   const defaultValues: ImportFormValues = useMemo(
     () => getFormInitialValues(),
@@ -178,7 +178,7 @@ export function ImportForm(props: FormProps) {
     <>
       <Form {...form}>
         <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
-          <Tabs defaultValue='urls'>
+          <Tabs defaultValue='files'>
             <TabsList className='grid w-full grid-cols-2 relative'>
               <TabsTrigger value='urls'>URLs</TabsTrigger>
               <TabsTrigger value='files'>Files</TabsTrigger>
@@ -214,10 +214,10 @@ export function ImportForm(props: FormProps) {
                           ) : (
                             <>
                               <p>
-                                Drop files or{' '}
+                                Drop files or
                                 <span className='underline text-neutral-500'>
                                   Click
-                                </span>{' '}
+                                </span>
                                 to browse
                               </p>
                               <p className='text-sm text-neutral-500'>
@@ -323,7 +323,7 @@ export function ImportForm(props: FormProps) {
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
               This will delete the file and the associated data. The action
-              cannot be undone and will permanently delete{' '}
+              cannot be undone and will permanently delete
               <b>
                 {deleteDialogOpen
                   ? fileToDelete?.file?.name
