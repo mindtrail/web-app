@@ -41,10 +41,14 @@ export const createDataSourceAndVectors = async ({
     dataSourceContent = cleanHTMLContent(file.html)
   }
 
-  const { chunks, sumaryContent = '' } = (await getChunksFromDoc({
+  const { chunks } = (await getChunksFromDoc({
     file,
     type,
   })) as HTMLChunkingResponse
+
+  console.log('Chunks', chunks[0])
+
+  // return chunks
 
   const nbChunks = chunks.length
   const textSize = chunks.reduce(
@@ -56,8 +60,9 @@ export const createDataSourceAndVectors = async ({
     return null
   }
 
-  const summary = await sumarizePage(sumaryContent)
-  const tags = await getPageTags(summary)
+  // @TODO: Use description insted of summary. Generate a summary for local files that don't have that info
+  // const summary = await sumarizePage('')
+  const tags = await getPageTags('')
 
   // We store the dataSource in the DB. Trying to store the content too, see how large it can be
   const dataSourcePayload = {
@@ -66,7 +71,6 @@ export const createDataSourceAndVectors = async ({
     type,
     nbChunks,
     textSize,
-    summary,
     content: dataSourceContent,
     ...metadata,
   }

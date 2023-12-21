@@ -22,7 +22,7 @@ export const HistoryEntry = ({
   handleTagListClick,
   handleHistoryDelete,
 }: HistoryItemProps) => {
-  const { id, name, displayName, summary, createdAt } = historyItem
+  const { name, displayName } = historyItem
 
   const handleDelete = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
@@ -47,8 +47,6 @@ export const HistoryEntry = ({
         </div>
         <div className='w-full h-20 bg-slate-100'></div>
       </div>
-
-      <div className='max-w-md lg:max-w-lg'>{summary}</div>
 
       <div className='flex gap-2 flex-wrap'></div>
       <span>Action</span>
