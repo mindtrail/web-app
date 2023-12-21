@@ -48,29 +48,7 @@ export async function POST(req: Request) {
       })
     }
 
-    let fileMetadata = {}
-
-    const { dataSourceId, ...metadata } = chunks[0]?.metadata
     const { name, type } = file
-
-    if (type === 'application/pdf') {
-      const { info } = metadata.pdf
-
-      if (info) {
-        const title = info?.Title
-        const description = info?.Subject || info?.Description || info?.Author
-        const tags = info?.Keywords?.split(',').map((tag: string) => tag.trim())
-
-        // This way I only set the prop if there is a value
-        fileMetadata = {
-          ...(title ? { title } : {}),
-          ...(description ? { description } : {}),
-          ...(tags ? { tags: tags } : {}),
-        }
-      }
-    }
-
-    console.log('File Metadata -- --', fileMetadata)
 
     return NextResponse.json({ textSize, name, type })
   } catch (err) {

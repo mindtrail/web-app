@@ -4,71 +4,28 @@ import { Document } from 'langchain/document'
 import { createAndStoreVectors } from '@/lib/qdrant'
 
 import { sumarizePage, getPageTags } from '@/lib/openAI'
-import { cleanHTMLContent } from '@/lib/loaders/utils'
 import { createTags } from '@/lib/db/tags'
 
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
 type CreateDSProps = {
   file: File | HTMLFile
-  DSType: DataSourceType
   userId: string
   chunks: Document[]
+  DSType: DataSourceType
 }
 
-export const createDataSourceAndVectors = async ({
-  file,
-  DSType,
-  userId,
-  chunks,
-}: CreateDSProps): Promise<Document[] | null> => {
-  const { name } = file
+export const createDataSourceAndVectors = async (
+  props: CreateDSProps,
+): Promise<Document[] | null> => {
+  let { userId, chunks, DSType } = props
 
-  let dataSourceContent = ''
-  let metadata = {}
-
-  if (DSType === DataSourceType.file) {
-    file = file as File
-
-    metadata = {
-      title: name,
-    }
-  } else {
-    file = file as HTMLFile
-
-    const { url, ...restMetadata } = file.metadata
-    metadata = restMetadata
-
-    dataSourceContent = cleanHTMLContent(file.html)
-  }
-
-  const nbChunks = chunks.length
-  const textSize = chunks.reduce(
-    (acc, doc) => acc + doc?.pageContent?.length,
-    0,
-  )
-
-  if (!nbChunks || !textSize) {
-    null
-  }
+  const dataSource = await createDataSource(props)
+  const dataSourceId = dataSource?.id
 
   // @TODO: Use description insted of summary. Generate a summary for local files that don't have that info
   // const summary = await sumarizePage('')
   const tags = await getPageTags('')
-
-  // We store the dataSource in the DB. Trying to store the content too, see how large it can be
-  const dataSourcePayload = {
-    userId,
-    name: name,
-    type: DSType,
-    nbChunks,
-    textSize,
-    content: dataSourceContent,
-    ...metadata,
-  }
-
-  const dataSource = await createDataSource(dataSourcePayload)
-  const dataSourceId = dataSource?.id
 
   if (!dataSourceId) {
     return null
@@ -112,3 +69,4 @@ const storeVectorsAndUpdateDataSource = async (docs: Document[]) => {
     })
   }
 }
+
