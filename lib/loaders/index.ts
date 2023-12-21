@@ -39,6 +39,7 @@ export const createDataSourceAndVectors = async (
 
   if (!tags.length) {
     tags = await getPageTags(description || '')
+    console.log(2222, tags)
   }
 
   if (!dataSourceId) {

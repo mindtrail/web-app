@@ -1,9 +1,18 @@
-import { Tag } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 
 type CreateTagsPayload = {
   tags: string[]
   dataSourceId: string
+}
+
+export const getTagList = async () => {
+  const tagList = await prisma.tag.findMany({
+    orderBy: {
+      name: 'asc',
+    },
+  })
+
+  return tagList
 }
 
 export const createTags = async ({ tags, dataSourceId }: CreateTagsPayload) => {
