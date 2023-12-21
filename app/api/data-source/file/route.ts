@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { DataSourceType } from '@prisma/client'
+import { Document } from 'langchain/document'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
 
+import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { readFormData } from '@/lib/utils'
 
@@ -28,60 +30,30 @@ export async function POST(req: Request) {
     })
   }
 
-  const { file } = await readFormData(req)
-
-  if (!file) {
-    return new Response(`Missing file.`, {
-      status: 400,
-    })
-  }
-
-  const payload = {
-    file,
-    userId,
-  }
-
-  processFileUpload(payload)
-  return NextResponse.json({ payload })
-}
-
-type ProcessFileUpload = {
-  file: File
-  userId: string
-}
-
-async function processFileUpload({ file, userId }: ProcessFileUpload) {
   try {
-    const docs = await createDataSourceAndVectors({
-      file,
-      userId,
-      DSType: DataSourceType.file,
-    })
+    const { file } = await readFormData(req)
 
-    if (!docs?.length) {
+    if (!file) {
+      return new Response(`Missing file.`, {
+        status: 400,
+      })
+    }
+
+    const chunks = await getChunksFromDoc({ file, DSType: DataSourceType.file })
+
+    if (!chunks?.length) {
       return new NextResponse('File is empty', {
         status: 400,
       })
     }
 
-    // We get the dataSourceId from the first doc(chunk)
-    const { dataSourceId, ...metadata } = docs[0]?.metadata
+    // Moved to a separate function to avoid blocking the response
+    processFileUpload({ file, userId, chunks })
 
-    console.log('File Upload', metadata)
-
-    await uploadToGCS({
-      uploadedFile: file,
-      userId,
-      dataSourceId,
-      metadata: {
-        title: file?.name,
-        ...metadata,
-      },
-      type: DataSourceType.file,
-    })
+    return NextResponse.json({ chunks })
   } catch (err) {
-    // Handle the error case
     console.error('File Upload Error:: ', err)
+
     return new NextResponse('Unsupported file type', {
       status: 403,
       headers: {
@@ -89,4 +61,39 @@ async function processFileUpload({ file, userId }: ProcessFileUpload) {
       },
     })
   }
+}
+
+type ProcessFileUpload = {
+  file: File
+  userId: string
+  chunks: Document[]
+}
+
+async function processFileUpload({ file, userId, chunks }: ProcessFileUpload) {
+  const docs = await createDataSourceAndVectors({
+    file,
+    userId,
+    chunks,
+    DSType: DataSourceType.file,
+  })
+
+  if (!docs?.length) {
+    return null
+  }
+
+  // We get the dataSourceId from the first doc(chunk)
+  const { dataSourceId, ...metadata } = docs[0]?.metadata
+
+  console.log('File Upload', metadata)
+
+  await uploadToGCS({
+    uploadedFile: file,
+    userId,
+    dataSourceId,
+    metadata: {
+      title: file?.name,
+      ...metadata,
+    },
+    type: DataSourceType.file,
+  })
 }

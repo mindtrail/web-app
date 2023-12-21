@@ -7,19 +7,20 @@ import { sumarizePage, getPageTags } from '@/lib/openAI'
 import { cleanHTMLContent } from '@/lib/loaders/utils'
 import { createTags } from '@/lib/db/tags'
 
-import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
 type CreateDSProps = {
   file: File | HTMLFile
   DSType: DataSourceType
   userId: string
+  chunks: Document[]
 }
 
 export const createDataSourceAndVectors = async ({
   file,
   DSType,
   userId,
+  chunks,
 }: CreateDSProps): Promise<Document[] | null> => {
   const { name } = file
 
@@ -40,8 +41,6 @@ export const createDataSourceAndVectors = async ({
 
     dataSourceContent = cleanHTMLContent(file.html)
   }
-
-  const chunks = await getChunksFromDoc({ file, type: DSType })
 
   const nbChunks = chunks.length
   const textSize = chunks.reduce(

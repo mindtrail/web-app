@@ -65,6 +65,4 @@ declare global {
     html: string
     metadata: Partial<BrowserExtensionData>
   }
-
-  type HTMLChunkingResponse = Document[]
 }

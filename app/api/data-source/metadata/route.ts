@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const chunks = await getChunksFromDoc({ file, type: DataSourceType.file })
+    const chunks = await getChunksFromDoc({ file, DSType: DataSourceType.file })
 
     const textSize = chunks?.reduce(
       (acc, doc) => acc + doc?.pageContent?.length,

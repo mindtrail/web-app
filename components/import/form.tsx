@@ -112,11 +112,17 @@ export function ImportForm(props: FormProps) {
   // @ts-ignore - getting the error for the refined error type
   const filesOrUrlsError = errors?.filesOrUrls
 
+  const onDrop = async (acceptedFiles: File[]) => {
+    setProcessing(true)
+    await handleFileDrop(acceptedFiles)
+    setProcessing(false)
+  }
+
   const { getRootProps, getInputProps, isDragAccept, isDragReject } =
     useDropzone({
       // accept: ACCEPTED_FILE_REACT_DROPZONE,
       validator: formValidator,
-      onDrop: handleFileDrop,
+      onDrop: onDrop,
     })
 
   function formValidator(file: File) {
