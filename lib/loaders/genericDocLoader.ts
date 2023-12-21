@@ -1,5 +1,4 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-import { Document } from 'langchain/document'
 import { DataSourceType } from '@prisma/client'
 
 import { getChunksFromLocalFile } from '@/lib/loaders/localFileLoader'
@@ -15,71 +14,60 @@ type GetChunksFromDocProps = {
 export const getChunksFromDoc = async ({
   file,
   type,
-}: GetChunksFromDocProps): Promise<Error | HTMLChunkingResponse> => {
-  try {
-    const { name } = file
+}: GetChunksFromDocProps): Promise<HTMLChunkingResponse> => {
+  const { name } = file
 
-    const metadata =
-      type === DataSourceType.web_page ? (file as HTMLFile).metadata : {}
-    const chunkHeader = `${metadata?.title || name}. `
+  const metadata =
+    type === DataSourceType.web_page ? (file as HTMLFile).metadata : {}
+  const chunkHeader = `${metadata?.title || name}. `
 
-    const loadedDoc =
-      type === DataSourceType.web_page
-        ? await getChunksFromHTML(file as HTMLFile)
-        : await getChunksFromLocalFile(file as File)
+  const loadedDoc =
+    type === DataSourceType.web_page
+      ? await getChunksFromHTML(file as HTMLFile)
+      : await getChunksFromLocalFile(file as File)
 
-    // TODO: Test this
-    if (loadedDoc instanceof Error) {
-      throw loadedDoc
-    }
+  const bulkTextSplitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 3000, // average page length
+    chunkOverlap: 0,
+    separators: ['\n\n'], // only split by new paragraphs
+  })
 
-    const bulkTextSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 3000, // average page length
-      chunkOverlap: 0,
-      separators: ['\n\n'], // only split by new paragraphs
-    })
+  const chunkTextSpliter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1250, // ~250 tokens (5 chars per token)
+    chunkOverlap: 100,
+    separators: ['\n\n', '.', '!', '?', '...'], // final split
+  })
 
-    const chunkTextSpliter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1250, // ~250 tokens (5 chars per token)
-      chunkOverlap: 100,
-      separators: ['\n\n', '.', '!', '?', '...'], // final split
-    })
-
-    const initialChunks = (
-      await bulkTextSplitter.splitDocuments(loadedDoc)
-    ).map(({ pageContent, metadata }) => {
+  const initialChunks = (await bulkTextSplitter.splitDocuments(loadedDoc)).map(
+    ({ pageContent, metadata }) => {
       return {
         metadata,
         pageContent: formatChunkForEmbedding(pageContent),
       }
-    })
+    },
+  )
 
-    const chunkHeaderOptions = { chunkHeader }
+  const chunkHeaderOptions = { chunkHeader }
 
-    const chunks = (
-      await chunkTextSpliter.splitDocuments(initialChunks, chunkHeaderOptions)
-    ).map(({ pageContent, metadata }) => {
-      // Remove blobType and source properties
-      // Create a copy of metadata to avoid mutating the original object
-      const metadataCopy = { ...metadata }
+  const chunks = (
+    await chunkTextSpliter.splitDocuments(initialChunks, chunkHeaderOptions)
+  ).map(({ pageContent, metadata }) => {
+    // Remove blobType and source properties
+    // Create a copy of metadata to avoid mutating the original object
+    const metadataCopy = { ...metadata }
 
-      delete metadataCopy.blobType
-      delete metadataCopy.source
+    delete metadataCopy.blobType
+    delete metadataCopy.source
 
-      return {
-        metadata: {
-          ...metadataCopy,
-          name,
-        },
-        pageContent: formatChunkForEmbedding(pageContent),
-      }
-    })
+    return {
+      metadata: {
+        ...metadataCopy,
+        name,
+      },
+      pageContent: formatChunkForEmbedding(pageContent),
+    }
+  })
 
-    console.log('Chunks', chunks.length)
-
-    return { chunks }
-  } catch (e: any) {
-    console.error('ERRRRRR ----+++ ', e)
-    return new Error(e)
-  }
+  console.log('Chunks', chunks.length)
+  return { chunks }
 }
