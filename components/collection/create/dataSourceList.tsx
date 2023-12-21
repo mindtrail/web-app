@@ -106,9 +106,11 @@ export function DataSourceList(props: DataSourceList) {
             {`${acceptedItems.length} of ${MAX_NR_OF_FILES} uploaded`}
           </span>
 
-          <span className='flex items-center'>
-            {textSizeLoading ? <IconSpinner className='mr-2' /> : textSize}
-            Chars
+          <span className='flex items-center gap-3'>
+            <span>
+              {textSizeLoading ? <IconSpinner className='mr-2' /> : textSize}
+            </span>
+            <span>Chars</span>
           </span>
         </div>
       )}

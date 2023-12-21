@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     !req ||
     !req.headers.get('content-type')?.startsWith('multipart/form-data')
   ) {
-    return new Response('Bad Request', {
+    return new Response('Missing form-data', {
       status: 400,
     })
   }
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     // Handle the error case
     console.error(response.message)
     return new NextResponse('Unsupported file type', {
-      status: 400,
+      status: 403,
     })
   }
 
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
   )
 
   if (!chunks?.length || !textSize) {
-    return new NextResponse('File is empty', {
+    return NextResponse.json('File is empty', {
       status: 400,
     })
   }

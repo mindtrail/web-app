@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server'
+
 export const DATA_SRC = '/api/data-source'
 export const UPLOAD_ENDPOINT = '/api/data-source/file'
 export const METADATA_ENDPOINT = '/api/data-source/metadata'
@@ -29,7 +31,14 @@ export async function getFileMetadataApiCall(file: File) {
   })
 
   if (!response.ok) {
-    throw new Error('Failed to upload files')
+    if (response.status === 401) {
+      const response = { textSize: 0, name: file.name, type: file.type }
+      return response
+    }
+
+    if (response.status === 403) {
+      throw new Error('Unsupported file type')
+    }
   }
 
   return response.json()
