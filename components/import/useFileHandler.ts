@@ -73,6 +73,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         )
         setTextSize((prevChars) => prevChars + totalChars)
         setTextSizeLoading(false)
+        return acceptedFiles
       } catch (error) {
         console.log(error)
       }

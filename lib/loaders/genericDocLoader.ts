@@ -1,5 +1,6 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { DataSourceType } from '@prisma/client'
+import { Document } from 'langchain/document'
 
 import { getChunksFromLocalFile } from '@/lib/loaders/localFileLoader'
 import { getChunksFromHTML } from '@/lib/loaders/htmlLoader'
@@ -8,21 +9,21 @@ import { formatChunkForEmbedding } from '@/lib/loaders/utils'
 
 type GetChunksFromDocProps = {
   file: File | HTMLFile
-  type: string
+  DSType: string
 }
 
 export const getChunksFromDoc = async ({
   file,
-  type,
-}: GetChunksFromDocProps): Promise<HTMLChunkingResponse> => {
+  DSType,
+}: GetChunksFromDocProps): Promise<Document[]> => {
   const { name } = file
 
   const metadata =
-    type === DataSourceType.web_page ? (file as HTMLFile).metadata : {}
+    DSType === DataSourceType.web_page ? (file as HTMLFile).metadata : {}
   const chunkHeader = `${metadata?.title || name}. `
 
   const loadedDoc =
-    type === DataSourceType.web_page
+    DSType === DataSourceType.web_page
       ? await getChunksFromHTML(file as HTMLFile)
       : await getChunksFromLocalFile(file as File)
 

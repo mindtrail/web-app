@@ -18,12 +18,13 @@ interface ImportDataSource extends React.ComponentProps<'div'> {
 
 export function ImportDataSource({ userId }: ImportDataSource) {
   const { toast } = useToast()
+  const router = useRouter()
 
   const onSubmit = async (data: ImportFormValues) => {
     try {
       await processImportData(data)
 
-      // router.push('/history?refresh=true')
+      router.push('/history?refresh=true')
     } catch (err) {
       console.log(err)
 
@@ -44,8 +45,10 @@ export function ImportDataSource({ userId }: ImportDataSource) {
   const processImportData = async (data: ImportFormValues) => {
     const { files, newURL } = data
 
+    // Only upload files that are not synched and have content
     const unsynchedFiles = files?.filter(
-      ({ status }) => status === DataSourceStatus.unsynched,
+      ({ status, textSize }) =>
+        status === DataSourceStatus.unsynched && textSize > 0,
     )
 
     if (newURL) {
