@@ -3,9 +3,9 @@ import { Document } from 'langchain/document'
 
 import { createAndStoreVectors } from '@/lib/qdrant'
 
-import { sumarizePage, getPageTags } from '@/lib/openAI'
 import { createTags } from '@/lib/db/tags'
-
+import { sumarizePage, getPageTags } from '@/lib/openAI'
+import { cleanHTMLContent } from '@/lib/loaders/utils'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
 type CreateDSProps = {
@@ -18,14 +18,25 @@ type CreateDSProps = {
 export const createDataSourceAndVectors = async (
   props: CreateDSProps,
 ): Promise<Document[] | null> => {
-  let { userId, chunks, DSType } = props
+  let { file, userId, chunks, DSType } = props
 
   const dataSource = await createDataSource(props)
-  const dataSourceId = dataSource?.id
 
-  // @TODO: Use description insted of summary. Generate a summary for local files that don't have that info
-  // const summary = await sumarizePage('')
-  const tags = await getPageTags('')
+  if (!dataSource) {
+    return null
+  }
+
+  const { id: dataSourceId, description } = dataSource
+
+  let tags: string[] = []
+  // PDFs may have
+  if (DSType === DataSourceType.file) {
+    const { type } = file as File
+
+    if (type === 'application/pdf') {
+      tags = chunks[0]?.metadata?.tags || []
+    }
+  }
 
   if (!dataSourceId) {
     return null
@@ -70,3 +81,4 @@ const storeVectorsAndUpdateDataSource = async (docs: Document[]) => {
   }
 }
 
+// function
