@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     const docs = await createDataSourceAndVectors({
       file,
       userId,
-      type: DataSourceType.web_page,
+      DSType: DataSourceType.web_page,
     })
 
     if (!docs?.length) {
