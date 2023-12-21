@@ -110,6 +110,7 @@ export const updateFilesWithMetadata = (
   prevFiles: AcceptedFile[],
   filesMetadata: Metadata[],
 ) => {
+  console.log(filesMetadata, prevFiles)
   const filesMetadataMap: { [key: string]: Metadata } = {}
   filesMetadata.forEach((metadata) => {
     filesMetadataMap[metadata.name] = metadata
