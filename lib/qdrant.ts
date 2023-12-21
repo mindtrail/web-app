@@ -36,7 +36,7 @@ interface CreateAndStoreVectors {
 type QdrantSearchResponse = Schemas['ScoredPoint'] & {
   payload: {
     metadata: {
-      metaDescription: string
+      description: string
       pageTitle: string
       hostName: string
     }
@@ -148,13 +148,12 @@ export const getVectorItemsByDataSourceId = async (
         }
 
         const point = points[0] as QdrantSearchResponse
-        const { metaDescription, pageTitle, hostName } =
-          point?.payload?.metadata
+        const { description, pageTitle, hostName } = point?.payload?.metadata
 
         // @ts-ignore
         result[dataSourceId] = {
           hostName,
-          metaDescription,
+          description,
           pageTitle,
         }
         return null

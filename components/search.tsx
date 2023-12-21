@@ -81,7 +81,7 @@ export function Search({ userId }: HistoryLookupProps) {
             </Link>
             <Link href={addHttpsIfMissing(foundWebsite?.name)}>
               <img
-                alt={foundWebsite?.metaDescription}
+                alt={foundWebsite?.description}
                 src={foundWebsite?.image}
               />
             </Link>
