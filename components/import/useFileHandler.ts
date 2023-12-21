@@ -8,10 +8,7 @@ import {
   deleteDataSourceApiCall,
 } from '@/lib/api/dataSource'
 
-import {
-  filterFiles,
-  updateFilesWithMetadata,
-} from '@/components/collection/utils'
+import { filterFiles, updateFilesWithMetadata } from '@/components/import/utils'
 
 const getFilesMetadata = async (files: AcceptedFile[]) => {
   const metadataCall = await Promise.all(
@@ -22,11 +19,8 @@ const getFilesMetadata = async (files: AcceptedFile[]) => {
         return await getFileMetadataApiCall(droppedFile)
       } catch (error) {
         // Log the error and return a default value for this file
-        console.error(
-          `Error getting metadata for file: ${droppedFile.name}`,
-          error,
-        )
-        return { file, textSize: 0 }
+        console.error(`Error getting metadata for file: ${droppedFile.name}`)
+        return { textSize: 0, name: file.name, type: file.type }
       }
     }),
   )
