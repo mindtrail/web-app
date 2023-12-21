@@ -72,7 +72,7 @@ export function Search({ userId }: HistoryLookupProps) {
           </div>
         )}
 
-        {foundWebsite?.summary ? (
+        {foundWebsite?.description ? (
           <div className='flex flex-col gap-4'>
             <Link href={addHttpsIfMissing(foundWebsite?.name)}>
               <Typography variant='h5' className='text-gray-600'>
@@ -80,10 +80,7 @@ export function Search({ userId }: HistoryLookupProps) {
               </Typography>
             </Link>
             <Link href={addHttpsIfMissing(foundWebsite?.name)}>
-              <img
-                alt={foundWebsite?.description}
-                src={foundWebsite?.image}
-              />
+              <img alt={foundWebsite?.description} src={foundWebsite?.image} />
             </Link>
           </div>
         ) : searchPerfromed ? (
