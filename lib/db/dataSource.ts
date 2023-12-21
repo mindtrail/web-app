@@ -4,7 +4,7 @@ import { Document } from 'langchain/document'
 
 import { getURLDisplayName } from '@/lib/utils'
 import { cleanHTMLContent } from '@/lib/loaders/utils'
-import { sumarizePage } from '@/lib/openAI'
+import { summarizePage } from '@/lib/openAI'
 
 export const getDataSourceListForUser = async (
   userId: string,
@@ -124,9 +124,8 @@ export const createDataSource = async (props: CreateDS) => {
       file.type === 'application/pdf' ? getMetadataFromChunk(chunks[0]) : {}
 
     if (!PDFMetadata?.description) {
-      description = await sumarizePage(chunks[0]?.pageContent)
+      description = await summarizePage(chunks[0]?.pageContent)
     }
-    console.log(3333333, description, PDFMetadata)
 
     metadata = {
       title: name,
@@ -144,7 +143,7 @@ export const createDataSource = async (props: CreateDS) => {
 
     title = title || name
     description =
-      description || (await sumarizePage(dataSourceContent.substring(0, 2000)))
+      description || (await summarizePage(dataSourceContent.substring(0, 2000)))
 
     metadata = {
       ...restMetadata,
