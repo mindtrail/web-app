@@ -35,15 +35,6 @@ export const columns: ColumnDef<HistoryItem>[] = [
     cell: ({ getValue }) => <DefaultCell text={getValue() as string} />,
   },
   {
-    id: 'summary',
-    accessorKey: 'summary',
-    header: () => <DefaultHeader text='summary' />,
-    size: 350,
-    minSize: 150,
-    maxSize: 700,
-    cell: ({ getValue }) => <DefaultCell text={getValue() as string} />,
-  },
-  {
     id: 'created',
     accessorKey: 'createdAt',
     header: () => <DefaultHeader text='created' />,
@@ -53,9 +44,6 @@ export const columns: ColumnDef<HistoryItem>[] = [
     cell: ({ getValue }) => (
       <DefaultCell text={formatDate(getValue() as string)} />
     ),
-
-    // },
-    // <DefaultCell text={getValue() as string} />,
   },
   {
     id: 'tags',

@@ -1,18 +1,12 @@
-import {
-  ReaderIcon,
-  Pencil2Icon,
-  BookmarkIcon,
-  CalendarIcon,
-} from '@radix-ui/react-icons'
+import { ReaderIcon, BookmarkIcon, CalendarIcon } from '@radix-ui/react-icons'
 
-type HeaderIconKeys = 'summary' | 'description' | 'tags' | 'created'
+type HeaderIconKeys = 'description' | 'tags' | 'created'
 type DefaultHeaderProps = {
   text: HeaderIconKeys
 }
 
 const HEADER_ICON_MAP: Record<HeaderIconKeys, typeof ReaderIcon> = {
   description: ReaderIcon,
-  summary: Pencil2Icon,
   tags: BookmarkIcon,
   created: CalendarIcon,
 }

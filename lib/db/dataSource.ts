@@ -76,7 +76,7 @@ type CreateDataSourcePayload = Pick<
   DataSource,
   'type' | 'name' | 'nbChunks' | 'textSize'
 > &
-  Partial<Pick<DataSource, 'summary' | 'displayName' | 'status'>> & {
+  Partial<Pick<DataSource, 'displayName' | 'status'>> & {
     userId: string
   }
 

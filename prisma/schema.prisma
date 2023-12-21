@@ -141,8 +141,6 @@ model DataSource {
   description   String?
   title         String?
   image         String?
-
-  summary       String?
   content       String?
 
   dataSourceTags        DataSourceTag[]

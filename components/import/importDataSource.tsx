@@ -24,7 +24,7 @@ export function ImportDataSource({ userId }: ImportDataSource) {
     try {
       await processImportData(data)
 
-      router.push('/history?refresh=true')
+      // router.push('/history?refresh=true')
     } catch (err) {
       console.log(err)
 
@@ -43,8 +43,7 @@ export function ImportDataSource({ userId }: ImportDataSource) {
   }
 
   const processImportData = async (data: ImportFormValues) => {
-    // TODO: Add dropdown to select collection
-    const { files, urls, newURL } = data
+    const { files, newURL } = data
 
     const unsynchedFiles = files?.filter(
       ({ status }) => status === DataSourceStatus.unsynched,

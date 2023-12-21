@@ -79,9 +79,6 @@ export function Search({ userId }: HistoryLookupProps) {
                 {foundWebsite?.hostName}
               </Typography>
             </Link>
-            <Typography variant='p' className='text-gray-600'>
-              {foundWebsite?.summary}
-            </Typography>
             <Link href={addHttpsIfMissing(foundWebsite?.name)}>
               <img
                 alt={foundWebsite?.metaDescription}
