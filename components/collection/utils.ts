@@ -20,7 +20,7 @@ export const getFormInitialValues = (
               file,
               source: 'remote',
               status: file.status,
-              charCount: file.textSize,
+              textSize: file.textSize,
             }))
         : [],
       urls: collection.dataSources
@@ -30,7 +30,7 @@ export const getFormInitialValues = (
               file: url,
               source: 'remote',
               status: url.status,
-              charCount: url.textSize,
+              textSize: url.textSize,
             }))
         : [],
       newURL: '',
@@ -125,7 +125,7 @@ export const updateFilesWithMetadata = (
     if (metadata && (!type || type === metadata.type)) {
       return {
         ...item,
-        charCount: metadata.charCount,
+        textSize: metadata.textSize,
       }
     }
 

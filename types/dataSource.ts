@@ -6,14 +6,14 @@ declare global {
     file: File | DataSource
     source?: 'local' | 'remote'
     status?: DataSourceStatus
-    charCount?: number
+    textSize?: number
   }
 
   type URLScrapped = {
     file: DataSource
     source?: 'local' | 'remote'
     status?: DataSourceStatus
-    charCount?: number
+    textSize?: number
   }
 
   type RejectedFile = {
@@ -27,7 +27,7 @@ declare global {
   }
 
   type Metadata = {
-    charCount: number
+    textSize: number
     name: string
     type: string
   }

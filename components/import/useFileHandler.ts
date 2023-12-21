@@ -26,9 +26,9 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
   const [files, setFiles] = useState<AcceptedFile[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
-  const [charCountLoading, setCharCountLoading] = useState(false)
+  const [textSizeLoading, setTextSizeLoading] = useState(false)
   const [dropzoneUsed, setDropzoneUsed] = useState(false)
-  const [charCount, setCharCount] = useState(0)
+  const [textSize, setTextSize] = useState(0)
   const [fileToDelete, setFileToDelete] = useState<AcceptedFile | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
@@ -49,7 +49,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
       setFiles((prevFiles = []) => [...prevFiles, ...acceptedFiles])
       setRejectedFiles(rejectedFiles)
-      setCharCountLoading(true)
+      setTextSizeLoading(true)
       setDropzoneUsed(true) // User has interacted with the dropzone
       try {
         const metadataForFiles = (await getFilesMetadata(
@@ -57,15 +57,15 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         )) as Metadata[]
 
         const totalChars = metadataForFiles.reduce(
-          (acc, { charCount }) => acc + charCount,
+          (acc, { textSize }) => acc + textSize,
           0,
         )
 
         setFiles((prevFiles) =>
           updateFilesWithMetadata(prevFiles, metadataForFiles),
         )
-        setCharCount((prevChars) => prevChars + totalChars)
-        setCharCountLoading(false)
+        setTextSize((prevChars) => prevChars + totalChars)
+        setTextSizeLoading(false)
       } catch (error) {
         console.log(error)
       }
@@ -84,20 +84,20 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
       return
     }
 
-    filterOutDeletedFileAndUpdateCharCount(file)
+    filterOutDeletedFileAndUpdateTextSize(file)
   }, [])
 
-  const filterOutDeletedFileAndUpdateCharCount = (
+  const filterOutDeletedFileAndUpdateTextSize = (
     fileToDelete: AcceptedFile,
   ) => {
-    const { file, charCount = 0, status } = fileToDelete
+    const { file, textSize = 0, status } = fileToDelete
 
     setFiles((prevFiles) =>
       prevFiles.filter(({ file: prevFile }) => {
         return prevFile.name !== file.name
       }),
     )
-    setCharCount((prevChars) => prevChars - charCount)
+    setTextSize((prevChars) => prevChars - textSize)
   }
 
   const confirmFileDelete = useCallback(async () => {
@@ -122,14 +122,14 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
       console.log(err)
     }
 
-    filterOutDeletedFileAndUpdateCharCount(fileToDelete)
+    filterOutDeletedFileAndUpdateTextSize(fileToDelete)
   }, [fileToDelete, toast])
 
   return {
     files,
     rejectedFiles,
-    charCountLoading,
-    charCount,
+    textSizeLoading,
+    textSize,
     dropzoneUsed,
     fileToDelete,
     deleteDialogOpen,

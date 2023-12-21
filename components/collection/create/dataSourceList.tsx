@@ -26,8 +26,8 @@ interface DataSourceList {
   type: DataSourceType
   acceptedItems: AcceptedFile[] | URLScrapped[]
   rejectedItems?: RejectedFile[]
-  charCount: number
-  charCountLoading: boolean
+  textSize: number
+  textSizeLoading: boolean
   handleFileDelete: DeleteHandler
 }
 
@@ -36,8 +36,8 @@ export function DataSourceList(props: DataSourceList) {
     type,
     acceptedItems,
     rejectedItems = [],
-    charCount,
-    charCountLoading,
+    textSize,
+    textSizeLoading,
     handleFileDelete,
   } = props
 
@@ -49,7 +49,7 @@ export function DataSourceList(props: DataSourceList) {
     acceptedItems.sort((a, b) => (a?.file?.name < b?.file?.name ? 1 : -1))
 
     return acceptedItems.map(
-      ({ file, charCount, status = 'unsynched' }, index) => (
+      ({ file, textSize, status = 'unsynched' }, index) => (
         <div
           className='flex group cursor-default justify-between items-center rounded-md hover:bg-slate-100 '
           key={index}
@@ -73,7 +73,7 @@ export function DataSourceList(props: DataSourceList) {
           </Tooltip>
 
           <div className='flex gap-2 items-center shrink-0'>
-            <span>{charCount}</span>
+            <span>{textSize}</span>
             <Button
               variant='ghost'
               size='sm'
@@ -81,7 +81,7 @@ export function DataSourceList(props: DataSourceList) {
               disabled={status !== 'unsynched' && status !== 'synched'}
               onClick={(event) =>
                 // @ts-ignore
-                handleFileDelete(event, { file, charCount, status })
+                handleFileDelete(event, { file, textSize, status })
               }
             >
               <Cross1Icon />
@@ -107,7 +107,7 @@ export function DataSourceList(props: DataSourceList) {
           </span>
 
           <span className='flex items-center'>
-            {charCountLoading ? <IconSpinner className='mr-2' /> : charCount}{' '}
+            {textSizeLoading ? <IconSpinner className='mr-2' /> : textSize}{' '}
             Chars
           </span>
         </div>
