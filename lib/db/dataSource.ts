@@ -1,7 +1,9 @@
 import { DataSource, DataSourceType } from '@prisma/client'
 import prisma from '@/lib/db/connection'
+import { Document } from 'langchain/document'
 
 import { getURLDisplayName } from '@/lib/utils'
+import { cleanHTMLContent } from '@/lib/loaders/utils'
 
 export const getDataSourceListForUser = async (
   userId: string,
@@ -72,14 +74,6 @@ export const getDataSourceById = async (dataSourceId: string) => {
   return dataSource
 }
 
-type CreateDataSourcePayload = Pick<
-  DataSource,
-  'type' | 'name' | 'nbChunks' | 'textSize'
-> &
-  Partial<Pick<DataSource, 'displayName' | 'status'>> & {
-    userId: string
-  }
-
 export const dataSourceExists = async (name: string, userId: string) => {
   // check if datasource exists for the logged in user
   const dataSource = await prisma.dataSource.findFirst({
@@ -96,14 +90,73 @@ export const dataSourceExists = async (name: string, userId: string) => {
   return dataSource
 }
 
-export const createDataSource = async (
-  payload: CreateDataSourcePayload,
-  uniqueName = false,
-) => {
-  const { name, userId, ...rest } = payload
+type CreateDataSourcePayload = Pick<
+  DataSource,
+  'type' | 'name' | 'nbChunks' | 'textSize'
+> &
+  Partial<Pick<DataSource, 'displayName' | 'status'>> & {
+    userId: string
+  }
+
+type CreateDS = {
+  file: File | HTMLFile
+  userId: string
+  chunks: Document[]
+  DSType: DataSourceType
+  uniqueName?: boolean
+}
+
+export const createDataSource = async (props: CreateDS) => {
+  let { file, userId, chunks, DSType, uniqueName = false } = props
+
+  const { name } = file
+
+  let dataSourceContent = ''
+  let metadata = {}
+
+  if (DSType === DataSourceType.file) {
+    file = file as File
+
+    // For PDFs, we may have metadata coming from the PDF itself
+    const PDFMetadata =
+      file.type === 'application/pdf' ? getMetadataFromChunk(chunks[0]) : {}
+
+    metadata = {
+      title: name,
+      ...PDFMetadata,
+    }
+  } else {
+    file = file as HTMLFile
+
+    const { url, ...restMetadata } = file.metadata
+    metadata = restMetadata
+
+    // Only store the content for web pages as it can be too large for local files
+    dataSourceContent = cleanHTMLContent(file.html)
+  }
+
+  const nbChunks = chunks.length
+  const textSize = chunks.reduce(
+    (acc, doc) => acc + doc?.pageContent?.length,
+    0,
+  )
+
+  if (!nbChunks || !textSize) {
+    return null
+  }
 
   const displayName =
-    payload.type === DataSourceType.web_page ? getURLDisplayName(name) : name
+    DSType === DataSourceType.web_page ? getURLDisplayName(name) : name
+
+  const dataSourcePayload = {
+    name,
+    nbChunks,
+    textSize,
+    type: DSType,
+    content: dataSourceContent,
+    displayName,
+    ...metadata,
+  }
 
   if (uniqueName) {
     const existingDataSource = await prisma.dataSource.findFirst({
@@ -111,15 +164,13 @@ export const createDataSource = async (
     })
     if (existingDataSource) {
       const { id } = existingDataSource
-      return updateDataSource({ id, ...payload, displayName })
+      return updateDataSource({ id, ...dataSourcePayload })
     }
   }
 
   const dataSource = await prisma.dataSource.create({
     data: {
-      ...rest,
-      displayName,
-      name,
+      ...dataSourcePayload,
       dataSourceUsers: {
         create: {
           user: {
@@ -192,4 +243,18 @@ export const deleteDataSourceDbOp = async (
     dataSourcesToDeleteFromDB.map((dataSource) => dataSource.id),
   )
   return dataSourcesToDeleteFromDB
+}
+
+function getMetadataFromChunk(chunk: Document): Partial<BrowserExtensionData> {
+  const { metadata } = chunk
+  if (!metadata) {
+    return {}
+  }
+
+  const { title, description, image } = metadata
+  return {
+    title,
+    description,
+    image,
+  }
 }

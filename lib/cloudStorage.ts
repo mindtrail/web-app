@@ -25,7 +25,7 @@ interface UploadToGCSProps {
   userId: string
   dataSourceId: string
   DSType: DataSourceType
-  metadata?: Partial<WEB_Data>
+  metadata?: Partial<BrowserExtensionData>
 }
 
 export async function uploadToGCS(props: UploadToGCSProps) {
@@ -53,8 +53,8 @@ export async function uploadToGCS(props: UploadToGCSProps) {
     const newFile = bucket.file(gcFileName)
     await newFile.save(fileContent)
 
-    await newFile.setMetadata({
-      contentType,
+    newFile.setMetadata({
+      contentType, // @ts-ignore
       metadata,
     })
 

@@ -37,22 +37,23 @@ declare global {
     file: AcceptedFile | URLScrapped,
   ) => void
 
+  type ScrapingResult = {
+    userId: string
+    collectionId?: string
+    websites: ScrapingFile[]
+  }
+
   type WEB_Data = {
     title: string
     description: string
     image?: string
     url: string
+    tags?: string[]
   }
 
   type ScrapingFile = {
     name: string
     metadata: WEB_Data
-  }
-
-  type ScrapingResult = {
-    userId: string
-    collectionId?: string
-    websites: ScrapingFile[]
   }
 
   type BrowserExtensionData = WEB_Data & {
