@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { DataSourceType } from '@prisma/client'
-import { Document } from 'langchain/document'
 
 import { authOptions } from '@/lib/authOptions'
 import { uploadToGCS } from '@/lib/cloudStorage'
@@ -56,7 +55,7 @@ async function processFileUpload({ file, userId }: ProcessFileUpload) {
     const docs = await createDataSourceAndVectors({
       file,
       userId,
-      type: DataSourceType.file,
+      DSType: DataSourceType.file,
     })
 
     if (!docs?.length) {
@@ -68,26 +67,7 @@ async function processFileUpload({ file, userId }: ProcessFileUpload) {
     // We get the dataSourceId from the first doc(chunk)
     const { dataSourceId, ...metadata } = docs[0]?.metadata
 
-    console.log('File Upload', metadata, file)
-
-    let fileMetadata = {}
-    // PDFs can have a title, description and tags in their metadata
-    if (file.type === 'application/pdf') {
-      const { info } = metadata.pdf
-
-      if (info) {
-        const title = info?.Title
-        const description = info?.Subject || info?.Description || info?.Author
-        const tags = info?.Keywords?.split(',').map((tag: string) => tag.trim())
-
-        // This way I only set the prop if there is a value
-        fileMetadata = {
-          ...(title ? { title } : {}),
-          ...(description ? { description } : {}),
-          ...(tags ? { tags: tags } : {}),
-        }
-      }
-    }
+    console.log('File Upload', metadata)
 
     await uploadToGCS({
       uploadedFile: file,
@@ -95,7 +75,7 @@ async function processFileUpload({ file, userId }: ProcessFileUpload) {
       dataSourceId,
       metadata: {
         title: file?.name,
-        ...fileMetadata,
+        ...metadata,
       },
       type: DataSourceType.file,
     })

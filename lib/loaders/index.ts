@@ -12,13 +12,13 @@ import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
 type CreateDSProps = {
   file: File | HTMLFile
-  type: DataSourceType
+  DSType: DataSourceType
   userId: string
 }
 
 export const createDataSourceAndVectors = async ({
   file,
-  type,
+  DSType,
   userId,
 }: CreateDSProps): Promise<Document[] | null> => {
   const { name } = file
@@ -26,7 +26,7 @@ export const createDataSourceAndVectors = async ({
   let dataSourceContent = ''
   let metadata = {}
 
-  if (type === DataSourceType.file) {
+  if (DSType === DataSourceType.file) {
     file = file as File
 
     metadata = {
@@ -41,10 +41,7 @@ export const createDataSourceAndVectors = async ({
     dataSourceContent = cleanHTMLContent(file.html)
   }
 
-  const { chunks } = (await getChunksFromDoc({
-    file,
-    type,
-  })) as HTMLChunkingResponse
+  const chunks = await getChunksFromDoc({ file, type: DSType })
 
   const nbChunks = chunks.length
   const textSize = chunks.reduce(
@@ -64,7 +61,7 @@ export const createDataSourceAndVectors = async ({
   const dataSourcePayload = {
     userId,
     name: name,
-    type,
+    type: DSType,
     nbChunks,
     textSize,
     content: dataSourceContent,
@@ -87,7 +84,7 @@ export const createDataSourceAndVectors = async ({
         ...metadata,
         dataSourceId,
         userId,
-        type,
+        type: DSType,
         tags,
       },
     }))

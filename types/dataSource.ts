@@ -66,12 +66,5 @@ declare global {
     metadata: Partial<BrowserExtensionData>
   }
 
-  type HTMLChunkingResponse = {
-    chunks: Document[]
-    sumaryContent?: string
-  }
-
-  type FileChunkingResponse = {
-    chunks: Document[]
-  }
+  type HTMLChunkingResponse = Document[]
 }

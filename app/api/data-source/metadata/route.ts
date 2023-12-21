@@ -35,22 +35,9 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Return nr of chunks & character count
-    const response = await getChunksFromDoc({
-      file,
-      type: DataSourceType.file,
-    })
+    const chunks = await getChunksFromDoc({ file, type: DataSourceType.file })
 
-    if (response instanceof Error) {
-      console.error('Metadata error', response.message)
-      return new NextResponse('Unsupported file type', {
-        status: 403,
-      })
-    }
-
-    const { chunks } = response
-
-    const textSize = chunks.reduce(
+    const textSize = chunks?.reduce(
       (acc, doc) => acc + doc?.pageContent?.length,
       0,
     )
@@ -61,13 +48,12 @@ export async function POST(req: Request) {
       })
     }
 
-    const { name, type } = file
+    let fileMetadata = {}
 
     const { dataSourceId, ...metadata } = chunks[0]?.metadata
-    console.log('Metadata for ---', metadata, file)
+    const { name, type } = file
 
-    let fileMetadata = {}
-    if (file.type === 'application/pdf') {
+    if (type === 'application/pdf') {
       const { info } = metadata.pdf
 
       if (info) {
@@ -84,7 +70,7 @@ export async function POST(req: Request) {
       }
     }
 
-    console.log('File Metadata', fileMetadata)
+    console.log('File Metadata -- --', fileMetadata)
 
     return NextResponse.json({ textSize, name, type })
   } catch (err) {
