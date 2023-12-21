@@ -4,8 +4,7 @@ import { Document } from 'langchain/document'
 import { createAndStoreVectors } from '@/lib/qdrant'
 
 import { createTags } from '@/lib/db/tags'
-import { sumarizePage, getPageTags } from '@/lib/openAI'
-import { cleanHTMLContent } from '@/lib/loaders/utils'
+import { getPageTags } from '@/lib/openAI'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
 type CreateDSProps = {
@@ -36,6 +35,10 @@ export const createDataSourceAndVectors = async (
     if (type === 'application/pdf') {
       tags = chunks[0]?.metadata?.tags || []
     }
+  }
+
+  if (!tags.length) {
+    tags = await getPageTags(description || '')
   }
 
   if (!dataSourceId) {

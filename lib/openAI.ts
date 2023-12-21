@@ -51,8 +51,11 @@ export const getPageTags = async (
   const openAI = getOpenAIConnection()
 
   const formattedPrompt = await tagsPromptTemplate.format({
-    tags: EXISTING_TAGS.join(', '),
+    // TODO: add existing tags
+    categories: EXISTING_TAGS.join(', '),
   })
+
+  console.log(4444444, pageDescription, 55555, formattedPrompt)
 
   const systemMessage = new SystemMessage(formattedPrompt)
   const humanMessage = new HumanMessage(pageDescription)
@@ -61,7 +64,7 @@ export const getPageTags = async (
     .call([systemMessage, humanMessage])
     .catch(console.error)) as AIMessageChunk
 
-  // console.log('AI TAGS ---- ---- --', response?.content)
+  console.log('AI TAGS ---- ---- --', response?.content)
 
   if (!response?.content || response?.content === 'undefined') {
     return []
@@ -75,8 +78,12 @@ export const getPageTags = async (
   return tags
 }
 
-export const sumarizePage = async (text: string) => {
+export const summarizePage = async (text: string) => {
   const openAI = getOpenAIConnection()
+
+  if (!text) {
+    return ''
+  }
 
   const humanMessage = new HumanMessage(text)
   const systemMessage = new SystemMessage(SUMMARY_PROMPT)
