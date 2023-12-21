@@ -4,6 +4,7 @@ import { Document } from 'langchain/document'
 
 import { getURLDisplayName } from '@/lib/utils'
 import { cleanHTMLContent } from '@/lib/loaders/utils'
+import { sumarizePage } from '@/lib/openAI'
 
 export const getDataSourceListForUser = async (
   userId: string,
@@ -113,6 +114,7 @@ export const createDataSource = async (props: CreateDS) => {
 
   let dataSourceContent = ''
   let metadata = {}
+  let description = ''
 
   if (DSType === DataSourceType.file) {
     file = file as File
@@ -121,18 +123,33 @@ export const createDataSource = async (props: CreateDS) => {
     const PDFMetadata =
       file.type === 'application/pdf' ? getMetadataFromChunk(chunks[0]) : {}
 
+    if (!PDFMetadata?.description) {
+      description = await sumarizePage(chunks[0]?.pageContent)
+    }
+
     metadata = {
       title: name,
+      description,
       ...PDFMetadata,
     }
-  } else {
+  }
+
+  if (DSType === DataSourceType.web_page) {
     file = file as HTMLFile
-
-    const { url, ...restMetadata } = file.metadata
-    metadata = restMetadata
-
     // Only store the content for web pages as it can be too large for local files
     dataSourceContent = cleanHTMLContent(file.html)
+
+    let { url, title, description, ...restMetadata } = file.metadata
+
+    title = title || name
+    description =
+      description || (await sumarizePage(dataSourceContent.substring(0, 2000)))
+
+    metadata = {
+      ...restMetadata,
+      title,
+      description,
+    }
   }
 
   const nbChunks = chunks.length
