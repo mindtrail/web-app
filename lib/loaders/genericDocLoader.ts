@@ -55,10 +55,21 @@ export const getChunksFromDoc = async ({
   ).map(({ pageContent, metadata }) => {
     // Remove blobType and source properties
     // Create a copy of metadata to avoid mutating the original object
-    const metadataCopy = { ...metadata }
+    let metadataCopy = { ...metadata }
 
-    delete metadataCopy.blobType
-    delete metadataCopy.source
+    if (DSType === DataSourceType.file) {
+      file = file as File
+
+      if (file.type === 'application/pdf') {
+        metadataCopy = {
+          ...metadataCopy,
+          ...enhanceMetadataForPDFs(metadataCopy),
+        }
+      }
+
+      delete metadataCopy.blobType
+      delete metadataCopy.source
+    }
 
     return {
       metadata: {
@@ -73,23 +84,22 @@ export const getChunksFromDoc = async ({
   return chunks
 }
 
-function enhanceMetadataForPDFs(file: File, metadata: any) {
-  let fileMetadata = {}
+function enhanceMetadataForPDFs(metadata: any) {
+  let PDFMetadata = {}
   // PDFs can have a title, description and tags in their metadata
-  if (file.type === 'application/pdf') {
-    const { info } = metadata.pdf
+  const { info } = metadata.pdf
 
-    if (info) {
-      const title = info?.Title
-      const description = info?.Subject || info?.Description || info?.Author
-      const tags = info?.Keywords?.split(',').map((tag: string) => tag.trim())
+  if (info) {
+    const title = info?.Title
+    const description = info?.Subject || info?.Description || info?.Author
+    const tags = info?.Keywords?.split(',').map((tag: string) => tag.trim())
 
-      // This way I only set the prop if there is a value
-      fileMetadata = {
-        ...(title ? { title } : {}),
-        ...(description ? { description } : {}),
-        ...(tags ? { tags: tags } : {}),
-      }
+    // This way I only set the prop if there is a value
+    PDFMetadata = {
+      ...(title ? { title } : {}),
+      ...(description ? { description } : {}),
+      ...(tags ? { tags: tags } : {}),
     }
   }
+  return PDFMetadata
 }

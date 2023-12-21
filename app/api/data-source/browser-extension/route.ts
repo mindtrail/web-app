@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { DataSourceType } from '@prisma/client'
 
+import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { authOptions } from '@/lib/authOptions'
 import { dataSourceExists } from '@/lib/db/dataSource'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { uploadToGCS } from '@/lib/cloudStorage'
 
+const DSType = DataSourceType.web_page
 // Function that processes the data received from the Browser Extension
 // TODO: Add authentication
 export async function POST(req: Request) {
@@ -40,10 +42,20 @@ export async function POST(req: Request) {
       metadata,
     }
 
+
+    const chunks = await getChunksFromDoc({ file, DSType })
+
+    if (!chunks?.length) {
+      return new NextResponse('File is empty', {
+        status: 400,
+      })
+    }
+
     const docs = await createDataSourceAndVectors({
       file,
       userId,
-      DSType: DataSourceType.web_page,
+      chunks,
+      DSType,
     })
 
     if (!docs?.length) {
@@ -60,7 +72,7 @@ export async function POST(req: Request) {
       userId,
       dataSourceId,
       metadata,
-      type: DataSourceType.web_page,
+      DSType,
     })
 
     return NextResponse.json({
