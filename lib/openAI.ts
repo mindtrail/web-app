@@ -2,32 +2,12 @@ import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { PromptTemplate } from 'langchain/prompts'
 import { SystemMessage, HumanMessage, AIMessageChunk } from 'langchain/schema'
 
+import { getTagList } from '@/lib/db/tags'
+
 const SUMMARY_PROMPT = process.env.SUMMARY_PROMPT || ''
 const GET_TAGS_PROMPT = process.env.GET_TAGS_PROMPT || ''
 
 const tagsPromptTemplate = PromptTemplate.fromTemplate(GET_TAGS_PROMPT)
-
-const EXISTING_TAGS = [
-  'utils',
-  'RAG',
-  'AI',
-  'library',
-  'low-code',
-  'saas',
-  'design-tools',
-  'saas',
-  'npm-package',
-  'framework',
-  'browser-extensions',
-  'react',
-  'nextjs',
-  'framework',
-  'coffee',
-  'espresso',
-  'ai',
-  'foundation-models',
-  'langchain',
-]
 
 let openAIChat: ChatOpenAI
 
@@ -50,12 +30,13 @@ export const getPageTags = async (
 ): Promise<string[]> => {
   const openAI = getOpenAIConnection()
 
+  const exsitingTags = (await getTagList()).map((tag) => tag.name)
+
   const formattedPrompt = await tagsPromptTemplate.format({
-    // TODO: add existing tags
-    categories: EXISTING_TAGS.join(', '),
+    categories: exsitingTags.join(', '),
   })
 
-  console.log(4444444, pageDescription, 55555, formattedPrompt)
+  // console.log(4444444, pageDescription, 55555, formattedPrompt)
 
   const systemMessage = new SystemMessage(formattedPrompt)
   const humanMessage = new HumanMessage(pageDescription)
@@ -63,8 +44,6 @@ export const getPageTags = async (
   const response = (await openAI
     .call([systemMessage, humanMessage])
     .catch(console.error)) as AIMessageChunk
-
-  console.log('AI TAGS ---- ---- --', response?.content)
 
   if (!response?.content || response?.content === 'undefined') {
     return []
