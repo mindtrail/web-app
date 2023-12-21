@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { DataSourceType } from '@prisma/client'
-import { Document } from 'langchain/document'
 
 import { authOptions } from '@/lib/authOptions'
 
@@ -50,11 +49,37 @@ export async function POST(req: Request) {
   }
 
   const { chunks } = response
+
+  if (!nbChunks || !textSize) {
+    return null
+  }
+
   const charCount = chunks.reduce(
     (acc, doc) => acc + doc?.pageContent?.length,
     0,
   )
 
   const { name, type } = file
+
+  const { dataSourceId, ...metadata } = chunks[0]?.metadata
+  console.log('Metadata for ---', metadata, file)
+
+  let fileMetadata = {}
+  if (file.type === 'application/pdf') {
+    const { info } = metadata.pdf
+
+    if (info) {
+      const description = info?.Subject || info?.Description
+      const author = info?.Author ? '. Author: ' + info?.Author : ''
+      fileMetadata = {
+        title: info?.Title,
+        description: description + author,
+        tags: info?.Keywords?.split(',').map((tag: string) => tag.trim()),
+      }
+    }
+  }
+
+  console.log('File Metadata', fileMetadata)
+
   return NextResponse.json({ charCount, name, type })
 }
