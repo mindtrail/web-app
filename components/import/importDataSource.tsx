@@ -23,7 +23,6 @@ export function ImportDataSource({ userId }: ImportDataSource) {
   const onSubmit = async (data: ImportFormValues) => {
     try {
       await processImportData(data)
-
       router.push('/history?refresh=true')
     } catch (err) {
       console.log(err)
@@ -59,24 +58,50 @@ export function ImportDataSource({ userId }: ImportDataSource) {
       if (scrapeResult?.error) {
         throw new Error(scrapeResult?.error?.message)
       }
+
+      toast({
+        title: 'URL import started',
+        description: `Websites are being imported. It may take a minute or two.`,
+      })
     }
 
     // We only upload files if there are changes
     if (unsynchedFiles?.length) {
-      await uploadFiles(unsynchedFiles)
-    }
+      const { failedUpload, successUpload } = await uploadFiles(unsynchedFiles)
 
-    toast({
-      title: 'Data import started',
-      description: `Import started. Data will be updated a few moments after the import is complete`,
-    })
+      const successMessage = successUpload?.length
+        ? `Files uploaded: ${successUpload.join(', ')}.`
+        : ''
+      const failedMessage = failedUpload?.length
+        ? `Failed to upload: ${failedUpload.join(', ')}!`
+        : ''
+      const toastTitle = failedMessage?.length
+        ? 'Partial import started!'
+        : 'Import started'
+
+      return toast({
+        title: toastTitle,
+        description: `${failedMessage} ${successMessage}`,
+      })
+    }
   }
 
-  const uploadFiles = async (files: AcceptedFile[], collectionId?: string) => {
-    const fileUploadPromises = files.map(async ({ file }) => {
-      return await uploadFileApiCall(file as File)
-    })
-    return await Promise.all(fileUploadPromises)
+  const uploadFiles = async (files: AcceptedFile[]) => {
+    const successUpload: string[] = []
+    const failedUpload: string[] = []
+    const res = await Promise.all(
+      files.map(async ({ file }) => {
+        try {
+          await uploadFileApiCall(file as File)
+          successUpload.push(file.name)
+        } catch (err) {
+          console.log(err)
+          failedUpload.push(file.name)
+        }
+      }),
+    )
+    console.log('failedUpload', failedUpload, res)
+    return { failedUpload, successUpload }
   }
 
   return (
