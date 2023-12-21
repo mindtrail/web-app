@@ -126,6 +126,7 @@ export const createDataSource = async (props: CreateDS) => {
     if (!PDFMetadata?.description) {
       description = await sumarizePage(chunks[0]?.pageContent)
     }
+    console.log(3333333, description, PDFMetadata)
 
     metadata = {
       title: name,
@@ -270,8 +271,8 @@ function getMetadataFromChunk(chunk: Document): Partial<BrowserExtensionData> {
 
   const { title, description, image } = metadata
   return {
-    title,
-    description,
-    image,
+    ...(title && { title }),
+    ...(description && { description }),
+    ...(image && { image }),
   }
 }
