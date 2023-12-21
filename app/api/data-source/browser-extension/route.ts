@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       result: `DataSource & ${docs.length} vectors Created`,
     })
   } catch (err) {
-    console.error('errr', err)
+    console.error('Browser Extension Error::', err)
     return new NextResponse('Somethin went wrong', {
       status: 400,
       headers: {
@@ -76,4 +76,3 @@ export async function POST(req: Request) {
     })
   }
 }
-

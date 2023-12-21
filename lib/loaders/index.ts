@@ -20,7 +20,7 @@ export const createDataSourceAndVectors = async ({
   file,
   type,
   userId,
-}: CreateDSProps) => {
+}: CreateDSProps): Promise<Document[] | null> => {
   const { name } = file
 
   let dataSourceContent = ''
@@ -53,7 +53,7 @@ export const createDataSourceAndVectors = async ({
   )
 
   if (!nbChunks || !textSize) {
-    return null
+    null
   }
 
   // @TODO: Use description insted of summary. Generate a summary for local files that don't have that info

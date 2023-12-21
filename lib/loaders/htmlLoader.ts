@@ -2,9 +2,7 @@ import { Document } from 'langchain/document'
 
 import { cleanHTMLContent } from '@/lib/loaders/utils'
 
-export async function getChunksFromHTML(
-  file: HTMLFile,
-): Promise<Document[] | Error> {
+export async function getChunksFromHTML(file: HTMLFile): Promise<Document[]> {
   const { html, metadata = {} } = file
   const { title = '', description = '' } = metadata
 

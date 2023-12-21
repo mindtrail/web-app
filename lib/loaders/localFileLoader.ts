@@ -38,13 +38,13 @@ const getFileLoader = (type: string) => {
 
 export const getChunksFromLocalFile = async (
   fileBlob: File,
-): Promise<Document[] | Error> => {
+): Promise<Document[]> => {
   const { type } = fileBlob
 
   const FileLoader = getFileLoader(type)
 
   if (!FileLoader) {
-    throw new Error('Unsupported file type')
+    throw new Error('Unsupported file type', { cause: 'unsupported_file_type' })
   }
 
   // @ts-ignore
