@@ -56,7 +56,6 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
     })
 
     const res = await result?.json()
-    console.log('Scraper ---', res)
 
     return res
   } catch (e) {

@@ -138,6 +138,8 @@ export const createDataSource = async (props: CreateDS) => {
 
     let { url, title, description, ...restMetadata } = file.metadata
 
+    console.log('file description:: ', description)
+
     title = title || name
     description =
       description || (await summarizePage(dataSourceContent.substring(0, 2000)))
