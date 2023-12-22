@@ -33,7 +33,7 @@ export const createTags = async ({ tags, dataSourceId }: CreateTagsPayload) => {
     },
   })
 
-  console.log('TAGS created:: ', createdTagRecords)
+  console.log('TAGS created:: ', createdTagRecords?.length)
 
   for (const tag of createdTagRecords) {
     await prisma.dataSourceTag.create({
