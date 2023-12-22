@@ -18,6 +18,9 @@ const nextConfig = {
     // loader: 'cloudinary',
     // path: 'https://res.cloudinary.com/',
   },
+  experimental: {
+    serverComponentsExternalPackages: ['langchain', 'cheerio', 'html-to-text'],
+  },
 
   webpack: (config, { isServer }) => {
     if (!isServer) {
