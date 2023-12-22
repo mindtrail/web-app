@@ -44,7 +44,6 @@ export function DataSourceList(props: DataSourceList) {
   const IconElement =
     type === DataSourceType.web_page ? GlobeIcon : FileTextIcon
 
-  // @TODO: update the name of the file in the DataSource to don't need the regex
   const acceptedDataSourceList = useMemo(() => {
     acceptedItems.sort((a, b) => (a?.file?.name < b?.file?.name ? 1 : -1))
 

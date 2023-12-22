@@ -1,6 +1,5 @@
 import * as z from 'zod'
-import { DataSourceStatus, DataSourceType } from '@prisma/client'
-
+import { DataSourceStatus } from '@prisma/client'
 import { MAX_FILE_SIZE } from '@/lib/constants'
 
 export type ImportFormValues = z.infer<typeof importFormSchema>
@@ -66,8 +65,7 @@ export const updateFilesWithMetadata = (
     filesMetadataMap[metadata.name] = metadata
   })
 
-  // @TODO - map
-  const newFiles = prevFiles.map((item) => {
+  return prevFiles.map((item) => {
     const { file } = item
     const { name, type } = file
 
@@ -79,11 +77,8 @@ export const updateFilesWithMetadata = (
         textSize: metadata.textSize,
       }
     }
-
     return item
   })
-
-  return newFiles
 }
 
 function validateUrls(urls: string = '') {

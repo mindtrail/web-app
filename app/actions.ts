@@ -69,7 +69,6 @@ export async function removeChat({ id, path }: { id: string; path: string }) {
 }
 
 export async function clearChats() {
-  // @TODO: decouple nextjs from kv
   return []
 
   // const session = await auth()
