@@ -15,8 +15,8 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
       },
     ],
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/',
+    // loader: 'cloudinary',
+    // path: 'https://res.cloudinary.com/',
   },
 
   webpack: (config, { isServer }) => {
