@@ -33,7 +33,6 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
 
     deleteFileFromGCS(deletedDataSources, userId)
     deleteVectorsForDataSource(dataSourceIdList)
-    // @TODO delete points from Qdrant -> Dimitri
 
     revalidatePath('/history')
     return { deletedDataSources }

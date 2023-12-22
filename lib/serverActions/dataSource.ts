@@ -1,7 +1,6 @@
 'use server'
 
 import { getServerSession } from 'next-auth/next'
-import { revalidateTag } from 'next/cache'
 import { authOptions } from '@/lib/authOptions'
 
 const env = process.env.NODE_ENV

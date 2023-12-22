@@ -1,9 +1,10 @@
 'use client'
 
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { MouseEvent, useCallback, useMemo, useState } from 'react'
 
 import { deleteDataSource } from '@/lib/serverActions/history'
 import { useDrop } from 'react-dnd'
+import { DataSourceType } from '@prisma/client'
 
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
@@ -20,11 +21,7 @@ import {
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
 import { columns } from '@/components/history/columns'
-import { getHostName } from '@/lib/utils'
-
-type Tags = {
-  [key: string]: string
-}
+import { getURLPathname } from '@/lib/utils'
 
 export function HistoryView({ historyItems, userId }: HistoryViewProps) {
   const [history, setHistory] = useState<HistoryItem[]>([])
@@ -75,8 +72,8 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
       return
     }
 
-    const entryNames = itemsToDelete
-      .map(({ displayName = '' }) => getHostName(displayName))
+    const deletedItems = itemsToDelete
+      .map(({ displayName = '' }) => displayName)
       .join(', ')
 
     const dataSourceIdList = itemsToDelete.map(({ id }) => id)
@@ -85,7 +82,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
       await deleteDataSource({ dataSourceIdList })
       toast({
         title: 'Delete History Entry',
-        description: `${entryNames} has been deleted`,
+        description: `${deletedItems} has been deleted`,
       })
 
       setDeleteDialogOpen(false)
@@ -94,7 +91,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
       toast({
         title: 'Error',
         variant: 'destructive',
-        description: `Something went wrong while deleting ${entryNames}`,
+        description: `Something went wrong while deleting ${deletedItems}`,
       })
       console.log(err)
 
@@ -103,15 +100,17 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     }
   }, [itemsToDelete, toast])
 
-  const entryNames = useMemo(
+  const deleteItemsList = useMemo(
     () =>
       itemsToDelete?.length &&
-      itemsToDelete.map(({ displayName = '' }, index) => (
+      itemsToDelete.map(({ displayName = '', name, type }, index) => (
         <li
           key={index}
           className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'
         >
-          {getHostName(displayName)}
+          {type === DataSourceType.file
+            ? displayName
+            : displayName + getURLPathname(name)}
         </li>
       )),
     [itemsToDelete],
@@ -138,6 +137,8 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     setProcessing(false)
   }
 
+  console.log(deleteItemsList)
+
   return (
     <div
       ref={dropRef}
@@ -161,7 +162,7 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
               This will delete the history entries and the associated data. The
               action cannot be undone and will permanently delete:
               <span className='block mt-4 mb-2 list-disc list-inside '>
-                {entryNames}
+                {deleteItemsList}
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>

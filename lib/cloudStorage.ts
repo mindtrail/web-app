@@ -2,7 +2,7 @@ import { Buffer } from 'buffer'
 import { Storage } from '@google-cloud/storage'
 import { DataSource, DataSourceType } from '@prisma/client'
 
-import { buildFilePath, GCS_ACTION_TYPE } from '@/lib/utils'
+import { buildGCSFilePath } from '@/lib/utils'
 
 const storage = new Storage()
 const bucketName = process.env.GCS_BUCKET_NAME || ''
@@ -32,7 +32,7 @@ export async function uploadToGCS(props: UploadToGCSProps) {
   try {
     const { uploadedFile, userId, dataSourceId, DSType, metadata } = props
     const { name } = uploadedFile
-    const gcFileName = buildFilePath({ userId, dataSourceId, name, DSType })
+    const gcFileName = buildGCSFilePath({ userId, dataSourceId, name, DSType })
 
     let contentType = ''
     let fileContent
@@ -75,7 +75,7 @@ export async function deleteFileFromGCS(
         const { id: dataSourceId, type: DSType, name } = dataSource
 
         const bucket = storage.bucket(bucketName)
-        const gcFileName = buildFilePath({
+        const gcFileName = buildGCSFilePath({
           userId,
           dataSourceId,
           name,

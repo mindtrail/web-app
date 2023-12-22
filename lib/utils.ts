@@ -21,18 +21,6 @@ export function formatDate(input: string | number | Date): string {
   })
 }
 
-export const getHostName = (urlString: string) => {
-  try {
-    const url = new URL(
-      urlString.includes('://') ? urlString : 'https://' + urlString,
-    )
-    return url.hostname
-  } catch (e) {
-    console.error(e)
-    return urlString
-  }
-}
-
 export const getURLDisplayName = (urlString: string): string => {
   try {
     const url = new URL(urlString)
@@ -41,6 +29,16 @@ export const getURLDisplayName = (urlString: string): string => {
       : url.hostname
 
     return hostname
+  } catch (e) {
+    console.error(e)
+    return urlString
+  }
+}
+
+export const getURLPathname = (urlString: string): string => {
+  try {
+    const url = new URL(urlString)
+    return url.pathname
   } catch (e) {
     console.error(e)
     return urlString
@@ -102,7 +100,7 @@ type BuildPath = {
   DSType: DataSourceType
 }
 
-export function buildFilePath({
+export function buildGCSFilePath({
   userId,
   dataSourceId,
   name,

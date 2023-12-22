@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
 import { Link1Icon, ExternalLinkIcon } from '@radix-ui/react-icons'
+import { DataSourceType } from '@prisma/client'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
@@ -44,12 +45,10 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
   const {
     image = '',
     title = 'Title',
-    updatedAt,
     name,
     displayName,
+    type,
   } = original as HistoryItem
-
-  const updatedDate = new Date(updatedAt).toDateString()
 
   if (!name) {
     return null
@@ -57,19 +56,6 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
 
   return (
     <div className='flex flex-col items-center gap-3 relative -mt-6'>
-      <Link
-        className={`flex justify-center items-center relative group/website px-4
-              hover:underline max-w-[85%]`}
-        href={addHttpsIfMissing(name)}
-        target='_blank'
-      >
-        <Typography className='text-ellipsis overflow-hidden max-w-full text-center'>
-          {displayName}
-        </Typography>
-        <ExternalLinkIcon
-          className={`absolute -right-1 invisible group-hover/website:visible`}
-        />
-      </Link>
       <Checkbox
         className={`absolute mt-[2px] bg-white left-2 invisible group-hover/row:visible ${
           (isRowSelected || isCheckboxVisible) && 'visible'
@@ -78,6 +64,27 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label='Select row'
       />
+
+      {type === DataSourceType.file ? (
+        <Typography className='line-clamp-1 text-ellipsis text-center max-w-[85%] px-4'>
+          {displayName}
+        </Typography>
+      ) : (
+        <Link
+          className={`flex justify-center items-center relative group/website px-4
+              hover:underline max-w-[85%]`}
+          href={addHttpsIfMissing(name)}
+          target='_blank'
+        >
+          <Typography className='line-clamp-1 text-ellipsis max-w-full text-center'>
+            {displayName}
+          </Typography>
+          <ExternalLinkIcon
+            className={`absolute -right-1 invisible group-hover/website:visible`}
+          />
+        </Link>
+      )}
+
       <div className={`w-full h-32 flex rounded-md group/car relative`}>
         {image ? (
           <img
