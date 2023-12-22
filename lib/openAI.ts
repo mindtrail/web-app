@@ -6,6 +6,7 @@ import { getTagList } from '@/lib/db/tags'
 
 const SUMMARY_PROMPT = process.env.SUMMARY_PROMPT || ''
 const GET_TAGS_PROMPT = process.env.GET_TAGS_PROMPT || ''
+const NO_TAGS_RESPONSE = 'no category'
 
 const tagsPromptTemplate = PromptTemplate.fromTemplate(GET_TAGS_PROMPT)
 
@@ -52,7 +53,7 @@ export const getPageTags = async (
   const tags = (response?.content as string)
     ?.split(',')
     .map((tag) => tag.trim())
-    .filter((tag) => tag.length)
+    .filter((tag) => tag.length && tag !== NO_TAGS_RESPONSE)
 
   return tags
 }
