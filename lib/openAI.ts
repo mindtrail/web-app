@@ -12,6 +12,9 @@ const tagsPromptTemplate = PromptTemplate.fromTemplate(GET_TAGS_PROMPT)
 
 let openAIChat: ChatOpenAI
 
+// Cause by aggresive tree shaking. I need to export PromptTemplate otherwise crashes
+export const NextBugFix = PromptTemplate
+
 export const getOpenAIConnection = () => {
   if (openAIChat) {
     return openAIChat
