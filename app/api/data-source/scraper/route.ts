@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { Document } from 'langchain/document'
 import { DataSourceType } from '@prisma/client'
 
+import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { downloadWebsiteFromGCS } from '@/lib/cloudStorage'
 
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
     const body = (await req.json()) as ScrapingResult
     const { userId, websites } = body
 
-    console.log('Creating DataSources for Scrapped URLs --- >', websites.length)
+    console.log('Create DS from Scrapped URLs --- >', websites.length)
 
     const docs = await Promise.all(
       websites.map(async ({ name: gcFileName, metadata }) => {
@@ -40,11 +41,16 @@ export async function POST(req: Request) {
           return null
         }
 
+        const chunks = await getChunksFromDoc({ file, DSType })
+        if (!chunks?.length) {
+          return null
+        }
+
         return await createDataSourceAndVectors({
           file,
           userId,
+          chunks,
           DSType,
-          chunks: [],
         })
       }),
     )

@@ -6,10 +6,7 @@ import { getURLDisplayName } from '@/lib/utils'
 import { cleanHTMLContent } from '@/lib/loaders/utils'
 import { summarizePage } from '@/lib/openAI'
 
-export const getDataSourceListForUser = async (
-  userId: string,
-  collectionId?: string,
-) => {
+export const getDataSourceListForUser = async (userId: string) => {
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
       dataSourceUsers: {
