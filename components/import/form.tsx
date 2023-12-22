@@ -184,7 +184,7 @@ export function ImportForm(props: FormProps) {
     <>
       <Form {...form}>
         <form onSubmit={handleSubmit(onFormSumbit)} className='space-y-8'>
-          <Tabs defaultValue='files'>
+          <Tabs defaultValue='urls'>
             <TabsList className='grid w-full grid-cols-2 relative'>
               <TabsTrigger value='urls'>URLs</TabsTrigger>
               <TabsTrigger value='files'>Files</TabsTrigger>
