@@ -29,6 +29,7 @@ import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 import {
   DropdownMenu,
@@ -130,12 +131,11 @@ export function DataTable<TData, TValue>({
           </DropdownMenu>
         </div>
       </div>
-      <div className='rounded-md border cursor-default relative'>
+      <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
         <div
-          className={`absolute invisible w-full h-10 flex items-center
-            first-letter:top-0 px-4 z-10 gap-4 rounded-t-md bg-background ${
-              areRowsSelected && '!visible'
-            }`}
+          className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
+            flex items-center first-letter:top-0 px-4 z-10 gap-4 rounded-t-md
+            ${areRowsSelected && '!visible'}`}
         >
           <Checkbox
             checked={
@@ -154,7 +154,7 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
-          <TableHeader>
+          <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
@@ -205,7 +205,8 @@ export function DataTable<TData, TValue>({
             </div>
           </div>
         )}
-      </div>
+        <ScrollBar orientation='horizontal' />
+      </ScrollArea>
       <ColumnDragLayer />
     </>
   )
