@@ -8,16 +8,16 @@ import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
 
-type WebsiteHeaderProps = {
+type SavedItemHeaderProps = {
   table: Table<HistoryItem>
 }
 
-export const WebsiteHeader = ({ table }: WebsiteHeaderProps) => {
+export const SavedItemHeader = ({ table }: SavedItemHeaderProps) => {
   return (
-    <div className='flex items-center gap-2 px-2 group/website'>
-      <Link1Icon className='group-hover/website:invisible' />
+    <div className='flex items-center gap-2 px-2 group/saved-item'>
+      <Link1Icon className='group-hover/saved-item:invisible' />
       <Checkbox
-        className='absolute hidden group-hover/website:block'
+        className='absolute hidden group-hover/saved-item:block'
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && 'indeterminate')
@@ -25,22 +25,22 @@ export const WebsiteHeader = ({ table }: WebsiteHeaderProps) => {
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
       />
-      Website
+      Item
     </div>
   )
 }
 
-type WebsiteCellProps = {
+type SavedItemCellProps = {
   row: Row<HistoryItem>
   table: Table<HistoryItem>
 }
 
-export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
+export const SavedItemCell = ({ row, table }: SavedItemCellProps) => {
   const { original } = row
 
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
-  const cellWidth = table.getColumn('website')?.getSize() || 200
+  const cellWidth = table.getColumn('saved-item')?.getSize() || 200
 
   const {
     image = '',
@@ -71,7 +71,7 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
         </Typography>
       ) : (
         <Link
-          className={`flex justify-center items-center relative group/website px-4
+          className={`flex justify-center items-center relative group/saved-item px-4
               hover:underline max-w-[85%]`}
           href={addHttpsIfMissing(name)}
           target='_blank'
@@ -80,7 +80,7 @@ export const WebsiteCell = ({ row, table }: WebsiteCellProps) => {
             {displayName}
           </Typography>
           <ExternalLinkIcon
-            className={`absolute -right-1 invisible group-hover/website:visible`}
+            className={`absolute -right-1 invisible group-hover/saved-item:visible`}
           />
         </Link>
       )}
