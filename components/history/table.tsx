@@ -134,7 +134,7 @@ export function DataTable<TData, TValue>({
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
         <div
           className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
-            flex items-center first-letter:top-0 px-4 z-10 gap-4 rounded-t-md
+            flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
             ${areRowsSelected && '!visible'}`}
         >
           <Checkbox

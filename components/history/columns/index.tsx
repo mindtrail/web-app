@@ -6,24 +6,24 @@ import { DefaultHeader } from '@/components/history/columns/defaultHeader'
 import { DefaultCell } from '@/components/history/columns/defaultCell'
 import { TagsCell } from '@/components/history/columns/tags'
 import {
-  WebsiteHeader,
-  WebsiteCell,
-} from '@/components/history/columns/website'
+  SavedItemHeader,
+  SavedItemCell,
+} from '@/components/history/columns/savedItem'
 
 import { formatDate } from '@/lib/utils'
 
-export const FIXED_COLUMNS = ['website']
+export const FIXED_COLUMNS = ['saved-item']
 
 export const columns: ColumnDef<HistoryItem>[] = [
   {
-    id: 'website',
+    id: 'saved-item',
     accessorKey: 'displayName',
-    header: ({ table }) => <WebsiteHeader table={table} />,
+    header: ({ table }) => <SavedItemHeader table={table} />,
     size: 200,
     minSize: 150,
     maxSize: 400,
     enableHiding: false,
-    cell: ({ row, table }) => <WebsiteCell row={row} table={table} />,
+    cell: ({ row, table }) => <SavedItemCell row={row} table={table} />,
   },
   {
     id: 'description',
