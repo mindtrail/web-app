@@ -1,10 +1,4 @@
 import { DataSource } from '@prisma/client'
-import {
-  ColumnOrderState,
-  SortingState,
-  VisibilityState,
-  TableState,
-} from '@tanstack/react-table'
 
 declare global {
   type HistoryItem = DataSource & {

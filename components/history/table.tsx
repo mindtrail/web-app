@@ -61,14 +61,14 @@ export function DataTable<TData, TValue>({
   updateUserPreferences,
 }: DataTableProps<TData, TValue>) {
   const {
-    columnSize: storedColSize,
     columnOrder: storedColOrder,
+    columnSize: storedColSize,
     columnVisibility: storedColVisibility,
   } = userPreferences?.tablePrefs as UserTablePrefs
 
   const initialOrder =
     storedColOrder || columns.map((column) => column.id as string)
-
+  const initialSize = storedColSize || DEFAULT_COLUMN_SIZE
   const initialVisibility = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
 
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialOrder)
@@ -76,9 +76,8 @@ export function DataTable<TData, TValue>({
     useState<VisibilityState>(initialVisibility)
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(
-    storedColSize || DEFAULT_COLUMN_SIZE,
-  )
+  const [columnSizing, setColumnSizing] =
+    useState<ColumnSizingState>(initialSize)
 
   const table = useReactTable({
     data,
@@ -107,18 +106,15 @@ export function DataTable<TData, TValue>({
 
   const handleVisibilityChange = useCallback(
     (value: boolean, column: Column<TData, unknown>) => {
-      console.log(column.id)
-      console.log(value)
-
       const updatedVisibility = {
         ...columnVisibility,
         [column.id]: !!value,
       }
-      console.log(updatedVisibility)
 
       column.toggleVisibility(!!value)
+      updateUserPreferences({ columnVisibility: updatedVisibility })
     },
-    [columnVisibility],
+    [columnVisibility, updateUserPreferences],
   )
 
   const tableFields = table

@@ -20,7 +20,7 @@ export const ColumnDragLayer = () => {
 
   return (
     <div
-      className={`fixed pointer-events-none z-50 left-0 top-0 h-10 px-2 flex items-center text-sm font-medium text-muted-foreground bg-white border rounded-sm`}
+      className={`fixed pointer-events-none z-50 left-0 top-0 h-10 px-2 flex items-center text-sm font-medium text-muted-foreground bg-white/50 border rounded-sm`}
       style={getItemStyles(initialOffset, currentOffset)}
     >
       {item?.columnDef?.header()}
