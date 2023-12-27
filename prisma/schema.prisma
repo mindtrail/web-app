@@ -79,6 +79,7 @@ model User {
   subscriptions     Subscription[]  @relation("user")
   usage             Usage?
   conversations     Conversation[]
+  userPreferences   UserPreferences?
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -260,6 +261,15 @@ model CollectionNote {
   @@id([collectionId, noteId])
 }
 
+model UserPreferences {
+  id          String    @id @default(cuid())
+
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tablePrefs Json     // or String if you serialize the JSON
+}
+
 
 model Filter {
   id        String @id @default(cuid())
@@ -296,7 +306,6 @@ model Conversation {
   @@index([visitorId], type: Hash)
   @@map("Conversations")
 }
-
 
 model Message {
   id             String        @id @default(cuid())
