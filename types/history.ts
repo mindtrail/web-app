@@ -28,6 +28,6 @@ declare global {
     // filters?: HistoryFilter[]
     // sorting?: SortingState
     columnOrder?: string[]
-    columnSizes?: Record<string, number>
+    columnSizes?: Record<string, number>[]
   }
 }
