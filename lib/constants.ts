@@ -5,7 +5,7 @@ export const MAX_CHARS_PER_KB = 500 * 1000 * 1000 //
 export const FIXED_COLUMNS = ['displayName']
 export const DRAG_ITEM_TYPE = 'column'
 
-export const TABLE_COLUMNS = [
+export const DEFAULT_USER_PREFS = [
   {
     id: 'displayName',
     accessorKey: 'displayName',

@@ -1,6 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
+import { UserPreferences } from '@prisma/client'
 
 import { DefaultHeader } from '@/components/history/columns/defaultHeader'
 import { DefaultCell } from '@/components/history/columns/defaultCell'
@@ -12,9 +13,17 @@ import {
 
 import { formatDate } from '@/lib/utils'
 
-export const columns: ColumnDef<HistoryItem>[] = [
+export const getColumnsDefinition = (userPreferences?: UserPreferences) => {
+  if (!userPreferences) {
+    return columns
+  }
+
+  return columns
+}
+
+const columns: ColumnDef<HistoryItem>[] = [
   {
-    id: 'saved-item',
+    id: 'displayName',
     accessorKey: 'displayName',
     header: ({ table }) => <SavedItemHeader table={table} />,
     size: 200,
@@ -33,7 +42,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
     cell: ({ getValue }) => <DefaultCell text={getValue() as string} />,
   },
   {
-    id: 'created',
+    id: 'createdAt',
     accessorKey: 'createdAt',
     header: () => <DefaultHeader text='created' />,
     size: 150,
@@ -44,7 +53,7 @@ export const columns: ColumnDef<HistoryItem>[] = [
     ),
   },
   {
-    id: 'tags',
+    id: 'dataSourceTags',
     accessorKey: 'dataSourceTags',
     header: () => <DefaultHeader text='tags' />,
     size: 200,

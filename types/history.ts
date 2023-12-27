@@ -5,12 +5,6 @@ declare global {
     displayName: string
   }
 
-  type HistoryViewProps = {
-    userId: string
-    historyItems: HistoryItem[]
-    // serverCall: () => void
-  }
-
   type HistoryFilter = {
     label: string
     value: string
