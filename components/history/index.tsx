@@ -23,9 +23,7 @@ import { DataTable } from '@/components/history/table'
 import { getColumnsDefinition } from '@/components/history/columns'
 
 import { getURLPathname } from '@/lib/utils'
-const updateUserPreferences = (prefs: UserTablePrefs) => {
-  console.log(123, prefs)
-}
+import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
   userId: string
@@ -48,6 +46,18 @@ export function HistoryComponent({
 
   const [, dropRef] = useDrop({ accept: 'column' })
   const { toast } = useToast()
+
+  const handlePreferenceUpdate = useCallback(
+    (newTablePrefs: UserTablePrefs) => {
+      if (!newTablePrefs) {
+        return
+      }
+
+      console.log('prefsToUpdate', newTablePrefs)
+      updateUserPreferences(userId, newTablePrefs)
+    },
+    [userId],
+  )
 
   const columns = useMemo(
     () => getColumnsDefinition(userPreferences),
@@ -167,7 +177,7 @@ export function HistoryComponent({
         data={filteredItems}
         processing={processing}
         handleHistoryDelete={handleHistoryDelete}
-        updateUserPreferences={updateUserPreferences}
+        updateUserPreferences={handlePreferenceUpdate}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

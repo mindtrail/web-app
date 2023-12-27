@@ -24,11 +24,10 @@ declare global {
   }
 
   type UserTablePrefs = {
-    tableState?: Partial<TableState>
-    visibleColumns?: VisibilityState
-    filters?: HistoryFilter[]
-    sorting?: SortingState
-    columnOrder?: ColumnOrderState
+    // visibleColumns?: VisibilityState
+    // filters?: HistoryFilter[]
+    // sorting?: SortingState
+    columnOrder?: string[]
     columnSizes?: Record<string, number>
   }
 }
