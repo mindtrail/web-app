@@ -52,30 +52,16 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   processing,
-  userPreferences,
   handleHistoryDelete,
   updateUserPreferences,
 }: DataTableProps<TData, TValue>) {
-  let { tablePrefs } = userPreferences || {}
-  tablePrefs = tablePrefs as UserTablePrefs
-
-  const initialColOrder = useMemo(() => {
-    // @ts-ignore
-    const userPrefColumnOrder = tablePrefs?.columnOrder
-
-    if (userPrefColumnOrder) {
-      return userPrefColumnOrder
-    }
-
-    return columns.map((column) => column.id as string)
-  }, [columns, tablePrefs])
-
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [columnOrder, setColumnOrder] =
-    useState<ColumnOrderState>(initialColOrder)
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
+    columns.map((column) => column.id as string),
+  )
 
   const table = useReactTable({
     data,

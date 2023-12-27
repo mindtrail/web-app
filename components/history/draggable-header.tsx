@@ -103,12 +103,12 @@ export function DraggableHeader<TData, TValue>({
 
   const updatePreferences = useCallback(() => {
     // I need to get all the columns sizes for the table so that I keep the DB in sync
-    const columnSizes = table
+    const columnSize = table
       .getAllFlatColumns()
-      .map((column) => ({ [column.id]: column.getSize() }))
+      .reduce((acc, column) => ({ ...acc, [column.id]: column.getSize() }), {})
 
     updateUserPreferences({
-      columnSizes,
+      columnSize,
     })
   }, [table, updateUserPreferences])
 

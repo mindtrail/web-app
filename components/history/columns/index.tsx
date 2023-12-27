@@ -12,17 +12,28 @@ import {
 } from '@/components/history/columns/savedItem'
 
 import { formatDate } from '@/lib/utils'
+import { MIN_SIZE, MAX_SIZE } from '@/lib/constants'
 
 export const getColumnsDefinition = (userPreferences?: UserPreferences) => {
   if (!userPreferences) {
     return columns
   }
 
-  return columns
-}
+  let updatedColumns = columns
 
-const MIN_SIZE = 150
-const MAX_SIZE = 600
+  const { columnSize, columnOrder } =
+    userPreferences?.tablePrefs as UserTablePrefs
+
+  if (columnSize) {
+    updatedColumns = updateColumnSize(columns, columnSize)
+  }
+
+  if (columnOrder) {
+    updatedColumns = updateColumnOrder(updatedColumns, columnOrder)
+  }
+
+  return updatedColumns
+}
 
 const columns: ColumnDef<HistoryItem>[] = [
   {
@@ -67,3 +78,29 @@ const columns: ColumnDef<HistoryItem>[] = [
     ),
   },
 ]
+
+const updateColumnSize = (
+  columns: ColumnDef<HistoryItem>[],
+  columnSize: Record<string, number>,
+): ColumnDef<HistoryItem>[] => {
+  return columns.map((column) => ({
+    ...column, // @ts-ignore -> TODO: fix this as it does not recognize the id
+    size: columnSize[column?.id] || column?.size,
+  }))
+}
+
+const updateColumnOrder = (
+  columns: ColumnDef<HistoryItem>[],
+  columnOrder: string[],
+): ColumnDef<HistoryItem>[] => {
+  const sortedCols = [...columns].sort((a, b) => {
+    // @ts-ignore --- Get the order index for both columns
+    const orderA = columnOrder.indexOf(a.id) // @ts-ignore
+    const orderB = columnOrder.indexOf(b.id)
+
+    // Compare the order indexes
+    return orderA - orderB
+  })
+
+  return sortedCols
+}
