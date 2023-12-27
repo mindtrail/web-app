@@ -137,8 +137,6 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     setProcessing(false)
   }
 
-  console.log(deleteItemsList)
-
   return (
     <div
       ref={dropRef}
