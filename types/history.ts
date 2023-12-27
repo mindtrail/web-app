@@ -16,11 +16,18 @@ declare global {
     value: string
   }
 
+  type ColumnSize = {
+    column: string
+    size: number
+    minSize?: number
+    maxSize?: number
+  }
+
   type UserPreferences = {
     visibleColumns: string[]
     filters?: HistoryFilter[]
     sorting?: string
     columnOrder?: string[]
-    columnSizes?: string[]
+    columnSizes?: ColumnSize[]
   }
 }

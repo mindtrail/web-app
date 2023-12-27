@@ -160,12 +160,11 @@ export function DataTable<TData, TValue>({
                 key={headerGroup.id}
                 // className='flex w-fit'
               >
-                {headerGroup.headers.map((header, index) => (
+                {headerGroup.headers.map((header) => (
                   <DraggableHeader
                     key={header.id}
                     header={header}
                     table={table}
-                    index={index}
                   />
                 ))}
               </TableRow>

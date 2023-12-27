@@ -1,12 +1,6 @@
 'use client'
 
-import {
-  useMemo,
-  useEffect,
-  useCallback,
-  useState,
-  MouseEventHandler,
-} from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
@@ -23,21 +17,18 @@ import {
 import { TableHead } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 
-import { FIXED_COLUMNS } from '@/components/history/columns'
+import { FIXED_COLUMNS, DRAG_ITEM_TYPE } from '@/lib/constants'
 
 interface DraggableHeaderProps<HistoryItem, TValue> {
   header: Header<HistoryItem, TValue>
   table: Table<HistoryItem>
-  index: number
 }
 
-const DRAG_ITEM_TYPE = 'column'
 type DropIndicator = 'left' | 'right' | null
 
 export function DraggableHeader<TData, TValue>({
   header,
   table,
-  index,
 }: DraggableHeaderProps<TData, TValue>) {
   const { getState, setColumnOrder } = table
 
