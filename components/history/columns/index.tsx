@@ -12,8 +12,6 @@ import {
 
 import { formatDate } from '@/lib/utils'
 
-export const FIXED_COLUMNS = ['saved-item']
-
 export const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'saved-item',
