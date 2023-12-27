@@ -15,4 +15,12 @@ declare global {
     label: string
     value: string
   }
+
+  type UserPreferences = {
+    visibleColumns: string[]
+    filters?: HistoryFilter[]
+    sorting?: string
+    columnOrder?: string[]
+    columnSizes?: string[]
+  }
 }
