@@ -21,15 +21,10 @@ export const getColumnsDefinition = (userPreferences?: UserPreferences) => {
 
   let updatedColumns = columns
 
-  const { columnSize, columnOrder } =
-    userPreferences?.tablePrefs as UserTablePrefs
+  const { columnSize } = userPreferences?.tablePrefs as UserTablePrefs
 
   if (columnSize) {
-    updatedColumns = updateColumnSize(columns, columnSize)
-  }
-
-  if (columnOrder) {
-    updatedColumns = updateColumnOrder(updatedColumns, columnOrder)
+    // updatedColumns = updateColumnSize(columns, columnSize)
   }
 
   return updatedColumns
@@ -40,7 +35,7 @@ const columns: ColumnDef<HistoryItem>[] = [
     id: 'displayName',
     accessorKey: 'displayName',
     header: ({ table }) => <SavedItemHeader table={table} />,
-    size: 200,
+    // size: 200,
     minSize: MIN_SIZE,
     maxSize: MAX_SIZE,
     enableHiding: false,
@@ -50,16 +45,17 @@ const columns: ColumnDef<HistoryItem>[] = [
     id: 'description',
     accessorKey: 'description',
     header: () => <DefaultHeader text='description' />,
-    size: 300,
+    // size: 300,
     minSize: MIN_SIZE,
     maxSize: MAX_SIZE * 1.5,
+
     cell: ({ getValue }) => <DefaultCell text={getValue() as string} />,
   },
   {
     id: 'createdAt',
     accessorKey: 'createdAt',
     header: () => <DefaultHeader text='created' />,
-    size: 150,
+    // size: 150,
     minSize: MIN_SIZE,
     maxSize: MAX_SIZE,
     cell: ({ getValue }) => (
@@ -70,7 +66,7 @@ const columns: ColumnDef<HistoryItem>[] = [
     id: 'dataSourceTags',
     accessorKey: 'dataSourceTags',
     header: () => <DefaultHeader text='tags' />,
-    size: 200,
+    // size: 200,
     minSize: MIN_SIZE,
     maxSize: MAX_SIZE,
     cell: ({ getValue }) => (
@@ -87,20 +83,4 @@ const updateColumnSize = (
     ...column, // @ts-ignore -> TODO: fix this as it does not recognize the id
     size: columnSize[column?.id] || column?.size,
   }))
-}
-
-const updateColumnOrder = (
-  columns: ColumnDef<HistoryItem>[],
-  columnOrder: string[],
-): ColumnDef<HistoryItem>[] => {
-  const sortedCols = [...columns].sort((a, b) => {
-    // @ts-ignore --- Get the order index for both columns
-    const orderA = columnOrder.indexOf(a.id) // @ts-ignore
-    const orderB = columnOrder.indexOf(b.id)
-
-    // Compare the order indexes
-    return orderA - orderB
-  })
-
-  return sortedCols
 }

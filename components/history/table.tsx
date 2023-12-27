@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useCallback, useState } from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
 
 import {
+  Column,
   ColumnDef,
   ColumnOrderState,
+  ColumnSizingState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -39,6 +41,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import { DEFAULT_COLUMN_SIZE, DEFAULT_COLUMN_VISIBILITY } from '@/lib/constants'
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -52,15 +56,28 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   processing,
+  userPreferences,
   handleHistoryDelete,
   updateUserPreferences,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [rowSelection, setRowSelection] = useState({})
+  const {
+    columnSize: storedColSize,
+    columnOrder: storedColOrder,
+    columnVisibility: storedColVisibility,
+  } = userPreferences?.tablePrefs as UserTablePrefs
 
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
-    columns.map((column) => column.id as string),
+  const initialOrder =
+    storedColOrder || columns.map((column) => column.id as string)
+
+  const initialVisibility = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
+
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialOrder)
+  const [columnVisibility, setColumnVisibility] =
+    useState<VisibilityState>(initialVisibility)
+  const [rowSelection, setRowSelection] = useState({})
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(
+    storedColSize || DEFAULT_COLUMN_SIZE,
   )
 
   const table = useReactTable({
@@ -74,17 +91,35 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     debugTable: true,
+    onColumnSizingChange: setColumnSizing,
     state: {
       columnOrder,
       columnVisibility,
       rowSelection,
       sorting,
+      columnSizing,
     },
   })
 
   const { rows } = table.getRowModel()
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
+
+  const handleVisibilityChange = useCallback(
+    (value: boolean, column: Column<TData, unknown>) => {
+      console.log(column.id)
+      console.log(value)
+
+      const updatedVisibility = {
+        ...columnVisibility,
+        [column.id]: !!value,
+      }
+      console.log(updatedVisibility)
+
+      column.toggleVisibility(!!value)
+    },
+    [columnVisibility],
+  )
 
   const tableFields = table
     .getAllColumns()
@@ -95,14 +130,14 @@ export function DataTable<TData, TValue>({
           key={column.id}
           className='capitalize'
           checked={column.getIsVisible()}
-          onCheckedChange={(value) => column.toggleVisibility(!!value)}
+          onCheckedChange={(value) => handleVisibilityChange(value, column)}
         >
           {column.id}
         </DropdownMenuCheckboxItem>
       )
     })
 
-  const onDelete = () => {
+  const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
 
     const itemsToDelete = selectedRows.rows.map(
@@ -112,7 +147,7 @@ export function DataTable<TData, TValue>({
     console.log(selectedRows, itemsToDelete)
     handleHistoryDelete(itemsToDelete)
     table.resetRowSelection()
-  }
+  }, [handleHistoryDelete, table])
 
   return (
     <>
