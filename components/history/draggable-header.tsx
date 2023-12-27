@@ -107,8 +107,6 @@ export function DraggableHeader<TData, TValue>({
       .getAllFlatColumns()
       .map((column) => ({ [column.id]: column.getSize() }))
 
-      console.log('columnsSizes', JSON.stringify(columnSizes, null, 2))
-
     updateUserPreferences({
       columnSizes,
     })

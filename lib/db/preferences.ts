@@ -30,8 +30,6 @@ export const updateUserPreferences = async (userId: string, payload: any) => {
     ...payload,
   }
 
-  console.log('mergedPrefs', mergedPrefs)
-
   const userPreferences = await prisma.userPreferences.upsert({
     where: {
       userId,

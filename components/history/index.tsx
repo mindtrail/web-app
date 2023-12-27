@@ -53,7 +53,6 @@ export function HistoryComponent({
         return
       }
 
-      console.log('prefsToUpdate', newTablePrefs)
       updateUserPreferences(userId, newTablePrefs)
     },
     [userId],
@@ -176,6 +175,7 @@ export function HistoryComponent({
         columns={columns}
         data={filteredItems}
         processing={processing}
+        userPreferences={userPreferences}
         handleHistoryDelete={handleHistoryDelete}
         updateUserPreferences={handlePreferenceUpdate}
       />
