@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
+import { UserPreferences } from '@prisma/client'
 
 import {
   ColumnDef,
@@ -42,6 +43,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   processing?: boolean
+  userPreferences?: UserPreferences
   handleHistoryDelete: (ids: HistoryItem[]) => void
   updateUserPreferences: (prefs: UserTablePrefs) => void
 }
@@ -50,17 +52,30 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   processing,
+  userPreferences,
   handleHistoryDelete,
   updateUserPreferences,
 }: DataTableProps<TData, TValue>) {
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [sorting, setSorting] = useState<SortingState>([])
+  let { tablePrefs } = userPreferences || {}
+  tablePrefs = tablePrefs as UserTablePrefs
 
+  const initialColOrder = useMemo(() => {
+    // @ts-ignore
+    const userPrefColumnOrder = tablePrefs?.columnOrder
+
+    if (userPrefColumnOrder) {
+      return userPrefColumnOrder
+    }
+
+    return columns.map((column) => column.id as string)
+  }, [columns, tablePrefs])
+
+  const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
 
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
-    columns.map((column) => column.id as string), //must start out with populated columnOrder so we can splice
-  )
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnOrder, setColumnOrder] =
+    useState<ColumnOrderState>(initialColOrder)
 
   const table = useReactTable({
     data,
