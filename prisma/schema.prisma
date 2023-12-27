@@ -267,7 +267,7 @@ model UserPreferences {
   userId      String    @unique
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  tablePrefs Json     // or String if you serialize the JSON
+  tablePrefs  Json     // or String if you serialize the JSON
 }
 
 
