@@ -41,18 +41,21 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  handleHistoryDelete: (ids: HistoryItem[]) => void
   processing?: boolean
+  handleHistoryDelete: (ids: HistoryItem[]) => void
+  updateUserPreferences: (prefs: UserTablePrefs) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  handleHistoryDelete,
   processing,
+  handleHistoryDelete,
+  updateUserPreferences,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
+
   const [rowSelection, setRowSelection] = useState({})
 
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
@@ -156,15 +159,13 @@ export function DataTable<TData, TValue>({
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                // className='flex w-fit'
-              >
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <DraggableHeader
                     key={header.id}
                     header={header}
                     table={table}
+                    updateUserPreferences={updateUserPreferences}
                   />
                 ))}
               </TableRow>

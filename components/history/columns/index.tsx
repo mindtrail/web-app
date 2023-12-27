@@ -21,14 +21,17 @@ export const getColumnsDefinition = (userPreferences?: UserPreferences) => {
   return columns
 }
 
+const MIN_SIZE = 150
+const MAX_SIZE = 600
+
 const columns: ColumnDef<HistoryItem>[] = [
   {
     id: 'displayName',
     accessorKey: 'displayName',
     header: ({ table }) => <SavedItemHeader table={table} />,
     size: 200,
-    minSize: 150,
-    maxSize: 400,
+    minSize: MIN_SIZE,
+    maxSize: MAX_SIZE,
     enableHiding: false,
     cell: ({ row, table }) => <SavedItemCell row={row} table={table} />,
   },
@@ -37,8 +40,8 @@ const columns: ColumnDef<HistoryItem>[] = [
     accessorKey: 'description',
     header: () => <DefaultHeader text='description' />,
     size: 300,
-    minSize: 150,
-    maxSize: 700,
+    minSize: MIN_SIZE,
+    maxSize: MAX_SIZE * 1.5,
     cell: ({ getValue }) => <DefaultCell text={getValue() as string} />,
   },
   {
@@ -46,8 +49,8 @@ const columns: ColumnDef<HistoryItem>[] = [
     accessorKey: 'createdAt',
     header: () => <DefaultHeader text='created' />,
     size: 150,
-    minSize: 100,
-    maxSize: 200,
+    minSize: MIN_SIZE,
+    maxSize: MAX_SIZE,
     cell: ({ getValue }) => (
       <DefaultCell text={formatDate(getValue() as string)} />
     ),
@@ -57,8 +60,8 @@ const columns: ColumnDef<HistoryItem>[] = [
     accessorKey: 'dataSourceTags',
     header: () => <DefaultHeader text='tags' />,
     size: 200,
-    minSize: 100,
-    maxSize: 300,
+    minSize: MIN_SIZE,
+    maxSize: MAX_SIZE,
     cell: ({ getValue }) => (
       <TagsCell tagList={getValue() as DataSourceTag[]} />
     ),

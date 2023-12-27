@@ -40,7 +40,7 @@ export const SavedItemCell = ({ row, table }: SavedItemCellProps) => {
 
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
-  const cellWidth = table.getColumn('saved-item')?.getSize() || 200
+  const cellWidth = table.getColumn('displayName')?.getSize() || 200
 
   const {
     image = '',

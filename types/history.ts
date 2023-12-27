@@ -1,4 +1,10 @@
 import { DataSource } from '@prisma/client'
+import {
+  ColumnOrderState,
+  SortingState,
+  VisibilityState,
+  TableState,
+} from '@tanstack/react-table'
 
 declare global {
   type HistoryItem = DataSource & {
@@ -17,11 +23,12 @@ declare global {
     maxSize?: number
   }
 
-  type UserPreferences = {
-    visibleColumns: string[]
+  type UserTablePrefs = {
+    tableState?: Partial<TableState>
+    visibleColumns?: VisibilityState
     filters?: HistoryFilter[]
-    sorting?: string
-    columnOrder?: string[]
-    columnSizes?: ColumnSize[]
+    sorting?: SortingState
+    columnOrder?: ColumnOrderState
+    columnSizes?: Record<string, number>
   }
 }
