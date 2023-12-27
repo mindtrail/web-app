@@ -71,14 +71,14 @@ model User {
   picture       String?
   hasOptInEmail Boolean? @default(false)
 
-  collections   Collection[]
-  dataSourceUsers DataSourceUser[] // Relation to DataSourceUser for data sources
+  collections       Collection[]
+  dataSourceUsers   DataSourceUser[] // Relation to DataSourceUser for data sources
 
-  filters       Filter[] // Relation to Filter, assuming users can create/save filters
+  filters           Filter[] // Relation to Filter, assuming users can create/save filters
 
-  subscriptions Subscription[]  @relation("user")
-  usage         Usage?
-  conversations Conversation[]
+  subscriptions     Subscription[]  @relation("user")
+  usage             Usage?
+  conversations     Conversation[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -114,7 +114,8 @@ model Collection {
   children Collection[] @relation("ParentChild")
 
   // Many-to-Many relation with DataSource
-  collectionDataSource CollectionDataSource[]
+  collectionDataSource  CollectionDataSource[]
+  collectionNotes       CollectionNote[]
 
   // One-to-Many relation with Filter
   filters Filter[]
@@ -143,9 +144,11 @@ model DataSource {
   image         String?
   content       String?
 
-  dataSourceTags        DataSourceTag[]
   collectionDataSource  CollectionDataSource[]
+  dataSourceTags        DataSourceTag[]
   dataSourceUsers       DataSourceUser[] // Relation to DataSourceUser for data sources
+  dataSourceClippings   DataSourceClipping[] // Relation to DataSourceUser for data sources
+  dataSourceNotes       DataSourceNote[] // Relation to DataSourceUser for data sources
 
   config    Json?
   nbChunks  Int? @default(0)
@@ -185,11 +188,12 @@ model CollectionDataSource {
 
 // New Tag model
 model Tag {
-  id      String @id @default(cuid())
-  name    String @unique
-  domain  String
+  id              String @id @default(cuid())
+  name            String @unique
+  domain          String
+  createdAt       DateTime @default(now())
 
-  dataSourceTags DataSourceTag[] // Relation to DataSourceTag for data sources
+  dataSourceTags  DataSourceTag[] // Relation to DataSourceTag for data sources
   @@map("Tags")
 }
 
@@ -200,8 +204,62 @@ model DataSourceTag {
 
   dataSource    DataSource @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
   tag           Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
   @@id([dataSourceId, tagId])
 }
+
+model Clipping {
+  id                String   @id @default(cuid())
+  content           String
+  externalResources String[] // Assuming PostgreSQL which supports array type
+  createdAt         DateTime @default(now())
+
+  dataSources       DataSourceClipping[]
+
+  @@map("Clippings")
+}
+
+model DataSourceClipping {
+  dataSourceId  String
+  clippingId    String
+
+  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
+  clipping      Clipping   @relation(fields: [clippingId], references: [id])
+
+  @@id([dataSourceId, clippingId])
+}
+
+model Note {
+  id          String   @id @default(cuid())
+  content     String
+  createdAt   DateTime @default(now())
+
+  dataSourceNotes   DataSourceNote[]
+  collectionNotes   CollectionNote[]
+
+  @@map("Notes")
+}
+
+model DataSourceNote {
+  dataSourceId  String
+  noteId        String
+
+  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
+  note          Note       @relation(fields: [noteId], references: [id])
+
+  @@id([dataSourceId, noteId])
+}
+
+model CollectionNote {
+  collectionId String
+  noteId       String
+
+  collection  Collection @relation(fields: [collectionId], references: [id])
+  note        Note       @relation(fields: [noteId], references: [id])
+
+  @@id([collectionId, noteId])
+}
+
 
 model Filter {
   id        String @id @default(cuid())
