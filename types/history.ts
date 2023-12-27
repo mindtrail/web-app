@@ -27,6 +27,7 @@ declare global {
     // visibleColumns?: VisibilityState
     // filters?: HistoryFilter[]
     // sorting?: SortingState
+    columnVisibility?: Record<string, boolean>
     columnOrder?: string[]
     columnSize?: Record<string, number>
   }
