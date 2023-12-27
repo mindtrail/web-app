@@ -21,7 +21,11 @@ import {
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
 import { getColumnsDefinition } from '@/components/history/columns'
+
 import { getURLPathname } from '@/lib/utils'
+const updateUserPreferences = (prefs: UserTablePrefs) => {
+  console.log(123, prefs)
+}
 
 type HistoryComponentProps = {
   userId: string
@@ -161,8 +165,9 @@ export function HistoryComponent({
       <DataTable
         columns={columns}
         data={filteredItems}
-        handleHistoryDelete={handleHistoryDelete}
         processing={processing}
+        handleHistoryDelete={handleHistoryDelete}
+        updateUserPreferences={updateUserPreferences}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

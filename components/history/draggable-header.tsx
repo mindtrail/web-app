@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
@@ -22,6 +22,7 @@ import { FIXED_COLUMNS, DRAG_ITEM_TYPE } from '@/lib/constants'
 interface DraggableHeaderProps<HistoryItem, TValue> {
   header: Header<HistoryItem, TValue>
   table: Table<HistoryItem>
+  updateUserPreferences: (prefs: UserTablePrefs) => void
 }
 
 type DropIndicator = 'left' | 'right' | null
@@ -29,6 +30,7 @@ type DropIndicator = 'left' | 'right' | null
 export function DraggableHeader<TData, TValue>({
   header,
   table,
+  updateUserPreferences,
 }: DraggableHeaderProps<TData, TValue>) {
   const { getState, setColumnOrder } = table
 
@@ -60,7 +62,17 @@ export function DraggableHeader<TData, TValue>({
         column.id,
         columnOrder,
       )
+
+      if (!newColumnOrder) {
+        return
+      }
+
+      console.log(111, newColumnOrder)
       setColumnOrder(newColumnOrder)
+
+      updateUserPreferences({
+        columnOrder: newColumnOrder,
+      })
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -89,6 +101,16 @@ export function DraggableHeader<TData, TValue>({
   }, [previewRef])
 
   const isResizing = column.getIsResizing()
+
+  const updatePreferences = useCallback(() => {
+    const columnSizes = {
+      [header.id]: header.getSize(),
+    }
+
+    updateUserPreferences({
+      columnSizes,
+    })
+  }, [header, updateUserPreferences])
 
   return (
     <>
@@ -120,6 +142,7 @@ export function DraggableHeader<TData, TValue>({
         </div>
         <div
           onMouseDown={header.getResizeHandler()}
+          onMouseUp={updatePreferences}
           className={`group absolute flex justify-center items-center w-4
             -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}
         >

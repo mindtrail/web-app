@@ -5,6 +5,13 @@ export const MAX_CHARS_PER_KB = 500 * 1000 * 1000 //
 export const FIXED_COLUMNS = ['displayName']
 export const DRAG_ITEM_TYPE = 'column'
 
+export const DEFAULT_VISIBLE_COLUMNS = [
+  'displayName',
+  'description',
+  'createdAt',
+  'dataSourceTags',
+]
+
 export const DEFAULT_USER_PREFS = [
   {
     id: 'displayName',
