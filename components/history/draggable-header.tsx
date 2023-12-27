@@ -67,7 +67,6 @@ export function DraggableHeader<TData, TValue>({
         return
       }
 
-      console.log(111, newColumnOrder)
       setColumnOrder(newColumnOrder)
 
       updateUserPreferences({

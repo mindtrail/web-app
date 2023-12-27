@@ -1,3 +1,5 @@
+'use server'
+
 import { UserPreferences } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 
@@ -11,17 +13,35 @@ export const getUserPreferences = async (userId: string) => {
   return userPreferences || undefined
 }
 
-export const updateUserPreferences = async (
-  userId: string,
-  data: UserPreferences,
-) => {
+export const updateUserPreferences = async (userId: string, payload: any) => {
+  // Retrieve existing preferences (if any)
+  const existingPrefs = await prisma.userPreferences.findUnique({
+    where: { userId },
+    select: { tablePrefs: true },
+  })
+
+  const existingTablePrefs =
+    typeof existingPrefs?.tablePrefs === 'object'
+      ? existingPrefs.tablePrefs
+      : {}
+
+  const mergedPrefs = {
+    ...existingTablePrefs,
+    ...payload,
+  }
+
+  console.log('mergedPrefs', mergedPrefs)
+
   const userPreferences = await prisma.userPreferences.upsert({
     where: {
       userId,
     },
-    // @ts-ignore
+    create: {
+      userId,
+      tablePrefs: mergedPrefs,
+    },
     update: {
-      ...data,
+      tablePrefs: mergedPrefs,
     },
   })
 
