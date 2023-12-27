@@ -4,7 +4,7 @@ import { MouseEvent, useCallback, useMemo, useState } from 'react'
 
 import { deleteDataSource } from '@/lib/serverActions/history'
 import { useDrop } from 'react-dnd'
-import { DataSourceType } from '@prisma/client'
+import { DataSourceType, UserPreferences } from '@prisma/client'
 
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
@@ -20,43 +20,35 @@ import {
 
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
-import { columns } from '@/components/history/columns'
+import { getColumnsDefinition } from '@/components/history/columns'
 import { getURLPathname } from '@/lib/utils'
 
-export function HistoryView({ historyItems, userId }: HistoryViewProps) {
-  const [history, setHistory] = useState<HistoryItem[]>([])
+type HistoryComponentProps = {
+  userId: string
+  historyItems: HistoryItem[]
+  userPreferences?: UserPreferences
+}
+
+export function HistoryComponent({
+  historyItems,
+  userId,
+  userPreferences,
+}: HistoryComponentProps) {
   const [filteredItems, setFilteredItems] =
     useState<HistoryItem[]>(historyItems)
 
-  const [categories, setCategories] = useState<HistoryFilter[]>([])
   const [filters, setFilters] = useState<HistoryFilter[]>()
   const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [processing, setProcessing] = useState(false)
 
-  const [, dropRef] = useDrop({
-    accept: 'column',
-  })
-
+  const [, dropRef] = useDrop({ accept: 'column' })
   const { toast } = useToast()
 
-  const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
-    event.preventDefault()
-    const newTag = event.currentTarget.dataset.value || ''
-
-    setFilters((prevFilters = []) => {
-      const newFilters = prevFilters.filter(
-        (prevTag) => prevTag.value !== newTag,
-      )
-
-      // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
-      if (newFilters.length === prevFilters.length) {
-        newFilters.push({ value: newTag, label: newTag })
-      }
-
-      return newFilters
-    })
-  }, [])
+  const columns = useMemo(
+    () => getColumnsDefinition(userPreferences),
+    [userPreferences],
+  )
 
   const handleHistoryDelete = useCallback((itemsToDelete: HistoryItem[]) => {
     if (!itemsToDelete?.length) {
@@ -116,26 +108,47 @@ export function HistoryView({ historyItems, userId }: HistoryViewProps) {
     [itemsToDelete],
   )
 
-  const handleSearch = async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setFilteredItems(historyItems)
-      return
-    }
-    setProcessing(true)
+  const handleSearch = useCallback(
+    async (searchQuery: string) => {
+      if (!searchQuery.trim()) {
+        setFilteredItems(historyItems)
+        return
+      }
+      setProcessing(true)
 
-    const result = await fetch('/api/history', {
-      method: 'POST',
-      body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      const result = await fetch('/api/history', {
+        method: 'POST',
+        body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const dataSourceList = await result.json()
+      setFilteredItems(dataSourceList)
+
+      setProcessing(false)
+    },
+    [userId, historyItems],
+  )
+
+  const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    const newTag = event.currentTarget.dataset.value || ''
+
+    setFilters((prevFilters = []) => {
+      const newFilters = prevFilters.filter(
+        (prevTag) => prevTag.value !== newTag,
+      )
+
+      // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
+      if (newFilters.length === prevFilters.length) {
+        newFilters.push({ value: newTag, label: newTag })
+      }
+
+      return newFilters
     })
-
-    const dataSourceList = await result.json()
-    setFilteredItems(dataSourceList)
-
-    setProcessing(false)
-  }
+  }, [])
 
   return (
     <div

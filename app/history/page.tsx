@@ -5,8 +5,9 @@ import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
 import { getDataSourceListForUser } from '@/lib/db/dataSource'
+import { getUserPreferences } from '@/lib/db/preferences'
 
-import { HistoryView } from '@/components/history'
+import { HistoryComponent } from '@/components/history'
 
 interface UserWithId {
   id: string | null
@@ -33,7 +34,19 @@ export default async function ChatPage() {
   }
 
   const userId = session.user.id
-  const historyItems = (await getDataSourceListForUser(userId)).slice(0, 50)
 
-  return <HistoryView userId={userId} historyItems={historyItems} />
+  let [userPreferences, historyItems] = await Promise.all([
+    getUserPreferences(userId),
+    getDataSourceListForUser(userId),
+  ])
+
+  historyItems = historyItems.splice(0, 40)
+
+  return (
+    <HistoryComponent
+      userId={userId}
+      historyItems={historyItems}
+      userPreferences={userPreferences}
+    />
+  )
 }
