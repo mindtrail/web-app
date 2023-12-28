@@ -8,7 +8,20 @@ export const MAX_SIZE = 600
 export const FIXED_COLUMNS = ['displayName']
 export const DRAG_ITEM_TYPE = 'column'
 
-export const DEFAULT_COLUMN_ORDER = []
+export const DEFAULT_COLUMN_ORDER = [
+  'displayName',
+  'description',
+  'createdAt',
+  'dataSourceTags',
+]
+
+export const COLUMN_LABELS: Record<string, string> = {
+  displayName: 'Item',
+  description: 'Description',
+  createdAt: 'Created',
+  dataSourceTags: 'Tags',
+}
+
 export const DEFAULT_COLUMN_VISIBILITY = {
   displayName: true,
   description: true,
@@ -22,29 +35,3 @@ export const DEFAULT_COLUMN_SIZE = {
   createdAt: 150,
   dataSourceTags: 200,
 }
-
-export const DEFAULT_USER_PREFS = [
-  {
-    id: 'displayName',
-    accessorKey: 'displayName',
-    size: 300,
-    enableHiding: false,
-    minSize: 100,
-    maxSize: 400,
-  },
-  {
-    id: 'description',
-    accessorKey: 'description',
-    size: 300,
-  },
-  {
-    id: 'createdAt',
-    accessorKey: 'createdAt',
-    size: 150,
-  },
-  {
-    id: 'dataSourceTags',
-    accessorKey: 'dataSourceTags',
-    size: 300,
-  },
-]

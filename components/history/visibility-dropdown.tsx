@@ -1,4 +1,4 @@
-import { Table, ColumnDef } from '@tanstack/react-table'
+import { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -8,26 +8,24 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import { COLUMN_LABELS } from '@/lib/constants'
+
 interface VisibilityDropdownProps {
   table: Table<HistoryItem>
+  columnOrder: string[]
 }
 
-export function VisibilityDropdown({ table }: VisibilityDropdownProps) {
-  const tableFields = table
-    .getAllColumns()
-    .filter((column) => column.getCanHide())
-    // .sort((a, b) => a.id - b.id)
-    .map((column) => {
-      return (
-        <DropdownMenuCheckboxItem
-          key={column.id}
-          className='capitalize'
-          checked={column.getIsVisible()}
-          onCheckedChange={(value) => column.toggleVisibility(!!value)}
-        >
-          {column.id}
-        </DropdownMenuCheckboxItem>
-      )
+export function VisibilityDropdown({ table, columnOrder }: VisibilityDropdownProps) {
+  const tableColumns = table
+    ?.getAllFlatColumns()
+    ?.filter((column) => column.getCanHide())
+    ?.sort((a, b) => {
+      // Get the order index for both columns
+      const orderA = columnOrder?.indexOf(a.id)
+      const orderB = columnOrder?.indexOf(b.id)
+
+      // Compare the order indexes
+      return orderA - orderB
     })
 
   return (
@@ -37,23 +35,18 @@ export function VisibilityDropdown({ table }: VisibilityDropdownProps) {
           Fields
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end'>{tableFields}</DropdownMenuContent>
+      <DropdownMenuContent align='end'>
+        {tableColumns.map((column) => (
+          <DropdownMenuCheckboxItem
+            key={column.id}
+            className='capitalize'
+            checked={column.getIsVisible()}
+            onCheckedChange={(value) => column.toggleVisibility(!!value)}
+          >
+            {COLUMN_LABELS[column.id]}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
     </DropdownMenu>
   )
-}
-
-const sortColumns = (
-  columns: ColumnDef<HistoryItem>[],
-  columnOrder: string[],
-): ColumnDef<HistoryItem>[] => {
-  const sortedCols = [...columns].sort((a, b) => {
-    // @ts-ignore --- Get the order index for both columns
-    const orderA = columnOrder.indexOf(a.id) // @ts-ignore
-    const orderB = columnOrder.indexOf(b.id)
-
-    // Compare the order indexes
-    return orderA - orderB
-  })
-
-  return sortedCols
 }

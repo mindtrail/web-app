@@ -1,6 +1,5 @@
 'use server'
 
-import { UserPreferences } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 
 export const getUserPreferences = async (userId: string) => {
