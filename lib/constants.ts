@@ -8,6 +8,7 @@ export const MAX_SIZE = 600
 export const FIXED_COLUMNS = ['displayName']
 export const DRAG_ITEM_TYPE = 'column'
 
+export const DEFAULT_COLUMN_ORDER = []
 export const DEFAULT_COLUMN_VISIBILITY = {
   displayName: true,
   description: true,
