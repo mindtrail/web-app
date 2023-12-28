@@ -112,6 +112,20 @@ export function DraggableHeader<TData, TValue>({
     })
   }, [table, updateUserPreferences])
 
+  // Added this becuase mouse up was not called when resizing past Min/Max width
+  const handleMouseDown = useCallback(
+    (event: unknown) => {
+      header.getResizeHandler()(event)
+
+      const handleMouseUp = () => {
+        updatePreferences()
+        window.removeEventListener('mouseup', handleMouseUp)
+      }
+      window.addEventListener('mouseup', handleMouseUp)
+    },
+    [header, updatePreferences],
+  )
+
   return (
     <>
       <TableHead
@@ -141,8 +155,7 @@ export function DraggableHeader<TData, TValue>({
           )}
         </div>
         <div
-          onMouseDown={header.getResizeHandler()}
-          onMouseUp={updatePreferences}
+          onMouseDown={handleMouseDown}
           className={`group absolute flex justify-center items-center w-4
             -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}
         >

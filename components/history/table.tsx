@@ -93,10 +93,10 @@ export function DataTable<TData, TValue>({
     onColumnSizingChange: setColumnSizing,
     state: {
       columnOrder,
+      columnSizing,
       columnVisibility,
       rowSelection,
       sorting,
-      columnSizing,
     },
   })
 
@@ -140,7 +140,6 @@ export function DataTable<TData, TValue>({
       ({ original }) => original as HistoryItem,
     )
 
-    console.log(selectedRows, itemsToDelete)
     handleHistoryDelete(itemsToDelete)
     table.resetRowSelection()
   }, [handleHistoryDelete, table])
