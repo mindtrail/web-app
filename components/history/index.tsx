@@ -20,7 +20,6 @@ import {
 
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
-import { tableColumns } from '@/components/history/columns'
 
 import { getURLPathname } from '@/lib/utils'
 import { updateUserPreferences } from '@/lib/db/preferences'
@@ -167,7 +166,6 @@ export function HistoryComponent({
       <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
-        columns={tableColumns}
         data={filteredItems}
         processing={processing}
         userPreferences={userPreferences}

@@ -1,12 +1,11 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
 
 import {
   Column,
-  ColumnDef,
   ColumnOrderState,
   ColumnSizingState,
   SortingState,
@@ -17,6 +16,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { IconSpinner } from '@/components/ui/icons/next-icons'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import {
   Table,
   TableBody,
@@ -25,26 +28,15 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { IconSpinner } from '@/components/ui/icons/next-icons'
-
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
 
 import { DEFAULT_COLUMN_SIZE, DEFAULT_COLUMN_VISIBILITY } from '@/lib/constants'
+import { getTableColumns } from '@/components/history/columns'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+interface DataTableProps<TData> {
   data: TData[]
   processing?: boolean
   userPreferences?: UserPreferences
@@ -52,22 +44,25 @@ interface DataTableProps<TData, TValue> {
   updateUserPreferences: (prefs: UserTablePrefs) => void
 }
 
-export function DataTable<TData, TValue>({
-  columns,
+export function DataTable<TData>({
   data,
   processing,
   userPreferences,
   handleHistoryDelete,
   updateUserPreferences,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const {
     columnOrder: storedColOrder,
     columnSize: storedColSize,
     columnVisibility: storedColVisibility,
-  } = userPreferences?.tablePrefs as UserTablePrefs
+  } = (userPreferences?.tablePrefs as UserTablePrefs) || {}
 
-  const initialOrder =
-    storedColOrder || columns.map((column) => column.id as string)
+  const columns = useMemo(
+    () => getTableColumns(storedColOrder),
+    [storedColOrder],
+  )
+
+  const initialOrder = columns.map((column) => column.id as string)
   const initialSize = storedColSize || DEFAULT_COLUMN_SIZE
   const initialVisibility = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
 
@@ -111,27 +106,10 @@ export function DataTable<TData, TValue>({
         [column.id]: !!value,
       }
 
-      column.toggleVisibility(!!value)
       updateUserPreferences({ columnVisibility: updatedVisibility })
     },
     [columnVisibility, updateUserPreferences],
   )
-
-  const tableFields = table
-    .getAllColumns()
-    .filter((column) => column.getCanHide())
-    .map((column) => {
-      return (
-        <DropdownMenuCheckboxItem
-          key={column.id}
-          className='capitalize'
-          checked={column.getIsVisible()}
-          onCheckedChange={(value) => handleVisibilityChange(value, column)}
-        >
-          {column.id}
-        </DropdownMenuCheckboxItem>
-      )
-    })
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
@@ -148,21 +126,14 @@ export function DataTable<TData, TValue>({
     <>
       <div className='flex items-center justify-between py-4'>
         <HistoryBreadcrumbs />
-
         <div className='flex items-center gap-2'>
           <Button size='sm' variant='ghost'>
             <CaretSortIcon className='h-5 w-5' />
             A-Z
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='outline' size='sm'>
-                Fields
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>{tableFields}</DropdownMenuContent>
-          </DropdownMenu>
+          {/* @ts-ignore */}
+          <VisibilityDropdown table={table} />
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>

@@ -8,11 +8,11 @@ import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
 
-type SavedItemHeaderProps = {
-  table: Table<HistoryItem>
+type SavedItemHeaderProps<TData> = {
+  table: Table<TData>
 }
 
-export const SavedItemHeader = ({ table }: SavedItemHeaderProps) => {
+export function SavedItemHeader<TData>({ table }: SavedItemHeaderProps<TData>) {
   return (
     <div className='flex items-center gap-2 px-2 group/saved-item'>
       <Link1Icon className='group-hover/saved-item:invisible' />
@@ -30,17 +30,20 @@ export const SavedItemHeader = ({ table }: SavedItemHeaderProps) => {
   )
 }
 
-type SavedItemCellProps = {
-  row: Row<HistoryItem>
-  table: Table<HistoryItem>
+type SavedItemCellProps<TData> = {
+  row: Row<TData>
+  table: Table<TData>
 }
 
-export const SavedItemCell = ({ row, table }: SavedItemCellProps) => {
+export function SavedItemCell<TData>({
+  row,
+  table,
+}: SavedItemCellProps<TData>) {
   const { original } = row
 
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
-  const cellWidth = table.getColumn('displayName')?.getSize() || 200
+  const cellWidth = table.getColumn('item')?.getSize() || 200
 
   const {
     image = '',
