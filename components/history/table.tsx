@@ -20,21 +20,19 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
 
-import { DEFAULT_COLUMN_SIZE, DEFAULT_COLUMN_VISIBILITY } from '@/lib/constants'
 import { getTableColumns } from '@/components/history/columns'
+import {
+  DEFAULT_COLUMN_SIZE,
+  DEFAULT_COLUMN_VISIBILITY,
+  DEFAULT_COLUMN_ORDER,
+} from '@/lib/constants'
 
 interface DataTableProps<TData> {
   data: TData[]
@@ -57,22 +55,17 @@ export function DataTable<TData>({
     columnVisibility: storedColVisibility,
   } = (userPreferences?.tablePrefs as UserTablePrefs) || {}
 
-  const columns = useMemo(
-    () => getTableColumns(storedColOrder),
-    [storedColOrder],
-  )
-
-  const initialOrder = columns.map((column) => column.id as string)
+  const initialOrder = storedColOrder || DEFAULT_COLUMN_ORDER
   const initialSize = storedColSize || DEFAULT_COLUMN_SIZE
-  const initialVisibility = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
+  const initialVis = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
 
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialOrder)
-  const [columnVisibility, setColumnVisibility] =
-    useState<VisibilityState>(initialVisibility)
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(initialSize)
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialVis)
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnSizing, setColumnSizing] =
-    useState<ColumnSizingState>(initialSize)
+
+  const columns = useMemo(() => getTableColumns(), [])
 
   const table = useReactTable({
     data,
@@ -114,9 +107,7 @@ export function DataTable<TData>({
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
 
-    const itemsToDelete = selectedRows.rows.map(
-      ({ original }) => original as HistoryItem,
-    )
+    const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
 
     handleHistoryDelete(itemsToDelete)
     table.resetRowSelection()
@@ -133,7 +124,7 @@ export function DataTable<TData>({
           </Button>
 
           {/* @ts-ignore */}
-          <VisibilityDropdown table={table} />
+          <VisibilityDropdown table={table} columnOrder={columnOrder} />
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
@@ -147,9 +138,7 @@ export function DataTable<TData>({
               table.getIsAllPageRowsSelected() ||
               (table.getIsSomePageRowsSelected() && 'indeterminate')
             }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label='Select all'
           />
           <div className='flex items-center gap-2'>

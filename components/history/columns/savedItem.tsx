@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
+import { COLUMN_LABELS } from '@/lib/constants'
 
 type SavedItemHeaderProps<TData> = {
   table: Table<TData>
@@ -25,7 +26,7 @@ export function SavedItemHeader<TData>({ table }: SavedItemHeaderProps<TData>) {
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
       />
-      Item
+      {COLUMN_LABELS.displayName}
     </div>
   )
 }
@@ -35,23 +36,14 @@ type SavedItemCellProps<TData> = {
   table: Table<TData>
 }
 
-export function SavedItemCell<TData>({
-  row,
-  table,
-}: SavedItemCellProps<TData>) {
+export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) {
   const { original } = row
 
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
-  const cellWidth = table.getColumn('item')?.getSize() || 200
+  const cellWidth = table.getColumn('displayName')?.getSize() || 200
 
-  const {
-    image = '',
-    title = 'Title',
-    name,
-    displayName,
-    type,
-  } = original as HistoryItem
+  const { image = '', title = 'Title', name, displayName, type } = original as HistoryItem
 
   if (!name) {
     return null
