@@ -77,7 +77,6 @@ export function DataTable<TData>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    debugTable: true,
     onColumnSizingChange: setColumnSizing,
     state: {
       columnOrder,
