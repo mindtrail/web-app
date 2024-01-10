@@ -13,22 +13,26 @@ This is a <a href="https://nextjs.org/">Next.js</a> starter kit that uses <a hre
 
 ## Developing Locally
 
-Check out to the *Dev* branch
 
-You can clone & create this repo with the following command
+Clone the repo
 
 ```bash
 npm i
+# or
+yarn install
 ```
 
 ## Getting Started
 
-First, run the development server:
+First, run the prisma setup, then the server.
+Yarn does it automatically, npn not
 
 ```bash
+npm run prisma:generate
 npm run dev
 # or
 yarn dev
+# if not working run a primsa:generate command before
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
