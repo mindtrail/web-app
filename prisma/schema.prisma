@@ -84,6 +84,9 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  notes         Note[] // Relation to Note, assuming users can create/save notes
+  clipping      Clipping[] // One User can have many Clippings
+
   @@map("Users")
 }
 
@@ -116,7 +119,6 @@ model Collection {
 
   // Many-to-Many relation with DataSource
   collectionDataSource  CollectionDataSource[]
-  collectionNotes       CollectionNote[]
 
   // One-to-Many relation with Filter
   filters Filter[]
@@ -148,8 +150,9 @@ model DataSource {
   collectionDataSource  CollectionDataSource[]
   dataSourceTags        DataSourceTag[]
   dataSourceUsers       DataSourceUser[] // Relation to DataSourceUser for data sources
-  dataSourceClippings   DataSourceClipping[] // Relation to DataSourceUser for data sources
-  dataSourceNotes       DataSourceNote[] // Relation to DataSourceUser for data sources
+
+  clippings             Clipping[] // One DataSource can have many Clippings
+  notes                 Note[] // Relation to DataSourceUser for data sources
 
   config    Json?
   nbChunks  Int? @default(0)
@@ -211,54 +214,40 @@ model DataSourceTag {
 
 model Clipping {
   id                String   @id @default(cuid())
-  content           String
-  externalResources String[] // Assuming PostgreSQL which supports array type
   createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
 
-  dataSources       DataSourceClipping[]
+  authorId          String?
+  author            User? @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  content           String
+  range             Json?
+  type              ClippingType @default(text)
+
+  dataSourceId      String
+  dataSource        DataSource @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+
+  notes             Note[] // Relation to Note, assuming users can create/save notes
 
   @@map("Clippings")
 }
 
-model DataSourceClipping {
-  dataSourceId  String
-  clippingId    String
-
-  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
-  clipping      Clipping   @relation(fields: [clippingId], references: [id])
-
-  @@id([dataSourceId, clippingId])
-}
-
 model Note {
-  id          String   @id @default(cuid())
-  content     String
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  content       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
 
-  dataSourceNotes   DataSourceNote[]
-  collectionNotes   CollectionNote[]
+  clippingId    String?
+  clipping      Clipping?  @relation(fields: [clippingId], references: [id], onDelete: Cascade)
+
+  dataSourceId  String?
+  dataSource    DataSource? @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+
+  authorId      String?
+  author        User? @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("Notes")
-}
-
-model DataSourceNote {
-  dataSourceId  String
-  noteId        String
-
-  dataSource    DataSource @relation(fields: [dataSourceId], references: [id])
-  note          Note       @relation(fields: [noteId], references: [id])
-
-  @@id([dataSourceId, noteId])
-}
-
-model CollectionNote {
-  collectionId String
-  noteId       String
-
-  collection  Collection @relation(fields: [collectionId], references: [id])
-  note        Note       @relation(fields: [noteId], references: [id])
-
-  @@id([collectionId, noteId])
 }
 
 model UserPreferences {
@@ -284,6 +273,7 @@ model Filter {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
   @@map("Filters")
 }
 
@@ -461,5 +451,10 @@ enum ModelName {
   gpt_3_5_turbo_16k
   gpt_4
   gpt_4_32k
+}
+
+enum ClippingType {
+  text
+  file
 }
 

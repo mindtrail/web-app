@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -21,12 +19,7 @@ const TAB_STYLE =
 
 export function LeftSidebar({ className }: SidebarNavProps) {
   return (
-    <nav
-      className={cn(
-        'flex flex-col w-[256px] border-r flex-shrink-0',
-        className,
-      )}
-    >
+    <nav className={cn('flex flex-col w-[256px] border-r flex-shrink-0', className)}>
       <div className='h-14 flex items-center'>
         <Link href='/' className='flex gap-2 w-full px-4 py-2'>
           <Image width={24} height={24} src='/icon-2.png' alt='Mind Trail' />
