@@ -58,11 +58,7 @@ type LoaderProps = {
   quality?: number
 }
 
-export const cloudinaryLoader = ({
-  src,
-  width = 200,
-  quality = 75,
-}: LoaderProps) => {
+export const cloudinaryLoader = ({ src, width = 200, quality = 75 }: LoaderProps) => {
   const cloudinaryBase = 'https://res.cloudinary.com/dea7r24ca/image/fetch/'
   return `${cloudinaryBase}w_${width},q_${quality || 75}/${src}`
 }
@@ -100,12 +96,7 @@ type BuildPath = {
   DSType: DataSourceType
 }
 
-export function buildGCSFilePath({
-  userId,
-  dataSourceId,
-  name,
-  DSType,
-}: BuildPath) {
+export function buildGCSFilePath({ userId, dataSourceId, name, DSType }: BuildPath) {
   if (DSType === DataSourceType.file) {
     return `${userId}/files/${name}/${dataSourceId}`
   }
