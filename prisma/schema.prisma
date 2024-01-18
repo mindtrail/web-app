@@ -221,7 +221,7 @@ model Clipping {
   author            User? @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   content           String
-  range             Json?
+  selector          Json?
   type              ClippingType @default(text)
 
   dataSourceId      String
