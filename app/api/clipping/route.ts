@@ -20,6 +20,7 @@ export async function GET() {
   return NextResponse.json(collectionList)
 }
 
+// TODO: Add authentication
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
@@ -32,8 +33,10 @@ export async function POST(req: Request) {
     })
   }
 
-  const body = (await req.json()) as CreateCollection
-  const { name, description, userId: clientUserId } = body
+  const body = (await req.json()) as SaveClipping
+  const { content, pageData, selector } = body
+
+  console.log('--- Creating Clipping for URL ---> ', pageData.url, content)
 
   // @TODO: add auth
   // if (clientUserId !== userId) {
@@ -43,12 +46,12 @@ export async function POST(req: Request) {
   // }
 
   try {
-    const collection = await createClipping({
-      userId,
-      payload,
-    })
+    // const collection = await createClipping({
+    //   userId,
+    //   payload,
+    // })
 
-    return NextResponse.json(collection)
+    return NextResponse.json(123)
   } catch (error) {
     console.error(error)
     return new Response('Error creating collection', {

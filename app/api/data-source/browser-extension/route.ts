@@ -31,10 +31,12 @@ export async function POST(req: Request) {
 
     console.log('--- Creating DataSources for URL ---> ', url)
 
-    if (await dataSourceExists(url, userId)) {
+    const existingDataSource = await dataSourceExists(url, userId)
+    if (existingDataSource) {
+      console.log('existingDataSource', existingDataSource)
       return NextResponse.json({
         status: 200,
-        message: 'DataSource already exists',
+        message: existingDataSource,
       })
     }
 
@@ -43,7 +45,6 @@ export async function POST(req: Request) {
       html,
       metadata,
     }
-
 
     const chunks = await getChunksFromDoc({ file, DSType })
 

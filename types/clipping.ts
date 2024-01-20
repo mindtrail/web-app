@@ -20,8 +20,8 @@ declare global {
   }
 
   interface SaveClipping {
+    userId: string
     content: string
-    pageData: BrowserExtensionData
     selector: {
       range: ClippingRange
       surroundingText: SurroundingText
