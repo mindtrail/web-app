@@ -9,18 +9,18 @@ export async function getAllClippings(userId: string) {
   return clippings
 }
 
-type CreateClipping = {
-  userId: string
-  content: string
-}
+export async function createClipping(payload: SaveClipping) {
+  console.log('createClipping', payload)
+  const { content, selector, dataSourceId, userId } = payload
 
-export async function createClipping({ userId, content }: CreateClipping) {
-  console.log('createClipping', userId, content)
-  // const newClipping = await prisma.clipping.create({
-  //   data: {
-  //     authorId: userId,
-  //     content: content,
-  //   },
-  // });
-  // return newClipping;
+  const newClipping = await prisma.clipping.create({
+    data: {
+      authorId: userId,
+      content,
+      dataSourceId,
+      selector: JSON.stringify(selector),
+    },
+  })
+
+  return newClipping
 }
