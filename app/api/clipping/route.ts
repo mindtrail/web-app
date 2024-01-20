@@ -33,10 +33,9 @@ export async function POST(req: Request) {
     })
   }
 
-  const body = (await req.json()) as SaveClipping
-  const { content, selector, dataSourceId } = body
+  const payload = (await req.json()) as SaveClipping
 
-  console.log('body', body)
+  console.log('body', payload.selector)
 
   // @TODO: add auth
   // if (clientUserId !== userId) {
@@ -46,12 +45,12 @@ export async function POST(req: Request) {
   // }
 
   try {
-    // const collection = await createClipping({
-    //   userId,
-    //   payload,
-    // })
+    const newClipping = await createClipping({
+      ...payload,
+      userId,
+    })
 
-    return NextResponse.json(123)
+    return NextResponse.json(newClipping)
   } catch (error) {
     console.error(error)
     return new Response('Error creating collection', {

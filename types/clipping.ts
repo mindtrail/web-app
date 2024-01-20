@@ -20,7 +20,7 @@ declare global {
   }
 
   interface SaveClipping {
-    userId?: string
+    userId: string
     dataSourceId: string
     content: string
     selector: {
