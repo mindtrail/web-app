@@ -1,20 +1,26 @@
 import prisma from '@/lib/db/connection'
 
-async function getAllClippings(userId: string) {
+export async function getAllClippings(userId: string) {
   const clippings = await prisma.clipping.findMany({
     where: {
       authorId: userId,
     },
-  });
-  return clippings;
+  })
+  return clippings
 }
 
-async function createClipping(userId: string, content: string) {
-  const newClipping = await prisma.clipping.create({
-    data: {
-      authorId: userId,
-      content: content,
-    },
-  });
-  return newClipping;
+type CreateClipping = {
+  userId: string
+  content: string
+}
+
+export async function createClipping({ userId, content }: CreateClipping) {
+  console.log('createClipping', userId, content)
+  // const newClipping = await prisma.clipping.create({
+  //   data: {
+  //     authorId: userId,
+  //     content: content,
+  //   },
+  // });
+  // return newClipping;
 }

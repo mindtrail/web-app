@@ -25,6 +25,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as BrowserExtensionData
     console.log(1111, body)
+
     const { html, ...metadata } = body
     const { url } = metadata
 

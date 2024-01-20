@@ -2,10 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import {
-  getCollectionListDbOp,
-  createCollectionDbOp,
-} from '@/lib/db/collection'
+import { createClipping, getAllClippings } from '@/lib/db/clipping'
 
 export async function GET() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -18,7 +15,7 @@ export async function GET() {
     })
   }
 
-  const collectionList = await getCollectionListDbOp({ userId })
+  const collectionList = await getAllClippings(userId)
 
   return NextResponse.json(collectionList)
 }
@@ -28,6 +25,7 @@ export async function POST(req: Request) {
 
   const userId = session?.user?.id
 
+  console.log('userId', userId)
   if (!userId) {
     return new Response('Unauthorized', {
       status: 401,
@@ -37,17 +35,17 @@ export async function POST(req: Request) {
   const body = (await req.json()) as CreateCollection
   const { name, description, userId: clientUserId } = body
 
-  if (clientUserId !== userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
-  }
+  // @TODO: add auth
+  // if (clientUserId !== userId) {
+  //   return new Response('Unauthorized', {
+  //     status: 401,
+  //   })
+  // }
 
   try {
-    const collection = await createCollectionDbOp({
+    const collection = await createClipping({
       userId,
-      name,
-      description,
+      payload,
     })
 
     return NextResponse.json(collection)

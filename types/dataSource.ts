@@ -61,6 +61,10 @@ declare global {
     html: string
   }
 
+  type ClippingBrowserPayload = {
+
+  }
+
   interface HTMLFile {
     name: string
     html: string
