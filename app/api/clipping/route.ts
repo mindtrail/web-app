@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { createClipping, getAllClippings } from '@/lib/db/clipping'
+import { createClipping, getClippingList } from '@/lib/db/clipping'
 
 export async function GET() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -15,9 +15,9 @@ export async function GET() {
     })
   }
 
-  const collectionList = await getAllClippings(userId)
+  const clippingList = await getClippingList(userId)
 
-  return NextResponse.json(collectionList)
+  return NextResponse.json(clippingList)
 }
 
 // TODO: Add authentication

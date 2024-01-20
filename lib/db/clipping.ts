@@ -1,9 +1,17 @@
 import prisma from '@/lib/db/connection'
 
-export async function getAllClippings(userId: string) {
+export async function getClippingList(userId: string) {
   const clippings = await prisma.clipping.findMany({
     where: {
       authorId: userId,
+    },
+    include: {
+      dataSource: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   })
   return clippings
