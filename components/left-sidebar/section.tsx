@@ -28,14 +28,9 @@ interface SectionProps {
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
 const NESTED_ITEM_STYLE = cn(SIDEBAR_BUTTON, 'pl-8')
 const ACTIVE_SIDEBAR_BUTTON = 'text-primary font-semibold hover:text-primary'
-const TRIGGER_HEADER_STYLE =
-  'flex flex-1 justify-between px-4 gap-2 cursor-pointer'
+const TRIGGER_HEADER_STYLE = 'flex flex-1 justify-between px-4 gap-2 cursor-pointer'
 
-export function Section({
-  title,
-  items,
-  iconOverride: Icon = FileIcon,
-}: SectionProps) {
+export function Section({ title, items, iconOverride: Icon = FileIcon }: SectionProps) {
   const [sectionIsOpen, setSectionIsOpen] = useState(true)
   const pathname = usePathname()
 
@@ -49,10 +44,7 @@ export function Section({
         <Link
           key={index + name}
           href={url}
-          className={cn(
-            NESTED_ITEM_STYLE,
-            pathname === url && ACTIVE_SIDEBAR_BUTTON,
-          )}
+          className={cn(NESTED_ITEM_STYLE, pathname === url && ACTIVE_SIDEBAR_BUTTON)}
         >
           <Icon />
           {name}
@@ -78,17 +70,12 @@ export function Section({
               {sectionIsOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
               {title}
             </Button>
-            <Button
-              variant='sidebar'
-              className='hover:bg-slate-200 -mr-4 shrink-0'
-            >
+            <Button variant='sidebar' className='hover:bg-slate-200 -mr-4 shrink-0'>
               <PlusIcon />
             </Button>
           </div>
         </AccordionTrigger>
-        <AccordionContent className='flex flex-col pb-0'>
-          {renderItems}
-        </AccordionContent>
+        <AccordionContent className='flex flex-col pb-0'>{renderItems}</AccordionContent>
       </AccordionItem>
     </Accordion>
   )
