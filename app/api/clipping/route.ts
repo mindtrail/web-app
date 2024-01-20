@@ -34,9 +34,9 @@ export async function POST(req: Request) {
   }
 
   const body = (await req.json()) as SaveClipping
-  const { content, pageData, selector } = body
+  const { content, selector, dataSourceId } = body
 
-  console.log('--- Creating Clipping for URL ---> ', pageData.url, content)
+  console.log('body', body)
 
   // @TODO: add auth
   // if (clientUserId !== userId) {

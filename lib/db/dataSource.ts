@@ -72,7 +72,7 @@ export const getDataSourceById = async (dataSourceId: string) => {
   return dataSource
 }
 
-export const dataSourceExists = async (name: string, userId: string) => {
+export const checkDataSourceExists = async (name: string, userId: string) => {
   // check if datasource exists for the logged in user
   const dataSource = await prisma.dataSource.findFirst({
     where: {

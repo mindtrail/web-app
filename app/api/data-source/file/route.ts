@@ -23,10 +23,7 @@ export async function POST(req: Request) {
     })
   }
 
-  if (
-    !req ||
-    !req.headers.get('content-type')?.startsWith('multipart/form-data')
-  ) {
+  if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
     return new Response('Bad Request', {
       status: 400,
     })
@@ -72,18 +69,20 @@ type ProcessFileUpload = {
 }
 
 async function processFileUpload({ file, userId, chunks }: ProcessFileUpload) {
-  const docs = await createDataSourceAndVectors({
+  const createDSResponse = await createDataSourceAndVectors({
     file,
     userId,
     chunks,
     DSType,
   })
 
-  if (!docs?.length) {
+  const { docs, dataSource } = createDSResponse || {}
+
+  if (!dataSource || !docs?.length) {
     return null
   }
 
-  // We get the dataSourceId from the first doc(chunk)
+  // @TODO: modify this... We get the dataSourceId from the first doc(chunk)
   const { dataSourceId, ...metadata } = docs[0]?.metadata
 
   // console.log('File metadata:: ', metadata)

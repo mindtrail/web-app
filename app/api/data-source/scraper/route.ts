@@ -46,18 +46,18 @@ export async function POST(req: Request) {
           return null
         }
 
-        return await createDataSourceAndVectors({
+        const createDSResponse = await createDataSourceAndVectors({
           file,
           userId,
           chunks,
           DSType,
         })
+
+        return createDSResponse?.docs
       }),
     )
 
-    const filteredDocs = docs
-      ?.flat()
-      ?.filter((doc) => doc !== null) as Document[]
+    const filteredDocs = docs?.flat()?.filter((doc) => doc !== null) as Document[]
 
     if (!filteredDocs?.length) {
       return new NextResponse('No docs', {
