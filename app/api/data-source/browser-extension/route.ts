@@ -4,7 +4,7 @@ import { DataSourceType } from '@prisma/client'
 
 import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { authOptions } from '@/lib/authOptions'
-import { dataSourceExists } from '@/lib/db/dataSource'
+import { checkDataSourceExists } from '@/lib/db/dataSource'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { uploadToGCS } from '@/lib/cloudStorage'
 
@@ -31,12 +31,12 @@ export async function POST(req: Request) {
 
     console.log('--- Creating DataSources for URL ---> ', url)
 
-    const existingDataSource = await dataSourceExists(url, userId)
+    const existingDataSource = await checkDataSourceExists(url, userId)
     if (existingDataSource) {
-      console.log('existingDataSource', existingDataSource)
+      // console.log('ExistingDataSource::: ', existingDataSource)
       return NextResponse.json({
-        status: 200,
-        message: existingDataSource,
+        result: 'DataSource already exists',
+        dataSource: existingDataSource,
       })
     }
 
@@ -54,14 +54,15 @@ export async function POST(req: Request) {
       })
     }
 
-    const docs = await createDataSourceAndVectors({
+    const createDSResponse = await createDataSourceAndVectors({
       file,
       userId,
       chunks,
       DSType,
     })
 
-    if (!docs?.length) {
+    const { docs, dataSource } = createDSResponse || {}
+    if (!dataSource || !docs?.length) {
       return new NextResponse('No docs', {
         status: 400,
       })
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       result: `DataSource & ${docs.length} vectors Created`,
+      dataSource,
     })
   } catch (err) {
     console.error('Browser Extension Error::', err)
