@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     })
   }
 
-  const payload = (await req.json()) as SaveClipping
+  const payload = (await req.json()) as SavedClipping
 
   console.log('body', payload.selector)
 

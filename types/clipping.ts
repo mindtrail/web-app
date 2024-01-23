@@ -19,7 +19,7 @@ declare global {
     end: number
   }
 
-  interface SaveClipping {
+  interface SavedClipping {
     userId: string
     dataSourceId: string
     content: string
