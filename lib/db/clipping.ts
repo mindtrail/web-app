@@ -17,7 +17,7 @@ export async function getClippingList(userId: string) {
   return clippings
 }
 
-export async function createClipping(payload: SaveClipping) {
+export async function createClipping(payload: SavedClipping) {
   const { content, selector, dataSourceId, userId } = payload
 
   const newClipping = await prisma.clipping.create({
