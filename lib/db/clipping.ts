@@ -31,3 +31,14 @@ export async function createClipping(payload: SavedClipping) {
 
   return newClipping
 }
+
+export async function deleteClipping(userId: string, clippingId: string) {
+  const deletedClipping = await prisma.clipping.delete({
+    where: {
+      authorId: userId,
+      id: clippingId,
+    },
+  })
+
+  return deletedClipping
+}
