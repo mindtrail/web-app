@@ -16,6 +16,7 @@ import {
   IconIdea,
   IconTag,
 } from '../ui/icons/next-icons'
+import { SELECTED_ITEM } from '@/lib/constants'
 
 const mockCollections = [
   { name: 'Collection 1', url: '/' },
@@ -42,13 +43,6 @@ type SidebarFoldersProps = {
   loading: boolean
   filters: any
   setSelected: (value: any) => void
-}
-
-const SELECTED_ITEM = {
-  FILTERS: 0,
-  COLLECTIONS: 1,
-  TAGS: 2,
-  HIGHLIHTS: 3,
 }
 
 // @ts-ignore

@@ -9,6 +9,7 @@ import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 import { getFiltersByUserId } from '@/lib/serverActions/filter'
 import { SecondSidebar } from './second-sidebar'
 import LeftSidebarFooter from './left-sidebar-footer'
+import { SELECTED_ITEM } from '@/lib/constants'
 
 type SidebarNavProps = {
   className?: string
@@ -16,11 +17,6 @@ type SidebarNavProps = {
 }
 
 const BRAND_NAME = 'Mind Trail'
-
-const SELECTED_ITEM = {
-  FILTERS: 0,
-  COLLECTIONS: 1,
-}
 
 export function LeftSidebar({ className, user }: SidebarNavProps) {
   const [openSecondSidebar, setOpenSecondSidebar] = useState(false)

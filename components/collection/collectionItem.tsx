@@ -29,8 +29,6 @@ export function CollectionListItem(props: itemProps) {
   const { collection } = props
   const { id, name, description, dataSources } = collection
 
-  console.log(JSON.stringify(collection.dataSources))
-
   const handleEdit = () => {}
 
   const handleDelete = () => {}
