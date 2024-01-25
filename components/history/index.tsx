@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { MouseEvent, useCallback, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useMemo, useState } from 'react'
 
-import { deleteDataSource } from "@/lib/serverActions/history";
-import { useDrop } from "react-dnd";
-import { DataSourceType, UserPreferences } from "@prisma/client";
+import { deleteDataSource } from '@/lib/serverActions/history'
+import { useDrop } from 'react-dnd'
+import { DataSourceType, UserPreferences } from '@prisma/client'
 
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -16,20 +16,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog'
 
-import { SearchBasic } from "@/components/search/basic";
-import { DataTable } from "@/components/history/table";
+import { SearchBasic } from '@/components/search/basic'
+import { DataTable } from '@/components/history/table'
 
-import { getURLPathname } from "@/lib/utils";
-import { updateUserPreferences } from "@/lib/db/preferences";
+import { getURLPathname } from '@/lib/utils'
+import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
-  historyMetadata: { name: string; parent: string; parentLink: string };
-  userId: string;
-  historyItems: HistoryItem[];
-  userPreferences?: UserPreferences;
-};
+  historyMetadata: { name: string; parent: string; parentLink: string }
+  userId: string
+  historyItems: HistoryItem[]
+  userPreferences?: UserPreferences
+}
 
 export function HistoryComponent({
   historyMetadata,
@@ -38,75 +38,73 @@ export function HistoryComponent({
   userPreferences,
 }: HistoryComponentProps) {
   const [filteredItems, setFilteredItems] =
-    useState<HistoryItem[]>(historyItems);
+    useState<HistoryItem[]>(historyItems)
 
-  const [filters, setFilters] = useState<HistoryFilter[]>();
-  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(
-    null
-  );
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [processing, setProcessing] = useState(false);
+  const [filters, setFilters] = useState<HistoryFilter[]>()
+  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [processing, setProcessing] = useState(false)
 
-  const [, dropRef] = useDrop({ accept: "column" });
-  const { toast } = useToast();
+  const [, dropRef] = useDrop({ accept: 'column' })
+  const { toast } = useToast()
 
   const handlePreferenceUpdate = useCallback(
     (newTablePrefs: UserTablePrefs) => {
       if (!newTablePrefs) {
-        return;
+        return
       }
 
-      updateUserPreferences(userId, newTablePrefs);
+      updateUserPreferences(userId, newTablePrefs)
     },
     [userId]
-  );
+  )
 
   const handleHistoryDelete = useCallback((itemsToDelete: HistoryItem[]) => {
     if (!itemsToDelete?.length) {
-      return;
+      return
     }
 
-    setItemsToDelete(itemsToDelete);
-    setDeleteDialogOpen(true);
-  }, []);
+    setItemsToDelete(itemsToDelete)
+    setDeleteDialogOpen(true)
+  }, [])
 
   const confirmHistoryDelete = useCallback(async () => {
     if (!itemsToDelete?.length) {
-      return;
+      return
     }
 
     const deletedItems = itemsToDelete
-      .map(({ displayName = "" }) => displayName)
-      .join(", ");
+      .map(({ displayName = '' }) => displayName)
+      .join(', ')
 
-    const dataSourceIdList = itemsToDelete.map(({ id }) => id);
+    const dataSourceIdList = itemsToDelete.map(({ id }) => id)
 
     try {
-      await deleteDataSource({ dataSourceIdList });
+      await deleteDataSource({ dataSourceIdList })
       toast({
-        title: "Delete History Entry",
+        title: 'Delete History Entry',
         description: `${deletedItems} has been deleted`,
-      });
+      })
 
-      setDeleteDialogOpen(false);
-      setItemsToDelete(null);
+      setDeleteDialogOpen(false)
+      setItemsToDelete(null)
     } catch (err) {
       toast({
-        title: "Error",
-        variant: "destructive",
+        title: 'Error',
+        variant: 'destructive',
         description: `Something went wrong while deleting ${deletedItems}`,
-      });
-      console.log(err);
+      })
+      console.log(err)
 
-      setDeleteDialogOpen(false);
-      setItemsToDelete(null);
+      setDeleteDialogOpen(false)
+      setItemsToDelete(null)
     }
-  }, [itemsToDelete, toast]);
+  }, [itemsToDelete, toast])
 
   const deleteItemsList = useMemo(
     () =>
       itemsToDelete?.length &&
-      itemsToDelete.map(({ displayName = "", name, type }, index) => (
+      itemsToDelete.map(({ displayName = '', name, type }, index) => (
         <li
           key={index}
           className="max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis"
@@ -117,49 +115,49 @@ export function HistoryComponent({
         </li>
       )),
     [itemsToDelete]
-  );
+  )
 
   const handleSearch = useCallback(
     async (searchQuery: string) => {
       if (!searchQuery.trim()) {
-        setFilteredItems(historyItems);
-        return;
+        setFilteredItems(historyItems)
+        return
       }
-      setProcessing(true);
+      setProcessing(true)
 
-      const result = await fetch("/api/history", {
-        method: "POST",
+      const result = await fetch('/api/history', {
+        method: 'POST',
         body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-      });
+      })
 
-      const dataSourceList = await result.json();
-      setFilteredItems(dataSourceList);
+      const dataSourceList = await result.json()
+      setFilteredItems(dataSourceList)
 
-      setProcessing(false);
+      setProcessing(false)
     },
     [userId, historyItems]
-  );
+  )
 
   const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-    const newTag = event.currentTarget.dataset.value || "";
+    event.preventDefault()
+    const newTag = event.currentTarget.dataset.value || ''
 
     setFilters((prevFilters = []) => {
       const newFilters = prevFilters.filter(
         (prevTag) => prevTag.value !== newTag
-      );
+      )
 
       // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
       if (newFilters.length === prevFilters.length) {
-        newFilters.push({ value: newTag, label: newTag });
+        newFilters.push({ value: newTag, label: newTag })
       }
 
-      return newFilters;
-    });
-  }, []);
+      return newFilters
+    })
+  }, [])
 
   return (
     <div
@@ -199,5 +197,5 @@ export function HistoryComponent({
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { Typography } from "@/components/typography";
-import Link from "next/link";
+import { Typography } from '@/components/typography'
+import Link from 'next/link'
 
 // @ts-ignore
 export function HistoryBreadcrumbs({ historyMetadata }) {
@@ -8,9 +8,7 @@ export function HistoryBreadcrumbs({ historyMetadata }) {
       {historyMetadata.parent && (
         <div className="flex items-center">
           <div className="flex items-center">
-            <Link
-              href={historyMetadata.parentLink || "/"}
-            >
+            <Link href={historyMetadata.parentLink || '/'}>
               <Typography variant="p">{historyMetadata.parent}</Typography>
             </Link>
           </div>
@@ -35,5 +33,5 @@ export function HistoryBreadcrumbs({ historyMetadata }) {
       )}
       <Typography variant="h5">{historyMetadata.name}</Typography>
     </div>
-  );
+  )
 }
