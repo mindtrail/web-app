@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { Fragment, KeyboardEvent, useEffect, useState } from "react";
-import Link from "next/link";
-import { Separator } from "@radix-ui/react-separator";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Fragment, KeyboardEvent, useEffect, useState } from 'react'
+import Link from 'next/link'
+import { Separator } from '@radix-ui/react-separator'
+import { cn } from '@/lib/utils'
+import { Input } from '@/components/ui/input'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   createCollection,
   deleteCollection,
   updateCollection,
-} from "@/lib/serverActions/collection";
+} from '@/lib/serverActions/collection'
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 
 import {
   IconCancel,
@@ -27,21 +27,21 @@ import {
   IconFolder,
   IconFolderOpen,
   IconSearch,
-} from "../ui/icons/next-icons";
-import { ScrollArea } from "../ui/scroll-area";
+} from '../ui/icons/next-icons'
+import { ScrollArea } from '../ui/scroll-area'
 
 type SecondSidebarProps = {
-  title: string;
-  items: SidebarItem[];
-  setItems: (items: SidebarItem[]) => void;
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  pathname: string;
-};
+  title: string
+  items: SidebarItem[]
+  setItems: (items: SidebarItem[]) => void
+  open: boolean
+  setOpen: (open: boolean) => void
+  pathname: string
+}
 
-const SIDEBAR_BUTTON = cn(buttonVariants({ variant: "sidebar" }));
-const NESTED_ITEM_STYLE = cn(SIDEBAR_BUTTON, "pl-2");
-const ACTIVE_SIDEBAR_BUTTON = "text-gray font-semibold hover:text-gray ";
+const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
+const NESTED_ITEM_STYLE = cn(SIDEBAR_BUTTON, 'pl-2')
+const ACTIVE_SIDEBAR_BUTTON = 'text-gray font-semibold hover:text-gray '
 
 export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   title,
@@ -51,104 +51,104 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   setOpen,
   pathname,
 }) => {
-  const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items);
-  const [searchValue, setSearchValue] = useState("");
+  const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items)
+  const [searchValue, setSearchValue] = useState('')
 
-  const [showNewItem, setShowNewItem] = useState(false);
-  const [nameNewItem, setNameNewItem] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [showNewItem, setShowNewItem] = useState(false)
+  const [nameNewItem, setNameNewItem] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
+  const [hoveredItemId, setHoveredItemId] = useState<string | null>(null)
   const [showMenuForItemId, setShowMenuForItemId] = useState<string | null>(
     null
-  );
+  )
 
   // Inside SecondSidebar component
-  const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({});
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const onUpdateFolderName = async (id: string, newName: string) => {
-    setLoading(true);
+    setLoading(true)
     try {
       await updateCollection({
         collectionId: id,
         name: newName,
-        description: "",
-      });
+        description: '',
+      })
 
       const elements = items.map((element) => {
         if (element.id === id) {
           return {
             ...element,
             name: newName,
-          };
+          }
         }
-        return element;
-      });
-      setFilteredItems(elements);
-      setItems(elements);
+        return element
+      })
+      setFilteredItems(elements)
+      setItems(elements)
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
       // Implement your update logic here
-      setIsEditing({ ...isEditing, [id]: false });
+      setIsEditing({ ...isEditing, [id]: false })
     }
-  };
+  }
 
   const onDuplicate = (id: string) => {
     // Implement your duplication logic here
-  };
+  }
 
   const onDelete = async (id: string) => {
-    setLoading(true);
+    setLoading(true)
     try {
       await deleteCollection({
         collectionId: id,
-      });
+      })
 
-      const elements = items.filter((element) => element.id !== id);
-      setFilteredItems(elements);
-      setItems(elements);
+      const elements = items.filter((element) => element.id !== id)
+      setFilteredItems(elements)
+      setItems(elements)
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error)
     } finally {
-      setLoading(false);
-      setConfirmDelete(null);
+      setLoading(false)
+      setConfirmDelete(null)
     }
-  };
+  }
 
   useEffect(() => {
-    setFilteredItems(items);
-  }, [items]);
+    setFilteredItems(items)
+  }, [items])
 
   const onFilterItems = (value) => {
     const searchitems = items.filter((item: any) => {
-      return item.name.toLowerCase().includes(value.toLowerCase());
-    });
-    setFilteredItems(searchitems);
-  };
+      return item.name.toLowerCase().includes(value.toLowerCase())
+    })
+    setFilteredItems(searchitems)
+  }
 
   const handleKeyDown = (
     event: KeyboardEvent<HTMLInputElement>,
     fn: Function
   ) => {
-    if (event.key === "Enter") {
-      fn();
+    if (event.key === 'Enter') {
+      fn()
     }
-  };
+  }
 
   const onSaveNewItem = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await createCollection({
         name: nameNewItem,
-        userId: "",
-        description: "",
-      });
+        userId: '',
+        description: '',
+      })
 
-      if ("id" in response && "name" in response && "description" in response) {
-        const item: SidebarItem = response;
+      if ('id' in response && 'name' in response && 'description' in response) {
+        const item: SidebarItem = response
         const elements = [
           {
             id: item.id,
@@ -157,29 +157,29 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
             url: `/collection/${item.id}`,
           },
           ...items,
-        ];
-        setFilteredItems(elements);
-        setItems(elements);
+        ]
+        setFilteredItems(elements)
+        setItems(elements)
       } else {
         // Handle error case
-        const error = response;
-        console.error("Error creating item:", error);
+        const error = response
+        console.error('Error creating item:', error)
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error)
     } finally {
-      setLoading(false);
-      setNameNewItem("");
-      setShowNewItem(false);
+      setLoading(false)
+      setNameNewItem('')
+      setShowNewItem(false)
     }
-  };
+  }
 
   return (
     <div
       className={`absolute bg-white top-14 flex flex-col flex-shrink-0 overflow-hidden z-10 transition-all duration-3  ease-in-out left-14 ${
-        open ? "w-[200px] border-l  border-r " : "w-[0px]"
+        open ? 'w-[200px] border-l  border-r ' : 'w-[0px]'
       }`}
-      style={{ height: "calc(100vh - 3.5rem)" }}
+      style={{ height: 'calc(100vh - 3.5rem)' }}
     >
       <nav className={`flex flex-col w-full border-r flex-shrink-0 `}>
         <div className="pr-4 pl-2 py-2 border-b flex justify-between items-center">
@@ -202,14 +202,14 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
             className="flex-1 bg-white border-[1px] ml-4 mr-2 disabled:bg-gray-100 disabled:text-gray-400 px-2"
             value={searchValue}
             onChange={(e) => {
-              setSearchValue(e.target.value);
-              onFilterItems(e.target.value);
+              setSearchValue(e.target.value)
+              onFilterItems(e.target.value)
             }}
             placeholder="Search"
           />
           <button
             onClick={() => {
-              onFilterItems(searchValue);
+              onFilterItems(searchValue)
             }}
             className="mr-4"
           >
@@ -230,8 +230,8 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
             />
             <button
               onClick={() => {
-                setShowNewItem(false);
-                setNameNewItem("");
+                setShowNewItem(false)
+                setNameNewItem('')
               }}
               className=""
             >
@@ -274,15 +274,15 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                       className="mt-1 block w-full appearance-none rounded-md px-3 py-2 placeholder-gray-400 shadow-sm border focus:border-black focus:outline-none focus:ring-black sm:text-sm"
                       defaultValue={name}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          onUpdateFolderName(id, e.target.value);
+                        if (e.key === 'Enter') {
+                          onUpdateFolderName(id, e.target.value)
                         }
                       }}
                       autoFocus
                     />
                     <button
                       onClick={() => {
-                        setIsEditing({ ...isEditing, [id]: false });
+                        setIsEditing({ ...isEditing, [id]: false })
                       }}
                     >
                       <IconCancel />
@@ -292,22 +292,22 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                   <div
                     key={index}
                     className={cn(
-                      pathname === url && "bg-gray-100 rounded-sm	",
-                      "p-2 flex justify-between items-center hover:bg-gray-100 rounded-sm "
+                      pathname === url && 'bg-gray-100 rounded-sm	',
+                      'p-2 flex justify-between items-center hover:bg-gray-100 rounded-sm '
                     )}
                     onMouseEnter={() => setHoveredItemId(id)}
                     onMouseLeave={() => setHoveredItemId(null)}
                   >
                     <Link
-                      href={url || ""}
+                      href={url || ''}
                       className={cn(
                         NESTED_ITEM_STYLE,
                         pathname === url && ACTIVE_SIDEBAR_BUTTON,
-                        "flex items-center gap-2 flex-grow w-[50px] "
+                        'flex items-center gap-2 flex-grow w-[50px] '
                       )}
                     >
                       {pathname === url ? <IconFolderOpen /> : <IconFolder />}
-                      <span className="truncate flex-grow">{name}</span>{" "}
+                      <span className="truncate flex-grow">{name}</span>{' '}
                       {/* Apply truncate and flex-grow */}
                     </Link>
                     <div className="flex-shrink-0">
@@ -320,19 +320,19 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                             <div className="absolute right-0 mt-1 bg-white border rounded shadow z-10">
                               <button
                                 onClick={() => {
-                                  let isEditingArray = { ...isEditing };
+                                  let isEditingArray = { ...isEditing }
                                   Object.keys(isEditing).forEach((id) => {
                                     if (isEditing[id]) {
                                       isEditingArray = {
                                         ...isEditingArray,
                                         [id]: false,
-                                      };
+                                      }
                                     }
-                                  });
+                                  })
                                   setIsEditing({
                                     ...isEditingArray,
                                     [id]: true,
-                                  });
+                                  })
                                 }}
                                 className="w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                               >
@@ -385,11 +385,11 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
         )}
       </nav>
     </div>
-  );
-};
+  )
+}
 
 const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <div className="relative inline-block text-left">
@@ -410,8 +410,8 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
           >
             <Button
               onClick={() => {
-                setShowNewItem(true);
-                setIsOpen(!isOpen);
+                setShowNewItem(true)
+                setIsOpen(!isOpen)
               }}
               className="block border-b w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
@@ -421,7 +421,7 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
             </Button>
             <Button
               onClick={() => {
-                setIsOpen(!isOpen);
+                setIsOpen(!isOpen)
               }}
               className="block w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
@@ -433,5 +433,5 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}

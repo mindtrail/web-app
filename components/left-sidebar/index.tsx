@@ -1,63 +1,63 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import FolderItems from "@/components/left-sidebar/folders";
-import { usePathname } from "next/navigation";
-import { getCollectionsByUserId } from "@/lib/serverActions/collection";
-import { getFiltersByUserId } from "@/lib/serverActions/filter";
-import { SecondSidebar } from "./second-sidebar";
-import LeftSidebarFooter from "./left-sidebar-footer";
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import FolderItems from '@/components/left-sidebar/folders'
+import { usePathname } from 'next/navigation'
+import { getCollectionsByUserId } from '@/lib/serverActions/collection'
+import { getFiltersByUserId } from '@/lib/serverActions/filter'
+import { SecondSidebar } from './second-sidebar'
+import LeftSidebarFooter from './left-sidebar-footer'
 
 type SidebarNavProps = {
-  className?: string;
-  user: any;
-};
+  className?: string
+  user: any
+}
 
-const BRAND_NAME = "Mind Trail";
+const BRAND_NAME = 'Mind Trail'
 
 const SELECTED_ITEM = {
   FILTERS: 0,
   COLLECTIONS: 1,
-};
+}
 
 export function LeftSidebar({ className, user }: SidebarNavProps) {
-  const [openSecondSidebar, setOpenSecondSidebar] = useState(false);
-  const [title, setTitle] = useState("");
-  const pathname = usePathname();
-  const [loading, setLoading] = useState(false);
+  const [openSecondSidebar, setOpenSecondSidebar] = useState(false)
+  const [title, setTitle] = useState('')
+  const pathname = usePathname()
+  const [loading, setLoading] = useState(false)
 
-  const [collections, setCollections] = useState<SidebarItem[]>([]);
-  const [filters, setFilters] = useState<SidebarItem[]>([]);
+  const [collections, setCollections] = useState<SidebarItem[]>([])
+  const [filters, setFilters] = useState<SidebarItem[]>([])
 
-  const [selected, setSelected] = useState(undefined);
+  const [selected, setSelected] = useState(undefined)
 
   useEffect(() => {
-    getCollectionsData();
-    getFiltersData();
+    getCollectionsData()
+    getFiltersData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   const getFiltersData = async () => {
-    setLoading(true);
-    const items = await getFiltersByUserId();
+    setLoading(true)
+    const items = await getFiltersByUserId()
     if (Array.isArray(items)) {
       const filterItems = items?.map((item) => {
         return {
           id: item.id,
           name: item.name,
           criteria: item.criteria,
-        };
-      });
-      setFilters(filterItems);
+        }
+      })
+      setFilters(filterItems)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const getCollectionsData = async () => {
-    setLoading(true);
-    const items = await getCollectionsByUserId();
+    setLoading(true)
+    const items = await getCollectionsByUserId()
     if (Array.isArray(items)) {
       const collectionItems = items?.map((item) => {
         return {
@@ -65,12 +65,12 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
           name: item.name,
           description: item.description,
           url: `/collection/${item.id}`,
-        };
-      });
-      setCollections(collectionItems);
+        }
+      })
+      setCollections(collectionItems)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   return (
     <div className="min-h-screen flex relative">
@@ -104,7 +104,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
             />
           </div>
           <div className="p-4 border-t border-gray-200">
-            <LeftSidebarFooter user={user}/>
+            <LeftSidebarFooter user={user} />
           </div>
         </nav>
         <SecondSidebar
@@ -119,5 +119,5 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
         />
       </div>
     </div>
-  );
+  )
 }

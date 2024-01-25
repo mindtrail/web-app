@@ -37,7 +37,7 @@ export function Section({
   items,
   iconOverride: Icon = FileIcon,
   // @ts-ignore
-  openSecondSidebar
+  openSecondSidebar,
 }: SectionProps) {
   const [sectionIsOpen, setSectionIsOpen] = useState(true)
   const pathname = usePathname()
@@ -54,7 +54,7 @@ export function Section({
           href={url}
           className={cn(
             NESTED_ITEM_STYLE,
-            pathname === url && ACTIVE_SIDEBAR_BUTTON,
+            pathname === url && ACTIVE_SIDEBAR_BUTTON
           )}
         >
           <Icon />
@@ -66,34 +66,33 @@ export function Section({
 
   return (
     <Accordion
-      type='single'
+      type="single"
       collapsible
       defaultValue={'filters'}
       onValueChange={onToggleSection}
     >
-      <AccordionItem value='filters' className='border-none'>
-        <AccordionTrigger asChild className='py-1'>
+      <AccordionItem value="filters" className="border-none">
+        <AccordionTrigger asChild className="py-1">
           <div className={TRIGGER_HEADER_STYLE}>
             <Button
-              variant='sidebarSection'
-              className='whitespace-nowrap overflow-hidden text-ellipsis'
+              variant="sidebarSection"
+              className="whitespace-nowrap overflow-hidden text-ellipsis"
             >
               {sectionIsOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
               {title}
             </Button>
             <Button
-              variant='sidebar'
-              className='hover:bg-slate-200 -mr-4 shrink-0'
+              variant="sidebar"
+              className="hover:bg-slate-200 -mr-4 shrink-0"
               onClick={(e) => {
                 e.preventDefault()
-                
               }}
             >
               <PlusIcon />
             </Button>
           </div>
         </AccordionTrigger>
-        <AccordionContent className='flex flex-col pb-0'>
+        <AccordionContent className="flex flex-col pb-0">
           {renderItems}
         </AccordionContent>
       </AccordionItem>

@@ -3,33 +3,33 @@ import {
   CollectionDataSource,
   DataSource,
   DataSourceStatus,
-} from "@prisma/client";
+} from '@prisma/client'
 
 declare global {
   type CollectionItem = {
-    collectionId: string;
-    name: string;
-    description: string | null;
-  };
+    collectionId: string
+    name: string
+    description: string | null
+  }
 
   type CollectionExtended = Collection & {
-    dataSources?: DataSource[];
-  };
+    dataSources?: DataSource[]
+  }
 
   type CollectionData = {
-    id: string | undefined;
-    name: string | undefined;
-    description: string | null | undefined;
-    dataSources: DataSource[];
-  };
-  
+    id: string | undefined
+    name: string | undefined
+    description: string | null | undefined
+    dataSources: DataSource[]
+  }
+
   type CreateCollection = {
-    userId: string;
-    name: string;
-    description: string;
-  };
+    userId: string
+    name: string
+    description: string
+  }
 
   type UpdateCollection = Partial<CreateCollection> & {
-    collectionId: string;
-  };
+    collectionId: string
+  }
 }
