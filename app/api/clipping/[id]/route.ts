@@ -13,10 +13,9 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
   const clippingId = params.id
 
   if (!userId) {
-    return new NextResponse('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
+
   try {
     const deletedClipping = await deleteClipping(userId, clippingId)
     return NextResponse.json({ deletedClipping })

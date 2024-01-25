@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { DataSourceType } from '@prisma/client'
 
@@ -9,22 +9,18 @@ import { createDataSourceAndVectors } from '@/lib/loaders'
 import { uploadToGCS } from '@/lib/cloudStorage'
 
 const DSType = DataSourceType.web_page
-// Function that processes the data received from the Browser Extension
-// TODO: Add authentication
-export async function POST(req: Request) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
 
+// Function that processes the data received from the Browser Extension
+export async function POST(req: NextRequest) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   try {
     const body = (await req.json()) as BrowserExtensionData
-    console.log(1111, body)
 
     const { html, ...metadata } = body
     const { url } = metadata
@@ -33,7 +29,6 @@ export async function POST(req: Request) {
 
     const existingDataSource = await checkDataSourceExists(url, userId)
     if (existingDataSource) {
-      // console.log('ExistingDataSource::: ', existingDataSource)
       return NextResponse.json({
         result: 'DataSource already exists',
         dataSource: existingDataSource,
