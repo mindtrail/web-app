@@ -1,43 +1,43 @@
-"use client";
-import { useMemo } from "react";
+'use client'
+import { useMemo } from 'react'
 
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { DataSourceStatus } from "@prisma/client";
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { DataSourceStatus } from '@prisma/client'
 
-import { Typography } from "@/components/typography";
-import { StatusIcon } from "@/components/collection/statusIcon";
-import { Button } from "@/components/ui/button";
+import { Typography } from '@/components/typography'
+import { StatusIcon } from '@/components/collection/statusIcon'
+import { Button } from '@/components/ui/button'
 
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip'
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 
 type itemProps = {
-  collection: CollectionExtended;
-};
+  collection: CollectionExtended
+}
 
 export function CollectionListItem(props: itemProps) {
-  const { collection } = props;
-  const { id, name, description, dataSources } = collection;
+  const { collection } = props
+  const { id, name, description, dataSources } = collection
 
   console.log(JSON.stringify(collection.dataSources))
 
-  const handleEdit = () => {};
+  const handleEdit = () => {}
 
-  const handleDelete = () => {};
+  const handleDelete = () => {}
 
   const handleClick = (id: string) => {
-    console.log(id);
-  };
+    console.log(id)
+  }
 
   return (
     <div
@@ -62,7 +62,7 @@ export function CollectionListItem(props: itemProps) {
                   </TooltipTrigger>
                   <TooltipContent
                     className={
-                      status !== DataSourceStatus.synched ? "bg-gray-500" : ""
+                      status !== DataSourceStatus.synched ? 'bg-gray-500' : ''
                     }
                   >
                     <p className="flex flex-col gap-2">
@@ -110,5 +110,5 @@ export function CollectionListItem(props: itemProps) {
         </DropdownMenu>
       </div>
     </div>
-  );
+  )
 }

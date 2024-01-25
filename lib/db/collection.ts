@@ -1,11 +1,11 @@
-import prisma from "@/lib/db/connection";
-import { getDataSourceListByIds } from "./dataSource";
-import { CollectionDataSource, Collection, DataSource } from "@prisma/client";
+import prisma from '@/lib/db/connection'
+import { getDataSourceListByIds } from './dataSource'
+import { CollectionDataSource, Collection, DataSource } from '@prisma/client'
 
 type CollectionListProps = {
-  userId: string | undefined;
-  includeDataSource?: boolean;
-};
+  userId: string | undefined
+  includeDataSource?: boolean
+}
 
 export const getCollectionListDbOp = async ({
   userId,
@@ -18,22 +18,22 @@ export const getCollectionListDbOp = async ({
       // @TODO: retrieve dataSources from the DB
       collectionDataSource: includeDataSource,
     },
-  });
+  })
 
-  return collectionList;
-};
+  return collectionList
+}
 
 type GetCollectionProps = {
-  userId: string;
-  collectionId: string;
-  includeDataSource?: boolean;
-};
+  userId: string
+  collectionId: string
+  includeDataSource?: boolean
+}
 
 type ResultType = Collection & {
   collectionDataSource: (CollectionDataSource & {
-    dataSource: DataSource;
-  })[];
-};
+    dataSource: DataSource
+  })[]
+}
 
 export const getCollectionDbOp = async ({
   userId,
@@ -52,18 +52,18 @@ export const getCollectionDbOp = async ({
           },
         }
       : {},
-  })) as ResultType;
+  })) as ResultType
 
-  const { collectionDataSource, ...rest } = collection;
-  const dataSources = collectionDataSource.map((item) => item?.dataSource);
+  const { collectionDataSource, ...rest } = collection
+  const dataSources = collectionDataSource.map((item) => item?.dataSource)
 
   const collectionItem = {
     ...rest,
     dataSources,
-  };
+  }
 
-  return collectionItem;
-};
+  return collectionItem
+}
 
 export const createCollectionDbOp = async ({
   userId,
@@ -76,11 +76,11 @@ export const createCollectionDbOp = async ({
       name,
       ownerId: userId,
     },
-  });
+  })
 
   if (nameExists) {
     // If it exists, append a random string or an index to make it unique
-    name = `${name}-${Math.floor(Math.random() * 90000 + 10000)}`; // appending a random 5 char nr
+    name = `${name}-${Math.floor(Math.random() * 90000 + 10000)}` // appending a random 5 char nr
   }
 
   const collection = await prisma.collection.create({
@@ -94,10 +94,10 @@ export const createCollectionDbOp = async ({
         },
       },
     },
-  });
+  })
 
-  return collection;
-};
+  return collection
+}
 
 export const updateCollectionDbOp = async ({
   collectionId,
@@ -112,21 +112,21 @@ export const updateCollectionDbOp = async ({
     data: {
       ...rest,
     },
-  });
+  })
 
-  console.log("UPDATE --- ", rest, collection);
-  return collection;
-};
+  console.log('UPDATE --- ', rest, collection)
+  return collection
+}
 
 export const deleteAllCollectionsForUser = async (userId: string) => {
   const collection = await prisma.collection.deleteMany({
     where: {
       ownerId: userId,
     },
-  });
+  })
 
-  return collection;
-};
+  return collection
+}
 
 export const deleteCollectionDbOp = async (
   userId: string,
@@ -138,7 +138,7 @@ export const deleteCollectionDbOp = async (
       id: collectionId,
       ownerId: userId,
     },
-  });
+  })
 
-  return collection;
-};
+  return collection
+}
