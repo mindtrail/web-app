@@ -22,6 +22,8 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         sidebar:
           'border justify-start px-4 gap-2 border-transparent text-foreground/70 hover:underline hover:text-foreground',
+        opensidebar:
+            'border justify-start pl-2 gap-2 border-transparent text-foreground/70 hover:underline hover:text-foreground',
         sidebarSection:
           'border justify-start px-4 gap-2 border-transparent text-foreground/70 hover:underline hover:text-foreground flex gap-2 -ml-4 border-none',
       },

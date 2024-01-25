@@ -1,52 +1,53 @@
-import { type Metadata } from 'next'
-import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth/next'
-import { Session } from 'next-auth'
+import { type Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { Session } from "next-auth";
 
-import { authOptions } from '@/lib/authOptions'
-import { getDataSourceListForUser } from '@/lib/db/dataSource'
-import { getUserPreferences } from '@/lib/db/preferences'
+import { authOptions } from "@/lib/authOptions";
+import { getDataSourceListForUser } from "@/lib/db/dataSource";
+import { getUserPreferences } from "@/lib/db/preferences";
 
-import { HistoryComponent } from '@/components/history'
+import { HistoryComponent } from "@/components/history";
 
 interface UserWithId {
-  id: string | null
+  id: string | null;
 }
-type ExtSession = Session & { user: UserWithId | null }
+type ExtSession = Session & { user: UserWithId | null };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const session = (await getServerSession(authOptions)) as ExtSession
+  const session = (await getServerSession(authOptions)) as ExtSession;
 
   if (!session?.user?.id) {
-    return {}
+    return {};
   }
 
   return {
-    title: 'Categories',
-  }
+    title: "Categories",
+  };
 }
 
 export default async function ChatPage() {
-  const session = (await getServerSession(authOptions)) as ExtSession
+  const session = (await getServerSession(authOptions)) as ExtSession;
 
   if (!session?.user?.id) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/`)
+    redirect(`/api/auth/signin?callbackUrl=/chat/`);
   }
 
-  const userId = session.user.id
+  const userId = session.user.id;
 
   let [userPreferences, historyItems] = await Promise.all([
     getUserPreferences(userId),
     getDataSourceListForUser(userId),
-  ])
+  ]);
 
-  historyItems = historyItems.splice(0, 40)
+  historyItems = historyItems.splice(0, 40);
 
   return (
     <HistoryComponent
+      historyMetadata={{ name: "All items", parent: "" }}
       userId={userId}
       historyItems={historyItems}
       userPreferences={userPreferences}
     />
-  )
+  );
 }
