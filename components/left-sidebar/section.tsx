@@ -1,3 +1,4 @@
+'use client'
 import { useCallback, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -35,6 +36,8 @@ export function Section({
   title,
   items,
   iconOverride: Icon = FileIcon,
+  // @ts-ignore
+  openSecondSidebar
 }: SectionProps) {
   const [sectionIsOpen, setSectionIsOpen] = useState(true)
   const pathname = usePathname()
@@ -55,11 +58,11 @@ export function Section({
           )}
         >
           <Icon />
-          {name}
+          {!openSecondSidebar && name}
         </Link>
       )
     })
-  }, [items, pathname, Icon])
+  }, [items, pathname, Icon, openSecondSidebar])
 
   return (
     <Accordion
@@ -81,6 +84,10 @@ export function Section({
             <Button
               variant='sidebar'
               className='hover:bg-slate-200 -mr-4 shrink-0'
+              onClick={(e) => {
+                e.preventDefault()
+                
+              }}
             >
               <PlusIcon />
             </Button>

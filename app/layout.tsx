@@ -1,50 +1,52 @@
-import '@/styles/globals.css'
-import { Metadata, Viewport } from 'next'
+import "@/styles/globals.css";
+import { Metadata, Viewport } from "next";
 
-import { Providers } from '@/context/providers'
-import { Toaster } from '@/components/ui/toaster'
-import { TailwindIndicator } from '@/components/tailwind-indicator'
-import { Separator } from '@/components/ui/separator'
-import { LeftSidebar } from '@/components/left-sidebar'
-import { SidebarRight } from '@/components/sidebar-right'
+import { Providers } from "@/context/providers";
+import { Toaster } from "@/components/ui/toaster";
+import { LeftSidebar } from "@/components/left-sidebar";
+import { SidebarRight } from "@/components/sidebar-right";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
 // export const dynamic = 'force-dynamic'
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: 'white' }],
-}
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "white" }],
+};
 
 export const metadata: Metadata = {
   title: {
-    default: 'Mind Trail',
+    default: "Mind Trail",
     template: `Mind Trail - %s`,
   },
   description:
-    'AI assitant to emember and structures everything you see online',
+    "AI assitant to emember and structures everything you see online",
   icons: {
-    icon: '/favicon.ico',
+    icon: "/favicon.ico",
   },
-}
+};
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession;
+  const user = session?.user;
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body className='flex min-h-screen'>
+    <html lang="en" suppressHydrationWarning>
+      <body className="flex min-h-screen">
         <Providers>
-          <LeftSidebar className='' />
-          <main className='flex flex-1 overflow-auto'>
+          <LeftSidebar className="" user={user} />
+          <main className="flex flex-1 overflow-auto">
             {children}
             {/* <Separator orientation='vertical' /> */}
-            {/* <SidebarRight /> */}
+            {<SidebarRight />}
           </main>
           {/* <TailwindIndicator /> */}
           <Toaster />
         </Providers>
       </body>
     </html>
-  )
+  );
 }
