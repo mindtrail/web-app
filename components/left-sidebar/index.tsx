@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { getCollectionsByUserId } from "@/lib/serverActions/collection";
 import { getFiltersByUserId } from "@/lib/serverActions/filter";
 import { SecondSidebar } from "./second-sidebar";
-import SecondSidebarFooter from "./second-sidebar-footer";
+import LeftSidebarFooter from "./left-sidebar-footer";
 
 type SidebarNavProps = {
   className?: string;
@@ -104,7 +104,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
             />
           </div>
           <div className="p-4 border-t border-gray-200">
-            <SecondSidebarFooter user={user}/>
+            <LeftSidebarFooter user={user}/>
           </div>
         </nav>
         <SecondSidebar
