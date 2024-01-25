@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { useCallback, useMemo, useState } from 'react'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import { UserPreferences } from '@prisma/client'
+import { useCallback, useMemo, useState } from "react";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { UserPreferences } from "@prisma/client";
 
 import {
   Column,
@@ -14,33 +14,39 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table";
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { IconSpinner } from '@/components/ui/icons/next-icons'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { IconSpinner } from "@/components/ui/icons/next-icons";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
-import { DraggableHeader } from '@/components/history/draggable-header'
-import { ColumnDragLayer } from '@/components/history/drag-layer'
-import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
+import { HistoryBreadcrumbs } from "@/components/history/breadcrumbs";
+import { DraggableHeader } from "@/components/history/draggable-header";
+import { ColumnDragLayer } from "@/components/history/drag-layer";
+import { VisibilityDropdown } from "@/components/history/visibility-dropdown";
 
-import { getTableColumns } from '@/components/history/columns'
+import { getTableColumns } from "@/components/history/columns";
 import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_COLUMN_VISIBILITY,
   DEFAULT_COLUMN_ORDER,
-} from '@/lib/constants'
+} from "@/lib/constants";
 
 interface DataTableProps<TData> {
-  historyMetadata: {name: string, parent: string},
-  data: TData[]
-  processing?: boolean
-  userPreferences?: UserPreferences
-  handleHistoryDelete: (ids: HistoryItem[]) => void
-  updateUserPreferences: (prefs: UserTablePrefs) => void
+  historyMetadata: { name: string; parent: string; parentLink: string };
+  data: TData[];
+  processing?: boolean;
+  userPreferences?: UserPreferences;
+  handleHistoryDelete: (ids: HistoryItem[]) => void;
+  updateUserPreferences: (prefs: UserTablePrefs) => void;
 }
 
 export function DataTable<TData>({
@@ -55,24 +61,27 @@ export function DataTable<TData>({
     columnOrder: storedColOrder,
     columnSize: storedColSize,
     columnVisibility: storedColVisibility,
-  } = (userPreferences?.tablePrefs as UserTablePrefs) || {}
+  } = (userPreferences?.tablePrefs as UserTablePrefs) || {};
 
-  const initialOrder = storedColOrder || DEFAULT_COLUMN_ORDER
-  const initialSize = storedColSize || DEFAULT_COLUMN_SIZE
-  const initialVis = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
+  const initialOrder = storedColOrder || DEFAULT_COLUMN_ORDER;
+  const initialSize = storedColSize || DEFAULT_COLUMN_SIZE;
+  const initialVis = storedColVisibility || DEFAULT_COLUMN_VISIBILITY;
 
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialOrder)
-  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(initialSize)
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialVis)
-  const [rowSelection, setRowSelection] = useState({})
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnOrder, setColumnOrder] =
+    useState<ColumnOrderState>(initialOrder);
+  const [columnSizing, setColumnSizing] =
+    useState<ColumnSizingState>(initialSize);
+  const [columnVisibility, setColumnVisibility] =
+    useState<VisibilityState>(initialVis);
+  const [rowSelection, setRowSelection] = useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo(() => getTableColumns(), [])
+  const columns = useMemo(() => getTableColumns(), []);
 
   const table = useReactTable({
     data,
     columns,
-    columnResizeMode: 'onChange',
+    columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onColumnOrderChange: setColumnOrder,
@@ -87,40 +96,42 @@ export function DataTable<TData>({
       rowSelection,
       sorting,
     },
-  })
+  });
 
-  const { rows } = table.getRowModel()
+  const { rows } = table.getRowModel();
   const areRowsSelected =
-    table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
+    table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected();
 
   const handleVisibilityChange = useCallback(
     (value: boolean, column: Column<TData, unknown>) => {
       const updatedVisibility = {
         ...columnVisibility,
         [column.id]: !!value,
-      }
+      };
 
-      updateUserPreferences({ columnVisibility: updatedVisibility })
+      updateUserPreferences({ columnVisibility: updatedVisibility });
     },
-    [columnVisibility, updateUserPreferences],
-  )
+    [columnVisibility, updateUserPreferences]
+  );
 
   const onDelete = useCallback(() => {
-    const selectedRows = table.getSelectedRowModel()
+    const selectedRows = table.getSelectedRowModel();
 
-    const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
+    const itemsToDelete = selectedRows.rows.map(
+      ({ original }) => original as HistoryItem
+    );
 
-    handleHistoryDelete(itemsToDelete)
-    table.resetRowSelection()
-  }, [handleHistoryDelete, table])
+    handleHistoryDelete(itemsToDelete);
+    table.resetRowSelection();
+  }, [handleHistoryDelete, table]);
 
   return (
     <>
-      <div className='flex items-center justify-between py-4'>
-        <HistoryBreadcrumbs historyMetadata={historyMetadata}/>
-        <div className='flex items-center gap-2'>
-          <Button size='sm' variant='ghost'>
-            <CaretSortIcon className='h-5 w-5' />
+      <div className="flex items-center justify-between py-4">
+        <HistoryBreadcrumbs historyMetadata={historyMetadata} />
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="ghost">
+            <CaretSortIcon className="h-5 w-5" />
             A-Z
           </Button>
 
@@ -128,28 +139,30 @@ export function DataTable<TData>({
           <VisibilityDropdown table={table} columnOrder={columnOrder} />
         </div>
       </div>
-      <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
+      <ScrollArea className="rounded-md border cursor-default max-h-[calc(100vh-165px)]">
         <div
           className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
             flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
-            ${areRowsSelected && '!visible'}`}
+            ${areRowsSelected && "!visible"}`}
         >
           <Checkbox
             checked={
               table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
+              (table.getIsSomePageRowsSelected() && "indeterminate")
             }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label='Select all'
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
           />
-          <div className='flex items-center gap-2'>
-            <Button variant='outline' size='sm' onClick={onDelete}>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onDelete}>
               Delete
             </Button>
           </div>
         </div>
-        <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
-          <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
+        <Table className="table-fixed" style={{ width: table.getTotalSize() }}>
+          <TableHeader className="sticky top-0 bg-background border-b shadow-sm z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -165,41 +178,41 @@ export function DataTable<TData>({
           </TableHeader>
           <TableBody>
             {rows?.map((row) => {
-              const isRowSelected = row.getIsSelected()
+              const isRowSelected = row.getIsSelected();
               return (
                 <TableRow
                   key={row.id}
-                  data-state={isRowSelected && 'selected'}
+                  data-state={isRowSelected && "selected"}
                   className={`group/row text-foreground/70 hover:text-foreground ${
-                    isRowSelected && 'text-foreground'
+                    isRowSelected && "text-foreground"
                   }`}
                 >
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
                       key={id}
                       className={`align-top pt-10 ${
-                        column.id === 'actions' && 'text-center'
+                        column.id === "actions" && "text-center"
                       }`}
                     >
                       {flexRender(column.columnDef.cell, getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>
 
         {processing && (
-          <div className='absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52'>
-            <div className='flex items-center gap-2 h-8'>
+          <div className="absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52">
+            <div className="flex items-center gap-2 h-8">
               <IconSpinner /> Searching...
             </div>
           </div>
         )}
-        <ScrollBar orientation='horizontal' />
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
       <ColumnDragLayer />
     </>
-  )
+  );
 }
