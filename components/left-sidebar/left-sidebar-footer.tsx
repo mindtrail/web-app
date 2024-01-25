@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { IconSettings } from "../ui/icons/next-icons";
+import { Button } from '@/components/ui/button'
+import { IconSettings } from '../ui/icons/next-icons'
 
 const TRIGGER_HEADER_STYLE =
-  "flex flex-1 justify-between pl-1 gap-2 cursor-pointer";
-const NAV_ITEM_STYLE = "flex flex-col py-2 items-stretch";
+  'flex flex-1 justify-between pl-1 gap-2 cursor-pointer'
+const NAV_ITEM_STYLE = 'flex flex-col py-2 items-stretch'
 
-const NAV_ITEM_CONTENT_STYLE = "flex flex-1  gap-4";
+const NAV_ITEM_CONTENT_STYLE = 'flex flex-1  gap-4'
 
-export default function SecondSidebarFooter({ user }: { user: any }) {
+export default function LeftSidebarFooter({ user }: { user: any }) {
   return (
     <div className="flex flex-col">
       <div className={NAV_ITEM_STYLE}>
@@ -26,5 +26,5 @@ export default function SecondSidebarFooter({ user }: { user: any }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { useState } from 'react'
 import {
   IconAllData,
   IconChevronRight,
@@ -15,41 +15,41 @@ import {
   IconHighlight,
   IconIdea,
   IconTag,
-} from "../ui/icons/next-icons";
+} from '../ui/icons/next-icons'
 
 const mockCollections = [
-  { name: "Collection 1", url: "/" },
-  { name: "UX Collection", url: "/collection/create" },
-];
+  { name: 'Collection 1', url: '/' },
+  { name: 'UX Collection', url: '/collection/create' },
+]
 
-const FAVORITES_URL = "/";
-const ALLITEMS_URL = "/history";
+const FAVORITES_URL = '/'
+const ALLITEMS_URL = '/history'
 
-const SIDEBAR_BUTTON = cn(buttonVariants({ variant: "sidebar" }));
-const OPEN_SIDEBAR_BUTTON = cn(buttonVariants({ variant: "opensidebar" }));
-const ACTIVE_SIDEBAR_BUTTON = "text-primary font-semibold hover:text-primary";
+const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
+const OPEN_SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'opensidebar' }))
+const ACTIVE_SIDEBAR_BUTTON = 'text-primary font-semibold hover:text-primary'
 const TRIGGER_HEADER_STYLE =
-  "flex flex-1 justify-between pl-3 gap-2 cursor-pointer";
-const NAV_ITEM_STYLE = "flex flex-col pl-2 py-2 items-stretch";
+  'flex flex-1 justify-between pl-3 gap-2 cursor-pointer'
+const NAV_ITEM_STYLE = 'flex flex-col pl-2 py-2 items-stretch'
 
-const OPENSIDEBAR_NAVITEM_STYLE = "pl-2 cursor-pointer text-center";
-const NAV_ITEM_CONTENT_STYLE = "flex flex-1 gap-2";
+const OPENSIDEBAR_NAVITEM_STYLE = 'pl-2 cursor-pointer text-center'
+const NAV_ITEM_CONTENT_STYLE = 'flex flex-1 gap-2'
 
 type SidebarFoldersProps = {
-  setOpenSecondSidebar: (value: boolean) => void;
-  openSecondSidebar: boolean;
-  setTitle: (value: string) => void;
-  loading: boolean;
-  filters: any;
-  setSelected: (value: any) => void;
-};
+  setOpenSecondSidebar: (value: boolean) => void
+  openSecondSidebar: boolean
+  setTitle: (value: string) => void
+  loading: boolean
+  filters: any
+  setSelected: (value: any) => void
+}
 
 const SELECTED_ITEM = {
   FILTERS: 0,
   COLLECTIONS: 1,
   TAGS: 2,
   HIGHLIHTS: 3,
-};
+}
 
 // @ts-ignore
 export default function FolderItems({
@@ -59,10 +59,10 @@ export default function FolderItems({
   loading,
   setSelected,
 }: SidebarFoldersProps) {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   const [filteredCollections, setFilteredCollections] =
-    useState<{ name: string; url: string }[]>(mockCollections);
+    useState<{ name: string; url: string }[]>(mockCollections)
 
   if (loading) {
     return (
@@ -85,7 +85,7 @@ export default function FolderItems({
         </svg>
         <span className="sr-only">Loading...</span>
       </div>
-    );
+    )
   }
 
   return (
@@ -117,9 +117,9 @@ export default function FolderItems({
             variant="sidebarSection"
             className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
             onClick={() => {
-              setTitle("Smart Folders");
-              setSelected(SELECTED_ITEM.FILTERS);
-              setOpenSecondSidebar(!openSecondSidebar);
+              setTitle('Smart Folders')
+              setSelected(SELECTED_ITEM.FILTERS)
+              setOpenSecondSidebar(!openSecondSidebar)
             }}
           >
             <div className="flex justify-between w-full">
@@ -148,9 +148,9 @@ export default function FolderItems({
             variant="sidebarSection"
             className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
             onClick={() => {
-              setTitle("Folders");
-              setSelected(SELECTED_ITEM.COLLECTIONS);
-              setOpenSecondSidebar(!openSecondSidebar);
+              setTitle('Folders')
+              setSelected(SELECTED_ITEM.COLLECTIONS)
+              setOpenSecondSidebar(!openSecondSidebar)
             }}
           >
             <div className="flex justify-between w-full">
@@ -178,9 +178,9 @@ export default function FolderItems({
             variant="sidebarSection"
             className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
             onClick={() => {
-              setTitle("Tags");
-              setSelected(SELECTED_ITEM.TAGS);
-              setOpenSecondSidebar(!openSecondSidebar);
+              setTitle('Tags')
+              setSelected(SELECTED_ITEM.TAGS)
+              setOpenSecondSidebar(!openSecondSidebar)
             }}
           >
             <div className="flex justify-between w-full">
@@ -208,7 +208,7 @@ export default function FolderItems({
             variant="sidebarSection"
             className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
             onClick={() => {
-              setTitle("Highlits");
+              setTitle('Highlits')
             }}
           >
             <div className="flex justify-between w-full">
@@ -221,5 +221,5 @@ export default function FolderItems({
         </div>
       </div>
     </div>
-  );
+  )
 }
