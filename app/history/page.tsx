@@ -44,7 +44,7 @@ export default async function ChatPage() {
 
   return (
     <HistoryComponent
-      historyMetadata={{ name: "All items", parent: "" }}
+      historyMetadata={{ name: "All items", parent: "", parentLink: "" }}
       userId={userId}
       historyItems={historyItems}
       userPreferences={userPreferences}

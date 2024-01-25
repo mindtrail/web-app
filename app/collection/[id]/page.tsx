@@ -46,9 +46,8 @@ export default async function EditDS({ params }: EditDSProps) {
   if (!collection) {
     redirect("/collection?error=not-found");
   }
-  
-  
-  let userPreferences = await getUserPreferences(userId)
+
+  let userPreferences = await getUserPreferences(userId);
 
   return (
     <>
@@ -57,7 +56,11 @@ export default async function EditDS({ params }: EditDSProps) {
       ) : (
         <>
           <HistoryComponent
-            historyMetadata={{name: collection.name, parent: "All items"}}
+            historyMetadata={{
+              name: collection.name,
+              parent: "All items",
+              parentLink: "/history",
+            }}
             userId={userId}
             historyItems={collection.dataSources}
             userPreferences={userPreferences}
