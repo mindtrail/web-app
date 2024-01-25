@@ -35,8 +35,7 @@ export function HistoryComponent({
   userId,
   userPreferences,
 }: HistoryComponentProps) {
-  const [filteredItems, setFilteredItems] =
-    useState<HistoryItem[]>(historyItems)
+  const [filteredItems, setFilteredItems] = useState<HistoryItem[]>(historyItems)
 
   const [filters, setFilters] = useState<HistoryFilter[]>()
   const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
@@ -123,20 +122,13 @@ export function HistoryComponent({
       }
       setProcessing(true)
 
-      const result = await fetch('/api/history', {
-        method: 'POST',
-        body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
+      const result = await fetch(`/api/history?searchQuery=${searchQuery}`)
       const dataSourceList = await result.json()
       setFilteredItems(dataSourceList)
 
       setProcessing(false)
     },
-    [userId, historyItems],
+    [historyItems],
   )
 
   const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -144,9 +136,7 @@ export function HistoryComponent({
     const newTag = event.currentTarget.dataset.value || ''
 
     setFilters((prevFilters = []) => {
-      const newFilters = prevFilters.filter(
-        (prevTag) => prevTag.value !== newTag,
-      )
+      const newFilters = prevFilters.filter((prevTag) => prevTag.value !== newTag)
 
       // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
       if (newFilters.length === prevFilters.length) {
@@ -178,8 +168,8 @@ export function HistoryComponent({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription className='break-words'>
-              This will delete the history entries and the associated data. The
-              action cannot be undone and will permanently delete:
+              This will delete the history entries and the associated data. The action
+              cannot be undone and will permanently delete:
               <span className='block mt-4 mb-2 list-disc list-inside '>
                 {deleteItemsList}
               </span>

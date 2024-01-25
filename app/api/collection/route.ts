@@ -2,10 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import {
-  getCollectionListDbOp,
-  createCollectionDbOp,
-} from '@/lib/db/collection'
+import { getCollectionListDbOp, createCollectionDbOp } from '@/lib/db/collection'
 
 export async function GET() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -13,9 +10,7 @@ export async function GET() {
   const userId = session?.user?.id
 
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const collectionList = await getCollectionListDbOp({ userId })
@@ -29,9 +24,7 @@ export async function POST(req: Request) {
   const userId = session?.user?.id
 
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const body = (await req.json()) as CreateCollection

@@ -31,13 +31,7 @@ export function Search({ userId }: HistoryLookupProps) {
     event.preventDefault()
     setProcessing(true)
 
-    const result = await fetch('/api/history', {
-      method: 'POST',
-      body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    const result = await fetch(`/api/history?searchQuery=${searchQuery}`)
     const websites = await result.json()
 
     setFoundWebsite(websites)

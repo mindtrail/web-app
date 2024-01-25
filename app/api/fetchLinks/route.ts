@@ -15,9 +15,7 @@ export async function GET(req: Request) {
 
   const userId = session?.user?.id
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const reqUrl = new URL(req.url)

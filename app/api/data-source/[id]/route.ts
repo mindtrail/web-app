@@ -14,10 +14,9 @@ export async function DELETE(
   const dataSourceId = params.id
 
   if (!userId) {
-    return new NextResponse('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
+
   try {
     const dataSource = await deleteDataSourceDbOp([dataSourceId], userId)
     // Delete dataSource from Qdrant and GCS

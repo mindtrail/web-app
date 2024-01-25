@@ -18,9 +18,7 @@ export async function POST(req: Request) {
   const userId = session?.user?.id
 
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {

@@ -10,39 +10,22 @@ export async function GET() {
   const userId = session?.user?.id
 
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const clippingList = await getClippingList(userId)
-
   return NextResponse.json(clippingList)
 }
 
-// TODO: Add authentication
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
-
   const userId = session?.user?.id
 
-  console.log('userId', userId)
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const payload = (await req.json()) as SavedClipping
-
-  console.log('body', payload.selector)
-
-  // @TODO: add auth
-  // if (clientUserId !== userId) {
-  //   return new Response('Unauthorized', {
-  //     status: 401,
-  //   })
-  // }
 
   try {
     const newClipping = await createClipping({

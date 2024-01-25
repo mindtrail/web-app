@@ -12,35 +12,23 @@ export async function POST(req: Request) {
   const userId = session?.user?.id
 
   if (!userId) {
-    return new NextResponse('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
-  if (
-    !req ||
-    !req.headers.get('content-type')?.startsWith('multipart/form-data')
-  ) {
-    return new NextResponse('Missing form-data', {
-      status: 400,
-    })
+  if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
+    return new NextResponse('Missing form-data', { status: 400 })
   }
 
   const { file } = await readFormData(req)
 
   if (!file) {
-    return new NextResponse(`Missing file.`, {
-      status: 400,
-    })
+    return new NextResponse(`Missing file.`, { status: 400 })
   }
 
   try {
     const chunks = await getChunksFromDoc({ file, DSType: DataSourceType.file })
 
-    const textSize = chunks?.reduce(
-      (acc, doc) => acc + doc?.pageContent?.length,
-      0,
-    )
+    const textSize = chunks?.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
     if (!chunks?.length || !textSize) {
       return NextResponse.json('File is empty', {
