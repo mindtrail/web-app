@@ -5,6 +5,7 @@ import { DataSourceType } from '@prisma/client'
 import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { downloadWebsiteFromGCS } from '@/lib/cloudStorage'
+import { getBaseResourceURL } from '@/lib/utils'
 
 const EMBEDDING_SECRET = process.env.EMBEDDING_SECRET || ''
 const DSType = DataSourceType.web_page
@@ -28,11 +29,12 @@ export async function POST(req: Request) {
     const docs = await Promise.all(
       websites.map(async ({ name: gcFileName, metadata }) => {
         const { url, ...restMetadata } = metadata
+        const baseResourceURL = getBaseResourceURL(url)
 
         // Download the html from GCS
         const html = await downloadWebsiteFromGCS(gcFileName)
         const file = {
-          name: url,
+          name: baseResourceURL,
           html,
           metadata: restMetadata,
         } as HTMLFile

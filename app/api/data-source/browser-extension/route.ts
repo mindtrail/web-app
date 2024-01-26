@@ -7,7 +7,9 @@ import { authOptions } from '@/lib/authOptions'
 import { checkDataSourceExists } from '@/lib/db/dataSource'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { uploadToGCS } from '@/lib/cloudStorage'
+import { getBaseResourceURL } from '@/lib/utils'
 
+// DataSourceType
 const DSType = DataSourceType.web_page
 
 // Function that processes the data received from the Browser Extension
@@ -23,11 +25,11 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as BrowserExtensionData
 
     const { html, ...metadata } = body
-    const { url } = metadata
+    const baseResourceURL = getBaseResourceURL(metadata?.url)
 
-    console.log('--- Creating DataSources for URL ---> ', url)
+    console.log('--- Creating DataSources for URL ---> ', baseResourceURL)
 
-    const existingDataSource = await checkDataSourceExists(url, userId)
+    const existingDataSource = await checkDataSourceExists(baseResourceURL, userId)
     if (existingDataSource) {
       return NextResponse.json({
         result: 'DataSource already exists',
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     const file = {
-      name: url,
+      name: baseResourceURL,
       html,
       metadata,
     }

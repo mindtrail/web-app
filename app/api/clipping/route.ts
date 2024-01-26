@@ -4,16 +4,18 @@ import { authOptions } from '@/lib/authOptions'
 
 import { createClipping, getClippingList } from '@/lib/db/clipping'
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
-
   const userId = session?.user?.id
 
   if (!userId) {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  const clippingList = await getClippingList(userId)
+  const url = new URL(req.url)
+  const groupByDataSource = !!url.searchParams.get('groupByDataSource')
+
+  const clippingList = await getClippingList(userId, groupByDataSource)
   return NextResponse.json(clippingList)
 }
 
