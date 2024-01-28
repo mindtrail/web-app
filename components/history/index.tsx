@@ -35,8 +35,7 @@ export function HistoryComponent({
   userId,
   userPreferences,
 }: HistoryComponentProps) {
-  const [filteredItems, setFilteredItems] =
-    useState<HistoryItem[]>(historyItems)
+  const [filteredItems, setFilteredItems] = useState<HistoryItem[]>(historyItems)
 
   const [filters, setFilters] = useState<HistoryFilter[]>()
   const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
@@ -105,8 +104,7 @@ export function HistoryComponent({
       itemsToDelete.map(({ displayName = '', name, type }, index) => (
         <li
           key={index}
-          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'
-        >
+          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'>
           {type === DataSourceType.file
             ? displayName
             : displayName + getURLPathname(name)}
@@ -144,9 +142,7 @@ export function HistoryComponent({
     const newTag = event.currentTarget.dataset.value || ''
 
     setFilters((prevFilters = []) => {
-      const newFilters = prevFilters.filter(
-        (prevTag) => prevTag.value !== newTag,
-      )
+      const newFilters = prevFilters.filter((prevTag) => prevTag.value !== newTag)
 
       // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
       if (newFilters.length === prevFilters.length) {
@@ -161,8 +157,7 @@ export function HistoryComponent({
     <div
       ref={dropRef}
       className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8
-        overflow-auto`}
-    >
+        overflow-auto`}>
       <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
@@ -170,7 +165,7 @@ export function HistoryComponent({
         processing={processing}
         userPreferences={userPreferences}
         handleHistoryDelete={handleHistoryDelete}
-        updateUserPreferences={handlePreferenceUpdate}
+        handlePreferenceUpdate={handlePreferenceUpdate}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -178,8 +173,8 @@ export function HistoryComponent({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription className='break-words'>
-              This will delete the history entries and the associated data. The
-              action cannot be undone and will permanently delete:
+              This will delete the history entries and the associated data. The action
+              cannot be undone and will permanently delete:
               <span className='block mt-4 mb-2 list-disc list-inside '>
                 {deleteItemsList}
               </span>
