@@ -48,7 +48,7 @@ export function VisibilityDropdown(props: VisibilityDropdownProps) {
 
       handlePreferenceUpdate({ columnVisibility: updatedVisibility })
     },
-    [table],
+    [table, handlePreferenceUpdate],
   )
 
   return (
