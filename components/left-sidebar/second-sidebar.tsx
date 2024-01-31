@@ -270,6 +270,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
               onClick={() => {
                 setShowNewItem(true)
                 setShowNewItemButton(false)
+                setNameNewItem(searchValue)
               }}
               className="text-xs font-normal"
             >
