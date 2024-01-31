@@ -35,19 +35,28 @@ export default async function ChatPage() {
 
   const userId = session.user.id
 
-  let [userPreferences, historyItems] = await Promise.all([
-    getUserPreferences(userId),
-    getDataSourceListForUser(userId),
-  ])
+  try {
+    let [userPreferences, historyItems] = await Promise.all([
+      getUserPreferences(userId),
+      getDataSourceListForUser(userId),
+    ])
 
-  historyItems = historyItems.splice(0, 40)
-
-  return (
-    <HistoryComponent
-      historyMetadata={{ name: 'All items', parent: '', parentLink: '' }}
-      userId={userId}
-      historyItems={historyItems}
-      userPreferences={userPreferences}
-    />
-  )
+    historyItems = historyItems.splice(0, 40)
+    return (
+      <HistoryComponent
+        historyMetadata={{
+          name: 'All items',
+          parent: '',
+          subParent: '',
+          parentLink: '',
+        }}
+        userId={userId}
+        historyItems={historyItems}
+        userPreferences={userPreferences}
+      />
+    )
+  } catch (err) {
+    console.log(err)
+    return null
+  }
 }

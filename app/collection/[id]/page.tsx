@@ -55,6 +55,7 @@ export default async function EditDS({ params }: EditDSProps) {
             historyMetadata={{
               name: collection.name,
               parent: 'All items',
+              subParent: 'Folders',
               parentLink: '/history',
             }}
             userId={userId}

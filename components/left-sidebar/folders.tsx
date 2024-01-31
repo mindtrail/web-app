@@ -43,6 +43,9 @@ type SidebarFoldersProps = {
   loading: boolean
   filters: any
   setSelected: (value: any) => void
+  selected: any
+  subSelected: any
+  setSubSelected: (value: any) => void
 }
 
 // @ts-ignore
@@ -52,6 +55,9 @@ export default function FolderItems({
   setTitle,
   loading,
   setSelected,
+  selected,
+  subSelected,  
+  setSubSelected
 }: SidebarFoldersProps) {
   const pathname = usePathname()
 
@@ -82,15 +88,30 @@ export default function FolderItems({
     )
   }
 
+  const openSecondSidebarFn = (item: any) => {
+    const isCurrentItem = item === selected;
+    if (isCurrentItem) {
+      setOpenSecondSidebar(!openSecondSidebar)
+    }
+    if (!openSecondSidebar) {
+      setOpenSecondSidebar(true)
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-col ml-1 items-stretch mt-2">
         <Link
           href={ALLITEMS_URL}
           className={cn(
-            openSecondSidebar ? OPEN_SIDEBAR_BUTTON : SIDEBAR_BUTTON,
+            SIDEBAR_BUTTON,
             pathname === FAVORITES_URL && ACTIVE_SIDEBAR_BUTTON
           )}
+          onClick={() => {
+            setSelected(undefined)
+            setSubSelected(undefined)
+            setOpenSecondSidebar(false)
+          }}
         >
           <div className="flex flex-1 gap-4">
             <IconAllData />
@@ -100,20 +121,16 @@ export default function FolderItems({
       </div>
       <Separator className="mb-2 mt-2" />
       <div className={NAV_ITEM_STYLE}>
-        <div
-          className={
-            !openSecondSidebar
-              ? TRIGGER_HEADER_STYLE
-              : OPENSIDEBAR_NAVITEM_STYLE
-          }
-        >
+        <div className={TRIGGER_HEADER_STYLE}>
           <Button
             variant="sidebarSection"
-            className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
+            className={`w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis ${
+              subSelected === SELECTED_ITEM.FILTERS && 'bg-[#f3f4f6]'
+            }`}
             onClick={() => {
               setTitle('Smart Folders')
+              openSecondSidebarFn(SELECTED_ITEM.FILTERS)
               setSelected(SELECTED_ITEM.FILTERS)
-              setOpenSecondSidebar(!openSecondSidebar)
             }}
           >
             <div className="flex justify-between w-full">
@@ -131,20 +148,16 @@ export default function FolderItems({
       </div>
 
       <div className={NAV_ITEM_STYLE}>
-        <div
-          className={
-            !openSecondSidebar
-              ? TRIGGER_HEADER_STYLE
-              : OPENSIDEBAR_NAVITEM_STYLE
-          }
-        >
+        <div className={TRIGGER_HEADER_STYLE}>
           <Button
             variant="sidebarSection"
-            className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
+            className={`w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis ${
+              subSelected === SELECTED_ITEM.COLLECTIONS && 'bg-[#f3f4f6]'
+            }`}
             onClick={() => {
               setTitle('Folders')
+              openSecondSidebarFn(SELECTED_ITEM.COLLECTIONS)
               setSelected(SELECTED_ITEM.COLLECTIONS)
-              setOpenSecondSidebar(!openSecondSidebar)
             }}
           >
             <div className="flex justify-between w-full">
@@ -161,20 +174,16 @@ export default function FolderItems({
         </div>
       </div>
       <div className={NAV_ITEM_STYLE}>
-        <div
-          className={
-            !openSecondSidebar
-              ? TRIGGER_HEADER_STYLE
-              : OPENSIDEBAR_NAVITEM_STYLE
-          }
-        >
+        <div className={TRIGGER_HEADER_STYLE}>
           <Button
             variant="sidebarSection"
-            className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
+            className={`w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis ${
+              subSelected === SELECTED_ITEM.TAGS && 'bg-[#f3f4f6]'
+            }`}
             onClick={() => {
               setTitle('Tags')
+              openSecondSidebarFn(SELECTED_ITEM.TAGS)
               setSelected(SELECTED_ITEM.TAGS)
-              setOpenSecondSidebar(!openSecondSidebar)
             }}
           >
             <div className="flex justify-between w-full">
@@ -191,18 +200,15 @@ export default function FolderItems({
         </div>
       </div>
       <div className={NAV_ITEM_STYLE}>
-        <div
-          className={
-            !openSecondSidebar
-              ? TRIGGER_HEADER_STYLE
-              : OPENSIDEBAR_NAVITEM_STYLE
-          }
-        >
+        <div className={TRIGGER_HEADER_STYLE}>
           <Button
             variant="sidebarSection"
-            className="w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis"
+            className={`w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis ${
+              subSelected === SELECTED_ITEM.HIGHLIHTS && 'bg-[#f3f4f6]'
+            }`}
             onClick={() => {
               setTitle('Highlits')
+              setSelected(SELECTED_ITEM.HIGHLIHTS)
             }}
           >
             <div className="flex justify-between w-full">

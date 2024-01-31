@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, KeyboardEvent, useEffect, useState } from 'react'
+import { Fragment, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Separator } from '@radix-ui/react-separator'
 import { cn } from '@/lib/utils'
@@ -26,6 +26,7 @@ import {
   IconDotsVertical,
   IconFolder,
   IconFolderOpen,
+  IconPlus,
   IconSearch,
 } from '../ui/icons/next-icons'
 import { ScrollArea } from '../ui/scroll-area'
@@ -37,6 +38,8 @@ type SecondSidebarProps = {
   open: boolean
   setOpen: (open: boolean) => void
   pathname: string
+  selected: any
+  setSubSelected: (value: any) => void
 }
 
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
@@ -50,12 +53,18 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   open,
   setOpen,
   pathname,
+  selected,
+  setSubSelected,
 }) => {
+  const sidebarRef = useRef(null)
+
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items)
   const [searchValue, setSearchValue] = useState('')
 
   const [showNewItem, setShowNewItem] = useState(false)
   const [nameNewItem, setNameNewItem] = useState('')
+  const [showNewItemButton, setShowNewItemButton] = useState(false)
+
   const [loading, setLoading] = useState(false)
 
   const [hoveredItemId, setHoveredItemId] = useState<string | null>(null)
@@ -66,6 +75,21 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   // Inside SecondSidebar component
   const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: { target: any }) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setShowNewItem(false) // Closes the new folder input
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [sidebarRef])
 
   const onUpdateFolderName = async (id: string, newName: string) => {
     setLoading(true)
@@ -96,9 +120,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
     }
   }
 
-  const onDuplicate = (id: string) => {
-    // Implement your duplication logic here
-  }
+  const onDuplicate = (id: string) => {}
 
   const onDelete = async (id: string) => {
     setLoading(true)
@@ -122,10 +144,13 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
     setFilteredItems(items)
   }, [items])
 
-  const onFilterItems = (value) => {
+  const onFilterItems = (value: any) => {
     const searchitems = items.filter((item: any) => {
       return item.name.toLowerCase().includes(value.toLowerCase())
     })
+    const noresults = value.length > 0 && searchitems.length === 0
+    setShowNewItemButton(noresults)
+
     setFilteredItems(searchitems)
   }
 
@@ -176,12 +201,12 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
 
   return (
     <div
+      ref={sidebarRef}
       className={`absolute bg-white top-14 flex flex-col flex-shrink-0 overflow-hidden z-10 transition-all duration-3  ease-in-out left-14 ${
         open ? 'w-[200px] border-l  border-r ' : 'w-[0px]'
       }`}
-      style={{ height: 'calc(100vh - 3.5rem)' }}
     >
-      <nav className={`flex flex-col w-full border-r flex-shrink-0 `}>
+      <nav className={`flex flex-col w-full border-r flex-shrink-0 h-[84vh]`}>
         <div className="pr-4 pl-2 py-2 border-b flex justify-between items-center">
           <div className="flex items-center">
             <button onClick={() => setOpen(false)}>
@@ -237,6 +262,20 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
             >
               <IconCancel />
             </button>
+          </div>
+        )}
+        {showNewItemButton && (
+          <div className="mx-4 mt-2 pb-2 flex items-center w-full">
+            <Button
+              onClick={() => {
+                setShowNewItem(true)
+                setShowNewItemButton(false)
+              }}
+              className="text-xs font-normal"
+            >
+              <IconPlus className="mr-2" />
+              Create new folder
+            </Button>
           </div>
         )}
         {loading && (
@@ -305,6 +344,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                         pathname === url && ACTIVE_SIDEBAR_BUTTON,
                         'flex items-center gap-2 flex-grow w-[50px] '
                       )}
+                      onClick={() => setSubSelected(selected)}
                     >
                       {pathname === url ? <IconFolderOpen /> : <IconFolder />}
                       <span className="truncate flex-grow">{name}</span>{' '}
@@ -419,6 +459,7 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
             >
               Create new folder
             </Button>
+            {/* TO-DO v1
             <Button
               onClick={() => {
                 setIsOpen(!isOpen)
@@ -428,7 +469,7 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
               variant="ghost"
             >
               Show Folders Tutorial
-            </Button>
+            </Button>*/}
           </div>
         </div>
       )}
