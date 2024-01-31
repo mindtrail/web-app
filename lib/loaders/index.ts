@@ -1,11 +1,14 @@
 import { DataSourceType, DataSourceStatus } from '@prisma/client'
 import { Document } from 'langchain/document'
+import { redirect } from 'next/navigation'
 
 import { createAndStoreVectors } from '@/lib/qdrant'
 
 import { createTags } from '@/lib/db/tags'
 import { getPageTags } from '@/lib/openAI'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../authOptions'
 
 type CreateDSProps = {
   file: File | HTMLFile
@@ -46,7 +49,7 @@ export const createDataSourceAndVectors = async (
     return null
   }
 
-  await createTags({ tags, dataSourceId })
+  await createTags({ tags, dataSourceId, userId })
 
   const docs = chunks
     .map(({ pageContent, metadata }) => ({

@@ -7,32 +7,37 @@ import { cleanHTMLContent } from '@/lib/loaders/utils'
 import { summarizePage } from '@/lib/openAI'
 
 export const getDataSourceListForUser = async (userId: string) => {
-  const dataSourceList = await prisma.dataSource.findMany({
-    where: {
-      dataSourceUsers: {
-        some: {
-          userId: userId,
+  try {
+    const dataSourceList = await prisma.dataSource.findMany({
+      where: {
+        dataSourceUsers: {
+          some: {
+            userId: userId,
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    include: {
-      dataSourceTags: {
-        include: {
-          tag: true,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        dataSourceTags: {
+          include: {
+            tag: true,
+          },
         },
       },
-    },
-  })
+    })
 
-  return dataSourceList
+    return dataSourceList
+  } catch (err) {
+    console.log(err)
+    return []
+  }
 }
 
 export const getDataSourceListByIds = async (
   dataSourceList: string[],
-  userId?: string,
+  userId?: string
 ) => {
   const result = await prisma.dataSource.findMany({
     where: {
@@ -154,7 +159,7 @@ export const createDataSource = async (props: CreateDS) => {
   const nbChunks = chunks.length
   const textSize = chunks.reduce(
     (acc, doc) => acc + doc?.pageContent?.length,
-    0,
+    0
   )
 
   if (!nbChunks || !textSize) {
@@ -221,7 +226,7 @@ export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
 
 export const deleteDataSourceDbOp = async (
   dataSourceIdList: string[],
-  userId: string,
+  userId: string
 ) => {
   // Step 1: Delete the m2m relationship between the user and the dataSource
   await prisma.dataSourceUser.deleteMany({
@@ -256,7 +261,7 @@ export const deleteDataSourceDbOp = async (
 
   console.log(
     'dataSourceDeleted:::',
-    dataSourcesToDeleteFromDB.map((dataSource) => dataSource.id),
+    dataSourcesToDeleteFromDB.map((dataSource) => dataSource.id)
   )
   return dataSourcesToDeleteFromDB
 }

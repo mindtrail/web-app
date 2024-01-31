@@ -3,6 +3,7 @@ import prisma from '@/lib/db/connection'
 type CreateTagsPayload = {
   tags: string[]
   dataSourceId: string
+  userId: string
 }
 
 export const getTagList = async () => {
@@ -15,7 +16,11 @@ export const getTagList = async () => {
   return tagList
 }
 
-export const createTags = async ({ tags, dataSourceId }: CreateTagsPayload) => {
+export const createTags = async ({
+  tags,
+  dataSourceId,
+  userId,
+}: CreateTagsPayload) => {
   // @TODO -> determine the domain of the tags. Add guardrails
   const tagsArray = tags.map((tag) => ({
     name: tag,
@@ -42,6 +47,12 @@ export const createTags = async ({ tags, dataSourceId }: CreateTagsPayload) => {
         dataSourceId: dataSourceId,
       },
     })
+    /*await prisma.userTag.create({
+      data: {
+        tagId: tag.id,
+        userId: userId,
+      },
+    })*/
   }
 
   return createdTagRecords
