@@ -41,7 +41,7 @@ import {
 } from '@/lib/constants'
 
 interface DataTableProps<TData> {
-  historyMetadata: { name: string; parent: string; parentLink: string }
+  historyMetadata: { name: string; subParent: string; parent: string; parentLink: string }
   data: TData[]
   processing?: boolean
   userPreferences?: UserPreferences

@@ -28,10 +28,12 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
   const [filters, setFilters] = useState<SidebarItem[]>([])
 
   const [selected, setSelected] = useState(undefined)
+  const [subSelected, setSubSelected] = useState(undefined)
 
   useEffect(() => {
     getCollectionsData()
-    getFiltersData()
+    // TO-DO: Smart Folders v1
+    //getFiltersData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -91,12 +93,15 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
             </div>
 
             <FolderItems
-              openSecondSidebar={false}
+              openSecondSidebar={openSecondSidebar}
               setOpenSecondSidebar={setOpenSecondSidebar}
               setTitle={setTitle}
               loading={loading}
               filters={filters}
               setSelected={setSelected}
+              selected={selected}
+              subSelected={subSelected}
+              setSubSelected={setSubSelected}
             />
           </div>
           <div className="p-4 border-t border-gray-200">
@@ -112,6 +117,8 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
           open={openSecondSidebar && selected !== undefined}
           setOpen={setOpenSecondSidebar}
           pathname={pathname}
+          selected={selected}
+          setSubSelected={setSubSelected}
         />
       </div>
     </div>

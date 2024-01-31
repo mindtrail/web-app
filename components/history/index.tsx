@@ -25,7 +25,7 @@ import { getURLPathname } from '@/lib/utils'
 import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
-  historyMetadata: { name: string; parent: string; parentLink: string }
+  historyMetadata: { name: string; subParent: string, parent: string; parentLink: string }
   userId: string
   historyItems: HistoryItem[]
   userPreferences?: UserPreferences
