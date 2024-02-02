@@ -14,9 +14,7 @@ export interface EditDSProps {
   }
 }
 
-export async function generateMetadata({
-  params,
-}: EditDSProps): Promise<Metadata> {
+export async function generateMetadata({ params }: EditDSProps): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {

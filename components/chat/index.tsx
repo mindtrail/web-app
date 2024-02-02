@@ -34,13 +34,9 @@ export interface ChatProps extends React.ComponentProps<'div'> {
 }
 
 export function Chat(props: ChatProps) {
-  const { id, initialMessages, className, name, flowiseURLEnvVar, userId } =
-    props
+  const { id, initialMessages, className, name, flowiseURLEnvVar, userId } = props
 
-  const [previewToken, setPreviewToken] = useLocalStorage<string | null>(
-    'ai-token',
-    null,
-  )
+  const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
   const [flowiseURL, setFlowiseURL] = useState(flowiseURLEnvVar)
@@ -99,16 +95,13 @@ export function Chat(props: ChatProps) {
             <DialogTitle>Enter your OpenAI Key</DialogTitle>
             <DialogDescription>
               If you have not obtained your OpenAI API key, you can do so by
-              <a
-                href='https://platform.openai.com/signup/'
-                className='underline'
-              >
+              <a href='https://platform.openai.com/signup/' className='underline'>
                 signing up
               </a>
-              on the OpenAI website. This is only necessary for preview
-              environments so that the open source community can test the app.
-              The token will be saved to your browser&apos;s local storage under
-              the name <code className='font-mono'>ai-token</code>.
+              on the OpenAI website. This is only necessary for preview environments so
+              that the open source community can test the app. The token will be saved to
+              your browser&apos;s local storage under the name{' '}
+              <code className='font-mono'>ai-token</code>.
             </DialogDescription>
           </DialogHeader>
           <Input

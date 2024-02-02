@@ -25,10 +25,7 @@ function getUserInitials(name: string) {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
-  const inDevelopment = useMemo(
-    () => process.env.NODE_ENV === 'development',
-    [],
-  )
+  const inDevelopment = useMemo(() => process.env.NODE_ENV === 'development', [])
 
   return (
     <div className='flex items-center justify-end w-full absolute'>

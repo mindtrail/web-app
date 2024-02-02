@@ -10,8 +10,7 @@ import { Document } from 'langchain/document'
 
 const LOADER: FILE_LOADER_PAIR = {
   'text/csv': CSVLoader,
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-    DocxLoader,
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': DocxLoader,
   // 'application/epub+zip': EPubLoader,
   'text/markdown': TextLoader,
   'text/plain': TextLoader,
@@ -36,9 +35,7 @@ const getFileLoader = (type: string) => {
   return FileLoader
 }
 
-export const getChunksFromLocalFile = async (
-  fileBlob: File,
-): Promise<Document[]> => {
+export const getChunksFromLocalFile = async (fileBlob: File): Promise<Document[]> => {
   const { type } = fileBlob
 
   const FileLoader = getFileLoader(type)

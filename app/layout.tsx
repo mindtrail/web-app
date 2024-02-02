@@ -19,8 +19,7 @@ export const metadata: Metadata = {
     default: 'Mind Trail',
     template: `Mind Trail - %s`,
   },
-  description:
-    'AI assitant to emember and structures everything you see online',
+  description: 'AI assitant to emember and structures everything you see online',
   icons: {
     icon: '/favicon.ico',
   },
@@ -34,11 +33,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const user = session?.user
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="flex min-h-screen">
+    <html lang='en' suppressHydrationWarning>
+      <body className='flex min-h-screen'>
         <Providers>
-          {<LeftSidebar className="" user={user} />}
-          <main className="flex flex-1 overflow-auto">
+          {<LeftSidebar className='' user={user} />}
+          <main className='flex flex-1 overflow-auto'>
             {children}
             {/* <Separator orientation='vertical' /> */}
             {<SidebarRight />}

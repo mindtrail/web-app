@@ -112,12 +112,11 @@ export function CollectionForm(props: FormProps) {
   // @ts-ignore - getting the error for the refined error type
   const filesOrUrlsError = errors?.filesOrUrls
 
-  const { getRootProps, getInputProps, isDragAccept, isDragReject } =
-    useDropzone({
-      accept: ACCEPTED_FILE_REACT_DROPZONE,
-      validator: formValidator,
-      onDrop: handleFileDrop,
-    })
+  const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
+    accept: ACCEPTED_FILE_REACT_DROPZONE,
+    validator: formValidator,
+    onDrop: handleFileDrop,
+  })
 
   function formValidator(file: File) {
     const { name, type } = file
@@ -138,9 +137,7 @@ export function CollectionForm(props: FormProps) {
     setProcessing(false)
   }
 
-  const handleWebsiteScrape = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleWebsiteScrape = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     if (onScrapeWebsite) {
@@ -170,8 +167,8 @@ export function CollectionForm(props: FormProps) {
     return isDragAccept
       ? DROPZONE_STYLES.ACCEPT
       : isDragReject
-      ? DROPZONE_STYLES.REJECT
-      : DROPZONE_STYLES.DEFAULT
+        ? DROPZONE_STYLES.REJECT
+        : DROPZONE_STYLES.DEFAULT
   }, [isDragAccept, isDragReject])
 
   const defaultTab = useMemo(() => {
@@ -225,9 +222,7 @@ export function CollectionForm(props: FormProps) {
                   name='files'
                   render={() => (
                     <FormItem className='relative'>
-                      <FormLabel
-                        className={filesOrUrlsError && 'text-destructive'}
-                      >
+                      <FormLabel className={filesOrUrlsError && 'text-destructive'}>
                         Upload Files
                       </FormLabel>
                       <FormControl>
@@ -245,14 +240,12 @@ export function CollectionForm(props: FormProps) {
                             <>
                               <p>
                                 Drop files or
-                                <span className='underline text-neutral-500'>
-                                  Click
-                                </span>
+                                <span className='underline text-neutral-500'>Click</span>
                                 to browse
                               </p>
                               <p className='text-sm text-neutral-500'>
-                                <span>Supported file types:</span> .pdf, .docx,
-                                .txt, .md, .json, .jsonl, .csv
+                                <span>Supported file types:</span> .pdf, .docx, .txt, .md,
+                                .json, .jsonl, .csv
                               </p>
                             </>
                           )}
@@ -280,9 +273,7 @@ export function CollectionForm(props: FormProps) {
                     name='newURL'
                     render={({ field }) => (
                       <FormItem className='w-full relative'>
-                        <FormLabel
-                          className={filesOrUrlsError && 'text-destructive'}
-                        >
+                        <FormLabel className={filesOrUrlsError && 'text-destructive'}>
                           Website
                         </FormLabel>
                         <FormControl>
@@ -352,12 +343,10 @@ export function CollectionForm(props: FormProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete the file and the associated data. The action
-              cannot be undone and will permanently delete
+              This will delete the file and the associated data. The action cannot be
+              undone and will permanently delete
               <b>
-                {deleteDialogOpen
-                  ? fileToDelete?.file?.name
-                  : urlToDelete?.file?.name}
+                {deleteDialogOpen ? fileToDelete?.file?.name : urlToDelete?.file?.name}
               </b>
               .
             </AlertDialogDescription>

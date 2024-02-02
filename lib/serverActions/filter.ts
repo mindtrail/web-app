@@ -2,11 +2,7 @@
 
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
-import {
-  createFilterDbOp,
-  deleteFilterDbOp,
-  updateFilterDbOp,
-} from '../db/filter'
+import { createFilterDbOp, deleteFilterDbOp, updateFilterDbOp } from '../db/filter'
 
 export async function getFiltersByUserId() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
