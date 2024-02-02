@@ -34,16 +34,19 @@ export const initAnalytics = ({
           ed: data,
         }
 
-        const promise = fetch(`https://${process.env.VERCEL_URL}/_vercel/insights/event`, {
-          headers: {
-            'content-type': 'application/json',
-            'user-agent': headers['user-agent'] as string,
-            'x-forwarded-for': headers['x-forwarded-for'] as string,
-            'x-va-server': '1',
+        const promise = fetch(
+          `https://${process.env.VERCEL_URL}/_vercel/insights/event`,
+          {
+            headers: {
+              'content-type': 'application/json',
+              'user-agent': headers['user-agent'] as string,
+              'x-forwarded-for': headers['x-forwarded-for'] as string,
+              'x-va-server': '1',
+            },
+            body: JSON.stringify(body),
+            method: 'POST',
           },
-          body: JSON.stringify(body),
-          method: 'POST',
-        })
+        )
 
         if (event) {
           event.waitUntil(promise)

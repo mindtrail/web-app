@@ -43,7 +43,6 @@ export async function POST(req: Request) {
       metadata,
     }
 
-
     const chunks = await getChunksFromDoc({ file, DSType })
 
     if (!chunks?.length) {

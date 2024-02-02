@@ -63,11 +63,7 @@ export async function updateCollection({ collectionId, name }: CollectionItem) {
   }
 }
 
-export async function deleteCollection({
-  collectionId,
-}: {
-  collectionId: string
-}) {
+export async function deleteCollection({ collectionId }: { collectionId: string }) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 

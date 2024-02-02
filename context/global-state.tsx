@@ -11,9 +11,10 @@ const initialState: GlobalState = {
   unsyncedCollections: [],
 }
 
-export const GlobalStateContext = createContext<
-  [GlobalState, React.Dispatch<Action>]
->([initialState, () => {}])
+export const GlobalStateContext = createContext<[GlobalState, React.Dispatch<Action>]>([
+  initialState,
+  () => {},
+])
 
 export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(globalReducer, initialState)

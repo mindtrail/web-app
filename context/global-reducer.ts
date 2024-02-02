@@ -1,7 +1,4 @@
-export const globalReducer = (
-  state: GlobalState,
-  action: Action,
-): GlobalState => {
+export const globalReducer = (state: GlobalState, action: Action): GlobalState => {
   console.log('ACTION', action)
 
   const { type, payload } = action

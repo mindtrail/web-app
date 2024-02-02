@@ -46,8 +46,7 @@ export function ImportDataSource({ userId }: ImportDataSource) {
 
     // Only upload files that are not synched and have content
     const unsynchedFiles = files?.filter(
-      ({ status, textSize }) =>
-        status === DataSourceStatus.unsynched && textSize > 0,
+      ({ status, textSize }) => status === DataSourceStatus.unsynched && textSize > 0,
     )
 
     if (newURL) {
