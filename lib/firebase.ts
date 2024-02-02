@@ -35,10 +35,7 @@ export async function addWebsiteToDb(payload: any) {
   }
 }
 
-export async function listenForCollectionUpdate(
-  collectionId: string,
-  callback: any,
-) {
+export async function listenForCollectionUpdate(collectionId: string, callback: any) {
   return onSnapshot(doc(db, WEBSITES_COLLECTION, collectionId), callback)
 }
 

@@ -19,7 +19,7 @@ export async function createCollectionApiCall(data: CreateCollection) {
 
 export async function updateCollectionApiCall(
   collectionId: string,
-  data: Partial<CreateCollection>
+  data: Partial<CreateCollection>,
 ) {
   const response = await fetch(`${DATASTORE_ENDPOINT}/${collectionId}`, {
     method: 'PATCH',

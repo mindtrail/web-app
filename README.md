@@ -13,7 +13,6 @@ This is a <a href="https://nextjs.org/">Next.js</a> starter kit that uses <a hre
 
 ## Developing Locally
 
-
 Clone the repo
 
 ```bash

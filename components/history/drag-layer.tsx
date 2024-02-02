@@ -5,14 +5,12 @@ import { DragHandleDots2Icon } from '@radix-ui/react-icons'
 import { Button } from '@/components/ui/button'
 
 export const ColumnDragLayer = () => {
-  const { isDragging, item, initialOffset, currentOffset } = useDragLayer(
-    (monitor) => ({
-      isDragging: monitor.isDragging(),
-      item: monitor.getItem(),
-      initialOffset: monitor.getInitialSourceClientOffset(),
-      currentOffset: monitor.getSourceClientOffset(),
-    }),
-  )
+  const { isDragging, item, initialOffset, currentOffset } = useDragLayer((monitor) => ({
+    isDragging: monitor.isDragging(),
+    item: monitor.getItem(),
+    initialOffset: monitor.getInitialSourceClientOffset(),
+    currentOffset: monitor.getSourceClientOffset(),
+  }))
 
   if (!isDragging || !item) {
     // return null
@@ -31,10 +29,7 @@ export const ColumnDragLayer = () => {
   )
 }
 
-function getItemStyles(
-  initialOffset: XYCoord | null,
-  currentOffset: XYCoord | null,
-) {
+function getItemStyles(initialOffset: XYCoord | null, currentOffset: XYCoord | null) {
   if (initialOffset == null || currentOffset == null) {
     return {
       display: 'none',

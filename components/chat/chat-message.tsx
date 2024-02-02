@@ -14,10 +14,7 @@ export interface ChatMessageProps {
 
 export function ChatMessage({ message, ...props }: ChatMessageProps) {
   return (
-    <div
-      className={cn('group relative mb-4 flex items-start md:-ml-8')}
-      {...props}
-    >
+    <div className={cn('group relative mb-4 flex items-start md:-ml-8')} {...props}>
       <div
         className={cn(
           'flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md border shadow',
@@ -39,9 +36,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
             code({ node, inline, className, children, ...props }) {
               if (children.length) {
                 if (children[0] == '▍') {
-                  return (
-                    <span className='mt-1 animate-pulse cursor-default'>▍</span>
-                  )
+                  return <span className='mt-1 animate-pulse cursor-default'>▍</span>
                 }
 
                 children[0] = (children[0] as string).replace('`▍`', '▍')

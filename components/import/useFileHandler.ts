@@ -3,10 +3,7 @@ import { DataSourceStatus, DataSource } from '@prisma/client'
 
 import { useToast } from '@/components/ui/use-toast'
 import { MAX_NR_OF_FILES } from '@/components/collection/constants'
-import {
-  getFileMetadataApiCall,
-  deleteDataSourceApiCall,
-} from '@/lib/api/dataSource'
+import { getFileMetadataApiCall, deleteDataSourceApiCall } from '@/lib/api/dataSource'
 
 import { filterFiles, updateFilesWithMetadata } from '@/components/import/utils'
 
@@ -49,28 +46,21 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
 
       const remainingSlots = MAX_NR_OF_FILES - existingFiles
       // Filter files based on size and nr limit
-      let { acceptedFiles, rejectedFiles } = filterFiles(
-        droppedFiles,
-        remainingSlots,
-      )
+      let { acceptedFiles, rejectedFiles } = filterFiles(droppedFiles, remainingSlots)
 
       setFiles((prevFiles = []) => [...prevFiles, ...acceptedFiles])
       setRejectedFiles(rejectedFiles)
       setTextSizeLoading(true)
       setDropzoneUsed(true) // User has interacted with the dropzone
       try {
-        const metadataForFiles = (await getFilesMetadata(
-          acceptedFiles,
-        )) as Metadata[]
+        const metadataForFiles = (await getFilesMetadata(acceptedFiles)) as Metadata[]
 
         const totalChars = metadataForFiles.reduce(
           (acc, { textSize }) => acc + textSize,
           0,
         )
 
-        setFiles((prevFiles) =>
-          updateFilesWithMetadata(prevFiles, metadataForFiles),
-        )
+        setFiles((prevFiles) => updateFilesWithMetadata(prevFiles, metadataForFiles))
         setTextSize((prevChars) => prevChars + totalChars)
         setTextSizeLoading(false)
         return acceptedFiles
@@ -95,9 +85,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
     filterOutDeletedFileAndUpdateTextSize(file)
   }, [])
 
-  const filterOutDeletedFileAndUpdateTextSize = (
-    fileToDelete: AcceptedFile,
-  ) => {
+  const filterOutDeletedFileAndUpdateTextSize = (fileToDelete: AcceptedFile) => {
     const { file, textSize = 0, status } = fileToDelete
 
     setFiles((prevFiles) =>

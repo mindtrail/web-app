@@ -20,9 +20,7 @@ export const updateUserPreferences = async (userId: string, payload: any) => {
   })
 
   const existingTablePrefs =
-    typeof existingPrefs?.tablePrefs === 'object'
-      ? existingPrefs.tablePrefs
-      : {}
+    typeof existingPrefs?.tablePrefs === 'object' ? existingPrefs.tablePrefs : {}
 
   const mergedPrefs = {
     ...existingTablePrefs,
