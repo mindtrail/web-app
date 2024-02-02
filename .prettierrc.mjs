@@ -3,11 +3,12 @@
 /** @type {import("prettier").Config} */
 
 export default {
-  // printWidth: 90,
-  // tabWidth: 2,
-  // semi: false,
-  // singleQuote: true,
-  // jsxSingleQuote: true,
-  // trailingComma: "all",
-  // arrowParens: "always",
-};
+  printWidth: 90,
+  tabWidth: 2,
+  useTabs: false,
+  semi: false,
+  singleQuote: true,
+  jsxSingleQuote: true,
+  trailingComma: 'all',
+  arrowParens: 'always',
+}

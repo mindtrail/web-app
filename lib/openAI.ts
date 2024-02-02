@@ -25,9 +25,7 @@ export const getOpenAIConnection = () => {
   return openAIChat
 }
 
-export const getPageTags = async (
-  pageDescription: string,
-): Promise<string[]> => {
+export const getPageTags = async (pageDescription: string): Promise<string[]> => {
   const openAI = getOpenAIConnection()
 
   const exsitingTags = (await getTagList()).map((tag) => tag.name)
