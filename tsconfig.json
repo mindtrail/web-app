@@ -14,7 +14,7 @@
       "@/styles/*": ["styles/*"],
       "@/types/*": ["types/*"],
       "@/typography/*": ["components/typography/*"],
-      "@/context/*": ["context/*"]
+      "@/context/*": ["context/*"],
     },
     "typeRoots": ["./node_modules/@types", "./types", "@/types/*"],
     "strict": true,
@@ -29,10 +29,16 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next"
-      }
-    ]
+        "name": "next",
+      },
+    ],
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "migration.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "migration.ts",
+  ],
+  "exclude": ["node_modules"],
 }

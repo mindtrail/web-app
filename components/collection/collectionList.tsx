@@ -103,8 +103,8 @@ export function CollectionList({ collectionList }: CollectionListProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Knowledge Base?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete all the associated data and file. The action
-              cannot be undone and will permanently delete
+              This will delete all the associated data and file. The action cannot be
+              undone and will permanently delete
               <b>{kbToDelete?.name}</b>
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -71,23 +71,18 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
   }
 
   return (
-    <div className="min-h-screen flex relative">
+    <div className='min-h-screen flex relative'>
       {/* Container for both sidebars and main content */}
       <div className={`flex ${className}`}>
         {/* First sidebar */}
-        <nav className="flex flex-col justify-between w-[256px] border-r flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out h-screen">
+        <nav className='flex flex-col justify-between w-[256px] border-r flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out h-screen'>
           <div>
-            <div className="h-14 border-b flex items-center justify-center">
+            <div className='h-14 border-b flex items-center justify-center'>
               <Link
-                href="/"
-                className="flex gap-4 w-full px-6 py-2 self-center items-center"
+                href='/'
+                className='flex gap-4 w-full px-6 py-2 self-center items-center'
               >
-                <Image
-                  width={30}
-                  height={30}
-                  src="/icon-2.png"
-                  alt="Mind Trail"
-                />
+                <Image width={30} height={30} src='/icon-2.png' alt='Mind Trail' />
                 {BRAND_NAME}
               </Link>
             </div>
@@ -104,16 +99,14 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
               setSubSelected={setSubSelected}
             />
           </div>
-          <div className="p-4 border-t border-gray-200">
+          <div className='p-4 border-t border-gray-200'>
             <LeftSidebarFooter user={user} />
           </div>
         </nav>
         <SecondSidebar
           title={title}
           items={selected === SELECTED_ITEM.COLLECTIONS ? collections : filters}
-          setItems={
-            selected === SELECTED_ITEM.COLLECTIONS ? setCollections : setFilters
-          }
+          setItems={selected === SELECTED_ITEM.COLLECTIONS ? setCollections : setFilters}
           open={openSecondSidebar && selected !== undefined}
           setOpen={setOpenSecondSidebar}
           pathname={pathname}

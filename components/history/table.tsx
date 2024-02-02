@@ -20,13 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
@@ -68,10 +62,8 @@ export function DataTable<TData>({
   const initialVis = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
 
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialOrder)
-  const [columnSizing, setColumnSizing] =
-    useState<ColumnSizingState>(initialSize)
-  const [columnVisibility, setColumnVisibility] =
-    useState<VisibilityState>(initialVis)
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(initialSize)
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialVis)
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -110,15 +102,13 @@ export function DataTable<TData>({
 
       updateUserPreferences({ columnVisibility: updatedVisibility })
     },
-    [columnVisibility, updateUserPreferences]
+    [columnVisibility, updateUserPreferences],
   )
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
 
-    const itemsToDelete = selectedRows.rows.map(
-      ({ original }) => original as HistoryItem
-    )
+    const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
 
     handleHistoryDelete(itemsToDelete)
     table.resetRowSelection()
@@ -126,11 +116,11 @@ export function DataTable<TData>({
 
   return (
     <>
-      <div className="flex items-center justify-between py-4">
+      <div className='flex items-center justify-between py-4'>
         <HistoryBreadcrumbs historyMetadata={historyMetadata} />
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="ghost">
-            <CaretSortIcon className="h-5 w-5" />
+        <div className='flex items-center gap-2'>
+          <Button size='sm' variant='ghost'>
+            <CaretSortIcon className='h-5 w-5' />
             A-Z
           </Button>
 
@@ -138,7 +128,7 @@ export function DataTable<TData>({
           <VisibilityDropdown table={table} columnOrder={columnOrder} />
         </div>
       </div>
-      <ScrollArea className="rounded-md border cursor-default max-h-[calc(100vh-165px)]">
+      <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
         <div
           className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
             flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
@@ -149,19 +139,17 @@ export function DataTable<TData>({
               table.getIsAllPageRowsSelected() ||
               (table.getIsSomePageRowsSelected() && 'indeterminate')
             }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label='Select all'
           />
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={onDelete}>
+          <div className='flex items-center gap-2'>
+            <Button variant='outline' size='sm' onClick={onDelete}>
               Delete
             </Button>
           </div>
         </div>
-        <Table className="table-fixed" style={{ width: table.getTotalSize() }}>
-          <TableHeader className="sticky top-0 bg-background border-b shadow-sm z-10">
+        <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
+          <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -203,13 +191,13 @@ export function DataTable<TData>({
         </Table>
 
         {processing && (
-          <div className="absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52">
-            <div className="flex items-center gap-2 h-8">
+          <div className='absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52'>
+            <div className='flex items-center gap-2 h-8'>
               <IconSpinner /> Searching...
             </div>
           </div>
         )}
-        <ScrollBar orientation="horizontal" />
+        <ScrollBar orientation='horizontal' />
       </ScrollArea>
       <ColumnDragLayer />
     </>

@@ -4,10 +4,7 @@ import { authOptions } from '@/lib/authOptions'
 
 import { deleteDataSourceDbOp } from '@/lib/db/dataSource'
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id

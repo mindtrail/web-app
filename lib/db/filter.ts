@@ -59,11 +59,7 @@ export const createFilterDbOp = async ({ userId, name }: CreateFilter) => {
   return filter
 }
 
-export const updateFilterDbOp = async ({
-  filterId,
-  userId,
-  ...rest
-}: UpdateFilter) => {
+export const updateFilterDbOp = async ({ filterId, userId, ...rest }: UpdateFilter) => {
   const filter = await prisma.filter.update({
     where: {
       id: filterId,
