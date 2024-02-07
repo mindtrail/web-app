@@ -4,15 +4,10 @@ import { UseChatHelpers } from 'ai/react'
 
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit'
 import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { IconArrowElbow } from '@/components/ui/icons/next-icons'
 
-export interface PromptProps
-  extends Pick<UseChatHelpers, 'input' | 'setInput'> {
+export interface PromptProps extends Pick<UseChatHelpers, 'input' | 'setInput'> {
   isLoading: boolean
   notInitialised?: boolean
   onSubmit: (event: FormEvent<HTMLFormElement>) => void

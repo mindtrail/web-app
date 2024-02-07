@@ -56,10 +56,7 @@ export const deleteDataSourceApiCall = async (fileId: string) => {
   return response.json()
 }
 
-export const scrapeURLsApiCall = async (
-  urls: string[],
-  collectionId?: string,
-) => {
+export const scrapeURLsApiCall = async (urls: string[], collectionId?: string) => {
   const response = await fetch(SCRAPER_ENDPOINT, {
     method: 'POST',
     headers: {

@@ -17,10 +17,7 @@ export async function POST(req: Request) {
     })
   }
 
-  if (
-    !req ||
-    !req.headers.get('content-type')?.startsWith('multipart/form-data')
-  ) {
+  if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
     return new NextResponse('Missing form-data', {
       status: 400,
     })
@@ -37,10 +34,7 @@ export async function POST(req: Request) {
   try {
     const chunks = await getChunksFromDoc({ file, DSType: DataSourceType.file })
 
-    const textSize = chunks?.reduce(
-      (acc, doc) => acc + doc?.pageContent?.length,
-      0,
-    )
+    const textSize = chunks?.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
     if (!chunks?.length || !textSize) {
       return NextResponse.json('File is empty', {

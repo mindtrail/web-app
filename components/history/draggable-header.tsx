@@ -39,10 +39,7 @@ export function DraggableHeader<TData, TValue>({
 
   const { column } = header
 
-  const draggableColumn = useMemo(
-    () => !FIXED_COLUMNS.includes(column.id),
-    [column],
-  )
+  const draggableColumn = useMemo(() => !FIXED_COLUMNS.includes(column.id), [column])
 
   const [{ isDragging }, dragRef, previewRef] = useDrag({
     item: () => column,
@@ -57,11 +54,7 @@ export function DraggableHeader<TData, TValue>({
     accept: DRAG_ITEM_TYPE,
     canDrop: () => draggableColumn,
     drop: (draggedColumn: Column<HistoryItem>) => {
-      const newColumnOrder = reorderColumn(
-        draggedColumn.id,
-        column.id,
-        columnOrder,
-      )
+      const newColumnOrder = reorderColumn(draggedColumn.id, column.id, columnOrder)
 
       if (!newColumnOrder) {
         return

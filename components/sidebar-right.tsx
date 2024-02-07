@@ -25,9 +25,7 @@ export async function SidebarRight() {
         )}
       </div>
       <Separator />
-      <div className='flex flex-1 flex-col items-center justify-center'>
-        Chat Section
-      </div>
+      <div className='flex flex-1 flex-col items-center justify-center'>Chat Section</div>
     </div>
   )
 }
