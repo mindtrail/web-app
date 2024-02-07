@@ -106,8 +106,7 @@ export function HistoryComponent({
       itemsToDelete.map(({ displayName = '', name, type }, index) => (
         <li
           key={index}
-          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'
-        >
+          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'>
           {type === DataSourceType.file
             ? displayName
             : displayName + getURLPathname(name)}
@@ -160,8 +159,7 @@ export function HistoryComponent({
     <div
       ref={dropRef}
       className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8
-        overflow-auto`}
-    >
+        overflow-auto`}>
       <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
@@ -170,7 +168,7 @@ export function HistoryComponent({
         processing={processing}
         userPreferences={userPreferences}
         handleHistoryDelete={handleHistoryDelete}
-        updateUserPreferences={handlePreferenceUpdate}
+        handlePreferenceUpdate={handlePreferenceUpdate}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
