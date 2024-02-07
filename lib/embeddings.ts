@@ -10,8 +10,7 @@ export const createEmbeddings = (chunks: Document[]): Promise<number[][]> => {
 }
 
 // Hugging Face Model
-const MODEL_URL =
-  'https://o6bv59bgw9y2izmr.eu-west-1.aws.endpoints.huggingface.cloud'
+const MODEL_URL = 'https://o6bv59bgw9y2izmr.eu-west-1.aws.endpoints.huggingface.cloud'
 
 // @TODO: use e5-base-v2 for English?
 const E5_BASE = 'intfloat/multilingual-e5-base'

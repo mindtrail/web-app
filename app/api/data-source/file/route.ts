@@ -23,10 +23,7 @@ export async function POST(req: Request) {
     })
   }
 
-  if (
-    !req ||
-    !req.headers.get('content-type')?.startsWith('multipart/form-data')
-  ) {
+  if (!req || !req.headers.get('content-type')?.startsWith('multipart/form-data')) {
     return new Response('Bad Request', {
       status: 400,
     })

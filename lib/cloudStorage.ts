@@ -65,10 +65,7 @@ export async function uploadToGCS(props: UploadToGCSProps) {
   }
 }
 
-export async function deleteFileFromGCS(
-  dataSourceList: DataSource[],
-  userId: string,
-) {
+export async function deleteFileFromGCS(dataSourceList: DataSource[], userId: string) {
   try {
     await Promise.all(
       dataSourceList.map((dataSource) => {

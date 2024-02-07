@@ -5,7 +5,8 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 import { getCollectionDbOp } from '@/lib/db/collection'
 
-import { CreateCollection } from '@/components/collection'
+import { getUserPreferences } from '@/lib/db/preferences'
+import { HistoryComponent } from '@/components/history'
 
 export interface EditDSProps {
   params: {
@@ -13,9 +14,7 @@ export interface EditDSProps {
   }
 }
 
-export async function generateMetadata({
-  params,
-}: EditDSProps): Promise<Metadata> {
+export async function generateMetadata({ params }: EditDSProps): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
@@ -30,28 +29,33 @@ export async function generateMetadata({
 export default async function EditDS({ params }: EditDSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
-  if (!session?.user?.id) {
+  const userId = session?.user?.id
+  if (!userId) {
     redirect(`/api/auth/signin?callbackUrl=/collection/${params.id}`)
   }
 
-  const userId = session?.user?.id
   const collectionId = params.id
-
   const collection = await getCollectionDbOp({ userId, collectionId })
 
   if (!collection) {
-    redirect('/collection?error=not-found')
+    return <div>Knowledge Base Not Found...</div>
+  }
+
+  let userPreferences = await getUserPreferences(userId)
+
+  const historyMetadata = {
+    name: collection.name,
+    parent: 'All items',
+    subParent: 'Folders',
+    parentLink: '/history',
   }
 
   return (
-    <>
-      {!collection ? (
-        <div>Knowledge Base Not Found...</div>
-      ) : (
-        <>
-          <CreateCollection userId={userId} collection={collection} />
-        </>
-      )}
-    </>
+    <HistoryComponent
+      historyMetadata={historyMetadata}
+      userId={userId}
+      historyItems={collection.dataSources}
+      userPreferences={userPreferences}
+    />
   )
 }

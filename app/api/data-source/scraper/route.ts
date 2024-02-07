@@ -55,9 +55,7 @@ export async function POST(req: Request) {
       }),
     )
 
-    const filteredDocs = docs
-      ?.flat()
-      ?.filter((doc) => doc !== null) as Document[]
+    const filteredDocs = docs?.flat()?.filter((doc) => doc !== null) as Document[]
 
     if (!filteredDocs?.length) {
       return new NextResponse('No docs', {

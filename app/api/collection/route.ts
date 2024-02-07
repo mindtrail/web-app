@@ -2,14 +2,10 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import {
-  getCollectionListDbOp,
-  createCollectionDbOp,
-} from '@/lib/db/collection'
+import { getCollectionListDbOp, createCollectionDbOp } from '@/lib/db/collection'
 
 export async function GET() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
-
   const userId = session?.user?.id
 
   if (!userId) {

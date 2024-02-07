@@ -28,8 +28,9 @@ export interface DSProps {
 
 export default async function CollectionPage(params: DSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
 
-  if (!session?.user?.id) {
+  if (!userId) {
     redirect(`/api/auth/signin?callbackUrl=/collection`)
   }
 
@@ -37,7 +38,6 @@ export default async function CollectionPage(params: DSProps) {
   const notFoundChat = params?.searchParams?.notFound
   const refresh = params?.searchParams?.refresh
 
-  const userId = session?.user?.id
   const collectionList = await getCollectionListDbOp({
     userId,
     includeDataSource: true,
