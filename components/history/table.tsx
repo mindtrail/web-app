@@ -5,7 +5,7 @@ import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
 
 import {
-  Column,
+  Table as ReactTable,
   ColumnOrderState,
   ColumnSizingState,
   SortingState,
@@ -39,7 +39,7 @@ interface DataTableProps<TData> {
   processing?: boolean
   userPreferences?: UserPreferences
   handleHistoryDelete: (ids: HistoryItem[]) => void
-  updateUserPreferences: (prefs: UserTablePrefs) => void
+  handlePreferenceUpdate: (prefs: UserTablePrefs) => void
 }
 
 export function DataTable<TData>({
@@ -47,7 +47,7 @@ export function DataTable<TData>({
   processing,
   userPreferences,
   handleHistoryDelete,
-  updateUserPreferences,
+  handlePreferenceUpdate,
 }: DataTableProps<TData>) {
   const {
     columnOrder: storedColOrder,
@@ -85,23 +85,11 @@ export function DataTable<TData>({
       rowSelection,
       sorting,
     },
-  })
+  }) as ReactTable<HistoryItem>
 
   const { rows } = table.getRowModel()
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
-
-  const handleVisibilityChange = useCallback(
-    (value: boolean, column: Column<TData, unknown>) => {
-      const updatedVisibility = {
-        ...columnVisibility,
-        [column.id]: !!value,
-      }
-
-      updateUserPreferences({ columnVisibility: updatedVisibility })
-    },
-    [columnVisibility, updateUserPreferences],
-  )
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
@@ -122,16 +110,18 @@ export function DataTable<TData>({
             A-Z
           </Button>
 
-          {/* @ts-ignore */}
-          <VisibilityDropdown table={table} columnOrder={columnOrder} />
+          <VisibilityDropdown
+            table={table}
+            columnOrder={columnOrder}
+            handlePreferenceUpdate={handlePreferenceUpdate}
+          />
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
         <div
           className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
             flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
-            ${areRowsSelected && '!visible'}`}
-        >
+            ${areRowsSelected && '!visible'}`}>
           <Checkbox
             checked={
               table.getIsAllPageRowsSelected() ||
@@ -155,7 +145,7 @@ export function DataTable<TData>({
                     key={header.id}
                     header={header}
                     table={table}
-                    updateUserPreferences={updateUserPreferences}
+                    handlePreferenceUpdate={handlePreferenceUpdate}
                   />
                 ))}
               </TableRow>
@@ -170,15 +160,13 @@ export function DataTable<TData>({
                   data-state={isRowSelected && 'selected'}
                   className={`group/row text-foreground/70 hover:text-foreground ${
                     isRowSelected && 'text-foreground'
-                  }`}
-                >
+                  }`}>
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
                       key={id}
                       className={`align-top pt-10 ${
                         column.id === 'actions' && 'text-center'
-                      }`}
-                    >
+                      }`}>
                       {flexRender(column.columnDef.cell, getContext())}
                     </TableCell>
                   ))}
