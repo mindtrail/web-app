@@ -90,12 +90,10 @@ export function CollectionListItem(props: itemProps) {
             forceMount
             onClick={(e) => e.stopPropagation()}
           >
-            <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEdit()}>Edit</DropdownMenuItem>
             <DropdownMenuItem disabled>Duplicate</DropdownMenuItem>
             <DropdownMenuItem disabled>Share</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(id, name)}>
-              Delete
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete()}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

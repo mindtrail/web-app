@@ -29,34 +29,37 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ChatPage() {
   const session = (await getServerSession(authOptions)) as ExtSession
 
-  if (!session?.user?.id) {
+  const userId = session?.user?.id
+  if (!userId) {
     redirect(`/api/auth/signin?callbackUrl=/chat/`)
   }
 
-  const userId = session.user.id
+  let userPreferences, historyItems
 
   try {
-    let [userPreferences, historyItems] = await Promise.all([
+    ;[userPreferences, historyItems] = await Promise.all([
       getUserPreferences(userId),
       getDataSourceListForUser(userId),
     ])
-
-    historyItems = historyItems.splice(0, 40)
-    return (
-      <HistoryComponent
-        historyMetadata={{
-          name: 'All items',
-          parent: '',
-          subParent: '',
-          parentLink: '',
-        }}
-        userId={userId}
-        historyItems={historyItems}
-        userPreferences={userPreferences}
-      />
-    )
   } catch (err) {
     console.log(err)
-    return null
+    return <div>Error loading history.</div>
   }
+
+  historyItems = historyItems.splice(0, 40)
+  const historyMetadata = {
+    name: 'All items',
+    parent: '',
+    subParent: '',
+    parentLink: '',
+  }
+
+  return (
+    <HistoryComponent
+      historyMetadata={historyMetadata}
+      userId={userId}
+      historyItems={historyItems}
+      userPreferences={userPreferences}
+    />
+  )
 }
