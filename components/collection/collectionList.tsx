@@ -92,9 +92,9 @@ export function CollectionList({ collectionList }: CollectionListProps) {
           <CollectionListItem
             key={index}
             collection={collection}
-            handleDelete={handleDelete}
-            handleEdit={handleEdit}
-            handleClick={openChat}
+            // handleDelete={handleDelete}
+            // handleEdit={handleEdit}
+            // handleClick={openChat}
           />
         ))}
       </div>

@@ -29,39 +29,33 @@ export async function generateMetadata({ params }: EditDSProps): Promise<Metadat
 export default async function EditDS({ params }: EditDSProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
-  if (!session?.user?.id) {
+  const userId = session?.user?.id
+  if (!userId) {
     redirect(`/api/auth/signin?callbackUrl=/collection/${params.id}`)
   }
 
-  const userId = session?.user?.id
   const collectionId = params.id
   const collection = await getCollectionDbOp({ userId, collectionId })
 
   if (!collection) {
-    redirect('/collection?error=not-found')
+    return <div>Knowledge Base Not Found...</div>
   }
 
   let userPreferences = await getUserPreferences(userId)
 
+  const historyMetadata = {
+    name: collection.name,
+    parent: 'All items',
+    subParent: 'Folders',
+    parentLink: '/history',
+  }
+
   return (
-    <>
-      {!collection ? (
-        <div>Knowledge Base Not Found...</div>
-      ) : (
-        <>
-          <HistoryComponent
-            historyMetadata={{
-              name: collection.name,
-              parent: 'All items',
-              subParent: 'Folders',
-              parentLink: '/history',
-            }}
-            userId={userId}
-            historyItems={collection.dataSources}
-            userPreferences={userPreferences}
-          />
-        </>
-      )}
-    </>
+    <HistoryComponent
+      historyMetadata={historyMetadata}
+      userId={userId}
+      historyItems={collection.dataSources}
+      userPreferences={userPreferences}
+    />
   )
 }
