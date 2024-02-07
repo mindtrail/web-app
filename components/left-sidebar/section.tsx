@@ -81,9 +81,6 @@ export function Section({
               {sectionIsOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
               {title}
             </Button>
-<<<<<<< HEAD
-            <Button variant='sidebar' className='hover:bg-slate-200 -mr-4 shrink-0'>
-=======
             <Button
               variant='sidebar'
               className='hover:bg-slate-200 -mr-4 shrink-0'
@@ -91,7 +88,6 @@ export function Section({
                 e.preventDefault()
               }}
             >
->>>>>>> dev
               <PlusIcon />
             </Button>
           </div>
