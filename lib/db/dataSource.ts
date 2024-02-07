@@ -152,17 +152,13 @@ export const createDataSource = async (props: CreateDS) => {
   }
 
   const nbChunks = chunks.length
-  const textSize = chunks.reduce(
-    (acc, doc) => acc + doc?.pageContent?.length,
-    0,
-  )
+  const textSize = chunks.reduce((acc, doc) => acc + doc?.pageContent?.length, 0)
 
   if (!nbChunks || !textSize) {
     return null
   }
 
-  const displayName =
-    DSType === DataSourceType.web_page ? getURLDisplayName(name) : name
+  const displayName = DSType === DataSourceType.web_page ? getURLDisplayName(name) : name
 
   const dataSourcePayload = {
     name,

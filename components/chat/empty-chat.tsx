@@ -32,15 +32,11 @@ interface EmptyChat {
 }
 
 export function EmptyChat({ setInput, exampleMessages, title }: EmptyChat) {
-  const messagesToDisplay = exampleMessages?.length
-    ? exampleMessages
-    : demoMessages
+  const messagesToDisplay = exampleMessages?.length ? exampleMessages : demoMessages
   return (
     <div className='mx-auto w-full max-w-2xl p-8 sm:rounded-lg'>
       <h1 className='mb-2 text-lg font-semibold'>{title}</h1>
-      <p className='leading-normal text-muted-foreground'>
-        Start a conversation here:
-      </p>
+      <p className='leading-normal text-muted-foreground'>Start a conversation here:</p>
       <div className='mt-4 flex flex-col items-start space-y-2'>
         {/* {messagesToDisplay.map((message, index) => (
           <Button

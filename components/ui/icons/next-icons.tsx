@@ -29,11 +29,7 @@ function IconNextChat({
           gradientUnits='userSpaceOnUse'
         >
           <stop stopColor={inverted ? 'white' : 'black'} />
-          <stop
-            offset={1}
-            stopColor={inverted ? 'white' : 'black'}
-            stopOpacity={0}
-          />
+          <stop offset={1} stopColor={inverted ? 'white' : 'black'} stopOpacity={0} />
         </linearGradient>
         <linearGradient
           id={`gradient-${id}-2`}
@@ -44,11 +40,7 @@ function IconNextChat({
           gradientUnits='userSpaceOnUse'
         >
           <stop stopColor={inverted ? 'white' : 'black'} />
-          <stop
-            offset={1}
-            stopColor={inverted ? 'white' : 'black'}
-            stopOpacity={0}
-          />
+          <stop offset={1} stopColor={inverted ? 'white' : 'black'} stopOpacity={0} />
         </linearGradient>
       </defs>
       <path
@@ -442,10 +434,7 @@ function IconUsers({ className, ...props }: React.ComponentProps<'svg'>) {
   )
 }
 
-function IconExternalLink({
-  className,
-  ...props
-}: React.ComponentProps<'svg'>) {
+function IconExternalLink({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -459,10 +448,7 @@ function IconExternalLink({
   )
 }
 
-function IconChevronUpDown({
-  className,
-  ...props
-}: React.ComponentProps<'svg'>) {
+function IconChevronUpDown({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -476,7 +462,293 @@ function IconChevronUpDown({
   )
 }
 
+function IconChevronLeft({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-chevron-left', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M15 6l-6 6l6 6' />
+    </svg>
+  )
+}
+
+function IconChevronRight({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-chevron-right', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M9 6l6 6l-6 6' />
+    </svg>
+  )
+}
+
+function IconFolders({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className='icon icon-tabler icon-tabler-folders'
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M9 4h3l2 2h5a2 2 0 0 1 2 2v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2' />
+      <path d='M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2' />
+    </svg>
+  )
+}
+
+function IconFolder({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className='icon icon-tabler icon-tabler-folder'
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2' />
+    </svg>
+  )
+}
+
+function IconFolderOpen({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className='icon icon-tabler icon-tabler-folder-open'
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M5 19l2.757 -7.351a1 1 0 0 1 .936 -.649h12.307a1 1 0 0 1 .986 1.164l-.996 5.211a2 2 0 0 1 -1.964 1.625h-14.026a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v2' />
+    </svg>
+  )
+}
+
+function IconAllData({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className='icon icon-tabler icon-tabler-database'
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0' />
+      <path d='M4 6v6a8 3 0 0 0 16 0v-6' />
+      <path d='M4 12v6a8 3 0 0 0 16 0v-6' />
+    </svg>
+  )
+}
+
+function IconCancel({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-x', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M18 6l-12 12' />
+      <path d='M6 6l12 12' />
+    </svg>
+  )
+}
+
+function IconSettings({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-settings', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z' />
+      <path d='M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0' />
+    </svg>
+  )
+}
+
+function IconIdea({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-bulb', className)}
+      width='21'
+      height='21'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7' />
+      <path d='M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3' />
+      <path d='M9.7 17l4.6 0' />
+    </svg>
+  )
+}
+
+function IconDotsVertical({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-dots-vertical', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
+      <path d='M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
+      <path d='M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
+    </svg>
+  )
+}
+
+function IconTag({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-tag', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
+      <path d='M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z' />
+    </svg>
+  )
+}
+
+function IconSearch({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-search', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0' />
+      <path d='M21 21l-6 -6' />
+    </svg>
+  )
+}
+
+function IconHighlight({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      className={cn('icon icon-tabler icon-tabler-highlight', className)}
+      width='20'
+      height='20'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='#2c3e50'
+      fill='none'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+      <path d='M3 19h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4' />
+      <path d='M12.5 5.5l4 4' />
+      <path d='M4.5 13.5l4 4' />
+      <path d='M21 15v4h-8l4 -4z' />
+    </svg>
+  )
+}
 export {
+  IconHighlight,
+  IconSearch,
+  IconTag,
+  IconDotsVertical,
+  IconChevronRight,
+  IconIdea,
+  IconSettings,
+  IconCancel,
+  IconAllData,
+  IconFolders,
+  IconFolder,
+  IconFolderOpen,
+  IconChevronLeft,
   IconEdit,
   IconNextChat,
   IconOpenAI,

@@ -76,9 +76,7 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   return result
 }
 
-export const searchSimilarText = async (
-  message: string,
-): Promise<Document[]> => {
+export const searchSimilarText = async (message: string): Promise<Document[]> => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     ...QDRANT_ARGS,
     collectionName: QDRANT_COLLECTION,

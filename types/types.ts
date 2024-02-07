@@ -27,4 +27,11 @@ declare global {
   type ExtendedSession = Session & { user: UserWithId | null }
 
   type DataSourceTag = { tag: Tag }
+
+  type SidebarItem = {
+    id: string
+    name: string
+    description?: string | null
+    url?: string
+  }
 }

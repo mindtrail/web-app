@@ -6,7 +6,6 @@ import { getCollectionListDbOp, createCollectionDbOp } from '@/lib/db/collection
 
 export async function GET() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
-
   const userId = session?.user?.id
 
   if (!userId) {
