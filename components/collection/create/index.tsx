@@ -13,10 +13,7 @@ import { GlobalStateContext } from '@/context/global-state'
 import { scrapeURLs } from '@/lib/serverActions/dataSource'
 
 import { uploadFileApiCall } from '@/lib/api/dataSource'
-import {
-  createCollectionApiCall,
-  updateCollectionApiCall,
-} from '@/lib/api/collection'
+import { createCollectionApiCall, updateCollectionApiCall } from '@/lib/api/collection'
 
 interface CollectionProps extends React.ComponentProps<'div'> {
   userId: string
@@ -34,9 +31,7 @@ export function CreateCollection({
 
   const onSubmit = async (data: CollectionFormValues) => {
     const actionType = existingCollection ? 'updated' : 'created'
-    const functionToCall = existingCollection
-      ? updateCollection
-      : createCollection
+    const functionToCall = existingCollection ? updateCollection : createCollection
 
     try {
       await functionToCall(data)

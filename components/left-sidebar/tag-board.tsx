@@ -30,11 +30,7 @@ export default function ResearchHistory() {
           Favorites
         </Link>
 
-        <Section
-          title='AI Groups'
-          items={mockFilters}
-          iconOverride={TokensIcon}
-        />
+        <Section title='AI Groups' items={mockFilters} iconOverride={TokensIcon} />
       </div>
 
       <div className='flex flex-col px-2 items-stretch'>

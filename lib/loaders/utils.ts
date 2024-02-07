@@ -13,17 +13,14 @@ export const formatChunkForEmbedding = (chunk: string): string => {
     .replace(/ ' /g, "'") // Remove extra spaces around single straight quotes
     .replace(/\s{2,}/g, ' ') // Replace multiple whitespace characters with a single space
     .toLowerCase() // Convert to lowercase
-    .replace(
-      /(?<=[\.!?]\s)([a-z])|^(?<start>[a-z])/g,
-      (match, group1, start) => {
-        if (group1) {
-          return group1.toUpperCase()
-        } else if (start) {
-          return start.toUpperCase()
-        }
-        return match
-      },
-    ) // Capitalize first letter of each sentence
+    .replace(/(?<=[\.!?]\s)([a-z])|^(?<start>[a-z])/g, (match, group1, start) => {
+      if (group1) {
+        return group1.toUpperCase()
+      } else if (start) {
+        return start.toUpperCase()
+      }
+      return match
+    }) // Capitalize first letter of each sentence
     .trim()
 }
 
