@@ -1,4 +1,6 @@
 import prisma from '@/lib/db/connection'
+// import { getDataSourceListByIds } from './dataSource'
+import { CollectionDataSource, Collection, DataSource } from '@prisma/client'
 
 type CollectionListProps = {
   userId: string
@@ -11,7 +13,7 @@ export const getCollectionListDbOp = async ({
 }: CollectionListProps) => {
   // Fetch data using Prisma based on the user
   const collectionList = await prisma.collection.findMany({
-    // where: { ownerId: userId },
+    where: { ownerId: userId },
     include: {
       // @TODO: retrieve dataSources from the DB
       collectionDataSource: includeDataSource,
@@ -24,22 +26,43 @@ export const getCollectionListDbOp = async ({
 type GetCollectionProps = {
   userId: string
   collectionId: string
+  includeDataSource?: boolean
+}
+
+type ResultType = Collection & {
+  collectionDataSource: (CollectionDataSource & {
+    dataSource: DataSource
+  })[]
 }
 
 export const getCollectionDbOp = async ({
   userId,
   collectionId,
+  includeDataSource = true,
 }: GetCollectionProps) => {
   // Fetch data using Prisma based on the user
-  // const collection = await prisma.collection.findUnique({
-  //   // where: { ownerId: userId, id: collectionId },
-  //   // include: {
-  //   // @TODO: retrieve dataSources from the DB
-  //   // dataSources: true,
-  //   // },
-  // })
-  // return collection
-  return null
+  const collection = (await prisma.collection.findUnique({
+    where: { ownerId: userId, id: collectionId },
+    include: includeDataSource
+      ? {
+          collectionDataSource: {
+            include: {
+              dataSource: true,
+            },
+          },
+        }
+      : {},
+  })) as ResultType
+
+  const { collectionDataSource, ...rest } = collection
+  const dataSources = collectionDataSource.map((item) => item?.dataSource)
+
+  const collectionItem = {
+    ...rest,
+    dataSources,
+  }
+
+  return collectionItem
 }
 
 export const createCollectionDbOp = async ({
@@ -105,10 +128,7 @@ export const deleteAllCollectionsForUser = async (userId: string) => {
   return collection
 }
 
-export const deleteCollectionDbOp = async (
-  userId: string,
-  collectionId: string,
-) => {
+export const deleteCollectionDbOp = async (userId: string, collectionId: string) => {
   // Delete all data sources for the collection
   const collection = await prisma.collection.delete({
     where: {

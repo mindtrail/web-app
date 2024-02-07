@@ -26,10 +26,7 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
   }
 
   try {
-    const deletedDataSources = await deleteDataSourceDbOp(
-      dataSourceIdList,
-      userId,
-    )
+    const deletedDataSources = await deleteDataSourceDbOp(dataSourceIdList, userId)
 
     deleteFileFromGCS(deletedDataSources, userId)
     deleteVectorsForDataSource(dataSourceIdList)

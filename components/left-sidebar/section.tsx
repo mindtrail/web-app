@@ -1,3 +1,4 @@
+'use client'
 import { useCallback, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -28,13 +29,14 @@ interface SectionProps {
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
 const NESTED_ITEM_STYLE = cn(SIDEBAR_BUTTON, 'pl-8')
 const ACTIVE_SIDEBAR_BUTTON = 'text-primary font-semibold hover:text-primary'
-const TRIGGER_HEADER_STYLE =
-  'flex flex-1 justify-between px-4 gap-2 cursor-pointer'
+const TRIGGER_HEADER_STYLE = 'flex flex-1 justify-between px-4 gap-2 cursor-pointer'
 
 export function Section({
   title,
   items,
   iconOverride: Icon = FileIcon,
+  // @ts-ignore
+  openSecondSidebar,
 }: SectionProps) {
   const [sectionIsOpen, setSectionIsOpen] = useState(true)
   const pathname = usePathname()
@@ -49,17 +51,14 @@ export function Section({
         <Link
           key={index + name}
           href={url}
-          className={cn(
-            NESTED_ITEM_STYLE,
-            pathname === url && ACTIVE_SIDEBAR_BUTTON,
-          )}
+          className={cn(NESTED_ITEM_STYLE, pathname === url && ACTIVE_SIDEBAR_BUTTON)}
         >
           <Icon />
-          {name}
+          {!openSecondSidebar && name}
         </Link>
       )
     })
-  }, [items, pathname, Icon])
+  }, [items, pathname, Icon, openSecondSidebar])
 
   return (
     <Accordion
@@ -81,14 +80,15 @@ export function Section({
             <Button
               variant='sidebar'
               className='hover:bg-slate-200 -mr-4 shrink-0'
+              onClick={(e) => {
+                e.preventDefault()
+              }}
             >
               <PlusIcon />
             </Button>
           </div>
         </AccordionTrigger>
-        <AccordionContent className='flex flex-col pb-0'>
-          {renderItems}
-        </AccordionContent>
+        <AccordionContent className='flex flex-col pb-0'>{renderItems}</AccordionContent>
       </AccordionItem>
     </Accordion>
   )

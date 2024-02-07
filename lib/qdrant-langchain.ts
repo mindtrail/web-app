@@ -66,9 +66,7 @@ export const searchSimilarText = async (message: string): Promise<string[]> => {
   return dataSourceList
 }
 
-export const deleteVectorsForDataSource = async (
-  dataSourceIdList: string[],
-) => {
+export const deleteVectorsForDataSource = async (dataSourceIdList: string[]) => {
   if (!dataSourceIdList?.length) {
     return
   }

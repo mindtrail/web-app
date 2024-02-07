@@ -14,9 +14,7 @@ export const ACCEPTED_FILE_TYPES = [
 export const ACCEPTED_FILE_REACT_DROPZONE = {
   'application/json': ['.json', '.jsonl'],
   'application/pdf': ['.pdf'],
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
-    '.docx',
-  ],
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
   'application/x-ndjson': ['.jsonl'],
   'application/x-subrip': ['.srt'],
   // 'application/octet-stream': ['', ''],
