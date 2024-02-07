@@ -23,7 +23,7 @@ export async function getCollectionsByUserId() {
   }
 
   try {
-    const items = await getCollectionListDbOp({ userId: userId })
+    const items = await getCollectionListDbOp({ userId })
 
     // Check if items is an array before mapping over it
     if (Array.isArray(items)) {

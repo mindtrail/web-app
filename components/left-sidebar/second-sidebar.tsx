@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, KeyboardEvent, useEffect, useRef, useState } from 'react'
+import { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Separator } from '@radix-ui/react-separator'
 import { cn } from '@/lib/utils'
@@ -47,6 +47,11 @@ const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
 const NESTED_ITEM_STYLE = cn(SIDEBAR_BUTTON, 'pl-2')
 const ACTIVE_SIDEBAR_BUTTON = 'text-gray font-semibold hover:text-gray '
 
+interface ItemToDelete {
+  id: string
+  name?: string
+}
+
 export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   title,
   items,
@@ -68,12 +73,17 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
 
   const [loading, setLoading] = useState(false)
 
-  const [hoveredItemId, setHoveredItemId] = useState<string | null>(null)
   const [showMenuForItemId, setShowMenuForItemId] = useState<string | null>(null)
 
   // Inside SecondSidebar component
   const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<ItemToDelete | null>(null)
+
+  const handleDelete = (id: string, name: string = '') => {
+    setItemToDelete({ id, name })
+    setDeleteDialogOpen(true)
+  }
 
   useEffect(() => {
     function handleClickOutside(event: { target: any }) {
@@ -124,21 +134,29 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
 
   const onDuplicate = (id: string) => {}
 
-  const onDelete = async (id: string) => {
+  const confirmDelete = async () => {
     setLoading(true)
+    const itemId = itemToDelete?.id
+
+    if (!itemId) {
+      setLoading(false)
+      setDeleteDialogOpen(false)
+      return
+    }
+
     try {
       await deleteCollection({
-        collectionId: id,
+        collectionId: itemId,
       })
 
-      const elements = items.filter((element) => element.id !== id)
+      const elements = items.filter((element) => element.id !== itemId)
       setFilteredItems(elements)
       setItems(elements)
     } catch (error) {
       console.error('Error:', error)
     } finally {
       setLoading(false)
-      setConfirmDelete(null)
+      setDeleteDialogOpen(false)
     }
   }
 
@@ -292,7 +310,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                       defaultValue={name}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                          onUpdateFolderName(id, e.target.value)
+                          onUpdateFolderName(id, (e?.target as HTMLInputElement).value)
                         }
                       }}
                       autoFocus
@@ -359,7 +377,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                             Duplicate
                           </button>
                           <button
-                            onClick={() => setConfirmDelete(id)}
+                            onClick={() => handleDelete(id)}
                             className='w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                           >
                             Delete
@@ -376,25 +394,20 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
         {!loading && filteredItems && filteredItems.length === 0 && (
           <div className='h-14 flex items-center justify-center'>No items</div>
         )}
-        {confirmDelete && (
-          <Dialog
-            open={confirmDelete && confirmDelete !== null}
-            onOpenChange={() => setConfirmDelete(null)}
-          >
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this folder?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className='items-center'>
-                <Button onClick={() => onDelete(confirmDelete)}>Delete</Button>
-                <Button onClick={() => setConfirmDelete(null)}>Cancel</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Delete</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this folder?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className='items-center'>
+              <Button onClick={() => confirmDelete()}>Delete</Button>
+              <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </nav>
     </div>
   )

@@ -1,9 +1,9 @@
 import prisma from '@/lib/db/connection'
-import { getDataSourceListByIds } from './dataSource'
+// import { getDataSourceListByIds } from './dataSource'
 import { CollectionDataSource, Collection, DataSource } from '@prisma/client'
 
 type CollectionListProps = {
-  userId: string | undefined
+  userId: string
   includeDataSource?: boolean
 }
 
