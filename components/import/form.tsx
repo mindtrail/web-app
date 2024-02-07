@@ -56,10 +56,7 @@ type FormProps = {
 export function ImportForm(props: FormProps) {
   const { onSubmit, onScrapeWebsite } = props
 
-  const defaultValues: ImportFormValues = useMemo(
-    () => getFormInitialValues(),
-    [],
-  )
+  const defaultValues: ImportFormValues = useMemo(() => getFormInitialValues(), [])
 
   const [processing, setProcessing] = useState(false)
 
@@ -118,12 +115,11 @@ export function ImportForm(props: FormProps) {
     setProcessing(false)
   }
 
-  const { getRootProps, getInputProps, isDragAccept, isDragReject } =
-    useDropzone({
-      // accept: ACCEPTED_FILE_REACT_DROPZONE,
-      validator: formValidator,
-      onDrop: onDrop,
-    })
+  const { getRootProps, getInputProps, isDragAccept, isDragReject } = useDropzone({
+    // accept: ACCEPTED_FILE_REACT_DROPZONE,
+    validator: formValidator,
+    onDrop: onDrop,
+  })
 
   function formValidator(file: File) {
     const { name, type } = file
@@ -144,9 +140,7 @@ export function ImportForm(props: FormProps) {
     setProcessing(false)
   }
 
-  const handleWebsiteScrape = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleWebsiteScrape = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
     if (onScrapeWebsite) {
@@ -176,8 +170,8 @@ export function ImportForm(props: FormProps) {
     return isDragAccept
       ? DROPZONE_STYLES.ACCEPT
       : isDragReject
-      ? DROPZONE_STYLES.REJECT
-      : DROPZONE_STYLES.DEFAULT
+        ? DROPZONE_STYLES.REJECT
+        : DROPZONE_STYLES.DEFAULT
   }, [isDragAccept, isDragReject])
 
   return (
@@ -201,9 +195,7 @@ export function ImportForm(props: FormProps) {
                   name='files'
                   render={() => (
                     <FormItem className='relative'>
-                      <FormLabel
-                        className={filesOrUrlsError && 'text-destructive'}
-                      >
+                      <FormLabel className={filesOrUrlsError && 'text-destructive'}>
                         Upload Files
                       </FormLabel>
                       <FormControl>
@@ -221,14 +213,12 @@ export function ImportForm(props: FormProps) {
                             <>
                               <p>
                                 Drop files or
-                                <span className='underline text-neutral-500'>
-                                  Click
-                                </span>
+                                <span className='underline text-neutral-500'>Click</span>
                                 to browse
                               </p>
                               <p className='text-sm text-neutral-500'>
-                                <span>Supported file types:</span> .pdf, .docx,
-                                .txt, .md, .json, .jsonl, .csv
+                                <span>Supported file types:</span> .pdf, .docx, .txt, .md,
+                                .json, .jsonl, .csv
                               </p>
                             </>
                           )}
@@ -256,9 +246,7 @@ export function ImportForm(props: FormProps) {
                     name='newURL'
                     render={({ field }) => (
                       <FormItem className='w-full relative'>
-                        <FormLabel
-                          className={filesOrUrlsError && 'text-destructive'}
-                        >
+                        <FormLabel className={filesOrUrlsError && 'text-destructive'}>
                           URL List
                         </FormLabel>
                         <FormControl>
@@ -328,12 +316,10 @@ export function ImportForm(props: FormProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete the file and the associated data. The action
-              cannot be undone and will permanently delete
+              This will delete the file and the associated data. The action cannot be
+              undone and will permanently delete
               <b>
-                {deleteDialogOpen
-                  ? fileToDelete?.file?.name
-                  : urlToDelete?.file?.name}
+                {deleteDialogOpen ? fileToDelete?.file?.name : urlToDelete?.file?.name}
               </b>
               .
             </AlertDialogDescription>

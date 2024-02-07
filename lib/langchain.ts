@@ -20,11 +20,7 @@ interface chatWithAI {
   userId: string
 }
 
-export async function callLangchainChat({
-  messages,
-  chatId,
-  userId,
-}: chatWithAI) {
+export async function callLangchainChat({ messages, chatId, userId }: chatWithAI) {
   if (!messages) {
     return new Response('No message provided', {
       status: 400,

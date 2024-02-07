@@ -1,17 +1,14 @@
+'use client'
 import { useMemo } from 'react'
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { DataSourceStatus, DataSourceType } from '@prisma/client'
+import { DataSourceStatus } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { StatusIcon } from '@/components/collection/statusIcon'
 import { Button } from '@/components/ui/button'
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import {
   DropdownMenu,
@@ -22,14 +19,19 @@ import {
 
 type itemProps = {
   collection: CollectionExtended
-  handleEdit: (id: string) => void
-  handleDelete: (id: string, name: string) => void
-  handleClick: (id: string) => void
 }
 
 export function CollectionListItem(props: itemProps) {
-  const { collection, handleEdit, handleDelete, handleClick } = props
+  const { collection } = props
   const { id, name, description, dataSources } = collection
+
+  const handleEdit = () => {}
+
+  const handleDelete = () => {}
+
+  const handleClick = (id: string) => {
+    console.log(id)
+  }
 
   return (
     <div
@@ -53,9 +55,7 @@ export function CollectionListItem(props: itemProps) {
                     </p>
                   </TooltipTrigger>
                   <TooltipContent
-                    className={
-                      status !== DataSourceStatus.synched ? 'bg-gray-500' : ''
-                    }
+                    className={status !== DataSourceStatus.synched ? 'bg-gray-500' : ''}
                   >
                     <p className='flex flex-col gap-2'>
                       {status !== DataSourceStatus.synched && (
@@ -90,14 +90,10 @@ export function CollectionListItem(props: itemProps) {
             forceMount
             onClick={(e) => e.stopPropagation()}
           >
-            <DropdownMenuItem onClick={() => handleEdit(id)}>
-              Edit
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEdit()}>Edit</DropdownMenuItem>
             <DropdownMenuItem disabled>Duplicate</DropdownMenuItem>
             <DropdownMenuItem disabled>Share</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(id, name)}>
-              Delete
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete()}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

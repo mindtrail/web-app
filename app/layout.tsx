@@ -3,10 +3,10 @@ import { Metadata, Viewport } from 'next'
 
 import { Providers } from '@/context/providers'
 import { Toaster } from '@/components/ui/toaster'
-import { TailwindIndicator } from '@/components/tailwind-indicator'
-import { Separator } from '@/components/ui/separator'
 import { LeftSidebar } from '@/components/left-sidebar'
 import { SidebarRight } from '@/components/sidebar-right'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
 
 // export const dynamic = 'force-dynamic'
 
@@ -19,8 +19,7 @@ export const metadata: Metadata = {
     default: 'Mind Trail',
     template: `Mind Trail - %s`,
   },
-  description:
-    'AI assitant to emember and structures everything you see online',
+  description: 'AI assitant to emember and structures everything you see online',
   icons: {
     icon: '/favicon.ico',
   },
@@ -30,16 +29,18 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const user = session?.user
   return (
     <html lang='en' suppressHydrationWarning>
       <body className='flex min-h-screen'>
         <Providers>
-          <LeftSidebar className='' />
+          <LeftSidebar user={user} />
           <main className='flex flex-1 overflow-auto'>
             {children}
             {/* <Separator orientation='vertical' /> */}
-            {/* <SidebarRight /> */}
+            <SidebarRight />
           </main>
           {/* <TailwindIndicator /> */}
           <Toaster />

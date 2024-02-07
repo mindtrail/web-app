@@ -1,51 +1,119 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-
-import { cn } from '@/lib/utils'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
-import DataHistory from '@/components/left-sidebar/folders'
-import TagBoard from '@/components/left-sidebar/tag-board'
+import FolderItems from '@/components/left-sidebar/folders'
+import { usePathname } from 'next/navigation'
+import { getCollectionsByUserId } from '@/lib/serverActions/collection'
+import { getFiltersByUserId } from '@/lib/serverActions/filter'
+import { SecondSidebar } from './second-sidebar'
+import LeftSidebarFooter from './left-sidebar-footer'
+import { SELECTED_ITEM } from '@/lib/constants'
 
 type SidebarNavProps = {
   className?: string
+  user: any
 }
 
-const TAB_STYLE_LINK =
-  'font-normal hover:text-foreground data-[state=active]:shadow-none data-[state=active]:font-medium'
+const BRAND_NAME = 'Mind Trail'
 
-const TAB_STYLE =
-  'font-normal hover:text-foreground data-[state=active]:shadow-none data-[state=active]:font-medium'
+export function LeftSidebar({ className, user }: SidebarNavProps) {
+  const [openSecondSidebar, setOpenSecondSidebar] = useState(false)
+  const [title, setTitle] = useState('')
+  const pathname = usePathname()
+  const [loading, setLoading] = useState(false)
 
-export function LeftSidebar({ className }: SidebarNavProps) {
+  const [collections, setCollections] = useState<SidebarItem[]>([])
+  const [filters, setFilters] = useState<SidebarItem[]>([])
+
+  const [selected, setSelected] = useState(undefined)
+  const [subSelected, setSubSelected] = useState(undefined)
+
+  useEffect(() => {
+    getCollectionsData()
+    // TO-DO: Smart Folders v1
+    //getFiltersData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const getFiltersData = async () => {
+    setLoading(true)
+    const items = await getFiltersByUserId()
+    if (Array.isArray(items)) {
+      const filterItems = items?.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          criteria: item.criteria,
+        }
+      })
+      setFilters(filterItems)
+    }
+    setLoading(false)
+  }
+
+  const getCollectionsData = async () => {
+    setLoading(true)
+    const items = await getCollectionsByUserId()
+    if (Array.isArray(items)) {
+      const collectionItems = items?.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          url: `/collection/${item.id}`,
+        }
+      })
+      setCollections(collectionItems)
+    }
+    setLoading(false)
+  }
+
   return (
-    <nav className={cn('flex flex-col w-[256px] border-r flex-shrink-0', className)}>
-      <div className='h-14 flex items-center'>
-        <Link href='/' className='flex gap-2 w-full px-4 py-2'>
-          <Image width={24} height={24} src='/icon-2.png' alt='Mind Trail' />
-          Mind Trail
-        </Link>
+    <div className='min-h-screen flex relative'>
+      {/* Container for both sidebars and main content */}
+      <div className={`flex ${className}`}>
+        {/* First sidebar */}
+        <nav className='flex flex-col justify-between w-[256px] border-r flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out h-screen'>
+          <div>
+            <div className='h-14 border-b flex items-center justify-center'>
+              <Link
+                href='/'
+                className='flex gap-4 w-full px-6 py-2 self-center items-center'
+              >
+                <Image width={30} height={30} src='/icon-2.png' alt='Mind Trail' />
+                {BRAND_NAME}
+              </Link>
+            </div>
+
+            <FolderItems
+              openSecondSidebar={openSecondSidebar}
+              setOpenSecondSidebar={setOpenSecondSidebar}
+              setTitle={setTitle}
+              loading={loading}
+              filters={filters}
+              setSelected={setSelected}
+              selected={selected}
+              subSelected={subSelected}
+              setSubSelected={setSubSelected}
+            />
+          </div>
+          <div className='p-4 border-t border-gray-200'>
+            <LeftSidebarFooter user={user} />
+          </div>
+        </nav>
+        <SecondSidebar
+          title={title}
+          items={selected === SELECTED_ITEM.COLLECTIONS ? collections : filters}
+          setItems={selected === SELECTED_ITEM.COLLECTIONS ? setCollections : setFilters}
+          open={openSecondSidebar && selected !== undefined}
+          setOpen={setOpenSecondSidebar}
+          pathname={pathname}
+          selected={selected}
+          setSubSelected={setSubSelected}
+        />
       </div>
-
-      <Tabs defaultValue='data' className='w-full flex flex-col flex-1 gap-2'>
-        <TabsList className='grid grid-cols-2 mx-2'>
-          <TabsTrigger value='data' className={TAB_STYLE}>
-            Folders
-          </TabsTrigger>
-          <TabsTrigger value='tag-board' className={TAB_STYLE}>
-            Tags
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value='data' className='flex-1'>
-          <DataHistory />
-        </TabsContent>
-        <TabsContent value='tag-board' className='flex-1'>
-          <TagBoard />
-        </TabsContent>
-      </Tabs>
-    </nav>
+    </div>
   )
 }
