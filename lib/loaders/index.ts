@@ -1,4 +1,4 @@
-import { DataSourceType, DataSourceStatus } from '@prisma/client'
+import { DataSource, DataSourceType, DataSourceStatus } from '@prisma/client'
 import { Document } from 'langchain/document'
 
 import { createAndStoreVectors } from '@/lib/qdrant'
@@ -14,9 +14,14 @@ type CreateDSProps = {
   DSType: DataSourceType
 }
 
+type DataSourceAndDocs = {
+  docs: Document[]
+  dataSource: DataSource
+}
+
 export const createDataSourceAndVectors = async (
   props: CreateDSProps,
-): Promise<Document[] | null> => {
+): Promise<DataSourceAndDocs | null> => {
   let { file, userId, chunks, DSType } = props
 
   const dataSource = await createDataSource(props)
@@ -63,7 +68,7 @@ export const createDataSourceAndVectors = async (
 
   await storeVectorsAndUpdateDataSource(docs)
 
-  return docs
+  return { docs, dataSource }
 }
 
 const storeVectorsAndUpdateDataSource = async (docs: Document[]) => {

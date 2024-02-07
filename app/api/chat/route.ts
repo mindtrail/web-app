@@ -9,18 +9,14 @@ export async function POST(req: Request) {
   const userId = session.user?.id
 
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const body = await req.json()
   const { messages, chatId } = body
 
   if (!messages?.length) {
-    return new Response('No message provided', {
-      status: 400,
-    })
+    return new Response('No message provided', { status: 400 })
   }
 
   try {

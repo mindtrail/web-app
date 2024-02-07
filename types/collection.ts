@@ -1,9 +1,4 @@
-import {
-  Collection,
-  CollectionDataSource,
-  DataSource,
-  DataSourceStatus,
-} from '@prisma/client'
+import { Collection, DataSource } from '@prisma/client'
 
 declare global {
   type CollectionItem = {

@@ -123,20 +123,13 @@ export function HistoryComponent({
       }
       setProcessing(true)
 
-      const result = await fetch('/api/history', {
-        method: 'POST',
-        body: JSON.stringify({ userId, searchQuery: searchQuery.trim() }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
+      const result = await fetch(`/api/history?searchQuery=${searchQuery}`)
       const dataSourceList = await result.json()
       setFilteredItems(dataSourceList)
 
       setProcessing(false)
     },
-    [userId, historyItems],
+    [historyItems],
   )
 
   const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {

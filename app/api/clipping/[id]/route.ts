@@ -2,24 +2,23 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { deleteDataSourceDbOp } from '@/lib/db/dataSource'
+import { deleteClipping } from '@/lib/db/clipping'
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+type EditRouteParams = { params: { id: string } }
+
+export async function DELETE(req: Request, { params }: EditRouteParams) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const dataSourceId = params.id
+  const clippingId = params.id
 
   if (!userId) {
     return new Response('Unauthorized', { status: 401 })
   }
 
   try {
-    const dataSource = await deleteDataSourceDbOp([dataSourceId], userId)
-    // Delete dataSource from Qdrant and GCS
-    // const res = await deleteFileFromGCS(dataSource)
-
-    return NextResponse.json({ dataSource })
+    const deletedClipping = await deleteClipping(userId, clippingId)
+    return NextResponse.json({ deletedClipping })
   } catch (error) {
     return new NextResponse('Collection not found', { status: 404 })
   }

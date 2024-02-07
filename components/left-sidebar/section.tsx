@@ -31,6 +31,9 @@ const NESTED_ITEM_STYLE = cn(SIDEBAR_BUTTON, 'pl-8')
 const ACTIVE_SIDEBAR_BUTTON = 'text-primary font-semibold hover:text-primary'
 const TRIGGER_HEADER_STYLE = 'flex flex-1 justify-between px-4 gap-2 cursor-pointer'
 
+<<<<<<< HEAD
+export function Section({ title, items, iconOverride: Icon = FileIcon }: SectionProps) {
+=======
 export function Section({
   title,
   items,
@@ -38,6 +41,7 @@ export function Section({
   // @ts-ignore
   openSecondSidebar,
 }: SectionProps) {
+>>>>>>> dev
   const [sectionIsOpen, setSectionIsOpen] = useState(true)
   const pathname = usePathname()
 

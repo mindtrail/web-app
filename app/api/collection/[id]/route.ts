@@ -13,10 +13,9 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
   const collectionId = params.id
 
   if (!userId) {
-    return new NextResponse('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
+
   try {
     const collectionList = await deleteCollectionDbOp(userId, collectionId)
     return NextResponse.json({ collectionList })
@@ -32,9 +31,7 @@ export async function PATCH(req: Request, { params }: EditRouteParams) {
   const collectionId = params.id
 
   if (!userId) {
-    return new NextResponse('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const body = (await req.json()) as Partial<CreateCollection>
