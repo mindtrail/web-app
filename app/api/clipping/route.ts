@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
-import { getCollectionListDbOp, createCollectionDbOp } from '@/lib/db/collection'
+import { createClipping, getClippingList } from '@/lib/db/clipping'
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 
@@ -12,37 +12,30 @@ export async function GET() {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  const collectionList = await getCollectionListDbOp({ userId })
+  const url = new URL(req.url)
+  const groupByDataSource = !!url.searchParams.get('groupByDataSource')
 
-  return NextResponse.json(collectionList)
+  const clippingList = await getClippingList(userId, groupByDataSource)
+  return NextResponse.json(clippingList)
 }
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
-
   const userId = session?.user?.id
 
   if (!userId) {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  const body = (await req.json()) as CreateCollection
-  const { name, description, userId: clientUserId } = body
-
-  if (clientUserId !== userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
-  }
+  const payload = (await req.json()) as SavedClipping
 
   try {
-    const collection = await createCollectionDbOp({
+    const newClipping = await createClipping({
+      ...payload,
       userId,
-      name,
-      description,
     })
 
-    return NextResponse.json(collection)
+    return NextResponse.json(newClipping)
   } catch (error) {
     console.error(error)
     return new Response('Error creating collection', {

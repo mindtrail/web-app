@@ -45,6 +45,17 @@ export const getURLPathname = (urlString: string): string => {
   }
 }
 
+// Strip query params, hashes, anchor tags...
+export const getBaseResourceURL = (urlString: string): string => {
+  try {
+    const url = new URL(urlString)
+    return `${url.origin}${url.pathname}`
+  } catch (e) {
+    console.error(e)
+    return urlString
+  }
+}
+
 export const addHttpsIfMissing = (url: string) => {
   if (!/^https?:\/\//i.test(url)) {
     return 'https://' + url

@@ -1,44 +1,44 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { DataSourceType } from '@prisma/client'
 
 import { getChunksFromDoc } from '@/lib/loaders/genericDocLoader'
 import { authOptions } from '@/lib/authOptions'
-import { dataSourceExists } from '@/lib/db/dataSource'
+import { checkDataSourceExists } from '@/lib/db/dataSource'
 import { createDataSourceAndVectors } from '@/lib/loaders'
 import { uploadToGCS } from '@/lib/cloudStorage'
+import { getBaseResourceURL } from '@/lib/utils'
 
+// DataSourceType
 const DSType = DataSourceType.web_page
-// Function that processes the data received from the Browser Extension
-// TODO: Add authentication
-export async function POST(req: Request) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
 
+// Function that processes the data received from the Browser Extension
+export async function POST(req: NextRequest) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 
   if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401,
-    })
+    return new Response('Unauthorized', { status: 401 })
   }
 
   try {
     const body = (await req.json()) as BrowserExtensionData
-    console.log(1111, body)
+
     const { html, ...metadata } = body
-    const { url } = metadata
+    const baseResourceURL = getBaseResourceURL(metadata?.url)
 
-    console.log('--- Creating DataSources for URL ---> ', url)
+    console.log('--- Creating DataSources for URL ---> ', baseResourceURL)
 
-    if (await dataSourceExists(url, userId)) {
+    const existingDataSource = await checkDataSourceExists(baseResourceURL, userId)
+    if (existingDataSource) {
       return NextResponse.json({
-        status: 200,
-        message: 'DataSource already exists',
+        result: 'DataSource already exists',
+        dataSource: existingDataSource,
       })
     }
 
     const file = {
-      name: url,
+      name: baseResourceURL,
       html,
       metadata,
     }
@@ -51,14 +51,15 @@ export async function POST(req: Request) {
       })
     }
 
-    const docs = await createDataSourceAndVectors({
+    const createDSResponse = await createDataSourceAndVectors({
       file,
       userId,
       chunks,
       DSType,
     })
 
-    if (!docs?.length) {
+    const { docs, dataSource } = createDSResponse || {}
+    if (!dataSource || !docs?.length) {
       return new NextResponse('No docs', {
         status: 400,
       })
@@ -77,6 +78,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       result: `DataSource & ${docs.length} vectors Created`,
+      dataSource,
     })
   } catch (err) {
     console.error('Browser Extension Error::', err)
