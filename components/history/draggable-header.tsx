@@ -22,7 +22,7 @@ import { FIXED_COLUMNS, DRAG_ITEM_TYPE } from '@/lib/constants'
 interface DraggableHeaderProps<HistoryItem, TValue> {
   header: Header<HistoryItem, TValue>
   table: Table<HistoryItem>
-  updateUserPreferences: (prefs: UserTablePrefs) => void
+  handlePreferenceUpdate: (prefs: UserTablePrefs) => void
 }
 
 type DropIndicator = 'left' | 'right' | null
@@ -30,7 +30,7 @@ type DropIndicator = 'left' | 'right' | null
 export function DraggableHeader<TData, TValue>({
   header,
   table,
-  updateUserPreferences,
+  handlePreferenceUpdate,
 }: DraggableHeaderProps<TData, TValue>) {
   const { getState, setColumnOrder } = table
 
@@ -62,7 +62,7 @@ export function DraggableHeader<TData, TValue>({
 
       setColumnOrder(newColumnOrder)
 
-      updateUserPreferences({
+      handlePreferenceUpdate({
         columnOrder: newColumnOrder,
       })
     },
@@ -94,16 +94,16 @@ export function DraggableHeader<TData, TValue>({
 
   const isResizing = column.getIsResizing()
 
-  const updatePreferences = useCallback(() => {
+  const updateColumnSize = useCallback(() => {
     // I need to get all the columns sizes for the table so that I keep the DB in sync
     const columnSize = table
       .getAllFlatColumns()
       .reduce((acc, column) => ({ ...acc, [column.id]: column.getSize() }), {})
 
-    updateUserPreferences({
+    handlePreferenceUpdate({
       columnSize,
     })
-  }, [table, updateUserPreferences])
+  }, [table, handlePreferenceUpdate])
 
   // Added this becuase mouse up was not called when resizing past Min/Max width
   const handleMouseDown = useCallback(
@@ -111,12 +111,12 @@ export function DraggableHeader<TData, TValue>({
       header.getResizeHandler()(event)
 
       const handleMouseUp = () => {
-        updatePreferences()
+        updateColumnSize()
         window.removeEventListener('mouseup', handleMouseUp)
       }
       window.addEventListener('mouseup', handleMouseUp)
     },
-    [header, updatePreferences],
+    [header, updateColumnSize],
   )
 
   return (
@@ -125,8 +125,7 @@ export function DraggableHeader<TData, TValue>({
         ref={dropRef}
         key={header.id}
         className={`relative ${isDragging ? 'opacity-50' : ''}`}
-        style={{ width: header.getSize() }}
-      >
+        style={{ width: header.getSize() }}>
         <div className={`flex items-center group `} ref={dragRef}>
           {header.isPlaceholder
             ? null
@@ -135,8 +134,7 @@ export function DraggableHeader<TData, TValue>({
           {draggableColumn && (
             <Button
               variant='ghost'
-              className={`px-2 invisible group-hover:visible cursor-grab`}
-            >
+              className={`px-2 invisible group-hover:visible cursor-grab`}>
               <DragHandleDots2Icon />
             </Button>
           )}
@@ -150,8 +148,7 @@ export function DraggableHeader<TData, TValue>({
         <div
           onMouseDown={handleMouseDown}
           className={`group absolute flex justify-center items-center w-4
-            -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}
-        >
+            -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}>
           <Separator
             orientation='vertical'
             className={`w-[2px] bg-primary opacity-0 group-hover:opacity-100 h-[70%] rounded-lg
