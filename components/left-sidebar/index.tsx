@@ -67,7 +67,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
           id: item.id,
           name: item.name,
           description: item.description,
-          url: `/collection/${item.id}`,
+          url: `/folder/${item.id}`,
         }
       })
       setCollections(collectionItems)
