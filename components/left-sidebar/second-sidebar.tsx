@@ -3,9 +3,12 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Separator } from '@radix-ui/react-separator'
+import { ChevronLeftIcon } from '@radix-ui/react-icons'
+
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Button, buttonVariants } from '@/components/ui/button'
+
 import {
   createCollection,
   deleteCollection,
@@ -22,7 +25,6 @@ import {
 
 import {
   IconCancel,
-  IconChevronLeft,
   IconDotsVertical,
   IconFolder,
   IconFolderOpen,
@@ -227,7 +229,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
         <div className='pr-4 pl-2 py-2 border-b flex justify-between items-center'>
           <div className='flex items-center'>
             <button onClick={() => setOpen(false)}>
-              <IconChevronLeft />
+              <ChevronLeftIcon />
             </button>
             <div className='pl-2'>
               <span className='font-semibold'>

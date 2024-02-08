@@ -93,7 +93,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
             </div>
 
             <TopSection filters={filters} />
-            <Separator className='mb-2 mt-2' />
+            <Separator />
 
             <Folders
               openSecondSidebar={openSecondSidebar}

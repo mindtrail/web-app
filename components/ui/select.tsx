@@ -4,11 +4,7 @@ import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
 import { cn } from '@/lib/utils'
-import {
-  IconArrowDown,
-  IconCheck,
-  IconChevronUpDown,
-} from '@/components/ui/icons/next-icons'
+import { IconCheck } from '@/components/ui/icons/next-icons'
 
 const Select = SelectPrimitive.Root
 
@@ -29,9 +25,6 @@ const SelectTrigger = React.forwardRef<
     {...props}
   >
     {children}
-    <SelectPrimitive.Icon asChild>
-      <IconChevronUpDown className='opacity-50' />
-    </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
