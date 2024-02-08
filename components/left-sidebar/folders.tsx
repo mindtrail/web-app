@@ -24,7 +24,7 @@ const mockCollections = [
 ]
 
 const FAVORITES_URL = '/'
-const ALLITEMS_URL = '/history'
+const ALLITEMS_URL = '/all-items'
 
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
 const OPEN_SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'opensidebar' }))
@@ -39,7 +39,6 @@ type SidebarFoldersProps = {
   setOpenSecondSidebar: (value: boolean) => void
   openSecondSidebar: boolean
   setTitle: (value: string) => void
-  loading: boolean
   filters: any
   setSelected: (value: any) => void
   selected: any
@@ -52,7 +51,6 @@ export default function FolderItems({
   setOpenSecondSidebar,
   openSecondSidebar,
   setTitle,
-  loading,
   setSelected,
   selected,
   subSelected,

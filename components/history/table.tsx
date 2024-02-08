@@ -107,7 +107,7 @@ export function DataTable<TData>({
       <div className='flex items-center justify-between py-4'>
         <HistoryBreadcrumbs historyMetadata={historyMetadata} />
         <div className='flex items-center gap-2'>
-          <Button size='sm' variant='ghost'>
+          <Button size='sm' variant='ghost' className='shrink-0'>
             <CaretSortIcon className='h-5 w-5' />
             A-Z
           </Button>
@@ -123,7 +123,8 @@ export function DataTable<TData>({
         <div
           className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
             flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
-            ${areRowsSelected && '!visible'}`}>
+            ${areRowsSelected && '!visible'}`}
+        >
           <Checkbox
             checked={
               table.getIsAllPageRowsSelected() ||
@@ -162,13 +163,15 @@ export function DataTable<TData>({
                   data-state={isRowSelected && 'selected'}
                   className={`group/row text-foreground/70 hover:text-foreground ${
                     isRowSelected && 'text-foreground'
-                  }`}>
+                  }`}
+                >
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
                       key={id}
                       className={`align-top pt-10 ${
                         column.id === 'actions' && 'text-center'
-                      }`}>
+                      }`}
+                    >
                       {flexRender(column.columnDef.cell, getContext())}
                     </TableCell>
                   ))}

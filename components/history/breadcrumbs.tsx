@@ -5,7 +5,7 @@ import { IconChevronRight } from '../ui/icons/next-icons'
 // @ts-ignore
 export function HistoryBreadcrumbs({ historyMetadata }) {
   return (
-    <div className='flex justify-between items-center'>
+    <div className='flex justify-between items-center flex-wrap'>
       {historyMetadata.parent && (
         <div className='flex items-center'>
           <div className='flex items-center'>

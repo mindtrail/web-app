@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <main className='flex flex-1 overflow-auto'>
             {children}
             {/* <Separator orientation='vertical' /> */}
-            <SidebarRight />
+            {/* <SidebarRight /> */}
           </main>
           {/* <TailwindIndicator /> */}
           <Toaster />

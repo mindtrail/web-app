@@ -31,7 +31,7 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
     deleteFileFromGCS(deletedDataSources, userId)
     deleteVectorsForDataSource(dataSourceIdList)
 
-    revalidatePath('/history')
+    revalidatePath('/all-items')
     return { deletedDataSources }
   } catch (error) {
     return { status: 404 }
