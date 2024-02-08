@@ -27,19 +27,18 @@ export function TopSection({}: TopSectionProps) {
   //   useState<{ name: string; url: string }[]>(mockCollections)
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col py-2 gap-1'>
       {topSectionItems.map(({ name, url, icon: Icon }) => (
-        <div key={url} className='flex flex-col ml-1 items-stretch mt-2'>
-          <Link
-            href={url}
-            className={cn(SIDEBAR_BUTTON, pathname === url && ACTIVE_SIDEBAR_BUTTON)}
-          >
-            <div className='flex flex-1 gap-4 items-center '>
-              <Icon />
-              {name}
-            </div>
-          </Link>
-        </div>
+        <Link
+          key={url}
+          href={url}
+          className={cn(SIDEBAR_BUTTON, pathname === url && ACTIVE_SIDEBAR_BUTTON)}
+        >
+          <div className='flex flex-1 gap-4 items-center '>
+            <Icon />
+            {name}
+          </div>
+        </Link>
       ))}
     </div>
   )

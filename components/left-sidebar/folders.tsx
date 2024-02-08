@@ -3,9 +3,10 @@
 import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { IconChevronRight, IconFolders, IconTag } from '@/components/ui/icons/next-icons'
+import { IconFolders, IconTag } from '@/components/ui/icons/next-icons'
 
 import { SELECTED_ITEM } from '@/lib/constants'
+import { ChevronRightIcon } from '@radix-ui/react-icons'
 
 const TRIGGER_HEADER_STYLE = 'flex flex-1 justify-between pl-3 gap-2 cursor-pointer'
 const NAV_ITEM_STYLE = 'flex flex-col pl-2 py-2 items-stretch'
@@ -66,7 +67,7 @@ export function Folders({
               </div>
 
               <div className='flex items-center'>
-                <IconChevronRight />
+                <ChevronRightIcon />
               </div>
             </div>
           </Button>
@@ -93,7 +94,7 @@ export function Folders({
               </div>
 
               <div className='flex items-center'>
-                <IconChevronRight />
+                <ChevronRightIcon />
               </div>
             </div>
           </Button>
@@ -119,7 +120,7 @@ export function Folders({
               </div>
 
               <div className='flex items-center'>
-                <IconChevronRight />
+                <ChevronRightIcon />
               </div>
             </div>
           </Button>
