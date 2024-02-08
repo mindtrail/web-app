@@ -93,6 +93,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
             </div>
 
             <TopSection filters={filters} />
+
             <Separator />
 
             <Folders
@@ -106,6 +107,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
               setSubSelected={setSubSelected}
             />
           </div>
+
           <div className='p-4 border-t border-gray-200'>
             <LeftSidebarFooter user={user} />
           </div>
