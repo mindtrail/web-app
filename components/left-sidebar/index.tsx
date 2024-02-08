@@ -22,7 +22,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
   const [openSecondSidebar, setOpenSecondSidebar] = useState(false)
   const [title, setTitle] = useState('')
   const pathname = usePathname()
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
 
   const [collections, setCollections] = useState<SidebarItem[]>([])
   const [filters, setFilters] = useState<SidebarItem[]>([])
@@ -38,7 +38,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
   }, [])
 
   const getFiltersData = async () => {
-    setLoading(true)
+    // setLoading(true)
     const items = await getFiltersByUserId()
     if (Array.isArray(items)) {
       const filterItems = items?.map((item) => {
@@ -50,11 +50,11 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
       })
       setFilters(filterItems)
     }
-    setLoading(false)
+    // setLoading(false)
   }
 
   const getCollectionsData = async () => {
-    setLoading(true)
+    // setLoading(true)
     const items = await getCollectionsByUserId()
     if (Array.isArray(items)) {
       const collectionItems = items?.map((item) => {
@@ -67,7 +67,7 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
       })
       setCollections(collectionItems)
     }
-    setLoading(false)
+    // setLoading(false)
   }
 
   return (
@@ -91,7 +91,6 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
               openSecondSidebar={openSecondSidebar}
               setOpenSecondSidebar={setOpenSecondSidebar}
               setTitle={setTitle}
-              loading={loading}
               filters={filters}
               setSelected={setSelected}
               selected={selected}

@@ -47,7 +47,7 @@ export default async function EditDS({ params }: EditDSProps) {
     name: collection.name,
     parent: 'All items',
     subParent: 'Folders',
-    parentLink: '/history',
+    parentLink: '/all-items',
   }
 
   return (
