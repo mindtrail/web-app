@@ -1,6 +1,7 @@
-import { Typography } from '@/components/typography'
 import Link from 'next/link'
-import { IconChevronRight } from '../ui/icons/next-icons'
+import { ChevronRightIcon } from '@radix-ui/react-icons'
+
+import { Typography } from '@/components/typography'
 
 // @ts-ignore
 export function HistoryBreadcrumbs({ historyMetadata }) {
@@ -14,13 +15,13 @@ export function HistoryBreadcrumbs({ historyMetadata }) {
             </Link>
           </div>
           <div className='mx-1'>
-            <IconChevronRight />
+            <ChevronRightIcon width={20} height={20} />
           </div>
           <div className='flex items-center'>
             <Typography variant='p'>{historyMetadata.subParent}</Typography>
           </div>
           <div className='mx-1'>
-            <IconChevronRight />
+            <ChevronRightIcon width={20} height={20} />
           </div>
         </div>
       )}

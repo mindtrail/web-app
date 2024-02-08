@@ -3,13 +3,18 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import FolderItems from '@/components/left-sidebar/folders'
 import { usePathname } from 'next/navigation'
+
+import { Separator } from '@/components/ui/separator'
+
 import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 import { getFiltersByUserId } from '@/lib/serverActions/filter'
-import { SecondSidebar } from './second-sidebar'
-import LeftSidebarFooter from './left-sidebar-footer'
 import { SELECTED_ITEM } from '@/lib/constants'
+
+import { SecondSidebar } from '@/components/left-sidebar/second-sidebar'
+import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
+import { Folders } from '@/components/left-sidebar/folders'
+import { TopSection } from '@/components/left-sidebar/top-section'
 
 type SidebarNavProps = {
   className?: string
@@ -87,7 +92,10 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
               </Link>
             </div>
 
-            <FolderItems
+            <TopSection filters={filters} />
+            <Separator className='mb-2 mt-2' />
+
+            <Folders
               openSecondSidebar={openSecondSidebar}
               setOpenSecondSidebar={setOpenSecondSidebar}
               setTitle={setTitle}
