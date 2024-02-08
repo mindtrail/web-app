@@ -14,6 +14,7 @@ import {
   deleteCollection,
   updateCollection,
 } from '@/lib/serverActions/collection'
+
 import {
   Dialog,
   DialogContent,
@@ -113,6 +114,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
         name: newName,
         description: '',
       })
+      console.log(items)
 
       const elements = items.map((element) => {
         if (element.id === id) {
@@ -176,9 +178,9 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
     setFilteredItems(searchitems)
   }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, fn: Function) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, callback: Function) => {
     if (event.key === 'Enter') {
-      fn()
+      callback()
     }
   }
 
@@ -198,7 +200,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
             id: item.id,
             name: item.name,
             description: item.description,
-            url: `/collection/${item.id}`,
+            url: `/folder/${item.id}`,
           },
           ...items,
         ]
@@ -305,7 +307,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
             {filteredItems.map(({ id, name, url }, index) => (
               <>
                 {isEditing[id] ? (
-                  <div className='mx-3 flex'>
+                  <div className='mx-3 flex' key={index}>
                     <input
                       id='name'
                       className='mt-1 block w-full appearance-none rounded-md px-3 py-2 placeholder-gray-400 shadow-sm border focus:border-black focus:outline-none focus:ring-black sm:text-sm'
@@ -340,10 +342,12 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                         pathname === url && ACTIVE_SIDEBAR_BUTTON,
                         'flex items-center gap-2 flex-grow w-[50px] ',
                       )}
-                      onClick={() => setSubSelected(selected)}
                     >
                       {pathname === url ? <IconFolderOpen /> : <IconFolder />}
-                      <span className='truncate flex-grow'>{name}</span>{' '}
+                      <span className='truncate flex-grow'>
+                        {url}
+                        {name}
+                      </span>
                       {/* Apply truncate and flex-grow */}
                     </Link>
                     <div className='flex-shrink-0 hidden group-hover:block'>
