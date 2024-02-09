@@ -34,4 +34,10 @@ declare global {
     description?: string | null
     url?: string
   }
+
+  type SidebarFoldersProps = {
+    name: string
+    url: string
+    icon: any
+  }
 }

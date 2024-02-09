@@ -3,27 +3,27 @@ import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import { IconAllData, IconHighlight } from '@/components/ui/icons/next-icons'
+
+import { TOP_SIDEBAR_ITEMS } from '@/components/left-sidebar/constants'
 
 const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
-const topSectionItems = [
-  { name: 'All Items', url: '/all-items', icon: IconAllData },
-  { name: 'Highlights', url: '/highlights', icon: IconHighlight },
-]
+interface TopSectionProps {
+  setSecondSidebar: (value?: any) => void
+}
 
-export function TopSection() {
+export function TopSection({ setSecondSidebar }: TopSectionProps) {
   const pathname = usePathname()
 
   return (
     <div className='flex flex-col py-2 gap-1 '>
-      {topSectionItems.map(({ name, url, icon: Icon }) => (
+      {TOP_SIDEBAR_ITEMS.map(({ name, url, icon: Icon }) => (
         <Link
           key={url}
           href={url}
           className={cn(SIDEBAR_BTN, pathname === url && ACTIVE_BTN)}
-        >
+          onClick={() => setSecondSidebar()}>
           <Icon />
           {name}
         </Link>
