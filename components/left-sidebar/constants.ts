@@ -12,19 +12,14 @@ export const TOP_SIDEBAR_ITEMS = [
   { name: 'Highlights', url: '/highlights', icon: IconHighlight },
 ]
 
-export const SIDEBAR_FOLDERS = {
-  FOLDERS: 'Folders',
-  TAGS: 'Tags',
-}
-
-export const SIDEBAR_FOLDERS_PROPS: Record<string, SidebarFoldersProps> = {
+export const SIDEBAR_FOLDERS: Record<string, SidebarFoldersProps> = {
   folder: {
-    name: SIDEBAR_FOLDERS.FOLDERS,
+    name: 'Folders',
     url: '/folder',
     icon: IconMultipleFolders,
   },
   tag: {
-    name: SIDEBAR_FOLDERS.TAGS,
+    name: 'Tags',
     url: '/tag',
     icon: IconTag,
   },

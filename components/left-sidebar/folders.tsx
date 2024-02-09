@@ -1,16 +1,15 @@
-import { use, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ChevronRightIcon } from '@radix-ui/react-icons'
 
 import { Button, buttonVariants } from '@/components/ui/button'
-import { IconMultipleFolders, IconTag } from '@/components/ui/icons/next-icons'
 
 import { getCollectionsByUserId } from '@/lib/serverActions/collection'
-import { getFiltersByUserId } from '@/lib/serverActions/filter'
+// import { getFiltersByUserId } from '@/lib/serverActions/filter'
 
 import { cn } from '@/lib/utils'
 
 import { SecondSidebar } from '@/components/left-sidebar/second-sidebar'
-import { SIDEBAR_FOLDERS_PROPS } from '@/components/left-sidebar/constants'
+import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
@@ -64,7 +63,7 @@ export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderPro
   return (
     <>
       <div className='flex flex-col flex-1 gap-1 py-2'>
-        {Object.values(SIDEBAR_FOLDERS_PROPS).map((item, index) => {
+        {Object.values(SIDEBAR_FOLDERS).map((item, index) => {
           const { name, url, icon: Icon } = item
           return (
             <Button

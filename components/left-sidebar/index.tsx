@@ -10,14 +10,13 @@ import { Separator } from '@/components/ui/separator'
 
 import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
 import { Folders } from '@/components/left-sidebar/folders'
-import { TopSection } from '@/components/left-sidebar/top-section'
-import { APP_NAME, SIDEBAR_FOLDERS_PROPS } from '@/components/left-sidebar/constants'
+import { TopSection } from '@/components/left-sidebar/sidebar-top'
+import { APP_NAME, SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 type SidebarNavProps = {
   className?: string
   user: any
 }
-
 
 export function LeftSidebar({ user }: SidebarNavProps) {
   const pathname = usePathname()
@@ -25,12 +24,10 @@ export function LeftSidebar({ user }: SidebarNavProps) {
 
   useEffect(() => {
     const subpath = pathname.split('/')[1]
-    const openedSidebar = SIDEBAR_FOLDERS_PROPS[subpath]
+    const openedSidebar = SIDEBAR_FOLDERS[subpath]
 
     setSecondSidebar(openedSidebar)
   }, [pathname])
-
-  console.log(secondSidebar)
 
   return (
     <div className='min-h-screen flex flex-col'>
