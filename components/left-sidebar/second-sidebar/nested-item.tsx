@@ -24,7 +24,6 @@ type NestedItemProps = {
   onDuplicate: (id: string) => void
   handleDelete: (id: string) => void
   setItems: (items: SidebarItem[]) => void
-  setOpen: (open: boolean) => void
 }
 
 const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))

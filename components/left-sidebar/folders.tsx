@@ -21,11 +21,6 @@ interface FolderProps {
 
 export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderProps) {
   const [collections, setCollections] = useState<SidebarItem[]>([])
-  const [secondSidebarOpen, setSecondSidebarOpen] = useState(!!secondSidebar)
-
-  useEffect(() => {
-    setSecondSidebarOpen(!!secondSidebar)
-  }, [secondSidebar])
 
   useEffect(() => {
     getCollectionsData()
@@ -48,16 +43,15 @@ export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderPro
 
   const handleFolderClick = useCallback(
     (item: any) => {
-      const isCurrentItem = item?.name === secondSidebar?.name
+      const toggleCurrentItem = item?.name === secondSidebar?.name
 
-      if (isCurrentItem) {
-        return setSecondSidebarOpen(!secondSidebarOpen)
+      if (toggleCurrentItem) {
+        return setSecondSidebar()
       }
 
       setSecondSidebar(item)
-      setSecondSidebarOpen(true)
     },
-    [secondSidebarOpen, secondSidebar, setSecondSidebar],
+    [secondSidebar, setSecondSidebar],
   )
 
   return (
@@ -86,8 +80,6 @@ export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderPro
         setSecondSidebar={setSecondSidebar}
         items={collections}
         setItems={setCollections}
-        open={secondSidebarOpen && secondSidebar !== undefined}
-        setOpen={setSecondSidebarOpen}
         pathname={pathname}
       />
     </>

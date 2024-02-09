@@ -24,12 +24,10 @@ import { NestedTopSection } from './nested-top'
 
 type SecondSidebarProps = {
   items: SidebarItem[]
-  open: boolean
   pathname: string
-  setItems: (items: SidebarItem[]) => void
-  setOpen: (open: boolean) => void
-  setSecondSidebar: (value?: string) => void
   secondSidebar?: SidebarFoldersProps
+  setItems: (items: SidebarItem[]) => void
+  setSecondSidebar: (value?: string) => void
 }
 
 interface ItemToDelete {
@@ -38,18 +36,12 @@ interface ItemToDelete {
 }
 
 export const SecondSidebar = (props: SecondSidebarProps) => {
-  const { items, secondSidebar, setItems, open, setOpen, pathname, setSecondSidebar } =
-    props
+  const { items, secondSidebar, pathname, setItems, setSecondSidebar } = props
 
   const sidebarRef = useRef(null)
-
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items)
-  const [searchValue, setSearchValue] = useState('')
 
   const [newItemName, setNewItemName] = useState('')
-  const [createNewItem, setCreateNewItem] = useState(false)
-  const [createNewItemButton, setCreateNewItemButton] = useState(false)
-
   const [loading, setLoading] = useState(false)
 
   // Inside SecondSidebar component
@@ -198,17 +190,17 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
       className={`absolute top-0 left-12 ml-1 h-full flex flex-col flex-shrink-0
         bg-background overflow-hidden transition-all duration-3 ease-in-out shadow-md
        opacity-0 group
-        ${open ? 'w-[204px] opacity-100' : 'w-[0px]'}
+        ${!!secondSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
       `}>
-      <NestedTopSection
-        secondSidebar={secondSidebar}
-        itemsCount={items?.length || 0}
-        setItems={setItems}
-        setOpen={setOpen}
-        setSecondSidebar={setSecondSidebar}
-      />
-
       <div className={`flex flex-col flex-1 w-full border-t border-l`}>
+        <NestedTopSection
+          secondSidebar={secondSidebar}
+          itemsCount={items?.length || 0}
+          onSaveNewItem={onSaveNewItem}
+          onFilterItems={onFilterItems}
+          setSecondSidebar={setSecondSidebar}
+        />
+
         <nav className={`flex flex-col w-full flex-shrink-0 flex-1 mt-1`}>
           {filteredItems && (
             <ScrollArea className='flex-1 flex flex-col max-h-[80vh] border-r-0 py-1 px-2'>
@@ -221,7 +213,6 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
                   onDuplicate={onDuplicate}
                   handleDelete={handleDelete}
                   setItems={setItems}
-                  setOpen={setOpen}
                 />
               ))}
             </ScrollArea>
