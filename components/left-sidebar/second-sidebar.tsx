@@ -1,5 +1,4 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { Separator } from '@radix-ui/react-separator'
 import { ChevronLeftIcon, Cross2Icon } from '@radix-ui/react-icons'
 
 import { cn } from '@/lib/utils'
@@ -43,8 +42,6 @@ type SecondSidebarProps = {
 }
 
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
-const NESTED_ITEM_STYLE = cn(SIDEBAR_BUTTON, 'pl-2')
-const ACTIVE_SIDEBAR_BUTTON = 'text-gray font-semibold hover:text-gray '
 
 interface ItemToDelete {
   id: string
@@ -69,8 +66,6 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   const [showNewItemButton, setShowNewItemButton] = useState(false)
 
   const [loading, setLoading] = useState(false)
-
-  const [showMenuForItemId, setShowMenuForItemId] = useState<string | null>(null)
 
   // Inside SecondSidebar component
   const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
@@ -267,9 +262,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
               </Button>
             )}
           </div>
-        </div>
 
-        <nav className={`flex flex-col w-full flex-shrink-0 flex-1`}>
           {showNewItem && (
             <div className='mx-2 ml-4 mt-2 pb-2 flex items-center'>
               <IconFolder />
@@ -303,17 +296,20 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                 className='text-xs font-normal'
               >
                 <IconPlus className='mr-2' />
-                Create new folder
+                Create folder
               </Button>
             </div>
           )}
+        </div>
 
+        <nav className={`flex flex-col w-full flex-shrink-0 flex-1 mt-1`}>
           {filteredItems && (
             <ScrollArea className='flex-1 flex flex-col max-h-[80vh] border-r-0 py-1 px-2'>
               {filteredItems.map((item) => (
                 <NestedItem
                   key={item.id}
                   item={item}
+                  pathname={pathname}
                   onUpdateFolderName={onUpdateFolderName}
                   onDuplicate={onDuplicate}
                   handleDelete={handleDelete}
