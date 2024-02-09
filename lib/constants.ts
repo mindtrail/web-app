@@ -35,10 +35,3 @@ export const DEFAULT_COLUMN_SIZE = {
   createdAt: 150,
   dataSourceTags: 200,
 }
-
-export const SELECTED_ITEM = {
-  FILTERS: 0,
-  COLLECTIONS: 1,
-  TAGS: 2,
-  HIGHLIHTS: 3,
-}

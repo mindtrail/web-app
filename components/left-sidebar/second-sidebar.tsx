@@ -32,30 +32,24 @@ import {
 } from '@/components/ui/icons/next-icons'
 
 type SecondSidebarProps = {
-  title: string
   items: SidebarItem[]
   open: boolean
   pathname: string
-  selected: any
   setItems: (items: SidebarItem[]) => void
   setOpen: (open: boolean) => void
+  setSecondSidebar: (value?: string) => void
+  secondSidebar?: SidebarFoldersProps
 }
-
-const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
 
 interface ItemToDelete {
   id: string
   name?: string
 }
 
-export const SecondSidebar: React.FC<SecondSidebarProps> = ({
-  title,
-  items,
-  setItems,
-  open,
-  setOpen,
-  pathname,
-}) => {
+export const SecondSidebar = (props: SecondSidebarProps) => {
+  const { items, secondSidebar, setItems, open, setOpen, pathname, setSecondSidebar } =
+    props
+
   const sidebarRef = useRef(null)
 
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items)
@@ -220,17 +214,16 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
         bg-background overflow-hidden transition-all duration-3 ease-in-out shadow-md
        opacity-0
         ${open ? 'w-[204px] opacity-100' : 'w-[0px]'}
-      `}
-    >
+      `}>
       <div className={`flex flex-col flex-1 w-full border-t border-l`}>
         <div className='flex flex-col gap-1'>
           <div className='pr-4 pl-2 py-2 flex justify-between items-center'>
             <div className='flex items-center gap-2'>
-              <Button variant='ghost' size='icon' onClick={() => setOpen(false)}>
+              <Button variant='ghost' size='icon' onClick={() => setSecondSidebar()}>
                 <ChevronLeftIcon />
               </Button>
-              <span className=' flex-1 overflow-hidden whitespace-nowrap'>
-                {title} - {items.length}
+              <span className='flex-1 overflow-hidden whitespace-nowrap capitalize'>
+                {secondSidebar?.name} - {items.length}
               </span>
             </div>
             <DropdownMenu setShowNewItem={setShowNewItem} />
@@ -256,8 +249,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                 onClick={() => {
                   setSearchValue('')
                   onFilterItems('')
-                }}
-              >
+                }}>
                 <Cross2Icon />
               </Button>
             )}
@@ -279,8 +271,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                   setShowNewItem(false)
                   setNameNewItem('')
                 }}
-                className=''
-              >
+                className=''>
                 <IconCancel />
               </button>
             </div>
@@ -293,8 +284,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                   setShowNewItemButton(false)
                   setNameNewItem(searchValue)
                 }}
-                className='text-xs font-normal'
-              >
+                className='text-xs font-normal'>
                 <IconPlus className='mr-2' />
                 Create folder
               </Button>
@@ -349,8 +339,7 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
     <div className='relative inline-block text-left'>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className='inline-flex justify-center w-full py-2 text-sm font-medium text-gray-700'
-      >
+        className='inline-flex justify-center w-full py-2 text-sm font-medium text-gray-700'>
         <IconDotsVertical />
       </button>
 
@@ -360,8 +349,7 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
             className='py-1 items-center justify-center'
             role='menu'
             aria-orientation='vertical'
-            aria-labelledby='options-menu'
-          >
+            aria-labelledby='options-menu'>
             <Button
               onClick={() => {
                 setShowNewItem(true)
@@ -369,8 +357,7 @@ const DropdownMenu = ({ setShowNewItem }: { setShowNewItem: any }) => {
               }}
               className='block border-b w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100'
               role='menuitem'
-              variant='ghost'
-            >
+              variant='ghost'>
               Create new folder
             </Button>
             {/* TO-DO v1
