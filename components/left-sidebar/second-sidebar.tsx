@@ -1,9 +1,8 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { ChevronLeftIcon, Cross2Icon } from '@radix-ui/react-icons'
 
-import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { NestedItem } from '@/components/left-sidebar/nested-item'
 
 import { ScrollArea } from '@/components/ui/scroll-area'

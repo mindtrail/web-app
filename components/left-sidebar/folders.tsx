@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 import { ChevronRightIcon } from '@radix-ui/react-icons'
 
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -23,6 +23,10 @@ interface FolderProps {
 export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderProps) {
   const [collections, setCollections] = useState<SidebarItem[]>([])
   const [secondSidebarOpen, setSecondSidebarOpen] = useState(!!secondSidebar)
+
+  useEffect(() => {
+    setSecondSidebarOpen(!!secondSidebar)
+  }, [secondSidebar])
 
   useEffect(() => {
     getCollectionsData()
