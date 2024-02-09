@@ -223,15 +223,15 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   return (
     <div
       ref={sidebarRef}
-      className={`absolute bg-white top-14 flex flex-col flex-shrink-0 overflow-hidden z-10 transition-all duration-3  ease-in-out left-14 ${
+      className={`absolute bg-white h-full flex flex-col flex-shrink-0 overflow-hidden z-10 transition-all duration-3  ease-in-out left-14 ${
         open ? 'w-[200px] border-l  border-r ' : 'w-[0px]'
       }`}
     >
-      <nav className={`flex flex-col w-full border-r flex-shrink-0 h-[84vh]`}>
+      <nav className={`flex flex-col w-full border-r flex-shrink-0 h-full`}>
         <div className='pr-4 pl-2 py-2 border-b flex justify-between items-center'>
           <div className='flex items-center'>
             <button onClick={() => setOpen(false)}>
-              <ChevronLeftIcon />
+              {/* <ChevronLeftIcon /> */}
             </button>
             <div className='pl-2'>
               <span className='font-semibold'>

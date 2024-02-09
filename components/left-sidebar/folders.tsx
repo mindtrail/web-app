@@ -82,7 +82,7 @@ export function Folders() {
   }
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col flex-1 '>
       <div className={NAV_ITEM_STYLE}>
         <div className={TRIGGER_HEADER_STYLE}>
           <Button
@@ -93,7 +93,7 @@ export function Folders() {
             onClick={() => {
               setTitle('Folders')
               openSecondSidebarFn(SELECTED_ITEM.COLLECTIONS)
-              // setSelected(SELECTED_ITEM.COLLECTIONS)
+              setSelected(SELECTED_ITEM.COLLECTIONS)
             }}
           >
             <div className='flex justify-between w-full'>
@@ -119,7 +119,7 @@ export function Folders() {
             onClick={() => {
               setTitle('Tags')
               openSecondSidebarFn(SELECTED_ITEM.TAGS)
-              // setSelected(SELECTED_ITEM.TAGS)
+              setSelected(SELECTED_ITEM.TAGS)
             }}
           >
             <div className='flex justify-between w-full'>
