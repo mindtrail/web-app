@@ -54,6 +54,8 @@ export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderPro
     [secondSidebar, setSecondSidebar],
   )
 
+  console.log(secondSidebar)
+
   return (
     <>
       <div className='flex flex-col flex-1 gap-1 py-2'>

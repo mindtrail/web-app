@@ -29,6 +29,8 @@ export function LeftSidebar({ user }: SidebarNavProps) {
     setSecondSidebar(openedSidebar)
   }, [pathname])
 
+  console.log(secondSidebar)
+
   return (
     <div className='min-h-screen flex flex-col'>
       <nav

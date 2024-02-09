@@ -1,20 +1,15 @@
-import { useState, KeyboardEvent } from 'react'
+import { useEffect, useCallback, useState, useRef, KeyboardEvent } from 'react'
 import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
-import {
-  IconCancel,
-  IconFolder,
-  IconPlus,
-  IconSearch,
-} from '@/components/ui/icons/next-icons'
+import { IconCancel, IconFolder, IconSearch } from '@/components/ui/icons/next-icons'
 
 interface TopNestedSectionProps {
   itemsCount: number
   secondSidebar?: SidebarFoldersProps
-  onSaveNewItem: () => void
+  onSaveNewItem: (name: string) => void
   onFilterItems: (value: string) => void
   setSecondSidebar: (value?: any) => void
 }
@@ -23,17 +18,52 @@ export function NestedTopSection(props: TopNestedSectionProps) {
   const { secondSidebar, setSecondSidebar, onSaveNewItem, onFilterItems, itemsCount } =
     props
 
+  const inputRef = useRef(null)
   const [searchValue, setSearchValue] = useState('')
 
   const [newItemName, setNewItemName] = useState('')
   const [createNewItem, setCreateNewItem] = useState(false)
-  const [createNewItemButton, setCreateNewItemButton] = useState(false)
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, callback: Function) => {
-    if (event.key === 'Enter') {
-      callback()
+  const handleKeyDown = useCallback(
+    async (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Enter') {
+        onSaveNewItem(newItemName)
+        setNewItemName('')
+        setCreateNewItem(false)
+        return
+      }
+
+      if (event.key === 'Escape') {
+        setCreateNewItem(false)
+        setNewItemName('')
+      }
+    },
+    [newItemName, onSaveNewItem],
+  )
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      setSearchValue(value)
+      onFilterItems(value)
+    },
+    [onFilterItems],
+  )
+
+  useEffect(() => {
+    // Alert if clicked outside of element)
+    function handleClickOutside(event: { target: any }) {
+      if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
+        setCreateNewItem(false) // Closes the new folder input
+      }
     }
-  }
+
+    // Bind the event listener
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [inputRef])
 
   return (
     <div className='flex flex-col gap-1'>
@@ -61,10 +91,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
           id='search'
           className='flex-1 border-[1px] mx-2 px-2'
           value={searchValue}
-          onChange={(e) => {
-            setSearchValue(e.target.value)
-            onFilterItems(e.target.value)
-          }}
+          onChange={(e) => handleSearch(e?.target?.value)}
           placeholder='Search'
         />
 
@@ -85,15 +112,17 @@ export function NestedTopSection(props: TopNestedSectionProps) {
       </div>
 
       {createNewItem && (
-        <div className='flex items-center mx-2 pl-2 gap-1 rounded relative bg-accent'>
+        <div
+          ref={inputRef}
+          className='flex items-center mt-4 mb-2 mx-2 pl-2 gap-1 rounded relative bg-accent'>
           <IconFolder />
           <Input
             autoFocus
-            className='text-xs flex-1 border bg-background px-2'
+            className='flex-1 border bg-background pl-2 pr-8'
             value={newItemName}
             onChange={(e) => setNewItemName(e.target.value)}
-            onKeyDown={(e) => handleKeyDown(e, onSaveNewItem)}
-            placeholder={`New ${secondSidebar?.name}`}
+            onKeyDown={handleKeyDown}
+            placeholder={`New ${secondSidebar?.entity}`}
           />
           <Button
             className='absolute right-0'
@@ -104,21 +133,6 @@ export function NestedTopSection(props: TopNestedSectionProps) {
               setNewItemName('')
             }}>
             <IconCancel />
-          </Button>
-        </div>
-      )}
-
-      {createNewItemButton && (
-        <div className='mx-4 mt-2 pb-2 flex items-center w-full'>
-          <Button
-            onClick={() => {
-              setCreateNewItem(true)
-              setCreateNewItemButton(false)
-              setNewItemName(searchValue)
-            }}
-            className='text-xs font-normal'>
-            <IconPlus className='mr-2' />
-            Create folder
           </Button>
         </div>
       )}
