@@ -26,7 +26,7 @@ export const SearchBasic = ({ handleSearch }: SearchProps) => {
     <div className='flex gap-4 w-full items-center'>
       <Input
         id='search'
-        className='flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400 px-2'
+        className='flex-1 border-[1px] disabled:bg-gray-100 disabled:text-gray-400 px-2'
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         onKeyDown={handleKeyDown}
