@@ -1,11 +1,11 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
 import { Separator } from '@radix-ui/react-separator'
-import { ChevronLeftIcon } from '@radix-ui/react-icons'
+import { ChevronLeftIcon, Cross2Icon } from '@radix-ui/react-icons'
 
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { NestedItem } from '@/components/left-sidebar/nested-item'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -214,200 +214,134 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
     }
   }
 
+  if (loading) {
+    return <IconSpinner />
+  }
+
   return (
     <div
       ref={sidebarRef}
-      className={`absolute top-0 left-12 ml-1 h-full flex flex-col flex-shrink-0 z-10
-      bg-background overflow-hidden transition-all duration-3  ease-in-out
-        ${open ? 'w-[210px] border-l  border-r ' : 'w-[0px]'}
+      className={`absolute top-0 left-12 ml-1 h-full flex flex-col flex-shrink-0
+        bg-background overflow-hidden transition-all duration-3 ease-in-out shadow-md
+       opacity-0
+        ${open ? 'w-[204px] opacity-100' : 'w-[0px]'}
       `}
     >
-      <nav className={`flex flex-col w-full border-r flex-shrink-0 h-full`}>
-        <div className='pr-4 pl-2 py-2 border-b flex justify-between items-center'>
-          <div className='flex items-center'>
-            <button onClick={() => setOpen(false)}>
-              <ChevronLeftIcon />
-            </button>
-            <div className='pl-2'>
-              <span className='font-semibold'>
-                {title} ({items.length})
+      <div className={`flex flex-col flex-1 w-full border-t border-l`}>
+        <div className='flex flex-col gap-1'>
+          <div className='pr-4 pl-2 py-2 flex justify-between items-center'>
+            <div className='flex items-center gap-2'>
+              <Button variant='ghost' size='icon' onClick={() => setOpen(false)}>
+                <ChevronLeftIcon />
+              </Button>
+              <span className=' flex-1 overflow-hidden whitespace-nowrap'>
+                {title} - {items.length}
               </span>
             </div>
+            <DropdownMenu setShowNewItem={setShowNewItem} />
           </div>
-          <DropdownMenu setShowNewItem={setShowNewItem} />
-        </div>
-        <Separator className='mb-2' />
-        <div className='flex w-full items-center mt-2'>
-          <Input
-            id='search'
-            className='flex-1 border-[1px] ml-4 mr-2 disabled:bg-gray-100
-              disabled:text-gray-400 px-2'
-            value={searchValue}
-            onChange={(e) => {
-              setSearchValue(e.target.value)
-              onFilterItems(e.target.value)
-            }}
-            placeholder='Search'
-          />
-          <button
-            onClick={() => {
-              onFilterItems(searchValue)
-            }}
-            className='mr-4'
-          >
-            <IconSearch />
-          </button>
-        </div>
-        <Separator className='my-2' />
-        {showNewItem && (
-          <div className='mx-2 ml-4 mt-2 pb-2 flex items-center'>
-            <IconFolder />
+          <div className='flex w-full items-center relative'>
             <Input
-              id='name'
-              className='file:font-normal text-xs ml-2 flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400'
-              value={nameNewItem}
-              onChange={(e) => setNameNewItem(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e, onSaveNewItem)}
-              placeholder='Name'
+              id='search'
+              className='flex-1 border-[1px] mx-2 px-2'
+              value={searchValue}
+              onChange={(e) => {
+                setSearchValue(e.target.value)
+                onFilterItems(e.target.value)
+              }}
+              placeholder='Search'
             />
-            <button
-              onClick={() => {
-                setShowNewItem(false)
-                setNameNewItem('')
-              }}
-              className=''
-            >
-              <IconCancel />
-            </button>
+            {!searchValue ? (
+              <IconSearch className='absolute right-4 opacity-50' />
+            ) : (
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute right-2'
+                onClick={() => {
+                  setSearchValue('')
+                  onFilterItems('')
+                }}
+              >
+                <Cross2Icon />
+              </Button>
+            )}
           </div>
-        )}
-        {showNewItemButton && (
-          <div className='mx-4 mt-2 pb-2 flex items-center w-full'>
-            <Button
-              onClick={() => {
-                setShowNewItem(true)
-                setShowNewItemButton(false)
-                setNameNewItem(searchValue)
-              }}
-              className='text-xs font-normal'
-            >
-              <IconPlus className='mr-2' />
-              Create new folder
-            </Button>
-          </div>
-        )}
-        {loading && <IconSpinner />}
+        </div>
 
-        {!loading && filteredItems && (
-          <ScrollArea className='flex-1 flex flex-col max-h-[80vh] border-r-0 py-1 px-2'>
-            {filteredItems.map(({ id, name, url }, index) => (
-              <>
-                {isEditing[id] ? (
-                  <div className='mx-3 flex' key={index}>
-                    <input
-                      id='name'
-                      className='mt-1 block w-full appearance-none rounded-md px-3 py-2 placeholder-gray-400 shadow-sm border focus:border-black focus:outline-none focus:ring-black sm:text-sm'
-                      defaultValue={name}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          onUpdateFolderName(id, (e?.target as HTMLInputElement).value)
-                        }
-                      }}
-                      autoFocus
-                    />
-                    <button
-                      onClick={() => {
-                        setIsEditing({ ...isEditing, [id]: false })
-                      }}
-                    >
-                      <IconCancel />
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    key={index}
-                    className={cn(
-                      pathname === url && 'bg-gray-100',
-                      'p-2 flex justify-between items-center hover:bg-gray-100 rounded-sm group',
-                    )}
-                  >
-                    <Link
-                      href={url || ''}
-                      className={cn(
-                        NESTED_ITEM_STYLE,
-                        pathname === url && ACTIVE_SIDEBAR_BUTTON,
-                        'flex items-center gap-2 flex-grow w-[50px] ',
-                      )}
-                    >
-                      {pathname === url ? <IconFolder /> : <IconFolder />}
-                      <span className='truncate flex-grow'>{name}</span>
-                      {/* Apply truncate and flex-grow */}
-                    </Link>
-                    <div className='flex-shrink-0 hidden group-hover:block'>
-                      <button onClick={() => setShowMenuForItemId(id)}>
-                        <IconDotsVertical />
-                      </button>
-                      {showMenuForItemId === id && (
-                        <div className='absolute right-0 mt-1 bg-white border rounded shadow z-10'>
-                          <button
-                            onClick={() => {
-                              let isEditingArray = { ...isEditing }
-                              Object.keys(isEditing).forEach((id) => {
-                                if (isEditing[id]) {
-                                  isEditingArray = {
-                                    ...isEditingArray,
-                                    [id]: false,
-                                  }
-                                }
-                              })
-                              setIsEditing({
-                                ...isEditingArray,
-                                [id]: true,
-                              })
-                            }}
-                            className='w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                          >
-                            Rename
-                          </button>
-                          <button
-                            onClick={() => onDuplicate(id)}
-                            className='w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                          >
-                            Duplicate
-                          </button>
-                          <button
-                            onClick={() => handleDelete(id)}
-                            className='w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </>
-            ))}
-          </ScrollArea>
-        )}
-        {!loading && filteredItems && filteredItems.length === 0 && (
-          <div className='h-14 flex items-center justify-center'>No items</div>
-        )}
-        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Delete</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete this folder?
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter className='items-center'>
-              <Button onClick={() => confirmDelete()}>Delete</Button>
-              <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </nav>
+        <nav className={`flex flex-col w-full flex-shrink-0 flex-1`}>
+          {showNewItem && (
+            <div className='mx-2 ml-4 mt-2 pb-2 flex items-center'>
+              <IconFolder />
+              <Input
+                id='name'
+                className='file:font-normal text-xs ml-2 flex-1 bg-white border-[1px] disabled:bg-gray-100 disabled:text-gray-400'
+                value={nameNewItem}
+                onChange={(e) => setNameNewItem(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, onSaveNewItem)}
+                placeholder='Name'
+              />
+              <button
+                onClick={() => {
+                  setShowNewItem(false)
+                  setNameNewItem('')
+                }}
+                className=''
+              >
+                <IconCancel />
+              </button>
+            </div>
+          )}
+          {showNewItemButton && (
+            <div className='mx-4 mt-2 pb-2 flex items-center w-full'>
+              <Button
+                onClick={() => {
+                  setShowNewItem(true)
+                  setShowNewItemButton(false)
+                  setNameNewItem(searchValue)
+                }}
+                className='text-xs font-normal'
+              >
+                <IconPlus className='mr-2' />
+                Create new folder
+              </Button>
+            </div>
+          )}
+
+          {filteredItems && (
+            <ScrollArea className='flex-1 flex flex-col max-h-[80vh] border-r-0 py-1 px-2'>
+              {filteredItems.map((item) => (
+                <NestedItem
+                  key={item.id}
+                  item={item}
+                  onUpdateFolderName={onUpdateFolderName}
+                  onDuplicate={onDuplicate}
+                  handleDelete={handleDelete}
+                  setItems={setItems}
+                  setOpen={setOpen}
+                />
+              ))}
+            </ScrollArea>
+          )}
+          {!loading && filteredItems && filteredItems.length === 0 && (
+            <div className='h-14 flex items-center justify-center'>No items</div>
+          )}
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this folder?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className='items-center'>
+                <Button onClick={() => confirmDelete()}>Delete</Button>
+                <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </nav>
+      </div>
     </div>
   )
 }
