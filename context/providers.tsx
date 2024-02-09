@@ -13,7 +13,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 
 export function Providers({ children }: ThemeProviderProps) {
   return (
-    <NextThemesProvider>
+    <NextThemesProvider attribute='class' defaultTheme='system' enableSystem>
       <TooltipProvider>
         <SessionProvider>
           <GlobalStateProvider>

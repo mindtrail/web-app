@@ -223,16 +223,15 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   return (
     <div
       ref={sidebarRef}
-      className={`absolute bg-white h-full flex flex-col flex-shrink-0 overflow-hidden z-10 transition-all duration-3  ease-in-out left-14 ${
-        open ? 'w-[200px] border-l  border-r ' : 'w-[0px]'
-      }`}
+      className={`absolute top-0 left-12 ml-1 h-full flex flex-col flex-shrink-0 z-10
+      bg-background overflow-hidden transition-all duration-3  ease-in-out
+        ${open ? 'w-[210px] border-l  border-r ' : 'w-[0px]'}
+      `}
     >
       <nav className={`flex flex-col w-full border-r flex-shrink-0 h-full`}>
         <div className='pr-4 pl-2 py-2 border-b flex justify-between items-center'>
           <div className='flex items-center'>
-            <button onClick={() => setOpen(false)}>
-              {/* <ChevronLeftIcon /> */}
-            </button>
+            <button onClick={() => setOpen(false)}>{/* <ChevronLeftIcon /> */}</button>
             <div className='pl-2'>
               <span className='font-semibold'>
                 {title} ({items.length})
@@ -245,7 +244,8 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
         <div className='flex w-full items-center mt-2'>
           <Input
             id='search'
-            className='flex-1 bg-white border-[1px] ml-4 mr-2 disabled:bg-gray-100 disabled:text-gray-400 px-2'
+            className='flex-1 border-[1px] ml-4 mr-2 disabled:bg-gray-100
+              disabled:text-gray-400 px-2'
             value={searchValue}
             onChange={(e) => {
               setSearchValue(e.target.value)

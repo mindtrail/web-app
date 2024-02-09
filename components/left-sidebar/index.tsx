@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
 import { Folders } from '@/components/left-sidebar/folders'
 import { TopSection } from '@/components/left-sidebar/top-section'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 type SidebarNavProps = {
   className?: string
@@ -32,13 +33,13 @@ export function LeftSidebar({ user }: SidebarNavProps) {
           </Link>
         </div>
 
-        <TopSection />
-
-        <Separator />
-
-        <Folders />
-
+        <div className='flex-1 flex flex-col relative'>
+          <TopSection />
+          <Separator />
+          <Folders />
+        </div>
         <div className='p-4 border-t border-gray-200'>
+          <ThemeToggle />
           <LeftSidebarFooter user={user} />
         </div>
       </nav>
