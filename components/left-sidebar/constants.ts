@@ -14,11 +14,13 @@ export const TOP_SIDEBAR_ITEMS = [
 
 export const SIDEBAR_FOLDERS: Record<string, SidebarFoldersProps> = {
   folder: {
+    entity: 'folder',
     name: 'Folders',
     url: '/folder',
     icon: IconMultipleFolders,
   },
   tag: {
+    entity: 'tag',
     name: 'Tags',
     url: '/tag',
     icon: IconTag,

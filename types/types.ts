@@ -36,6 +36,7 @@ declare global {
   }
 
   type SidebarFoldersProps = {
+    entity: string
     name: string
     url: string
     icon: any

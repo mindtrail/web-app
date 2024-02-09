@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
+import { PlusIcon } from '@radix-ui/react-icons'
 
 import {
   Dialog,
@@ -38,11 +39,10 @@ interface ItemToDelete {
 export const SecondSidebar = (props: SecondSidebarProps) => {
   const { items, secondSidebar, pathname, setItems, setSecondSidebar } = props
 
-  const sidebarRef = useRef(null)
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items)
-
-  const [newItemName, setNewItemName] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const [createNewItemButton, setCreateNewItemButton] = useState(false)
 
   // Inside SecondSidebar component
   const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
@@ -53,24 +53,6 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
     setItemToDelete({ id, name })
     setDeleteDialogOpen(true)
   }
-
-  useEffect(() => {
-    function handleClickOutside(event: { target: any }) {
-      if (
-        sidebarRef.current &&
-        !(sidebarRef.current as HTMLElement).contains(event.target)
-      ) {
-        setCreateNewItem(false) // Closes the new folder input
-      }
-    }
-
-    // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [sidebarRef])
 
   const onUpdateFolderName = async (id: string, newName: string) => {
     setLoading(true)
@@ -139,16 +121,16 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
       return item.name.toLowerCase().includes(value.toLowerCase())
     })
     const noresults = value.length > 0 && searchitems.length === 0
-    setCreateNewItemButton(noresults)
+    // setCreateNewItemButton(noresults)
 
     setFilteredItems(searchitems)
   }
 
-  const onSaveNewItem = async () => {
-    setLoading(true)
+  const onSaveNewItem = async (name: string) => {
+    // @TODO: loading for new item....
     try {
       const response = await createCollection({
-        name: newItemName,
+        name,
         userId: '',
         description: '',
       })
@@ -174,9 +156,7 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      setLoading(false)
-      setNewItemName('')
-      setCreateNewItem(false)
+      // setCreateNewItem(false)
     }
   }
 
@@ -186,7 +166,6 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
 
   return (
     <div
-      ref={sidebarRef}
       className={`absolute top-0 left-12 ml-1 h-full flex flex-col flex-shrink-0
         bg-background overflow-hidden transition-all duration-3 ease-in-out shadow-md
        opacity-0 group
@@ -220,22 +199,37 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
           {!loading && filteredItems && filteredItems.length === 0 && (
             <div className='h-14 flex items-center justify-center'>No items</div>
           )}
-
-          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this folder?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className='items-center'>
-                <Button onClick={() => confirmDelete()}>Delete</Button>
-                <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </nav>
+
+        {createNewItemButton && (
+          <div className='mx-4 mt-2 pb-2 flex items-center w-full'>
+            <Button
+              className='gap-2'
+              onClick={() => {
+                // CREATE NEW ITEM
+                // setNewItemName('')
+                setCreateNewItemButton(false)
+              }}>
+              <PlusIcon />
+              Create {'new name'}
+            </Button>
+          </div>
+        )}
+
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Delete</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this folder?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className='items-center'>
+              <Button onClick={() => confirmDelete()}>Delete</Button>
+              <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
