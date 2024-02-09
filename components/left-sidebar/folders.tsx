@@ -11,31 +11,21 @@ import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 import { getFiltersByUserId } from '@/lib/serverActions/filter'
 import { SELECTED_ITEM } from '@/lib/constants'
 
-const TRIGGER_HEADER_STYLE = 'flex flex-1 justify-between pl-3 gap-2 cursor-pointer'
-const NAV_ITEM_STYLE = 'flex flex-col pl-2 py-2 items-stretch'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
 
-const NAV_ITEM_CONTENT_STYLE = 'flex flex-1 gap-2'
+const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 export function Folders() {
-  // items={selected === SELECTED_ITEM.COLLECTIONS ? collections : filters}
-  // setItems={selected === SELECTED_ITEM.COLLECTIONS ? setCollections : setFilters}
-
   const pathname = usePathname()
 
-  // console.log(pathname.split('/')[1])
-
-  const [secondSidebarOpen, setSecondSidebarOpen] = useState(false)
   const [title, setTitle] = useState('')
-
+  const [secondSidebarOpen, setSecondSidebarOpen] = useState(false)
   const [selected, setSelected] = useState()
-  const [subSelected, setSubSelected] = useState()
   const [collections, setCollections] = useState<SidebarItem[]>([])
 
   useEffect(() => {
     getCollectionsData()
-    // TO-DO: Smart Folders v1
-    //getFiltersData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getCollectionsData = async () => {
@@ -82,60 +72,41 @@ export function Folders() {
   }
 
   return (
-    <div className='flex flex-col flex-1 '>
-      <div className={NAV_ITEM_STYLE}>
-        <div className={TRIGGER_HEADER_STYLE}>
-          <Button
-            variant='sidebarSection'
-            className={`w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis ${
-              subSelected === SELECTED_ITEM.COLLECTIONS && 'bg-[#f3f4f6]'
-            }`}
-            onClick={() => {
-              setTitle('Folders')
-              openSecondSidebar(SELECTED_ITEM.COLLECTIONS)
-              setSelected(SELECTED_ITEM.COLLECTIONS)
-            }}
-          >
-            <div className='flex justify-between w-full'>
-              <div className={NAV_ITEM_CONTENT_STYLE}>
-                <IconMultipleFolders />
-                <span className='ml-2'>Folders</span>
-              </div>
+    <>
+      <div className='flex flex-col flex-1 gap-1 py-2'>
+        <Button
+          variant='sidebar'
+          className={pathname.includes('folder') ? ACTIVE_BTN : ''}
+          onClick={() => {
+            setTitle('Folders')
+            openSecondSidebar(SELECTED_ITEM.COLLECTIONS)
+            setSelected(SELECTED_ITEM.COLLECTIONS)
+          }}
+        >
+          <span className='flex flex-1 gap-4'>
+            <IconMultipleFolders />
+            Folders
+          </span>
 
-              <div className='flex items-center'>
-                <ChevronRightIcon />
-              </div>
-            </div>
-          </Button>
-        </div>
+          <ChevronRightIcon className='mr-2' />
+        </Button>
+        <Button
+          variant='sidebar'
+          className={pathname.includes('tags') ? ACTIVE_BTN : ''}
+          onClick={() => {
+            setTitle('Tags')
+            openSecondSidebar(SELECTED_ITEM.TAGS)
+            setSelected(SELECTED_ITEM.TAGS)
+          }}
+        >
+          <span className='flex flex-1 gap-4'>
+            <IconTag />
+            Tags
+          </span>
+
+          <ChevronRightIcon className='mr-2' />
+        </Button>
       </div>
-      <div className={NAV_ITEM_STYLE}>
-        <div className={TRIGGER_HEADER_STYLE}>
-          <Button
-            variant='sidebarSection'
-            className={`w-full flex items-center whitespace-nowrap overflow-hidden text-ellipsis ${
-              subSelected === SELECTED_ITEM.TAGS && 'bg-[#f3f4f6]'
-            }`}
-            onClick={() => {
-              setTitle('Tags')
-              openSecondSidebar(SELECTED_ITEM.TAGS)
-              setSelected(SELECTED_ITEM.TAGS)
-            }}
-          >
-            <div className='flex justify-between w-full'>
-              <div className={NAV_ITEM_CONTENT_STYLE}>
-                <IconTag />
-                <span className='ml-2'>Tags</span>
-              </div>
-
-              <div className='flex items-center'>
-                <ChevronRightIcon />
-              </div>
-            </div>
-          </Button>
-        </div>
-      </div>
-
       <SecondSidebar
         title={title}
         items={selected === SELECTED_ITEM.COLLECTIONS ? collections : filters}
@@ -144,8 +115,7 @@ export function Folders() {
         setOpen={setSecondSidebarOpen}
         pathname={pathname}
         selected={selected}
-        setSubSelected={setSubSelected}
       />
-    </div>
+    </>
   )
 }

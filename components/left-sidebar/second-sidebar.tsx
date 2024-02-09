@@ -1,5 +1,3 @@
-'use client'
-
 import { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Separator } from '@radix-ui/react-separator'
@@ -9,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Button, buttonVariants } from '@/components/ui/button'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   createCollection,
   deleteCollection,
@@ -31,18 +30,16 @@ import {
   IconPlus,
   IconSearch,
   IconSpinner,
-} from '../ui/icons/next-icons'
-import { ScrollArea } from '../ui/scroll-area'
+} from '@/components/ui/icons/next-icons'
 
 type SecondSidebarProps = {
   title: string
   items: SidebarItem[]
-  setItems: (items: SidebarItem[]) => void
   open: boolean
-  setOpen: (open: boolean) => void
   pathname: string
   selected: any
-  setSubSelected: (value: any) => void
+  setItems: (items: SidebarItem[]) => void
+  setOpen: (open: boolean) => void
 }
 
 const SIDEBAR_BUTTON = cn(buttonVariants({ variant: 'sidebar' }))
@@ -61,8 +58,6 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
   open,
   setOpen,
   pathname,
-  selected,
-  setSubSelected,
 }) => {
   const sidebarRef = useRef(null)
 
