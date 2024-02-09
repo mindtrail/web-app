@@ -22,6 +22,8 @@ export function Folders() {
 
   const pathname = usePathname()
 
+  // console.log(pathname.split('/')[1])
+
   const [secondSidebarOpen, setSecondSidebarOpen] = useState(false)
   const [title, setTitle] = useState('')
 
