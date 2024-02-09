@@ -28,7 +28,6 @@ import {
   IconCancel,
   IconDotsVertical,
   IconFolder,
-  IconFolderOpen,
   IconPlus,
   IconSearch,
   IconSpinner,
@@ -231,7 +230,9 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
       <nav className={`flex flex-col w-full border-r flex-shrink-0 h-full`}>
         <div className='pr-4 pl-2 py-2 border-b flex justify-between items-center'>
           <div className='flex items-center'>
-            <button onClick={() => setOpen(false)}>{/* <ChevronLeftIcon /> */}</button>
+            <button onClick={() => setOpen(false)}>
+              <ChevronLeftIcon />
+            </button>
             <div className='pl-2'>
               <span className='font-semibold'>
                 {title} ({items.length})
@@ -343,7 +344,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                         'flex items-center gap-2 flex-grow w-[50px] ',
                       )}
                     >
-                      {pathname === url ? <IconFolderOpen /> : <IconFolder />}
+                      {pathname === url ? <IconFolder /> : <IconFolder />}
                       <span className='truncate flex-grow'>{name}</span>
                       {/* Apply truncate and flex-grow */}
                     </Link>

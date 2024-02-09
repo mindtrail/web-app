@@ -5,7 +5,7 @@ import { ChevronRightIcon } from '@radix-ui/react-icons'
 import { SecondSidebar } from '@/components/left-sidebar/second-sidebar'
 
 import { Button } from '@/components/ui/button'
-import { IconFolders, IconTag } from '@/components/ui/icons/next-icons'
+import { IconMultipleFolders, IconTag } from '@/components/ui/icons/next-icons'
 
 import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 import { getFiltersByUserId } from '@/lib/serverActions/filter'
@@ -22,7 +22,7 @@ export function Folders() {
 
   const pathname = usePathname()
 
-  const [openSecondSidebar, setOpenSecondSidebar] = useState(false)
+  const [secondSidebarOpen, setSecondSidebarOpen] = useState(false)
   const [title, setTitle] = useState('')
 
   const [selected, setSelected] = useState()
@@ -37,7 +37,6 @@ export function Folders() {
   }, [])
 
   const getCollectionsData = async () => {
-    // setLoading(true)
     const items = await getCollectionsByUserId()
     if (Array.isArray(items)) {
       const collectionItems = items?.map((item) => {
@@ -50,7 +49,6 @@ export function Folders() {
       })
       setCollections(collectionItems)
     }
-    // setLoading(false)
   }
 
   const [filters, setFilters] = useState<SidebarItem[]>([])
@@ -71,13 +69,13 @@ export function Folders() {
     // setLoading(false)
   }
 
-  const openSecondSidebarFn = (item: any) => {
+  const openSecondSidebar = (item: any) => {
     const isCurrentItem = item === selected
     if (isCurrentItem) {
-      setOpenSecondSidebar(!openSecondSidebar)
+      setSecondSidebarOpen(!secondSidebarOpen)
     }
-    if (!openSecondSidebar) {
-      setOpenSecondSidebar(true)
+    if (!secondSidebarOpen) {
+      setSecondSidebarOpen(true)
     }
   }
 
@@ -92,13 +90,13 @@ export function Folders() {
             }`}
             onClick={() => {
               setTitle('Folders')
-              openSecondSidebarFn(SELECTED_ITEM.COLLECTIONS)
+              openSecondSidebar(SELECTED_ITEM.COLLECTIONS)
               setSelected(SELECTED_ITEM.COLLECTIONS)
             }}
           >
             <div className='flex justify-between w-full'>
               <div className={NAV_ITEM_CONTENT_STYLE}>
-                <IconFolders />
+                <IconMultipleFolders />
                 <span className='ml-2'>Folders</span>
               </div>
 
@@ -118,7 +116,7 @@ export function Folders() {
             }`}
             onClick={() => {
               setTitle('Tags')
-              openSecondSidebarFn(SELECTED_ITEM.TAGS)
+              openSecondSidebar(SELECTED_ITEM.TAGS)
               setSelected(SELECTED_ITEM.TAGS)
             }}
           >
@@ -140,8 +138,8 @@ export function Folders() {
         title={title}
         items={selected === SELECTED_ITEM.COLLECTIONS ? collections : filters}
         setItems={selected === SELECTED_ITEM.COLLECTIONS ? setCollections : setFilters}
-        open={openSecondSidebar && selected !== undefined}
-        setOpen={setOpenSecondSidebar}
+        open={secondSidebarOpen && selected !== undefined}
+        setOpen={setSecondSidebarOpen}
         pathname={pathname}
         selected={selected}
         setSubSelected={setSubSelected}

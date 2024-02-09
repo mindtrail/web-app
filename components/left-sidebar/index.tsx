@@ -38,7 +38,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
           <Separator />
           <Folders />
         </div>
-        <div className='p-4 border-t border-gray-200'>
+        <div className='p-4 border-t'>
           <ThemeToggle />
           <LeftSidebarFooter user={user} />
         </div>
