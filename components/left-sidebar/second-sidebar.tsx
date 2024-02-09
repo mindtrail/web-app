@@ -344,10 +344,7 @@ export const SecondSidebar: React.FC<SecondSidebarProps> = ({
                       )}
                     >
                       {pathname === url ? <IconFolderOpen /> : <IconFolder />}
-                      <span className='truncate flex-grow'>
-                        {url}
-                        {name}
-                      </span>
+                      <span className='truncate flex-grow'>{name}</span>
                       {/* Apply truncate and flex-grow */}
                     </Link>
                     <div className='flex-shrink-0 hidden group-hover:block'>

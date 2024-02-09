@@ -1,17 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
 
 import { Separator } from '@/components/ui/separator'
 
-import { getCollectionsByUserId } from '@/lib/serverActions/collection'
-import { getFiltersByUserId } from '@/lib/serverActions/filter'
-import { SELECTED_ITEM } from '@/lib/constants'
-
-import { SecondSidebar } from '@/components/left-sidebar/second-sidebar'
 import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
 import { Folders } from '@/components/left-sidebar/folders'
 import { TopSection } from '@/components/left-sidebar/top-section'
@@ -24,57 +17,6 @@ type SidebarNavProps = {
 const BRAND_NAME = 'Mind Trail'
 
 export function LeftSidebar({ className, user }: SidebarNavProps) {
-  const [openSecondSidebar, setOpenSecondSidebar] = useState(false)
-  const [title, setTitle] = useState('')
-  const pathname = usePathname()
-  // const [loading, setLoading] = useState(false)
-
-  const [collections, setCollections] = useState<SidebarItem[]>([])
-  const [filters, setFilters] = useState<SidebarItem[]>([])
-
-  const [selected, setSelected] = useState(undefined)
-  const [subSelected, setSubSelected] = useState(undefined)
-
-  useEffect(() => {
-    getCollectionsData()
-    // TO-DO: Smart Folders v1
-    //getFiltersData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const getFiltersData = async () => {
-    // setLoading(true)
-    const items = await getFiltersByUserId()
-    if (Array.isArray(items)) {
-      const filterItems = items?.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-          criteria: item.criteria,
-        }
-      })
-      setFilters(filterItems)
-    }
-    // setLoading(false)
-  }
-
-  const getCollectionsData = async () => {
-    // setLoading(true)
-    const items = await getCollectionsByUserId()
-    if (Array.isArray(items)) {
-      const collectionItems = items?.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          url: `/folder/${item.id}`,
-        }
-      })
-      setCollections(collectionItems)
-    }
-    // setLoading(false)
-  }
-
   return (
     <div className='min-h-screen flex relative'>
       {/* Container for both sidebars and main content */}
@@ -92,36 +34,17 @@ export function LeftSidebar({ className, user }: SidebarNavProps) {
               </Link>
             </div>
 
-            <TopSection filters={filters} />
+            <TopSection />
 
             <Separator />
 
-            <Folders
-              openSecondSidebar={openSecondSidebar}
-              setOpenSecondSidebar={setOpenSecondSidebar}
-              setTitle={setTitle}
-              filters={filters}
-              setSelected={setSelected}
-              selected={selected}
-              subSelected={subSelected}
-              setSubSelected={setSubSelected}
-            />
+            <Folders />
           </div>
 
           <div className='p-4 border-t border-gray-200'>
             <LeftSidebarFooter user={user} />
           </div>
         </nav>
-        <SecondSidebar
-          title={title}
-          items={selected === SELECTED_ITEM.COLLECTIONS ? collections : filters}
-          setItems={selected === SELECTED_ITEM.COLLECTIONS ? setCollections : setFilters}
-          open={openSecondSidebar && selected !== undefined}
-          setOpen={setOpenSecondSidebar}
-          pathname={pathname}
-          selected={selected}
-          setSubSelected={setSubSelected}
-        />
       </div>
     </div>
   )
