@@ -56,7 +56,6 @@ export function LeftSidebar({ user }: SidebarNavProps) {
 
     if (Array.isArray(items)) {
       const newArr = items.splice(5, 7)
-      console.log(newArr)
       setItemListByCategory((prev) => {
         return {
           ...prev,
@@ -70,7 +69,8 @@ export function LeftSidebar({ user }: SidebarNavProps) {
     <div className='min-h-screen flex flex-col'>
       <nav
         className='flex flex-col flex-1 justify-between w-[256px] flex-shrink-0
-            border-r overflow-hidden transition-all duration-300 ease-in-out h-screen'>
+          border-r overflow-hidden transition-all duration-300 ease-in-out h-screen'
+      >
         <div className='h-14 border-b flex items-center justify-center'>
           <Link href='/' className='flex gap-4 w-full px-4 py-2 self-center items-center'>
             <Image width={30} height={30} src='/icon-2.png' alt='Mind Trail' />

@@ -1,11 +1,11 @@
 import { useEffect, useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { PlusIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
-import { PlusIcon } from '@radix-ui/react-icons'
-
+import { useToast } from '@/components/ui/use-toast'
 import {
   Dialog,
   DialogContent,
@@ -47,6 +47,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   } = props
 
   const router = useRouter()
+  const { toast } = useToast()
 
   const [itemsList, setItemsList] = useState<SidebarItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -54,7 +55,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const [createInProgress, setCreateInProgress] = useState(false)
   const [createNewItemButton, setCreateNewItemButton] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [itemToDelete, setItemToDelete] = useState<ItemToDelete | null>(null)
+  const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
   useEffect(() => {
     const { entity } = nestedSidebar
@@ -65,8 +66,9 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     }
   }, [nestedSidebar, itemListByCategory])
 
-  const handleDelete = (id: string, name: string = '') => {
-    setItemToDelete({ id, name })
+  const onDelete = (item: SidebarItem) => {
+    console.log(item)
+    setItemToDelete(item)
     setDeleteDialogOpen(true)
   }
 
@@ -101,14 +103,13 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const onDuplicate = (id: string) => {}
 
   const confirmDelete = async () => {
-    setLoading(true)
-    const itemId = itemToDelete?.id
-
-    if (!itemId) {
-      setLoading(false)
+    if (!itemToDelete?.id) {
       setDeleteDialogOpen(false)
       return
     }
+
+    const { id: itemId, name } = itemToDelete
+    setLoading(true)
 
     try {
       await deleteCollection({
@@ -122,6 +123,12 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     } finally {
       setLoading(false)
       setDeleteDialogOpen(false)
+
+      const itemType = nestedSidebar.name.substring(0, nestedSidebar.name.length - 1)
+      toast({
+        title: `${itemType} deleted`,
+        description: `${name} has been deleted`,
+      })
     }
   }
 
@@ -198,7 +205,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       />
 
       {loading ? (
-        <IconSpinner className='self-center mt-4' />
+        <IconSpinner className='self-center mt-24 h-6 w-6 text-foreground/50' />
       ) : (
         <nav className='h-full'>
           {/* Viewport height - Top and bottom areas */}
@@ -210,7 +217,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
                 pathname={pathname}
                 onUpdateFolderName={onUpdateFolderName}
                 onDuplicate={onDuplicate}
-                handleDelete={handleDelete}
+                onDelete={onDelete}
               />
             ))}
           </ScrollArea>
@@ -226,10 +233,9 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           <Button
             className='gap-2'
             onClick={() => {
-              // CREATE NEW ITEM
-              // setNewItemName('')
               setCreateNewItemButton(false)
-            }}>
+            }}
+          >
             <PlusIcon />
             Create {'new name'}
           </Button>
@@ -241,12 +247,16 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           <DialogHeader>
             <DialogTitle>Confirm Delete</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this folder?
+              Are you sure you want to delete <strong>{itemToDelete?.name}</strong> ?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className='items-center'>
-            <Button onClick={() => confirmDelete()}>Delete</Button>
-            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button variant='destructive' onClick={() => confirmDelete()}>
+              Delete
+            </Button>
+            <Button variant='secondary' onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
