@@ -123,10 +123,12 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     const searchitems = items.filter((item: any) => {
       return item.name.toLowerCase().includes(value.toLowerCase())
     })
-    const noresults = value.length > 0 && searchitems.length === 0
-    // setCreateNewItemButton(noresults)
-
     setFilteredItems(searchitems)
+
+    const noresults = value.length > 0 && searchitems.length === 0
+    if (noresults) {
+      setCreateNewItemButton(noresults)
+    }
   }
 
   const onSaveNewItem = async (name: string) => {
