@@ -3,18 +3,20 @@ import { useEffect, useRef, useState, KeyboardEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-import { IconCancel, IconFolder } from '@/components/ui/icons/next-icons'
+import { IconCancel, IconFolder, IconSpinner } from '@/components/ui/icons/next-icons'
 
 type EditableInput = {
-  item: SidebarItem
+  item?: SidebarItem
   itemName: string
-  setIsEditing: (isEditing: boolean) => void
+  opInProgress?: boolean
+  setInputVisibility: (isEditing: boolean) => void
   setItemName: (itemName: string) => void
   callbackFn: () => void
 }
 
 export const EditableInput = (props: EditableInput) => {
-  const { item, itemName, setIsEditing, setItemName, callbackFn } = props
+  const { item, itemName, opInProgress, setInputVisibility, setItemName, callbackFn } =
+    props
 
   const inputRef = useRef(null)
 
@@ -22,7 +24,7 @@ export const EditableInput = (props: EditableInput) => {
     // Alert if clicked outside of element)
     function handleClickOutside(event: { target: any }) {
       if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
-        setIsEditing(false) // Closes the new folder input
+        setInputVisibility(false) // Closes the new folder input
       }
     }
 
@@ -32,18 +34,18 @@ export const EditableInput = (props: EditableInput) => {
       // Unbind the event listener on clean up
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [inputRef, setIsEditing])
+  }, [inputRef, setInputVisibility])
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       callbackFn()
-      setIsEditing(false) // Closes the new folder input
+      setInputVisibility(false) // Closes the new folder input
       return
     }
 
     if (event.key === 'Escape') {
-      setItemName(item.name) // Resets the text value
-      setIsEditing(false) // Closes the new folder input
+      setItemName(item?.name || '') // Resets the text value
+      setInputVisibility(false) // Closes the new folder input
     }
   }
 
@@ -52,11 +54,18 @@ export const EditableInput = (props: EditableInput) => {
       ref={inputRef}
       className='flex items-center relative gap-1 px-2 rounded h-9 bg-accent'
     >
-      <IconFolder />
+      {opInProgress ? (
+        <span className='w-5 flex justify-center'>
+          <IconSpinner />
+        </span>
+      ) : (
+        <IconFolder />
+      )}
       <Input
         autoFocus
-        className='flex-1 border bg-background pl-1 pr-8 h-8'
         value={itemName}
+        disabled={opInProgress}
+        className='flex-1 border bg-background pl-1 pr-8 h-8'
         onChange={(e) => setItemName(e?.target?.value)}
         onKeyDown={handleKeyDown}
       />
@@ -64,7 +73,7 @@ export const EditableInput = (props: EditableInput) => {
         className='absolute right-2'
         variant='ghost'
         size='icon'
-        onClick={() => setIsEditing(false)}
+        onClick={() => setInputVisibility(false)}
       >
         <IconCancel />
       </Button>

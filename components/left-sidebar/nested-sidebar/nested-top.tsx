@@ -1,19 +1,15 @@
-import { useEffect, useCallback, useState, useRef, KeyboardEvent } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { IconSearch } from '@/components/ui/icons/next-icons'
 
-import {
-  IconCancel,
-  IconFolder,
-  IconSearch,
-  IconSpinner,
-} from '@/components/ui/icons/next-icons'
+import { EditableInput } from './editable-input'
 
 interface TopNestedSectionProps {
   itemsCount: number
-  createInProgress: boolean
+  opInProgress: boolean
   nestedSidebar?: NestedSidebarProps
   onSaveNewItem: (name: string) => void
   onFilterItems: (value: string) => void
@@ -23,39 +19,27 @@ interface TopNestedSectionProps {
 export function NestedTopSection(props: TopNestedSectionProps) {
   const {
     itemsCount,
-    createInProgress,
+    opInProgress,
     nestedSidebar,
     setNestedSidebar,
     onSaveNewItem,
     onFilterItems,
   } = props
 
-  const inputRef = useRef(null)
   const [searchValue, setSearchValue] = useState('')
 
   const [newItemName, setNewItemName] = useState('')
-  const [showNewItemInput, setShowNewItemInput] = useState(false)
+  const [inputVisibility, setInputVisibility] = useState(false)
 
   // When an item is added/removed, reset the search value
   useEffect(() => {
     setSearchValue('')
   }, [itemsCount])
 
-  const handleKeyDown = useCallback(
-    async (event: KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Enter') {
-        onSaveNewItem(newItemName)
-        setShowNewItemInput(false)
-        return
-      }
-
-      if (event.key === 'Escape') {
-        setShowNewItemInput(false)
-        setNewItemName('')
-      }
-    },
-    [newItemName, onSaveNewItem],
-  )
+  const handleSave = () => {
+    onSaveNewItem(newItemName)
+    setInputVisibility(false)
+  }
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -65,24 +49,8 @@ export function NestedTopSection(props: TopNestedSectionProps) {
     [onFilterItems],
   )
 
-  useEffect(() => {
-    // Alert if clicked outside of element)
-    function handleClickOutside(event: { target: any }) {
-      if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
-        setShowNewItemInput(false) // Closes the new folder input
-      }
-    }
-
-    // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [inputRef])
-
   return (
-    <div className='flex flex-col gap-1'>
+    <div className='flex flex-col gap'>
       <div className='heading px-2 py-2 flex justify-between items-center'>
         <div className='flex items-center'>
           <Button variant='ghost' size='icon' onClick={() => setNestedSidebar()}>
@@ -98,8 +66,8 @@ export function NestedTopSection(props: TopNestedSectionProps) {
           variant='ghost'
           size='icon'
           onClick={() => {
-            setShowNewItemInput(true)
-            setNewItemName('') // Reset name when showing the input
+            setInputVisibility(true)
+            setNewItemName(`New ${nestedSidebar?.entityType}`) // Reset
           }}
         >
           <PlusIcon width={16} height={16} />
@@ -132,29 +100,15 @@ export function NestedTopSection(props: TopNestedSectionProps) {
         )}
       </div>
 
-      {(showNewItemInput || createInProgress) && (
-        <div
-          ref={inputRef}
-          className='flex items-center mt-4 mb-2 mx-2 pl-2 gap-1 rounded relative bg-accent'
-        >
-          {createInProgress ? <IconSpinner /> : <IconFolder />}
-          <Input
-            autoFocus
-            disabled={createInProgress}
-            className='flex-1 border bg-background pl-1 pr-8 h-8'
-            value={newItemName}
-            onChange={(e) => setNewItemName(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={createInProgress ? newItemName : `New ${nestedSidebar?.entity}`}
+      {(inputVisibility || opInProgress) && (
+        <div className='pt-4 -mt-[2px] -mb-2 px-2'>
+          <EditableInput
+            itemName={newItemName}
+            opInProgress={opInProgress}
+            setItemName={setNewItemName}
+            setInputVisibility={setInputVisibility}
+            callbackFn={handleSave}
           />
-          <Button
-            className='absolute right-0'
-            variant='ghost'
-            size='icon'
-            onClick={() => setShowNewItemInput(false)}
-          >
-            <IconCancel />
-          </Button>
         </div>
       )}
     </div>

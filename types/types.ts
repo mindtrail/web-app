@@ -39,7 +39,7 @@ declare global {
   }
 
   type NestedSidebarProps = {
-    entity: string
+    entityType: string
     name: string
     url: string
     icon: any

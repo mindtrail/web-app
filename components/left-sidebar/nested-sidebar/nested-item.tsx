@@ -32,21 +32,21 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
   const { id, name } = item
 
   const inputRef = useRef(null)
-  const [isEditing, setIsEditing] = useState(false)
+  const [inputVisibility, setInputVisibility] = useState(false)
   const [itemName, setItemName] = useState(name)
 
   const itemUrl = `${nestedSidebar.url}/${id}`
 
   const handleUpdate = () => {
     onUpdateFolderName(id, itemName)
-    setIsEditing(false)
+    setInputVisibility(false)
   }
 
   useEffect(() => {
     // Alert if clicked outside of element)
     function handleClickOutside(event: { target: any }) {
       if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
-        setIsEditing(false) // Closes the new folder input
+        setInputVisibility(false) // Closes the new folder input
       }
     }
 
@@ -58,12 +58,12 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
     }
   }, [inputRef])
 
-  if (isEditing) {
+  if (inputVisibility) {
     return (
       <EditableInput
         item={item}
         itemName={itemName}
-        setIsEditing={setIsEditing}
+        setInputVisibility={setInputVisibility}
         setItemName={setItemName}
         callbackFn={handleUpdate}
       />
@@ -76,29 +76,35 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
       className={cn(
         SIDEBAR_BTN,
         pathname === itemUrl && ACTIVE_BTN,
-        'px-2 flex justify-between items-center rounded-sm group/item',
+        'flex justify-between items-center px-2 rounded-sm group/item gap-0',
       )}
     >
-      <div className='flex items-center gap-2'>
+      <span className='flex items-center gap-2 '>
         <IconFolder />
-        <span className='truncate flex-grow'>{itemName}</span>
-      </div>
+        <span className='truncate max-w-[110px]'>{itemName}</span>
+      </span>
 
-      <div className='flex-shrink-0 invisible group-hover/item:visible relative'>
+      <span className='flex-shrink-0 invisible group-hover/item:visible relative'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' size='icon'>
-              <IconDotsVertical />
+            <Button
+              variant='ghost'
+              size='icon'
+              className='hover:bg-slate-200 dark:hover:bg-slate-700 '
+            >
+              <IconDotsVertical className='text-secondary-foreground' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent sideOffset={5}>
-            <DropdownMenuItem onClick={() => setIsEditing(true)}>Rename</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setInputVisibility(true)}>
+              Rename
+            </DropdownMenuItem>
             {/* <DropdownMenuItem onClick={() => onDuplicate(id)}>Duplicate</DropdownMenuItem> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => onDelete(item)}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+      </span>
     </Link>
   )
 }
