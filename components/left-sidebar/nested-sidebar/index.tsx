@@ -23,6 +23,7 @@ import {
 
 import { NestedItem } from './nested-item'
 import { NestedTopSection } from './nested-top'
+import { Separator } from '@/components/ui/separator'
 
 type SecondSidebarProps = {
   itemListByCategory?: ItemListByCategory
@@ -52,16 +53,16 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const [itemsList, setItemsList] = useState<SidebarItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  const [createInProgress, setCreateInProgress] = useState(false)
+  const [opInProgress, setOpInProgress] = useState(false)
   const [createNewItemButton, setCreateNewItemButton] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
   useEffect(() => {
-    const { entity } = nestedSidebar
+    const { entityType } = nestedSidebar
 
-    if (itemListByCategory && Array.isArray(itemListByCategory[entity])) {
-      setItemsList(itemListByCategory[entity])
+    if (itemListByCategory && Array.isArray(itemListByCategory[entityType])) {
+      setItemsList(itemListByCategory[entityType])
       setLoading(false)
     }
   }, [nestedSidebar, itemListByCategory])
@@ -142,7 +143,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   }
 
   const onSaveNewItem = async (name: string) => {
-    setCreateInProgress(true)
+    setOpInProgress(true)
 
     try {
       const response = await createCollection({
@@ -171,7 +172,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      setCreateInProgress(false)
+      setOpInProgress(false)
     }
   }
 
@@ -183,7 +184,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       setItemListByCategory((prev) => {
         return {
           ...prev,
-          [nestedSidebar.entity]: newItemList,
+          [nestedSidebar.entityType]: newItemList,
         }
       })
     },
@@ -195,7 +196,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       <NestedTopSection
         nestedSidebar={nestedSidebar}
         itemsCount={itemsList?.length || 0}
-        createInProgress={createInProgress}
+        opInProgress={opInProgress}
         onSaveNewItem={onSaveNewItem}
         onFilterItems={onFilterItems}
         setNestedSidebar={setNestedSidebar}
@@ -206,7 +207,10 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       ) : (
         <nav className='h-full'>
           {/* Viewport height - Top and bottom areas */}
-          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pt-2 pb-1 gap-1'>
+          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pt-3 pb-1 gap-1'>
+            {/* Added this as a spacer, to have all the border visible on editing */}
+            <Separator className='bg-transparent h-[2px]' />
+
             {itemsList.map((item) => (
               <NestedItem
                 key={item.id}
@@ -218,6 +222,8 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
                 onDelete={onDelete}
               />
             ))}
+
+            <Separator className='bg-transparent h-[2px]' />
           </ScrollArea>
 
           {!itemsList?.length && (

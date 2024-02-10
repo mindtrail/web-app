@@ -14,13 +14,13 @@ export const TOP_SIDEBAR_ITEMS = [
 
 export const SIDEBAR_FOLDERS: Record<string, NestedSidebarProps> = {
   folder: {
-    entity: 'folder',
+    entityType: 'folder',
     name: 'Folders',
     url: '/folder',
     icon: IconMultipleFolders,
   },
   tag: {
-    entity: 'tag',
+    entityType: 'tag',
     name: 'Tags',
     url: '/tag',
     icon: IconTag,

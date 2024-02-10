@@ -45,7 +45,7 @@ export function Folders(props: FolderProps) {
 
   return (
     <>
-      <div className='flex flex-col flex-1 gap-1 py-2'>
+      <div className='flex flex-col flex-1 gap-1 py-2 mt-[2px]'>
         {Object.values(SIDEBAR_FOLDERS).map((item, index) => {
           const { name, url, icon: Icon } = item
           return (
@@ -53,7 +53,8 @@ export function Folders(props: FolderProps) {
               key={index}
               variant='sidebar'
               className={pathname.includes(url) ? ACTIVE_BTN : ''}
-              onClick={() => handleFolderClick(item)}>
+              onClick={() => handleFolderClick(item)}
+            >
               <span className='flex flex-1 gap-4'>
                 <Icon />
                 {name}
@@ -70,7 +71,8 @@ export function Folders(props: FolderProps) {
         transition-all duration-3 ease-in-out
 
         ${!!nestedSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
-      `}>
+      `}
+      >
         {nestedSidebar && (
           <NestedSidebar
             pathname={pathname}
