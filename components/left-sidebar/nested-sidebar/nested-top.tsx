@@ -36,6 +36,11 @@ export function NestedTopSection(props: TopNestedSectionProps) {
   const [newItemName, setNewItemName] = useState('')
   const [showNewItemInput, setShowNewItemInput] = useState(false)
 
+  // When an item is added/removed, reset the search value
+  useEffect(() => {
+    setSearchValue('')
+  }, [itemsCount])
+
   const handleKeyDown = useCallback(
     async (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
