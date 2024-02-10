@@ -35,6 +35,10 @@ declare global {
     url?: string
   }
 
+  type ItemListByCategory = {
+    [key: string]: SidebarItem[]
+  }
+
   type NestedSidebarProps = {
     entity: string
     name: string

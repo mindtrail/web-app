@@ -36,11 +36,10 @@ export async function getCollectionsByUserId() {
       })
       return elements
     } else {
-      // Handle the case where items is not an array
       return { error: { status: 500, message: 'Server error' } }
     }
   } catch (error) {
-    return { status: 404 }
+    return { error: { status: 500, message: error } }
   }
 }
 export async function updateCollection({ collectionId, name }: CollectionItem) {
