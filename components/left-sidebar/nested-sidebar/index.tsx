@@ -172,12 +172,13 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
 
   return (
     <div
-      className={`absolute top-0 left-12 ml-1 h-full flex flex-col flex-shrink-0
-        bg-background overflow-hidden transition-all duration-3 ease-in-out shadow-md
-       opacity-0 group
+      className={`absolute top-0 left-12 ml-1 h-full flex flex-col
+        bg-background overflow-hidden shadow-md opacity-0 group
+        transition-all duration-3 ease-in-out
+
         ${!!nestedSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
       `}>
-      <div className={`flex flex-col flex-1 w-full border-t border-l`}>
+      <div className={`flex flex-col flex-1 w-full border-t border-l gap-2`}>
         <NestedTopSection
           nestedSidebar={nestedSidebar}
           itemsCount={items?.length || 0}
@@ -187,23 +188,23 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           setNestedSidebar={setNestedSidebar}
         />
 
-        <nav className={`flex flex-col w-full flex-shrink-0 flex-1 mt-1`}>
-          {filteredItems && (
-            <ScrollArea className='flex-1 flex flex-col max-h-[80vh] border-r-0 py-1 px-2'>
-              {filteredItems.map((item) => (
-                <NestedItem
-                  key={item.id}
-                  item={item}
-                  pathname={pathname}
-                  onUpdateFolderName={onUpdateFolderName}
-                  onDuplicate={onDuplicate}
-                  handleDelete={handleDelete}
-                  setItems={setItems}
-                />
-              ))}
-            </ScrollArea>
-          )}
-          {!loading && filteredItems && filteredItems.length === 0 && (
+        <nav className='h-full'>
+          {/* Viewport height - Top and bottom areas */}
+          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pb-1'>
+            {filteredItems.map((item) => (
+              <NestedItem
+                key={item.id}
+                item={item}
+                pathname={pathname}
+                onUpdateFolderName={onUpdateFolderName}
+                onDuplicate={onDuplicate}
+                handleDelete={handleDelete}
+                setItems={setItems}
+              />
+            ))}
+          </ScrollArea>
+
+          {!filteredItems?.length && (
             <div className='h-14 flex items-center justify-center'>No items</div>
           )}
         </nav>
