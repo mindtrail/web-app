@@ -66,7 +66,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
   }
 
   return (
-    <div className='min-h-screen flex flex-col'>
+    <div className='min-h-screen flex flex-col select-none'>
       <nav
         className='flex flex-col flex-1 justify-between w-[256px] flex-shrink-0
           border-r overflow-hidden transition-all duration-300 ease-in-out h-screen'
