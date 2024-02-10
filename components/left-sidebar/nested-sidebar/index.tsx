@@ -89,7 +89,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         return item
       })
 
-      // setItems(updatedItemList)
+      updateItemListCallback(updatedItemList)
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -115,8 +115,8 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         collectionId: itemId,
       })
 
-      const elements = itemsList.filter((item) => item.id !== itemId)
-      // setItems(elements)
+      const remainingItems = itemsList.filter((item) => item.id !== itemId)
+      updateItemListCallback(remainingItems)
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -158,7 +158,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         const newItemList = [newItem, ...itemsList]
 
         router.push(newItem.url)
-        updateItemList(newItemList)
+        updateItemListCallback(newItemList)
       } else {
         // Handle error case
         const error = response
@@ -171,7 +171,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     }
   }
 
-  const updateItemList = useCallback(
+  const updateItemListCallback = useCallback(
     (newItemList: SidebarItem[]) => {
       // setItemsList(newItemList)
 
@@ -198,7 +198,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       />
 
       {loading ? (
-        <IconSpinner />
+        <IconSpinner className='self-center mt-4' />
       ) : (
         <nav className='h-full'>
           {/* Viewport height - Top and bottom areas */}
