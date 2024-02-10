@@ -86,6 +86,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
             nestedSidebar={nestedSidebar}
             itemListByCategory={itemListByCategory}
             setNestedSidebar={setNestedSidebar}
+            setItemListByCategory={setItemListByCategory}
           />
         </div>
         <div className='p-4 border-t'>
