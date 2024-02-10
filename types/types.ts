@@ -44,6 +44,5 @@ declare global {
     name: string
     url: string
     icon: any
-    items: SidebarItem[]
   }
 }

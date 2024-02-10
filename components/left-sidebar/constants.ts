@@ -18,13 +18,11 @@ export const SIDEBAR_FOLDERS: Record<string, NestedSidebarProps> = {
     name: 'Folders',
     url: '/folder',
     icon: IconMultipleFolders,
-    items: [],
   },
   tag: {
     entity: 'tag',
     name: 'Tags',
     url: '/tag',
     icon: IconTag,
-    items: [],
   },
 }
