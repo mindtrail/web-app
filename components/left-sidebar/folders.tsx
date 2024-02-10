@@ -16,28 +16,12 @@ const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 interface FolderProps {
   pathname: string
   nestedSidebar?: NestedSidebarProps
+  itemListByCategory?: ItemListByCategory
   setNestedSidebar: (value?: any) => void
 }
 
-export function Folders({ pathname, nestedSidebar, setNestedSidebar }: FolderProps) {
-  const [collections, setCollections] = useState<SidebarItem[]>([])
-
-  useEffect(() => {
-    getCollectionsData()
-  }, [])
-
-  const getCollectionsData = async () => {
-    const items = await getCollectionsByUserId()
-
-    if (Array.isArray(items)) {
-      const collectionItems = items?.map((item) => ({
-        ...item,
-        url: `/folder/${item.id}`,
-      }))
-
-      setCollections(collectionItems)
-    }
-  }
+export function Folders(props: FolderProps) {
+  const { pathname, nestedSidebar, itemListByCategory, setNestedSidebar } = props
 
   const handleFolderClick = useCallback(
     (item: any) => {
@@ -74,11 +58,10 @@ export function Folders({ pathname, nestedSidebar, setNestedSidebar }: FolderPro
         })}
       </div>
       <NestedSidebar
-        nestedSidebar={nestedSidebar}
-        setNestedSidebar={setNestedSidebar}
-        items={collections}
-        setItems={setCollections}
         pathname={pathname}
+        nestedSidebar={nestedSidebar}
+        itemListByCategory={itemListByCategory}
+        setNestedSidebar={setNestedSidebar}
       />
     </>
   )

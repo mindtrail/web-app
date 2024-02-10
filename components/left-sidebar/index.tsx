@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -13,6 +13,9 @@ import { Folders } from '@/components/left-sidebar/folders'
 import { TopSection } from '@/components/left-sidebar/sidebar-top'
 import { APP_NAME, SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
+import { getCollectionsByUserId } from '@/lib/serverActions/collection'
+// import { getFiltersByUserId } from '@/lib/serverActions/filter'
+
 type SidebarNavProps = {
   className?: string
   user: any
@@ -21,6 +24,7 @@ type SidebarNavProps = {
 export function LeftSidebar({ user }: SidebarNavProps) {
   const pathname = usePathname()
   const [nestedSidebar, setNestedSidebar] = useState<NestedSidebarProps | undefined>()
+  const [itemListByCategory, setItemListByCategory] = useState<ItemListByCategory>()
 
   useEffect(() => {
     const subpath = pathname.split('/')[1]
@@ -28,6 +32,39 @@ export function LeftSidebar({ user }: SidebarNavProps) {
 
     setNestedSidebar(openedSidebar)
   }, [pathname])
+
+  useEffect(() => {
+    getCollectionsList()
+    getTagsList()
+  }, [])
+
+  const getCollectionsList = async () => {
+    const items = await getCollectionsByUserId()
+
+    if (Array.isArray(items)) {
+      setItemListByCategory((prev) => {
+        return {
+          ...prev,
+          folder: items,
+        }
+      })
+    }
+  }
+
+  const getTagsList = async () => {
+    const items = await getCollectionsByUserId()
+
+    if (Array.isArray(items)) {
+      const newArr = items.splice(5, 7)
+      console.log(newArr)
+      setItemListByCategory((prev) => {
+        return {
+          ...prev,
+          tag: newArr,
+        }
+      })
+    }
+  }
 
   return (
     <div className='min-h-screen flex flex-col'>
@@ -47,6 +84,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
           <Folders
             pathname={pathname}
             nestedSidebar={nestedSidebar}
+            itemListByCategory={itemListByCategory}
             setNestedSidebar={setNestedSidebar}
           />
         </div>

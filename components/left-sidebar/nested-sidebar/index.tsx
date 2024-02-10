@@ -25,10 +25,9 @@ import { NestedItem } from './nested-item'
 import { NestedTopSection } from './nested-top'
 
 type SecondSidebarProps = {
-  items: SidebarItem[]
+  itemListByCategory?: ItemListByCategory
   pathname: string
   nestedSidebar?: NestedSidebarProps
-  setItems: (items: SidebarItem[]) => void
   setNestedSidebar: (value?: string) => void
 }
 
@@ -38,24 +37,29 @@ interface ItemToDelete {
 }
 
 export const NestedSidebar = (props: SecondSidebarProps) => {
-  const { items, nestedSidebar, pathname, setItems, setNestedSidebar } = props
+  const { itemListByCategory, nestedSidebar, pathname, setNestedSidebar } = props
 
   const router = useRouter()
 
-  const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items)
-  const [loading, setLoading] = useState(false)
+  const [itemsList, setItemsList] = useState<SidebarItem[]>([])
+  const [loading, setLoading] = useState(true)
+
   const [createInProgress, setCreateInProgress] = useState(false)
-
   const [createNewItemButton, setCreateNewItemButton] = useState(false)
-
-  // Inside NestedSidebar component
-  const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<ItemToDelete | null>(null)
 
   useEffect(() => {
-    setFilteredItems(items)
-  }, [items])
+    if (!nestedSidebar) {
+      return
+    }
+
+    const { entity } = nestedSidebar
+    if (itemListByCategory && Array.isArray(itemListByCategory[entity])) {
+      setItemsList(itemListByCategory[entity])
+      setLoading(false)
+    }
+  }, [nestedSidebar, itemListByCategory])
 
   const handleDelete = (id: string, name: string = '') => {
     setItemToDelete({ id, name })
@@ -70,25 +74,23 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         name: newName,
         description: '',
       })
-      console.log(items)
 
-      const updatedItemList = items.map((element) => {
-        if (element.id === id) {
+      const updatedItemList = itemsList.map((item) => {
+        if (item.id === id) {
           return {
-            ...element,
+            ...item,
             name: newName,
           }
         }
-        return element
+        return item
       })
 
-      setItems(updatedItemList)
+      // setItems(updatedItemList)
     } catch (error) {
       console.error('Error:', error)
     } finally {
       setLoading(false)
       // Implement your update logic here
-      setIsEditing({ ...isEditing, [id]: false })
     }
   }
 
@@ -109,8 +111,8 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         collectionId: itemId,
       })
 
-      const elements = items.filter((element) => element.id !== itemId)
-      setItems(elements)
+      const elements = itemsList.filter((item) => item.id !== itemId)
+      // setItems(elements)
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -120,10 +122,10 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   }
 
   const onFilterItems = (value: any) => {
-    const searchitems = items.filter((item: any) => {
+    const searchitems = itemsList.filter((item: any) => {
       return item.name.toLowerCase().includes(value.toLowerCase())
     })
-    setFilteredItems(searchitems)
+    setItemsList(searchitems)
 
     const noresults = value.length > 0 && searchitems.length === 0
     if (noresults) {
@@ -150,10 +152,10 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           url: `/folder/${response.id}`,
         }
 
-        const newItemList = [newItem, ...items]
+        const newItemList = [newItem, ...itemsList]
 
         router.push(newItem.url)
-        setItems(newItemList)
+        // setItems(newItemList)
       } else {
         // Handle error case
         const error = response
@@ -164,10 +166,6 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     } finally {
       setCreateInProgress(false)
     }
-  }
-
-  if (loading) {
-    return <IconSpinner />
   }
 
   return (
@@ -181,33 +179,36 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       <div className={`flex flex-col flex-1 w-full border-t border-l gap-2`}>
         <NestedTopSection
           nestedSidebar={nestedSidebar}
-          itemsCount={items?.length || 0}
+          itemsCount={itemsList?.length || 0}
           createInProgress={createInProgress}
           onSaveNewItem={onSaveNewItem}
           onFilterItems={onFilterItems}
           setNestedSidebar={setNestedSidebar}
         />
 
-        <nav className='h-full'>
-          {/* Viewport height - Top and bottom areas */}
-          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pb-1'>
-            {filteredItems.map((item) => (
-              <NestedItem
-                key={item.id}
-                item={item}
-                pathname={pathname}
-                onUpdateFolderName={onUpdateFolderName}
-                onDuplicate={onDuplicate}
-                handleDelete={handleDelete}
-                setItems={setItems}
-              />
-            ))}
-          </ScrollArea>
+        {loading ? (
+          <IconSpinner />
+        ) : (
+          <nav className='h-full'>
+            {/* Viewport height - Top and bottom areas */}
+            <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pb-1'>
+              {itemsList.map((item) => (
+                <NestedItem
+                  key={item.id}
+                  item={item}
+                  pathname={pathname}
+                  onUpdateFolderName={onUpdateFolderName}
+                  onDuplicate={onDuplicate}
+                  handleDelete={handleDelete}
+                />
+              ))}
+            </ScrollArea>
 
-          {!filteredItems?.length && (
-            <div className='h-14 flex items-center justify-center'>No items</div>
-          )}
-        </nav>
+            {!itemsList?.length && (
+              <div className='h-14 flex items-center justify-center'>No items</div>
+            )}
+          </nav>
+        )}
 
         {createNewItemButton && (
           <div className='mx-4 mt-2 pb-2 flex items-center w-full'>

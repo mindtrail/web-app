@@ -23,7 +23,6 @@ type NestedItemProps = {
   onUpdateFolderName: (id: string, newName: string) => void
   onDuplicate: (id: string) => void
   handleDelete: (id: string) => void
-  setItems: (items: SidebarItem[]) => void
 }
 
 const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
