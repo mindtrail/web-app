@@ -4,37 +4,48 @@ import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
-import { IconCancel, IconFolder, IconSearch } from '@/components/ui/icons/next-icons'
+import {
+  IconCancel,
+  IconFolder,
+  IconSearch,
+  IconSpinner,
+} from '@/components/ui/icons/next-icons'
 
 interface TopNestedSectionProps {
   itemsCount: number
-  secondSidebar?: SidebarFoldersProps
+  createInProgress: boolean
+  nestedSidebar?: NestedSidebarProps
   onSaveNewItem: (name: string) => void
   onFilterItems: (value: string) => void
-  setSecondSidebar: (value?: any) => void
+  setNestedSidebar: (value?: any) => void
 }
 
 export function NestedTopSection(props: TopNestedSectionProps) {
-  const { secondSidebar, setSecondSidebar, onSaveNewItem, onFilterItems, itemsCount } =
-    props
+  const {
+    itemsCount,
+    createInProgress,
+    nestedSidebar,
+    setNestedSidebar,
+    onSaveNewItem,
+    onFilterItems,
+  } = props
 
   const inputRef = useRef(null)
   const [searchValue, setSearchValue] = useState('')
 
   const [newItemName, setNewItemName] = useState('')
-  const [createNewItem, setCreateNewItem] = useState(false)
+  const [showNewItemInput, setShowNewItemInput] = useState(false)
 
   const handleKeyDown = useCallback(
     async (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
         onSaveNewItem(newItemName)
-        setNewItemName('')
-        setCreateNewItem(false)
+        setShowNewItemInput(false)
         return
       }
 
       if (event.key === 'Escape') {
-        setCreateNewItem(false)
+        setShowNewItemInput(false)
         setNewItemName('')
       }
     },
@@ -53,7 +64,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
     // Alert if clicked outside of element)
     function handleClickOutside(event: { target: any }) {
       if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
-        setCreateNewItem(false) // Closes the new folder input
+        setShowNewItemInput(false) // Closes the new folder input
       }
     }
 
@@ -69,11 +80,11 @@ export function NestedTopSection(props: TopNestedSectionProps) {
     <div className='flex flex-col gap-1'>
       <div className='heading px-2 py-2 flex justify-between items-center'>
         <div className='flex items-center'>
-          <Button variant='ghost' size='icon' onClick={() => setSecondSidebar()}>
+          <Button variant='ghost' size='icon' onClick={() => setNestedSidebar()}>
             <ChevronLeftIcon width={16} height={16} />
           </Button>
           <span className='flex-1 overflow-hidden whitespace-nowrap capitalize'>
-            {secondSidebar?.name} - {itemsCount}
+            {nestedSidebar?.name} - {itemsCount}
           </span>
         </div>
 
@@ -81,7 +92,10 @@ export function NestedTopSection(props: TopNestedSectionProps) {
           className='invisible group-hover:visible'
           variant='ghost'
           size='icon'
-          onClick={() => setCreateNewItem(true)}>
+          onClick={() => {
+            setShowNewItemInput(true)
+            setNewItemName('') // Reset name when showing the input
+          }}>
           <PlusIcon width={16} height={16} />
         </Button>
       </div>
@@ -111,27 +125,25 @@ export function NestedTopSection(props: TopNestedSectionProps) {
         )}
       </div>
 
-      {createNewItem && (
+      {(showNewItemInput || createInProgress) && (
         <div
           ref={inputRef}
           className='flex items-center mt-4 mb-2 mx-2 pl-2 gap-1 rounded relative bg-accent'>
-          <IconFolder />
+          {createInProgress ? <IconSpinner /> : <IconFolder />}
           <Input
             autoFocus
+            disabled={createInProgress}
             className='flex-1 border bg-background pl-2 pr-8'
             value={newItemName}
             onChange={(e) => setNewItemName(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={`New ${secondSidebar?.entity}`}
+            placeholder={createInProgress ? newItemName : `New ${nestedSidebar?.entity}`}
           />
           <Button
             className='absolute right-0'
             variant='ghost'
             size='icon'
-            onClick={() => {
-              setCreateNewItem(false)
-              setNewItemName('')
-            }}>
+            onClick={() => setShowNewItemInput(false)}>
             <IconCancel />
           </Button>
         </div>

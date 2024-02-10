@@ -10,10 +10,10 @@ const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 interface TopSectionProps {
-  setSecondSidebar: (value?: any) => void
+  setNestedSidebar: (value?: any) => void
 }
 
-export function TopSection({ setSecondSidebar }: TopSectionProps) {
+export function TopSection({ setNestedSidebar }: TopSectionProps) {
   const pathname = usePathname()
 
   return (
@@ -23,7 +23,7 @@ export function TopSection({ setSecondSidebar }: TopSectionProps) {
           key={url}
           href={url}
           className={cn(SIDEBAR_BTN, pathname === url && ACTIVE_BTN)}
-          onClick={() => setSecondSidebar()}>
+          onClick={() => setNestedSidebar()}>
           <Icon />
           {name}
         </Link>

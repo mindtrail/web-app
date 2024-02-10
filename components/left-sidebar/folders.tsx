@@ -8,18 +8,18 @@ import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 
 import { cn } from '@/lib/utils'
 
-import { SecondSidebar } from '@/components/left-sidebar/second-sidebar'
+import { NestedSidebar } from '@/components/left-sidebar/nested-sidebar'
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 interface FolderProps {
   pathname: string
-  secondSidebar?: SidebarFoldersProps
-  setSecondSidebar: (value?: any) => void
+  nestedSidebar?: NestedSidebarProps
+  setNestedSidebar: (value?: any) => void
 }
 
-export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderProps) {
+export function Folders({ pathname, nestedSidebar, setNestedSidebar }: FolderProps) {
   const [collections, setCollections] = useState<SidebarItem[]>([])
 
   useEffect(() => {
@@ -28,33 +28,29 @@ export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderPro
 
   const getCollectionsData = async () => {
     const items = await getCollectionsByUserId()
+
     if (Array.isArray(items)) {
-      const collectionItems = items?.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          url: `/folder/${item.id}`,
-        }
-      })
+      const collectionItems = items?.map((item) => ({
+        ...item,
+        url: `/folder/${item.id}`,
+      }))
+
       setCollections(collectionItems)
     }
   }
 
   const handleFolderClick = useCallback(
     (item: any) => {
-      const toggleCurrentItem = item?.name === secondSidebar?.name
+      const toggleCurrentItem = item?.name === nestedSidebar?.name
 
       if (toggleCurrentItem) {
-        return setSecondSidebar()
+        return setNestedSidebar()
       }
 
-      setSecondSidebar(item)
+      setNestedSidebar(item)
     },
-    [secondSidebar, setSecondSidebar],
+    [nestedSidebar, setNestedSidebar],
   )
-
-  console.log(secondSidebar)
 
   return (
     <>
@@ -77,9 +73,9 @@ export function Folders({ pathname, secondSidebar, setSecondSidebar }: FolderPro
           )
         })}
       </div>
-      <SecondSidebar
-        secondSidebar={secondSidebar}
-        setSecondSidebar={setSecondSidebar}
+      <NestedSidebar
+        nestedSidebar={nestedSidebar}
+        setNestedSidebar={setNestedSidebar}
         items={collections}
         setItems={setCollections}
         pathname={pathname}

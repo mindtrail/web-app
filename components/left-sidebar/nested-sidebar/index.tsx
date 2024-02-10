@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -26,9 +27,9 @@ import { NestedTopSection } from './nested-top'
 type SecondSidebarProps = {
   items: SidebarItem[]
   pathname: string
-  secondSidebar?: SidebarFoldersProps
+  nestedSidebar?: NestedSidebarProps
   setItems: (items: SidebarItem[]) => void
-  setSecondSidebar: (value?: string) => void
+  setNestedSidebar: (value?: string) => void
 }
 
 interface ItemToDelete {
@@ -36,18 +37,25 @@ interface ItemToDelete {
   name?: string
 }
 
-export const SecondSidebar = (props: SecondSidebarProps) => {
-  const { items, secondSidebar, pathname, setItems, setSecondSidebar } = props
+export const NestedSidebar = (props: SecondSidebarProps) => {
+  const { items, nestedSidebar, pathname, setItems, setNestedSidebar } = props
+
+  const router = useRouter()
 
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(items)
   const [loading, setLoading] = useState(false)
+  const [createInProgress, setCreateInProgress] = useState(false)
 
   const [createNewItemButton, setCreateNewItemButton] = useState(false)
 
-  // Inside SecondSidebar component
+  // Inside NestedSidebar component
   const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<ItemToDelete | null>(null)
+
+  useEffect(() => {
+    setFilteredItems(items)
+  }, [items])
 
   const handleDelete = (id: string, name: string = '') => {
     setItemToDelete({ id, name })
@@ -64,7 +72,7 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
       })
       console.log(items)
 
-      const elements = items.map((element) => {
+      const updatedItemList = items.map((element) => {
         if (element.id === id) {
           return {
             ...element,
@@ -73,8 +81,8 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
         }
         return element
       })
-      setFilteredItems(elements)
-      setItems(elements)
+
+      setItems(updatedItemList)
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -102,7 +110,6 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
       })
 
       const elements = items.filter((element) => element.id !== itemId)
-      setFilteredItems(elements)
       setItems(elements)
     } catch (error) {
       console.error('Error:', error)
@@ -111,10 +118,6 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
       setDeleteDialogOpen(false)
     }
   }
-
-  useEffect(() => {
-    setFilteredItems(items)
-  }, [items])
 
   const onFilterItems = (value: any) => {
     const searchitems = items.filter((item: any) => {
@@ -127,7 +130,8 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
   }
 
   const onSaveNewItem = async (name: string) => {
-    // @TODO: loading for new item....
+    setCreateInProgress(true)
+
     try {
       const response = await createCollection({
         name,
@@ -136,18 +140,18 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
       })
 
       if ('id' in response && 'name' in response && 'description' in response) {
-        const item: SidebarItem = response
-        const elements = [
-          {
-            id: item.id,
-            name: item.name,
-            description: item.description,
-            url: `/folder/${item.id}`,
-          },
-          ...items,
-        ]
-        setFilteredItems(elements)
-        setItems(elements)
+        const { id, name, description } = response
+        const newItem = {
+          id,
+          name,
+          description,
+          url: `/folder/${response.id}`,
+        }
+
+        const newItemList = [newItem, ...items]
+
+        router.push(newItem.url)
+        setItems(newItemList)
       } else {
         // Handle error case
         const error = response
@@ -156,7 +160,7 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      // setCreateNewItem(false)
+      setCreateInProgress(false)
     }
   }
 
@@ -169,15 +173,16 @@ export const SecondSidebar = (props: SecondSidebarProps) => {
       className={`absolute top-0 left-12 ml-1 h-full flex flex-col flex-shrink-0
         bg-background overflow-hidden transition-all duration-3 ease-in-out shadow-md
        opacity-0 group
-        ${!!secondSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
+        ${!!nestedSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
       `}>
       <div className={`flex flex-col flex-1 w-full border-t border-l`}>
         <NestedTopSection
-          secondSidebar={secondSidebar}
+          nestedSidebar={nestedSidebar}
           itemsCount={items?.length || 0}
+          createInProgress={createInProgress}
           onSaveNewItem={onSaveNewItem}
           onFilterItems={onFilterItems}
-          setSecondSidebar={setSecondSidebar}
+          setNestedSidebar={setNestedSidebar}
         />
 
         <nav className={`flex flex-col w-full flex-shrink-0 flex-1 mt-1`}>

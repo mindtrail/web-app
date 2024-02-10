@@ -35,10 +35,11 @@ declare global {
     url?: string
   }
 
-  type SidebarFoldersProps = {
+  type NestedSidebarProps = {
     entity: string
     name: string
     url: string
     icon: any
+    items: SidebarItem[]
   }
 }
