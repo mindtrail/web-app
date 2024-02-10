@@ -18,6 +18,9 @@ export const getCollectionListDbOp = async ({
       // @TODO: retrieve dataSources from the DB
       collectionDataSource: includeDataSource,
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   })
 
   return collectionList
@@ -54,6 +57,9 @@ export const getCollectionDbOp = async ({
       : {},
   })) as ResultType
 
+  if (!collection) {
+    return null
+  }
   const { collectionDataSource, ...rest } = collection
   const dataSources = collectionDataSource.map((item) => item?.dataSource)
 
