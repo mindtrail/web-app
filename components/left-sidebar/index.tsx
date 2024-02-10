@@ -20,16 +20,14 @@ type SidebarNavProps = {
 
 export function LeftSidebar({ user }: SidebarNavProps) {
   const pathname = usePathname()
-  const [secondSidebar, setSecondSidebar] = useState<SidebarFoldersProps | undefined>()
+  const [nestedSidebar, setNestedSidebar] = useState<NestedSidebarProps | undefined>()
 
   useEffect(() => {
     const subpath = pathname.split('/')[1]
     const openedSidebar = SIDEBAR_FOLDERS[subpath]
 
-    setSecondSidebar(openedSidebar)
+    setNestedSidebar(openedSidebar)
   }, [pathname])
-
-  console.log(secondSidebar)
 
   return (
     <div className='min-h-screen flex flex-col'>
@@ -44,12 +42,12 @@ export function LeftSidebar({ user }: SidebarNavProps) {
         </div>
 
         <div className='flex-1 flex flex-col relative'>
-          <TopSection setSecondSidebar={setSecondSidebar} />
+          <TopSection setNestedSidebar={setNestedSidebar} />
           <Separator />
           <Folders
             pathname={pathname}
-            secondSidebar={secondSidebar}
-            setSecondSidebar={setSecondSidebar}
+            nestedSidebar={nestedSidebar}
+            setNestedSidebar={setNestedSidebar}
           />
         </div>
         <div className='p-4 border-t'>

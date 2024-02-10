@@ -12,7 +12,7 @@ export const TOP_SIDEBAR_ITEMS = [
   { name: 'Highlights', url: '/highlights', icon: IconHighlight },
 ]
 
-export const SIDEBAR_FOLDERS: Record<string, SidebarFoldersProps> = {
+export const SIDEBAR_FOLDERS: Record<string, NestedSidebarProps> = {
   folder: {
     entity: 'folder',
     name: 'Folders',
