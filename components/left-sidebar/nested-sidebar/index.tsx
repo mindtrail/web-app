@@ -33,11 +33,6 @@ type SecondSidebarProps = {
   setItemListByCategory: (value: ItemListByCategory) => void
 }
 
-interface ItemToDelete {
-  id: string
-  name?: string
-}
-
 export const NestedSidebar = (props: SecondSidebarProps) => {
   const {
     itemListByCategory,
@@ -50,11 +45,14 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const router = useRouter()
   const { toast } = useToast()
 
-  const [itemsList, setItemsList] = useState<SidebarItem[]>([])
+  const [allItems, setAllItems] = useState<SidebarItem[]>([])
+  const [filteredItems, setFilteredItems] = useState<SidebarItem[]>([])
   const [loading, setLoading] = useState(true)
 
+  const [searchValue, setSearchValue] = useState('')
+  const [showCreateBtnIfNoFound, setShowCreateBtnIfNoFound] = useState(false)
+
   const [opInProgress, setOpInProgress] = useState(false)
-  const [createNewItemButton, setCreateNewItemButton] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
@@ -62,13 +60,13 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     const { entityType } = nestedSidebar
 
     if (itemListByCategory && Array.isArray(itemListByCategory[entityType])) {
-      setItemsList(itemListByCategory[entityType])
+      setAllItems(itemListByCategory[entityType])
+      setFilteredItems(itemListByCategory[entityType])
       setLoading(false)
     }
   }, [nestedSidebar, itemListByCategory])
 
   const onDelete = (item: SidebarItem) => {
-    console.log(item)
     setItemToDelete(item)
     setDeleteDialogOpen(true)
   }
@@ -81,7 +79,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         description: '',
       })
 
-      const updatedItemList = itemsList.map((item) => {
+      const updatedItemList = filteredItems.map((item) => {
         if (item.id === id) {
           return {
             ...item,
@@ -115,7 +113,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         collectionId: itemId,
       })
 
-      const remainingItems = itemsList.filter((item) => item.id !== itemId)
+      const remainingItems = filteredItems.filter((item) => item.id !== itemId)
       updateItemListCallback(remainingItems)
     } catch (error) {
       console.error('Error:', error)
@@ -130,15 +128,30 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     }
   }
 
-  const onFilterItems = (value: any) => {
-    const searchitems = itemsList.filter((item: any) => {
-      return item.name.toLowerCase().includes(value.toLowerCase())
-    })
-    setItemsList(searchitems)
+  const onFilterItems = (value: string = '') => {
+    if (!allItems?.length) {
+      return
+    }
+
+    if (!value) {
+      setSearchValue('')
+      setFilteredItems(allItems)
+      setShowCreateBtnIfNoFound(false)
+      return
+    }
+
+    setSearchValue(value)
+
+    value = value.toLowerCase()
+    const searchitems = allItems.filter((item: any) =>
+      item.name.toLowerCase().includes(value),
+    )
+
+    setFilteredItems(searchitems)
 
     const noresults = value.length > 0 && searchitems.length === 0
     if (noresults) {
-      setCreateNewItemButton(noresults)
+      setShowCreateBtnIfNoFound(noresults)
     }
   }
 
@@ -160,7 +173,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           description,
           url: `/folder/${response.id}`,
         }
-        const newItemList = [newItem, ...itemsList]
+        const newItemList = [newItem, ...filteredItems]
 
         router.push(newItem.url)
         updateItemListCallback(newItemList)
@@ -178,7 +191,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
 
   const updateItemListCallback = useCallback(
     (newItemList: SidebarItem[]) => {
-      // setItemsList(newItemList)
+      // setFilteredItems(newItemList)
 
       // @ts-ignore
       setItemListByCategory((prev) => {
@@ -191,11 +204,17 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     [nestedSidebar, setItemListByCategory],
   )
 
+  const itemsCount =
+    filteredItems?.length === allItems?.length
+      ? filteredItems?.length.toString()
+      : `${filteredItems?.length} / ${allItems?.length}`
+
   return (
     <div className={`flex flex-col flex-1 w-full border-t border-l`}>
       <NestedTopSection
+        searchValue={searchValue}
         nestedSidebar={nestedSidebar}
-        itemsCount={itemsList?.length || 0}
+        itemsCount={itemsCount}
         opInProgress={opInProgress}
         onSaveNewItem={onSaveNewItem}
         onFilterItems={onFilterItems}
@@ -211,7 +230,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             {/* Added this as a spacer, to have all the border visible on editing */}
             <Separator className='bg-transparent h-[2px]' />
 
-            {itemsList.map((item) => (
+            {filteredItems.map((item) => (
               <NestedItem
                 key={item.id}
                 item={item}
@@ -226,24 +245,19 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             <Separator className='bg-transparent h-[2px]' />
           </ScrollArea>
 
-          {!itemsList?.length && (
-            <span className='absolute top-44 w-full text-center text-foreground/75'>
+          {!filteredItems?.length && (
+            <span className='absolute top-32 w-full text-center text-foreground/75'>
               No items
             </span>
           )}
         </nav>
       )}
 
-      {createNewItemButton && (
-        <div className='mx-4 mt-2 pb-2 flex items-center w-full'>
-          <Button
-            className='gap-2'
-            onClick={() => {
-              setCreateNewItemButton(false)
-            }}
-          >
+      {showCreateBtnIfNoFound && (
+        <div className='absolute top-44 mx-4 mt-2 pb-2 flex items-center w-full'>
+          <Button className='gap-2' onClick={() => setShowCreateBtnIfNoFound(false)}>
             <PlusIcon />
-            Create {'new name'}
+            Create {searchValue}
           </Button>
         </div>
       )}

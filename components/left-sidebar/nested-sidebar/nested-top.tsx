@@ -8,7 +8,8 @@ import { IconSearch } from '@/components/ui/icons/next-icons'
 import { EditableInput } from './editable-input'
 
 interface TopNestedSectionProps {
-  itemsCount: number
+  searchValue: string
+  itemsCount: string
   opInProgress: boolean
   nestedSidebar?: NestedSidebarProps
   onSaveNewItem: (name: string) => void
@@ -18,6 +19,7 @@ interface TopNestedSectionProps {
 
 export function NestedTopSection(props: TopNestedSectionProps) {
   const {
+    searchValue,
     itemsCount,
     opInProgress,
     nestedSidebar,
@@ -26,28 +28,13 @@ export function NestedTopSection(props: TopNestedSectionProps) {
     onFilterItems,
   } = props
 
-  const [searchValue, setSearchValue] = useState('')
-
   const [newItemName, setNewItemName] = useState('')
   const [inputVisibility, setInputVisibility] = useState(false)
-
-  // When an item is added/removed, reset the search value
-  useEffect(() => {
-    setSearchValue('')
-  }, [itemsCount])
 
   const handleSave = () => {
     onSaveNewItem(newItemName)
     setInputVisibility(false)
   }
-
-  const handleSearch = useCallback(
-    (value: string) => {
-      setSearchValue(value)
-      onFilterItems(value)
-    },
-    [onFilterItems],
-  )
 
   return (
     <div className='flex flex-col gap'>
@@ -57,7 +44,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
             <ChevronLeftIcon width={16} height={16} />
           </Button>
           <span className='flex-1 overflow-hidden whitespace-nowrap capitalize'>
-            {nestedSidebar?.name} - {itemsCount}
+            {nestedSidebar?.name} ({itemsCount})
           </span>
         </div>
 
@@ -79,7 +66,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
           id='search'
           className='flex-1 border-[1px] mx-2 px-2'
           value={searchValue}
-          onChange={(e) => handleSearch(e?.target?.value)}
+          onChange={(e) => onFilterItems(e?.target?.value)}
           placeholder='Search'
         />
 
@@ -90,10 +77,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
             variant='ghost'
             size='icon'
             className='absolute right-2'
-            onClick={() => {
-              setSearchValue('')
-              onFilterItems('')
-            }}
+            onClick={() => onFilterItems('')}
           >
             <Cross2Icon />
           </Button>
