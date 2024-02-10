@@ -10,6 +10,5 @@ export default {
   jsxSingleQuote: true,
   trailingComma: 'all',
   bracketSpacing: true,
-  bracketSameLine: true,
   arrowParens: 'always',
 }

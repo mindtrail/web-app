@@ -2,7 +2,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
+
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 
 import {
   IconCancel,
@@ -32,16 +35,13 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
   const { item, pathname, onUpdateFolderName, onDuplicate, handleDelete } = props
   const { id, name, url } = item
 
-  const [showMenuForItemId, setShowMenuForItemId] = useState<string | null>(null)
-
   // Inside NestedItem component
-  const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({})
+  const [isEditing, setIsEditing] = useState(false)
 
-  if (isEditing[id]) {
+  if (isEditing) {
     return (
       <div className='mx-3 flex' key={url}>
-        <input
-          id='name'
+        <Input
           autoFocus
           className='mt-1 block w-full appearance-none rounded-md px-3 py-2 placeholder-gray-400 shadow-sm border focus:border-black focus:outline-none focus:ring-black sm:text-sm'
           defaultValue={name}
@@ -53,7 +53,7 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
         />
         <button
           onClick={() => {
-            setIsEditing({ ...isEditing, [id]: false })
+            setIsEditing(false)
           }}>
           <IconCancel />
         </button>
@@ -75,26 +75,25 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
       </div>
 
       <div className='flex-shrink-0 hidden group-hover/item:flex'>
-        <button onClick={() => setShowMenuForItemId(id)}>
-          <IconDotsVertical />
-        </button>
-        {showMenuForItemId === id && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant='ghost' size='icon'>
+              <IconDotsVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent sideOffset={5}>
+            <DropdownMenuItem>Rename</DropdownMenuItem>
+            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <Separator />
+            <DropdownMenuItem>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {
           <div className='absolute right-0 mt-1 bg-white border rounded shadow z-10'>
             <button
               onClick={() => {
-                let isEditingArray = { ...isEditing }
-                Object.keys(isEditing).forEach((id) => {
-                  if (isEditing[id]) {
-                    isEditingArray = {
-                      ...isEditingArray,
-                      [id]: false,
-                    }
-                  }
-                })
-                setIsEditing({
-                  ...isEditingArray,
-                  [id]: true,
-                })
+                setIsEditing(true)
               }}
               className='w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>
               Rename
@@ -110,7 +109,7 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
               Delete
             </button>
           </div>
-        )}
+        }
       </div>
     </Link>
   )
