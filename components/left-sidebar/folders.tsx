@@ -18,10 +18,17 @@ interface FolderProps {
   nestedSidebar?: NestedSidebarProps
   itemListByCategory?: ItemListByCategory
   setNestedSidebar: (value?: any) => void
+  setItemListByCategory: (value: ItemListByCategory) => void
 }
 
 export function Folders(props: FolderProps) {
-  const { pathname, nestedSidebar, itemListByCategory, setNestedSidebar } = props
+  const {
+    pathname,
+    nestedSidebar,
+    itemListByCategory,
+    setNestedSidebar,
+    setItemListByCategory,
+  } = props
 
   const handleFolderClick = useCallback(
     (item: any) => {
@@ -57,12 +64,23 @@ export function Folders(props: FolderProps) {
           )
         })}
       </div>
-      <NestedSidebar
-        pathname={pathname}
-        nestedSidebar={nestedSidebar}
-        itemListByCategory={itemListByCategory}
-        setNestedSidebar={setNestedSidebar}
-      />
+      <div
+        className={`absolute top-0 left-12 ml-1 h-full flex flex-col
+        bg-background overflow-hidden shadow-md opacity-0 group
+        transition-all duration-3 ease-in-out
+
+        ${!!nestedSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
+      `}>
+        {nestedSidebar && (
+          <NestedSidebar
+            pathname={pathname}
+            nestedSidebar={nestedSidebar}
+            itemListByCategory={itemListByCategory}
+            setNestedSidebar={setNestedSidebar}
+            setItemListByCategory={setItemListByCategory}
+          />
+        )}
+      </div>
     </>
   )
 }

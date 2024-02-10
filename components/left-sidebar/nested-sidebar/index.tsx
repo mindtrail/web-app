@@ -27,8 +27,9 @@ import { NestedTopSection } from './nested-top'
 type SecondSidebarProps = {
   itemListByCategory?: ItemListByCategory
   pathname: string
-  nestedSidebar?: NestedSidebarProps
+  nestedSidebar: NestedSidebarProps
   setNestedSidebar: (value?: string) => void
+  setItemListByCategory: (value: ItemListByCategory) => void
 }
 
 interface ItemToDelete {
@@ -37,7 +38,13 @@ interface ItemToDelete {
 }
 
 export const NestedSidebar = (props: SecondSidebarProps) => {
-  const { itemListByCategory, nestedSidebar, pathname, setNestedSidebar } = props
+  const {
+    itemListByCategory,
+    nestedSidebar,
+    pathname,
+    setNestedSidebar,
+    setItemListByCategory,
+  } = props
 
   const router = useRouter()
 
@@ -50,11 +57,8 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const [itemToDelete, setItemToDelete] = useState<ItemToDelete | null>(null)
 
   useEffect(() => {
-    if (!nestedSidebar) {
-      return
-    }
-
     const { entity } = nestedSidebar
+
     if (itemListByCategory && Array.isArray(itemListByCategory[entity])) {
       setItemsList(itemListByCategory[entity])
       setLoading(false)
@@ -151,11 +155,10 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           description,
           url: `/folder/${response.id}`,
         }
-
         const newItemList = [newItem, ...itemsList]
 
         router.push(newItem.url)
-        // setItems(newItemList)
+        updateItemList(newItemList)
       } else {
         // Handle error case
         const error = response
@@ -168,78 +171,85 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     }
   }
 
+  const updateItemList = useCallback(
+    (newItemList: SidebarItem[]) => {
+      // setItemsList(newItemList)
+
+      // @ts-ignore
+      setItemListByCategory((prev) => {
+        return {
+          ...prev,
+          [nestedSidebar.entity]: newItemList,
+        }
+      })
+    },
+    [nestedSidebar, setItemListByCategory],
+  )
+
   return (
-    <div
-      className={`absolute top-0 left-12 ml-1 h-full flex flex-col
-        bg-background overflow-hidden shadow-md opacity-0 group
-        transition-all duration-3 ease-in-out
+    <div className={`flex flex-col flex-1 w-full border-t border-l gap-2`}>
+      <NestedTopSection
+        nestedSidebar={nestedSidebar}
+        itemsCount={itemsList?.length || 0}
+        createInProgress={createInProgress}
+        onSaveNewItem={onSaveNewItem}
+        onFilterItems={onFilterItems}
+        setNestedSidebar={setNestedSidebar}
+      />
 
-        ${!!nestedSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
-      `}>
-      <div className={`flex flex-col flex-1 w-full border-t border-l gap-2`}>
-        <NestedTopSection
-          nestedSidebar={nestedSidebar}
-          itemsCount={itemsList?.length || 0}
-          createInProgress={createInProgress}
-          onSaveNewItem={onSaveNewItem}
-          onFilterItems={onFilterItems}
-          setNestedSidebar={setNestedSidebar}
-        />
+      {loading ? (
+        <IconSpinner />
+      ) : (
+        <nav className='h-full'>
+          {/* Viewport height - Top and bottom areas */}
+          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pb-1'>
+            {itemsList.map((item) => (
+              <NestedItem
+                key={item.id}
+                item={item}
+                pathname={pathname}
+                onUpdateFolderName={onUpdateFolderName}
+                onDuplicate={onDuplicate}
+                handleDelete={handleDelete}
+              />
+            ))}
+          </ScrollArea>
 
-        {loading ? (
-          <IconSpinner />
-        ) : (
-          <nav className='h-full'>
-            {/* Viewport height - Top and bottom areas */}
-            <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pb-1'>
-              {itemsList.map((item) => (
-                <NestedItem
-                  key={item.id}
-                  item={item}
-                  pathname={pathname}
-                  onUpdateFolderName={onUpdateFolderName}
-                  onDuplicate={onDuplicate}
-                  handleDelete={handleDelete}
-                />
-              ))}
-            </ScrollArea>
+          {!itemsList?.length && (
+            <div className='h-14 flex items-center justify-center'>No items</div>
+          )}
+        </nav>
+      )}
 
-            {!itemsList?.length && (
-              <div className='h-14 flex items-center justify-center'>No items</div>
-            )}
-          </nav>
-        )}
+      {createNewItemButton && (
+        <div className='mx-4 mt-2 pb-2 flex items-center w-full'>
+          <Button
+            className='gap-2'
+            onClick={() => {
+              // CREATE NEW ITEM
+              // setNewItemName('')
+              setCreateNewItemButton(false)
+            }}>
+            <PlusIcon />
+            Create {'new name'}
+          </Button>
+        </div>
+      )}
 
-        {createNewItemButton && (
-          <div className='mx-4 mt-2 pb-2 flex items-center w-full'>
-            <Button
-              className='gap-2'
-              onClick={() => {
-                // CREATE NEW ITEM
-                // setNewItemName('')
-                setCreateNewItemButton(false)
-              }}>
-              <PlusIcon />
-              Create {'new name'}
-            </Button>
-          </div>
-        )}
-
-        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Delete</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete this folder?
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter className='items-center'>
-              <Button onClick={() => confirmDelete()}>Delete</Button>
-              <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this folder?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className='items-center'>
+            <Button onClick={() => confirmDelete()}>Delete</Button>
+            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
