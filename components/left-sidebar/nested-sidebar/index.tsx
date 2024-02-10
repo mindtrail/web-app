@@ -73,7 +73,6 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   }
 
   const onUpdateFolderName = async (id: string, newName: string) => {
-    setLoading(true)
     try {
       await updateCollection({
         collectionId: id,
@@ -95,11 +94,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      setLoading(false)
       // Implement your update logic here
     }
   }
 
+  // @TODO: Implement this
   const onDuplicate = (id: string) => {}
 
   const confirmDelete = async () => {
@@ -109,7 +108,6 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     }
 
     const { id: itemId, name } = itemToDelete
-    setLoading(true)
 
     try {
       await deleteCollection({
@@ -121,7 +119,6 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      setLoading(false)
       setDeleteDialogOpen(false)
 
       const itemType = nestedSidebar.name.substring(0, nestedSidebar.name.length - 1)
@@ -194,7 +191,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   )
 
   return (
-    <div className={`flex flex-col flex-1 w-full border-t border-l gap-2`}>
+    <div className={`flex flex-col flex-1 w-full border-t border-l`}>
       <NestedTopSection
         nestedSidebar={nestedSidebar}
         itemsCount={itemsList?.length || 0}
@@ -209,12 +206,13 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       ) : (
         <nav className='h-full'>
           {/* Viewport height - Top and bottom areas */}
-          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pb-1'>
+          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pt-2 pb-1 gap-1'>
             {itemsList.map((item) => (
               <NestedItem
                 key={item.id}
                 item={item}
                 pathname={pathname}
+                nestedSidebar={nestedSidebar}
                 onUpdateFolderName={onUpdateFolderName}
                 onDuplicate={onDuplicate}
                 onDelete={onDelete}

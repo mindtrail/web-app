@@ -32,7 +32,6 @@ declare global {
     id: string
     name: string
     description?: string | null
-    url?: string
   }
 
   type ItemListByCategory = {

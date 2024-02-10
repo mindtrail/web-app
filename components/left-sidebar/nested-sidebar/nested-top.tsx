@@ -100,7 +100,8 @@ export function NestedTopSection(props: TopNestedSectionProps) {
           onClick={() => {
             setShowNewItemInput(true)
             setNewItemName('') // Reset name when showing the input
-          }}>
+          }}
+        >
           <PlusIcon width={16} height={16} />
         </Button>
       </div>
@@ -124,7 +125,8 @@ export function NestedTopSection(props: TopNestedSectionProps) {
             onClick={() => {
               setSearchValue('')
               onFilterItems('')
-            }}>
+            }}
+          >
             <Cross2Icon />
           </Button>
         )}
@@ -133,12 +135,13 @@ export function NestedTopSection(props: TopNestedSectionProps) {
       {(showNewItemInput || createInProgress) && (
         <div
           ref={inputRef}
-          className='flex items-center mt-4 mb-2 mx-2 pl-2 gap-1 rounded relative bg-accent'>
+          className='flex items-center mt-4 mb-2 mx-2 pl-2 gap-1 rounded relative bg-accent'
+        >
           {createInProgress ? <IconSpinner /> : <IconFolder />}
           <Input
             autoFocus
             disabled={createInProgress}
-            className='flex-1 border bg-background pl-2 pr-8'
+            className='flex-1 border bg-background pl-1 pr-8 h-8'
             value={newItemName}
             onChange={(e) => setNewItemName(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -148,7 +151,8 @@ export function NestedTopSection(props: TopNestedSectionProps) {
             className='absolute right-0'
             variant='ghost'
             size='icon'
-            onClick={() => setShowNewItemInput(false)}>
+            onClick={() => setShowNewItemInput(false)}
+          >
             <IconCancel />
           </Button>
         </div>
