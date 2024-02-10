@@ -95,7 +95,7 @@ export const NestedItem: React.FC<NestedItemProps> = (props) => {
               <IconDotsVertical className='text-secondary-foreground' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent sideOffset={5}>
+          <DropdownMenuContent sideOffset={-6}>
             <DropdownMenuItem onClick={() => setInputVisibility(true)}>
               Rename
             </DropdownMenuItem>

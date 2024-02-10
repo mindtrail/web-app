@@ -227,7 +227,9 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           </ScrollArea>
 
           {!itemsList?.length && (
-            <div className='h-14 flex items-center justify-center'>No items</div>
+            <span className='absolute top-44 w-full text-center text-foreground/75'>
+              No items
+            </span>
           )}
         </nav>
       )}
