@@ -4,9 +4,10 @@ import { Metadata, Viewport } from 'next'
 import { Providers } from '@/context/providers'
 import { Toaster } from '@/components/ui/toaster'
 import { LeftSidebar } from '@/components/left-sidebar'
-import { SidebarRight } from '@/components/sidebar-right'
+// import { SidebarRight } from '@/components/sidebar-right'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
+import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 // export const dynamic = 'force-dynamic'
 
@@ -42,7 +43,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             {/* <Separator orientation='vertical' /> */}
             {/* <SidebarRight /> */}
           </main>
-          {/* <TailwindIndicator /> */}
+          <TailwindIndicator />
           <Toaster />
         </Providers>
       </body>

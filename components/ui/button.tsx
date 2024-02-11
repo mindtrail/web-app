@@ -18,6 +18,8 @@ const buttonVariants = cva(
           'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground text-foreground/70',
         link: 'text-primary underline-offset-4 hover:underline',
+        secondaryLink:
+          'text-foreground/70 underline-offset-4 hover:underline hover:text-foreground',
         sidebar: 'justify-start gap-4 text-foreground/70 hover:bg-accent cursor-default',
         sidebarActive: 'justify-start text-primary font-semibold bg-primary/10',
         opensidebar:

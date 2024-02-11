@@ -44,4 +44,11 @@ declare global {
     url: string
     icon: any
   }
+
+  type HistoryMetadata = {
+    name: string
+    subParent: string
+    parent: string
+    parentLink: string
+  }
 }

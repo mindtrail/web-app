@@ -25,7 +25,7 @@ import { getURLPathname } from '@/lib/utils'
 import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
-  historyMetadata: { name: string; subParent: string; parent: string; parentLink: string }
+  historyMetadata: HistoryMetadata
   userId: string
   historyItems: HistoryItem[]
   userPreferences?: UserPreferences
@@ -106,7 +106,8 @@ export function HistoryComponent({
       itemsToDelete.map(({ displayName = '', name, type }, index) => (
         <li
           key={index}
-          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'>
+          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'
+        >
           {type === DataSourceType.file
             ? displayName
             : displayName + getURLPathname(name)}
@@ -152,7 +153,8 @@ export function HistoryComponent({
     <div
       ref={dropRef}
       className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8
-        overflow-auto`}>
+        overflow-auto`}
+    >
       <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
