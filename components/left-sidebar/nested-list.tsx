@@ -50,7 +50,7 @@ export function NestedSidebarsList(props: NestedSidebarsListProps) {
               onClick={() => handleFolderClick(item)}
             >
               <span className='flex flex-1 gap-4'>
-                <Icon />
+                <Icon className='w-5 h-5' />
                 {name}
               </span>
 

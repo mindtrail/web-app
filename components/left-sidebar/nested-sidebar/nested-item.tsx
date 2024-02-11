@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
+import { DotsVerticalIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 
+import { IconFolder } from '@/components/ui/icons/next-icons'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { IconDotsVertical, IconFolder } from '@/components/ui/icons/next-icons'
 import { EditableInput } from './editable-input'
 
 import {
@@ -29,13 +30,18 @@ const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 export const NestedItem = (props: NestedItemProps) => {
   const { activeNestedSidebar, item, pathname, onUpdateFolderName, onDelete } = props
+  const { url, entityType, icon } = activeNestedSidebar
   const { id, name } = item
+
+  const ItemIcon = entityType === 'folder' ? IconFolder : icon
 
   const inputRef = useRef(null)
   const [inputVisibility, setInputVisibility] = useState(false)
   const [itemName, setItemName] = useState(name)
 
-  const itemUrl = `${activeNestedSidebar.url}/${id}`
+  const itemUrl = `${url}/${id}`
+
+  console.log(activeNestedSidebar)
 
   const handleUpdate = () => {
     onUpdateFolderName(id, itemName)
@@ -80,7 +86,7 @@ export const NestedItem = (props: NestedItemProps) => {
       )}
     >
       <span className='flex items-center gap-2 '>
-        <IconFolder />
+        <ItemIcon />
         <span className='truncate max-w-[110px]'>{itemName}</span>
       </span>
 
@@ -92,7 +98,7 @@ export const NestedItem = (props: NestedItemProps) => {
               size='icon'
               className='hover:bg-slate-200 dark:hover:bg-slate-700 '
             >
-              <IconDotsVertical className='text-secondary-foreground' />
+              <DotsVerticalIcon className='text-secondary-foreground' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent sideOffset={-6}>
