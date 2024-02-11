@@ -9,14 +9,22 @@ type EditableInput = {
   item?: SidebarItem
   itemName: string
   opInProgress?: boolean
+  entityType?: string
   setInputVisibility: (isEditing: boolean) => void
   setItemName: (itemName: string) => void
   callbackFn: () => void
 }
 
 export const EditableInput = (props: EditableInput) => {
-  const { item, itemName, opInProgress, setInputVisibility, setItemName, callbackFn } =
-    props
+  const {
+    item,
+    itemName,
+    opInProgress,
+    entityType = 'folder',
+    setInputVisibility,
+    setItemName,
+    callbackFn,
+  } = props
 
   const inputRef = useRef(null)
 
@@ -63,6 +71,7 @@ export const EditableInput = (props: EditableInput) => {
       )}
       <Input
         autoFocus
+        placeholder={`New ${entityType}`}
         value={itemName}
         disabled={opInProgress}
         className='flex-1 border bg-background pl-1 pr-8 h-8'
