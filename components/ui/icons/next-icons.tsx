@@ -451,8 +451,7 @@ function IconExternalLink({ className, ...props }: React.ComponentProps<'svg'>) 
 function IconMultipleFolders({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -470,8 +469,7 @@ function IconMultipleFolders({ className, ...props }: React.ComponentProps<'svg'
 function IconFolder({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -489,8 +487,7 @@ function IconFolder({ className, ...props }: React.ComponentProps<'svg'>) {
 function IconAllData({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -548,33 +545,10 @@ function IconIdea({ className, ...props }: React.ComponentProps<'svg'>) {
   )
 }
 
-function IconDotsVertical({ className, ...props }: React.ComponentProps<'svg'>) {
-  return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      className={cn('icon icon-tabler icon-tabler-dots-vertical', className)}
-      width='20'
-      height='20'
-      viewBox='0 0 24 24'
-      strokeWidth='1.5'
-      stroke='#2c3e50'
-      fill='none'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-    >
-      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
-      <path d='M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
-      <path d='M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
-      <path d='M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
-    </svg>
-  )
-}
-
 function IconTag({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -613,15 +587,14 @@ function IconSearch({ className, ...props }: React.ComponentProps<'svg'>) {
 function IconHighlight({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
     >
       <path
-        fill-rule='evenodd'
-        clip-rule='evenodd'
+        fillRule='evenodd'
+        clipRule='evenodd'
         d='M17.0973 5.94107C17.3368 6.02246 17.4748 6.26952 17.4284 6.51343L17.4111 6.57975L17.2129 7.17457L15.6155 11.9744C15.3687 12.7109 14.6157 13.1307 13.8797 12.9706L13.5763 13.8754C13.3241 14.6345 12.3771 15.5389 11.6216 15.3391L11.5233 15.3095L11.3647 15.2556L10.8371 16.8372C10.6645 17.3567 10.2281 17.7606 9.70132 17.8636L9.58713 17.8806L2.8684 17.8789C2.54909 17.8675 2.25782 17.6103 2.32123 17.2833L2.33844 17.2177L3.81229 12.7903L3.65263 12.7363C2.90125 12.4817 2.63471 11.2157 2.83279 10.4525L2.86634 10.3403L3.16964 9.43582C2.51855 9.13136 2.16993 8.39567 2.35018 7.68851L2.38122 7.58271L3.7382 3.50206L3.78687 3.35528L4.14349 2.27972C4.23124 2.01569 4.51423 1.87344 4.77558 1.96199C5.01515 2.04316 5.15337 2.29009 5.10716 2.53404L5.08991 2.60038L3.32764 7.90337C3.2472 8.1454 3.35875 8.40573 3.57921 8.51565L3.64197 8.54177L14.0357 11.9697C14.2758 12.0507 14.5342 11.9377 14.6436 11.7154L14.6696 11.6521L16.465 6.25823C16.5529 5.99428 16.8361 5.85229 17.0973 5.94107ZM4.75871 13.111L10.4182 14.935L9.89068 16.5165L9.87318 16.562C9.79817 16.712 9.64516 16.7436 9.47675 16.7631L3.53468 16.7867L4.75871 13.111ZM4.11299 9.7648L12.9298 12.6585L12.6299 13.5548L12.5998 13.631C12.4909 13.8538 12.0807 14.4345 11.8411 14.3533L3.97041 11.7802L3.90764 11.7541C3.68718 11.6442 3.73234 10.903 3.81278 10.661L4.11299 9.7648Z'
         fill='currentColor'
       />
@@ -629,12 +602,10 @@ function IconHighlight({ className, ...props }: React.ComponentProps<'svg'>) {
   )
 }
 
-
 export {
   IconHighlight,
   IconSearch,
   IconTag,
-  IconDotsVertical,
   IconIdea,
   IconCancel,
   IconAllData,
