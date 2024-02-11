@@ -8,25 +8,27 @@ import { IconSearch } from '@/components/ui/icons/next-icons'
 import { EditableInput } from './editable-input'
 
 interface TopNestedSectionProps {
+  activeNestedSidebar: NestedSidebarItem
   searchValue: string
   itemsCount: string
   opInProgress: boolean
-  nestedSidebar?: NestedSidebarProps
   onSaveNewItem: (name: string) => void
   onFilterItems: (value: string) => void
-  setNestedSidebar: (value?: any) => void
+  setActiveNestedSidebar: (value?: any) => void
 }
 
 export function NestedTopSection(props: TopNestedSectionProps) {
   const {
+    activeNestedSidebar,
     searchValue,
     itemsCount,
     opInProgress,
-    nestedSidebar,
-    setNestedSidebar,
+    setActiveNestedSidebar,
     onSaveNewItem,
     onFilterItems,
   } = props
+
+  const { entityType, name } = activeNestedSidebar
 
   const [newItemName, setNewItemName] = useState('')
   const [inputVisibility, setInputVisibility] = useState(false)
@@ -40,11 +42,11 @@ export function NestedTopSection(props: TopNestedSectionProps) {
     <div className='flex flex-col gap'>
       <div className='heading px-2 py-2 flex justify-between items-center'>
         <div className='flex items-center'>
-          <Button variant='ghost' size='icon' onClick={() => setNestedSidebar()}>
+          <Button variant='ghost' size='icon' onClick={() => setActiveNestedSidebar()}>
             <ChevronLeftIcon width={16} height={16} />
           </Button>
           <span className='flex-1 overflow-hidden whitespace-nowrap capitalize'>
-            {nestedSidebar?.name} ({itemsCount})
+            {name} ({itemsCount})
           </span>
         </div>
 
@@ -54,7 +56,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
           size='icon'
           onClick={() => {
             setInputVisibility(true)
-            setNewItemName(`New ${nestedSidebar?.entityType}`) // Reset
+            setNewItemName('')
           }}
         >
           <PlusIcon width={16} height={16} />
@@ -89,6 +91,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
           <EditableInput
             itemName={newItemName}
             opInProgress={opInProgress}
+            entityType={entityType}
             setItemName={setNewItemName}
             setInputVisibility={setInputVisibility}
             callbackFn={handleSave}

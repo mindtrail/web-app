@@ -26,19 +26,19 @@ import { NestedTopSection } from './nested-top'
 import { Separator } from '@/components/ui/separator'
 
 type SecondSidebarProps = {
+  activeNestedSidebar: NestedSidebarItem
   itemListByCategory?: ItemListByCategory
   pathname: string
-  nestedSidebar: NestedSidebarProps
-  setNestedSidebar: (value?: string) => void
+  setActiveNestedSidebar: (value?: string) => void
   setItemListByCategory: (value: ItemListByCategory) => void
 }
 
 export const NestedSidebar = (props: SecondSidebarProps) => {
   const {
+    activeNestedSidebar,
     itemListByCategory,
-    nestedSidebar,
     pathname,
-    setNestedSidebar,
+    setActiveNestedSidebar,
     setItemListByCategory,
   } = props
 
@@ -50,21 +50,21 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const [loading, setLoading] = useState(true)
 
   const [searchValue, setSearchValue] = useState('')
-  const [showCreateBtnIfNoFound, setShowCreateBtnIfNoFound] = useState(false)
+  const [createItemfromSearchValue, setCreateItemFromSearchValue] = useState(false)
 
   const [opInProgress, setOpInProgress] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
   useEffect(() => {
-    const { entityType } = nestedSidebar
+    const { entityType } = activeNestedSidebar
 
     if (itemListByCategory && Array.isArray(itemListByCategory[entityType])) {
       setAllItems(itemListByCategory[entityType])
       setFilteredItems(itemListByCategory[entityType])
       setLoading(false)
     }
-  }, [nestedSidebar, itemListByCategory])
+  }, [activeNestedSidebar, itemListByCategory])
 
   const onDelete = (item: SidebarItem) => {
     setItemToDelete(item)
@@ -120,7 +120,10 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     } finally {
       setDeleteDialogOpen(false)
 
-      const itemType = nestedSidebar.name.substring(0, nestedSidebar.name.length - 1)
+      const itemType = activeNestedSidebar.name.substring(
+        0,
+        activeNestedSidebar.name.length - 1,
+      )
       toast({
         title: `${itemType} deleted`,
         description: `${name} has been deleted`,
@@ -136,23 +139,19 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     if (!value) {
       setSearchValue('')
       setFilteredItems(allItems)
-      setShowCreateBtnIfNoFound(false)
+      setCreateItemFromSearchValue(false)
       return
     }
 
     setSearchValue(value)
 
     value = value.toLowerCase()
-    const searchitems = allItems.filter((item: any) =>
+    const filterResult = allItems.filter((item: any) =>
       item.name.toLowerCase().includes(value),
     )
 
-    setFilteredItems(searchitems)
-
-    const noresults = value.length > 0 && searchitems.length === 0
-    if (noresults) {
-      setShowCreateBtnIfNoFound(noresults)
-    }
+    setFilteredItems(filterResult)
+    setCreateItemFromSearchValue(!filterResult?.length)
   }
 
   const onSaveNewItem = async (name: string) => {
@@ -186,6 +185,10 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       console.error('Error:', error)
     } finally {
       setOpInProgress(false)
+      if (createItemfromSearchValue) {
+        setSearchValue('')
+        setCreateItemFromSearchValue(false)
+      }
     }
   }
 
@@ -197,11 +200,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       setItemListByCategory((prev) => {
         return {
           ...prev,
-          [nestedSidebar.entityType]: newItemList,
+          [activeNestedSidebar.entityType]: newItemList,
         }
       })
     },
-    [nestedSidebar, setItemListByCategory],
+    [activeNestedSidebar, setItemListByCategory],
   )
 
   const itemsCount =
@@ -213,12 +216,12 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     <div className={`flex flex-col flex-1 w-full border-t border-l`}>
       <NestedTopSection
         searchValue={searchValue}
-        nestedSidebar={nestedSidebar}
+        activeNestedSidebar={activeNestedSidebar}
         itemsCount={itemsCount}
         opInProgress={opInProgress}
         onSaveNewItem={onSaveNewItem}
         onFilterItems={onFilterItems}
-        setNestedSidebar={setNestedSidebar}
+        setActiveNestedSidebar={setActiveNestedSidebar}
       />
 
       {loading ? (
@@ -235,7 +238,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
                 key={item.id}
                 item={item}
                 pathname={pathname}
-                nestedSidebar={nestedSidebar}
+                activeNestedSidebar={activeNestedSidebar}
                 onUpdateFolderName={onUpdateFolderName}
                 onDuplicate={onDuplicate}
                 onDelete={onDelete}
@@ -253,11 +256,22 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         </nav>
       )}
 
-      {showCreateBtnIfNoFound && (
-        <div className='absolute top-44 mx-4 mt-2 pb-2 flex items-center w-full'>
-          <Button className='gap-2' onClick={() => setShowCreateBtnIfNoFound(false)}>
-            <PlusIcon />
-            Create {searchValue}
+      {createItemfromSearchValue && (
+        <div className='absolute top-48 px-2 flex items-center w-full max-w-full'>
+          <Button
+            className='gap-1 flex-1 max-w-full'
+            disabled={opInProgress}
+            onClick={() => onSaveNewItem(searchValue)}
+          >
+            {opInProgress ? (
+              <IconSpinner className='shrink-0' />
+            ) : (
+              <PlusIcon className='shrink-0' width={16} height={16} />
+            )}
+
+            <span className='truncate'>
+              {opInProgress ? 'Creating' : 'Create'} {searchValue}
+            </span>
           </Button>
         </div>
       )}

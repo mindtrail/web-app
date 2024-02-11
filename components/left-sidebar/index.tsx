@@ -9,10 +9,10 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Separator } from '@/components/ui/separator'
 
 import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
-import { Folders } from '@/components/left-sidebar/folders'
-import { TopSection } from '@/components/left-sidebar/sidebar-top'
-import { APP_NAME, SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
+import { NestedSidebarsList } from '@/components/left-sidebar/nested-list'
+import { NavListTop } from '@/components/left-sidebar/nav-list-top'
 
+import { APP_NAME, SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 // import { getFiltersByUserId } from '@/lib/serverActions/filter'
 
@@ -23,14 +23,15 @@ type SidebarNavProps = {
 
 export function LeftSidebar({ user }: SidebarNavProps) {
   const pathname = usePathname()
-  const [nestedSidebar, setNestedSidebar] = useState<NestedSidebarProps | undefined>()
+
   const [itemListByCategory, setItemListByCategory] = useState<ItemListByCategory>()
+  const [activeNestedSidebar, setActiveNestedSidebar] = useState<NestedSidebarItem>()
 
   useEffect(() => {
     const subpath = pathname.split('/')[1]
     const openedSidebar = SIDEBAR_FOLDERS[subpath]
 
-    setNestedSidebar(openedSidebar)
+    setActiveNestedSidebar(openedSidebar)
   }, [pathname])
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
     const items = await getCollectionsByUserId()
 
     if (Array.isArray(items)) {
-      const newArr = items.splice(5, 7)
+      const newArr = items.splice(3, 7)
       setItemListByCategory((prev) => {
         return {
           ...prev,
@@ -79,13 +80,13 @@ export function LeftSidebar({ user }: SidebarNavProps) {
         </div>
 
         <div className='flex-1 flex flex-col relative'>
-          <TopSection setNestedSidebar={setNestedSidebar} />
+          <NavListTop setActiveNestedSidebar={setActiveNestedSidebar} />
           <Separator />
-          <Folders
+          <NestedSidebarsList
             pathname={pathname}
-            nestedSidebar={nestedSidebar}
+            activeNestedSidebar={activeNestedSidebar}
             itemListByCategory={itemListByCategory}
-            setNestedSidebar={setNestedSidebar}
+            setActiveNestedSidebar={setActiveNestedSidebar}
             setItemListByCategory={setItemListByCategory}
           />
         </div>

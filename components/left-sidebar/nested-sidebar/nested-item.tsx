@@ -16,9 +16,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 type NestedItemProps = {
+  activeNestedSidebar: NestedSidebarItem
   item: SidebarItem
   pathname: string
-  nestedSidebar: NestedSidebarProps
   onUpdateFolderName: (id: string, newName: string) => void
   onDuplicate: (id: string) => void
   onDelete: (item: SidebarItem) => void
@@ -27,15 +27,15 @@ type NestedItemProps = {
 const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
-export const NestedItem: React.FC<NestedItemProps> = (props) => {
-  const { item, pathname, nestedSidebar, onUpdateFolderName, onDelete } = props
+export const NestedItem = (props: NestedItemProps) => {
+  const { activeNestedSidebar, item, pathname, onUpdateFolderName, onDelete } = props
   const { id, name } = item
 
   const inputRef = useRef(null)
   const [inputVisibility, setInputVisibility] = useState(false)
   const [itemName, setItemName] = useState(name)
 
-  const itemUrl = `${nestedSidebar.url}/${id}`
+  const itemUrl = `${activeNestedSidebar.url}/${id}`
 
   const handleUpdate = () => {
     onUpdateFolderName(id, itemName)

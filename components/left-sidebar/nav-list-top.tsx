@@ -9,11 +9,11 @@ import { TOP_SIDEBAR_ITEMS } from '@/components/left-sidebar/constants'
 const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
-interface TopSectionProps {
-  setNestedSidebar: (value?: any) => void
+interface NavListTopProps {
+  setActiveNestedSidebar: (value?: any) => void
 }
 
-export function TopSection({ setNestedSidebar }: TopSectionProps) {
+export function NavListTop({ setActiveNestedSidebar }: NavListTopProps) {
   const pathname = usePathname()
 
   return (
@@ -23,7 +23,8 @@ export function TopSection({ setNestedSidebar }: TopSectionProps) {
           key={url}
           href={url}
           className={cn(SIDEBAR_BTN, pathname === url && ACTIVE_BTN)}
-          onClick={() => setNestedSidebar()}>
+          onClick={() => setActiveNestedSidebar()}
+        >
           <Icon />
           {name}
         </Link>

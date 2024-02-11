@@ -1,46 +1,40 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ChevronRightIcon } from '@radix-ui/react-icons'
 
-import { Button, buttonVariants } from '@/components/ui/button'
-
-import { getCollectionsByUserId } from '@/lib/serverActions/collection'
-// import { getFiltersByUserId } from '@/lib/serverActions/filter'
-
 import { cn } from '@/lib/utils'
+import { Button, buttonVariants } from '@/components/ui/button'
 
 import { NestedSidebar } from '@/components/left-sidebar/nested-sidebar'
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
-interface FolderProps {
+interface NestedSidebarsListProps {
   pathname: string
-  nestedSidebar?: NestedSidebarProps
+  activeNestedSidebar?: NestedSidebarItem
   itemListByCategory?: ItemListByCategory
-  setNestedSidebar: (value?: any) => void
+  setActiveNestedSidebar: (value?: any) => void
   setItemListByCategory: (value: ItemListByCategory) => void
 }
 
-export function Folders(props: FolderProps) {
+export function NestedSidebarsList(props: NestedSidebarsListProps) {
   const {
     pathname,
-    nestedSidebar,
+    activeNestedSidebar,
     itemListByCategory,
-    setNestedSidebar,
+    setActiveNestedSidebar,
     setItemListByCategory,
   } = props
 
   const handleFolderClick = useCallback(
     (item: any) => {
-      const toggleCurrentItem = item?.name === nestedSidebar?.name
-
-      if (toggleCurrentItem) {
-        return setNestedSidebar()
+      if (item?.name === activeNestedSidebar?.name) {
+        return setActiveNestedSidebar()
       }
 
-      setNestedSidebar(item)
+      setActiveNestedSidebar(item)
     },
-    [nestedSidebar, setNestedSidebar],
+    [activeNestedSidebar, setActiveNestedSidebar],
   )
 
   return (
@@ -70,15 +64,15 @@ export function Folders(props: FolderProps) {
         bg-background overflow-hidden shadow-md opacity-0 group
         transition-all duration-3 ease-in-out
 
-        ${!!nestedSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
+        ${!!activeNestedSidebar ? 'w-[204px] opacity-100' : 'w-[0px]'}
       `}
       >
-        {nestedSidebar && (
+        {activeNestedSidebar && (
           <NestedSidebar
             pathname={pathname}
-            nestedSidebar={nestedSidebar}
+            activeNestedSidebar={activeNestedSidebar}
             itemListByCategory={itemListByCategory}
-            setNestedSidebar={setNestedSidebar}
+            setActiveNestedSidebar={setActiveNestedSidebar}
             setItemListByCategory={setItemListByCategory}
           />
         )}
