@@ -121,6 +121,7 @@ export function DataTable<TData>({
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
         <ActionBar table={table} onDelete={onDelete} areRowsSelected={areRowsSelected} />
+
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -30,7 +30,7 @@ export const ActionBar = ({ areRowsSelected, table, onDelete }: ActionBarProps) 
           Add to Folder
         </Button>
         <Button variant='ghost' size='sm' className='gap-1 flex'>
-          <IconTag />
+          <IconTag className='shrink-0' />
           Add Tags
         </Button>
         <Button variant='ghost' size='sm' className='gap-1 flex' onClick={onDelete}>
