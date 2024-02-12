@@ -41,8 +41,6 @@ export const NestedItem = (props: NestedItemProps) => {
 
   const itemUrl = `${url}/${id}`
 
-  console.log(activeNestedSidebar)
-
   const handleUpdate = () => {
     onUpdateFolderName(id, itemName)
     setInputVisibility(false)

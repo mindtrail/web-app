@@ -34,12 +34,12 @@ declare global {
     description?: string | null
   }
 
-  type ItemListByCategory = {
+  type NestedItemsByCategory = {
     [key: string]: SidebarItem[]
   }
 
   type NestedSidebarItem = {
-    entityType: string
+    entityType: string // @TODO make this more specific
     name: string
     url: string
     icon: any
