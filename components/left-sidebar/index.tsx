@@ -20,7 +20,7 @@ type SidebarNavProps = {
 export function LeftSidebar({ user }: SidebarNavProps) {
   const [state] = useGlobalState()
   const { activeNestedSidebar, nestedItemsByCategory } = state
-  console.log(activeNestedSidebar)
+  // console.log(activeNestedSidebar)
 
   const { setActiveNestedSidebar, setNestedItemsByCategory } = useGlobalStateActions()
 
@@ -37,19 +37,18 @@ export function LeftSidebar({ user }: SidebarNavProps) {
           </Link>
         </div>
 
-        <div className='flex-1 flex flex-col space-between pb-2'>
-          <div className='relative flex-1'>
-            <NavListTop setActiveNestedSidebar={setActiveNestedSidebar} />
-            <Separator />
-            <NestedSidebarsList
-              pathname={'pathname'}
-              activeNestedSidebar={activeNestedSidebar}
-              nestedItemsByCategory={nestedItemsByCategory}
-              setActiveNestedSidebar={setActiveNestedSidebar}
-              setNestedItemsByCategory={setNestedItemsByCategory}
-            />
-          </div>
-          <ThemeToggle />
+        <div className='flex-1 flex flex-col space-between pb-2 relative'>
+          <NavListTop setActiveNestedSidebar={setActiveNestedSidebar} />
+          <Separator />
+          <NestedSidebarsList
+            pathname={'pathname'}
+            activeNestedSidebar={activeNestedSidebar}
+            nestedItemsByCategory={nestedItemsByCategory}
+            setActiveNestedSidebar={setActiveNestedSidebar}
+            setNestedItemsByCategory={setNestedItemsByCategory}
+          />
+
+          <ThemeToggle className='ml-2 ' />
         </div>
         <LeftSidebarFooter user={user} />
       </nav>
