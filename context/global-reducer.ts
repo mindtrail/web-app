@@ -1,6 +1,7 @@
 export const globalReducer = (state: GlobalState, action: Action): GlobalState => {
   const { type, payload } = action
-  console.log('REDUCER ---- ', type, payload)
+
+  // console.log('REDUCER ---- ', type, payload)
 
   switch (type) {
     case 'ADD_UNSYNCED_DATA_STORE':

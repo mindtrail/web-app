@@ -19,9 +19,8 @@ type SidebarNavProps = {
 
 export function LeftSidebar({ user }: SidebarNavProps) {
   const [state] = useGlobalState()
-  const { activeNestedSidebar, nestedItemsByCategory } = state
-  // console.log(activeNestedSidebar)
 
+  const { activeNestedSidebar, nestedItemsByCategory } = state
   const { setActiveNestedSidebar, setNestedItemsByCategory } = useGlobalStateActions()
 
   return (

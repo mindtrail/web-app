@@ -25,14 +25,13 @@ import { getURLPathname } from '@/lib/utils'
 import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
-  historyMetadata: HistoryMetadata
+  collection?: CollectionExtended
   userId: string
   historyItems: HistoryItem[]
   userPreferences?: UserPreferences
 }
 
 export function HistoryComponent({
-  historyMetadata,
   historyItems,
   userId,
   userPreferences,
@@ -155,7 +154,6 @@ export function HistoryComponent({
       <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
-        historyMetadata={historyMetadata}
         data={filteredItems}
         processing={processing}
         userPreferences={userPreferences}
