@@ -12,18 +12,18 @@ const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 interface NestedSidebarsListProps {
   pathname: string
   activeNestedSidebar?: NestedSidebarItem
-  itemListByCategory?: ItemListByCategory
+  nestedItemsByCategory?: nestedItemsByCategory
   setActiveNestedSidebar: (value?: any) => void
-  setItemListByCategory: (value: ItemListByCategory) => void
+  setNestedItemsByCategory: (value: nestedItemsByCategory) => void
 }
 
 export function NestedSidebarsList(props: NestedSidebarsListProps) {
   const {
     pathname,
     activeNestedSidebar,
-    itemListByCategory,
+    nestedItemsByCategory,
     setActiveNestedSidebar,
-    setItemListByCategory,
+    setNestedItemsByCategory,
   } = props
 
   const handleFolderClick = useCallback(
@@ -71,9 +71,9 @@ export function NestedSidebarsList(props: NestedSidebarsListProps) {
           <NestedSidebar
             pathname={pathname}
             activeNestedSidebar={activeNestedSidebar}
-            itemListByCategory={itemListByCategory}
+            nestedItemsByCategory={nestedItemsByCategory}
             setActiveNestedSidebar={setActiveNestedSidebar}
-            setItemListByCategory={setItemListByCategory}
+            setNestedItemsByCategory={setNestedItemsByCategory}
           />
         )}
       </div>

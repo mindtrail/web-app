@@ -20,9 +20,7 @@ export function ThemeToggle() {
       variant='ghost'
       size='icon'
       onClick={() => {
-        startTransition(() => {
-          setTheme(theme === 'light' ? 'dark' : 'light')
-        })
+        startTransition(() => setTheme(theme === 'light' ? 'dark' : 'light'))
       }}
     >
       {hasMounted ? (

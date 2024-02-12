@@ -27,19 +27,19 @@ import { Separator } from '@/components/ui/separator'
 
 type SecondSidebarProps = {
   activeNestedSidebar: NestedSidebarItem
-  itemListByCategory?: ItemListByCategory
+  nestedItemsByCategory?: NestedItemsByCategory
   pathname: string
   setActiveNestedSidebar: (value?: string) => void
-  setItemListByCategory: (value: ItemListByCategory) => void
+  setNestedItemsByCategory: (value: NestedItemsByCategory) => void
 }
 
 export const NestedSidebar = (props: SecondSidebarProps) => {
   const {
     activeNestedSidebar,
-    itemListByCategory,
+    nestedItemsByCategory,
     pathname,
     setActiveNestedSidebar,
-    setItemListByCategory,
+    setNestedItemsByCategory,
   } = props
 
   const router = useRouter()
@@ -59,12 +59,12 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   useEffect(() => {
     const { entityType } = activeNestedSidebar
 
-    if (itemListByCategory && Array.isArray(itemListByCategory[entityType])) {
-      setAllItems(itemListByCategory[entityType])
-      setFilteredItems(itemListByCategory[entityType])
+    if (nestedItemsByCategory && Array.isArray(nestedItemsByCategory[entityType])) {
+      setAllItems(nestedItemsByCategory[entityType])
+      setFilteredItems(nestedItemsByCategory[entityType])
       setLoading(false)
     }
-  }, [activeNestedSidebar, itemListByCategory])
+  }, [activeNestedSidebar, nestedItemsByCategory])
 
   const onDelete = (item: SidebarItem) => {
     setItemToDelete(item)
@@ -197,14 +197,14 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       // setFilteredItems(newItemList)
 
       // @ts-ignore
-      setItemListByCategory((prev) => {
+      setNestedItemsByCategory((prev) => {
         return {
           ...prev,
           [activeNestedSidebar.entityType]: newItemList,
         }
       })
     },
-    [activeNestedSidebar, setItemListByCategory],
+    [activeNestedSidebar, setNestedItemsByCategory],
   )
 
   const itemsCount =
