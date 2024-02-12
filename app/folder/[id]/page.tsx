@@ -1,5 +1,5 @@
 import { type Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { redirect, useServerInsertedHTML } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
@@ -8,25 +8,30 @@ import { getCollectionDbOp } from '@/lib/db/collection'
 import { getUserPreferences } from '@/lib/db/preferences'
 import { HistoryComponent } from '@/components/history'
 
-export interface EditDSProps {
+export interface FolderItemProps {
   params: {
     id: string
   }
 }
 
-export async function generateMetadata({ params }: EditDSProps): Promise<Metadata> {
+export async function generateMetadata({ params }: FolderItemProps): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
-  if (!session?.user?.id) {
+  const userId = session?.user?.id
+  const collectionId = params.id
+  if (!userId) {
     return {}
   }
 
+  const collection = await getCollectionDbOp({ userId, collectionId })
+
   return {
-    title: 'Chat',
+    title: collection?.name,
+    description: collection?.description,
   }
 }
 
-export default async function EditDS({ params }: EditDSProps) {
+export default async function FolderItem({ params }: FolderItemProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
@@ -41,20 +46,13 @@ export default async function EditDS({ params }: EditDSProps) {
     return <div>Knowledge Base Not Found...</div>
   }
 
-  let userPreferences = await getUserPreferences(userId)
-
-  const historyMetadata = {
-    name: collection.name,
-    parent: 'All items',
-    subParent: 'Folders',
-    parentLink: '/all-items',
-  }
+  const userPreferences = await getUserPreferences(userId)
+  const historyItems = collection.dataSources
 
   return (
     <HistoryComponent
-      historyMetadata={historyMetadata}
+      historyItems={historyItems}
       userId={userId}
-      historyItems={collection.dataSources}
       userPreferences={userPreferences}
     />
   )

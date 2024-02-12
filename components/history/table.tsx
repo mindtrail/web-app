@@ -35,7 +35,6 @@ import {
 } from '@/lib/constants'
 
 interface DataTableProps<TData> {
-  historyMetadata: { name: string; subParent: string; parent: string; parentLink: string }
   data: TData[]
   processing?: boolean
   userPreferences?: UserPreferences
@@ -44,7 +43,6 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({
-  historyMetadata,
   data,
   processing,
   userPreferences,
@@ -105,7 +103,7 @@ export function DataTable<TData>({
   return (
     <>
       <div className='flex items-center justify-between py-4'>
-        <HistoryBreadcrumbs historyMetadata={historyMetadata} />
+        <HistoryBreadcrumbs />
         <div className='flex items-center gap-2'>
           <Button size='sm' variant='ghost' className='shrink-0'>
             <CaretSortIcon className='h-5 w-5' />
