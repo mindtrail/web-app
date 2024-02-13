@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { DotsVerticalIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 import { IconFolder } from '@/components/ui/icons/next-icons'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { EditableInput } from '@/components/editable-input'
+import { ItemInput } from '@/components/left-sidebar/item-input'
 
 import {
   DropdownMenu,
@@ -35,39 +35,22 @@ export const NestedItem = (props: NestedItemProps) => {
 
   const ItemIcon = entityType === 'folder' ? IconFolder : icon
 
-  const inputRef = useRef(null)
-  const [inputVisibility, setInputVisibility] = useState(false)
   const [itemName, setItemName] = useState(name)
+  const [renameInputVisible, setRenameInputVisible] = useState(false)
 
   const itemUrl = `${url}/${id}`
 
   const handleUpdate = () => {
     onUpdateFolderName(id, itemName)
-    setInputVisibility(false)
+    setRenameInputVisible(false)
   }
 
-  useEffect(() => {
-    // Alert if clicked outside of element)
-    function handleClickOutside(event: { target: any }) {
-      if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
-        setInputVisibility(false) // Closes the new folder input
-      }
-    }
-
-    // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [inputRef])
-
-  if (inputVisibility) {
+  if (renameInputVisible) {
     return (
-      <EditableInput
+      <ItemInput
         item={item}
         itemName={itemName}
-        setInputVisibility={setInputVisibility}
+        setInputVisibility={setRenameInputVisible}
         setItemName={setItemName}
         callbackFn={handleUpdate}
       />
@@ -77,7 +60,7 @@ export const NestedItem = (props: NestedItemProps) => {
   return (
     <Link
       href={itemUrl || ''}
-      onDoubleClick={() => setInputVisibility(true)}
+      onDoubleClick={() => setRenameInputVisible(true)}
       className={cn(
         SIDEBAR_BTN,
         pathname === itemUrl && ACTIVE_BTN,
@@ -101,7 +84,7 @@ export const NestedItem = (props: NestedItemProps) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent sideOffset={-4}>
-            <DropdownMenuItem onClick={() => setInputVisibility(true)}>
+            <DropdownMenuItem onClick={() => setRenameInputVisible(true)}>
               Rename
             </DropdownMenuItem>
             {/* <DropdownMenuItem onClick={() => onDuplicate(id)}>Duplicate</DropdownMenuItem> */}
