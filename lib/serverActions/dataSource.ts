@@ -3,6 +3,8 @@
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/authOptions'
 
+import { addDataSourcesToCollectionDbOp } from '@/lib/db/dataSource'
+
 const env = process.env.NODE_ENV
 const SCRAPER_SERVICE_URL =
   env === 'development'
@@ -67,5 +69,47 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
         message: 'Scraper service Error',
       },
     }
+  }
+}
+
+export const addDataSourcesToCollection = async (
+  dataSourceIds: string[],
+  collectionId: string,
+) => {
+  console.log('addDataSourcesToCollection', dataSourceIds, collectionId)
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return {
+      error: {
+        status: 401,
+        message: 'Unauthorized',
+      },
+    }
+  }
+
+  if (!dataSourceIds?.length || !collectionId) {
+    return {
+      error: {
+        status: 400,
+        message: 'Invalid request, No DataSources or Folder provided',
+      },
+    }
+  }
+
+  try {
+    const result = await addDataSourcesToCollectionDbOp(dataSourceIds, collectionId)
+  } catch (e) {
+    console.log('Error ---', e)
+    const result = {
+      error: {
+        status: 500,
+        message: 'Error adding DataSources to Collection',
+      },
+    }
+
+    console.log(result)
+    return result
   }
 }

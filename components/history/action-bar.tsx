@@ -11,6 +11,7 @@ import { AddToFolder } from '@/components/history/add-to-folder'
 
 import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 import { createCollection } from '@/lib/serverActions/collection'
+import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
 
 type ActionBarProps = {
   table: any
@@ -42,19 +43,12 @@ export const ActionBar = (props: ActionBarProps) => {
 
   const onAddToFolder = useCallback(
     async (payload: AddItemToFolder) => {
-      const { existingId, newFolderName } = payload
+      const { existingFolderId, newFolderName } = payload
 
-      const selectedRows = table.getSelectedRowModel()
-
-      if (existingId) {
-        console.log(existingId)
-        console.log(selectedRows)
-        return
-      }
+      let collectionId = existingFolderId
 
       if (newFolderName) {
         console.log(newFolderName)
-        console.log(selectedRows)
         try {
           const response = await createCollection({
             name: newFolderName,
@@ -66,6 +60,7 @@ export const ActionBar = (props: ActionBarProps) => {
           // @TODO: improve this
           if ('id' in response && 'name' in response && 'description' in response) {
             const { id, name, description } = response
+
             const newItem = {
               id,
               name,
@@ -73,19 +68,28 @@ export const ActionBar = (props: ActionBarProps) => {
               url: `/folder/${response.id}`,
             }
 
+            collectionId = id
             const newItemList = [newItem, ...nestedItemsByCategory.folder]
 
-            return setNestedItemsByCategory({
+            setNestedItemsByCategory({
               entityType: FOLDER_ENTITY,
               items: newItemList,
             })
           }
-
-          console.error('Error creating item:', response)
         } catch (error) {
           console.log(error)
         }
       }
+
+      if (!collectionId) {
+        return console.log(' No collection ID found')
+      }
+
+      const dataSourceIds = table
+        .getSelectedRowModel() // @ts-ignore
+        .rows.map(({ original }) => original.id)
+
+      addDataSourcesToCollection(dataSourceIds, collectionId)
     },
     [table, nestedItemsByCategory.folder, setNestedItemsByCategory],
   )

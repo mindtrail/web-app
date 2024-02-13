@@ -1,4 +1,4 @@
-import { DataSource, DataSourceType } from '@prisma/client'
+import { DataSource, DataSourceType, CollectionDataSource } from '@prisma/client'
 import prisma from '@/lib/db/connection'
 import { Document } from 'langchain/document'
 
@@ -269,4 +269,16 @@ function getMetadataFromChunk(chunk: Document): Partial<BrowserExtensionData> {
     ...(description && { description }),
     ...(image && { image }),
   }
+}
+
+export const addDataSourcesToCollectionDbOp = async (
+  dataSourceIds: string[],
+  collectionId: string,
+) => {
+  await prisma.collectionDataSource.createMany({
+    data: dataSourceIds.map((dataSourceId) => ({
+      dataSourceId,
+      collectionId,
+    })),
+  })
 }
