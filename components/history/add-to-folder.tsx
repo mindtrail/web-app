@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { IconSearch } from '@/components/ui/icons/next-icons'
 import { Typography } from '@/components/typography'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { NestedItemInput } from '@/components/left-sidebar/nested-sidebar/item-input'
 
 export function AddToFolder() {
@@ -81,16 +82,21 @@ export function AddToFolder() {
             </Button>
           )}
         </div>
-        {filteredItems.map((item: any) => (
-          <Button
-            key={item.id}
-            className='w-full justify-start'
-            variant='ghost'
-            onClick={handleFolderClick}
-          >
-            {item?.name}
-          </Button>
-        ))}
+        {/* there's some css issue here. Fixed it for now with 254 instead of */}
+        <div className='-ml-4 w-[254px]'>
+          <ScrollArea className='flex px-4 flex-col max-h-[35vh]'>
+            {filteredItems.map((item: any) => (
+              <Button
+                key={item.id}
+                className='w-full justify-start'
+                variant='ghost'
+                onClick={handleFolderClick}
+              >
+                {item?.name}
+              </Button>
+            ))}
+          </ScrollArea>
+        </div>
 
         {!filteredItems?.length && (
           <Typography className='w-full mt-2 py-4 px-4 max-w-52 truncate' variant='small'>
