@@ -40,7 +40,6 @@ export function LeftSidebar({ user }: SidebarNavProps) {
           <NavListTop setActiveNestedSidebar={setActiveNestedSidebar} />
           <Separator />
           <NestedSidebarsList
-            pathname={'pathname'}
             activeNestedSidebar={activeNestedSidebar}
             nestedItemsByCategory={nestedItemsByCategory}
             setActiveNestedSidebar={setActiveNestedSidebar}

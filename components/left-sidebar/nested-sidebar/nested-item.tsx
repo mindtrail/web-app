@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 import { IconFolder } from '@/components/ui/icons/next-icons'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { EditableInput } from './editable-input'
+import { EditableInput } from '@/components/editable-input'
 
 import {
   DropdownMenu,
@@ -77,6 +77,7 @@ export const NestedItem = (props: NestedItemProps) => {
   return (
     <Link
       href={itemUrl || ''}
+      onDoubleClick={() => setInputVisibility(true)}
       className={cn(
         SIDEBAR_BTN,
         pathname === itemUrl && ACTIVE_BTN,
@@ -99,7 +100,7 @@ export const NestedItem = (props: NestedItemProps) => {
               <DotsVerticalIcon className='text-secondary-foreground' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent sideOffset={-6}>
+          <DropdownMenuContent sideOffset={-4}>
             <DropdownMenuItem onClick={() => setInputVisibility(true)}>
               Rename
             </DropdownMenuItem>

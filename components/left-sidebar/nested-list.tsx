@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { ChevronRightIcon } from '@radix-ui/react-icons'
+import { usePathname } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -10,21 +11,21 @@ import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 interface NestedSidebarsListProps {
-  pathname: string
   activeNestedSidebar?: NestedSidebarItem
-  nestedItemsByCategory?: nestedItemsByCategory
+  nestedItemsByCategory?: NestedItemsByCategory
   setActiveNestedSidebar: (value?: any) => void
-  setNestedItemsByCategory: (value: nestedItemsByCategory) => void
+  setNestedItemsByCategory: (value: SetNestedItemByCat) => void
 }
 
 export function NestedSidebarsList(props: NestedSidebarsListProps) {
   const {
-    pathname,
     activeNestedSidebar,
     nestedItemsByCategory,
     setActiveNestedSidebar,
     setNestedItemsByCategory,
   } = props
+
+  const pathname = usePathname()
 
   const handleFolderClick = useCallback(
     (item: any) => {

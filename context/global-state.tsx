@@ -88,8 +88,8 @@ export const useGlobalState = () => {
 export const useGlobalStateActions = () => {
   const [, dispatch] = useContext(GlobalStateContext)
 
-  const setNestedItemsByCategory = (payload: NestedItems) => {
-    // dispatch({ type: 'SET_NESTED_ITEMS_BY_CATEGORY', payload })
+  const setNestedItemsByCategory = (payload: SetNestedItemByCat) => {
+    dispatch({ type: 'SET_NESTED_ITEMS_BY_CATEGORY', payload })
   }
 
   const setActiveNestedSidebar = (payload: NestedSidebarItem) => {

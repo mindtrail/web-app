@@ -1,11 +1,11 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useState } from 'react'
 import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { IconSearch } from '@/components/ui/icons/next-icons'
 
-import { EditableInput } from './editable-input'
+import { EditableInput } from '@/components/editable-input'
 
 interface TopNestedSectionProps {
   activeNestedSidebar: NestedSidebarItem
@@ -39,7 +39,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
   }
 
   return (
-    <div className='flex flex-col gap'>
+    <div className='flex flex-col'>
       <div className='heading px-2 py-2 flex justify-between items-center'>
         <div className='flex items-center'>
           <Button variant='ghost' size='icon' onClick={() => setActiveNestedSidebar()}>
@@ -66,7 +66,7 @@ export function NestedTopSection(props: TopNestedSectionProps) {
       <div className='search flex w-full items-center relative'>
         <Input
           id='search'
-          className='flex-1 border-[1px] mx-2 px-2'
+          className='mx-2'
           value={searchValue}
           onChange={(e) => onFilterItems(e?.target?.value)}
           placeholder='Search'

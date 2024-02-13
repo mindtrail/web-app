@@ -38,6 +38,11 @@ declare global {
     [key: string]: SidebarItem[]
   }
 
+  type SetNestedItemByCat = {
+    entityType: string
+    items: SidebarItem[]
+  }
+
   type NestedSidebarItem = {
     entityType: string // @TODO make this more specific
     name: string

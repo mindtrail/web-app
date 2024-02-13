@@ -30,7 +30,7 @@ type SecondSidebarProps = {
   nestedItemsByCategory?: NestedItemsByCategory
   pathname: string
   setActiveNestedSidebar: (value?: string) => void
-  setNestedItemsByCategory: (value: NestedItemsByCategory) => void
+  setNestedItemsByCategory: (value: SetNestedItemByCat) => void
 }
 
 export const NestedSidebar = (props: SecondSidebarProps) => {
@@ -131,28 +131,31 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     }
   }
 
-  const onFilterItems = (value: string = '') => {
-    if (!allItems?.length) {
-      return
-    }
+  const onFilterItems = useCallback(
+    (value: string = '') => {
+      if (!allItems?.length) {
+        return
+      }
 
-    if (!value) {
-      setSearchValue('')
-      setFilteredItems(allItems)
-      setCreateItemFromSearchValue(false)
-      return
-    }
+      if (!value) {
+        setSearchValue('')
+        setFilteredItems(allItems)
+        setCreateItemFromSearchValue(false)
+        return
+      }
 
-    setSearchValue(value)
+      setSearchValue(value)
 
-    value = value.toLowerCase()
-    const filterResult = allItems.filter((item: any) =>
-      item.name.toLowerCase().includes(value),
-    )
+      value = value.toLowerCase()
+      const filterResult = allItems.filter((item: any) =>
+        item.name.toLowerCase().includes(value),
+      )
 
-    setFilteredItems(filterResult)
-    setCreateItemFromSearchValue(!filterResult?.length)
-  }
+      setFilteredItems(filterResult)
+      setCreateItemFromSearchValue(!filterResult?.length)
+    },
+    [allItems],
+  )
 
   const onSaveNewItem = async (name: string) => {
     setOpInProgress(true)

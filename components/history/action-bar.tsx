@@ -1,14 +1,24 @@
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 
 import { TrashIcon } from '@radix-ui/react-icons'
 import { IconTag, IconFolder } from '@/components/ui/icons/next-icons'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+
+import { AddToFolder } from '@/components/history/add-to-folder'
 
 type ActionBarProps = {
   areRowsSelected: boolean
   table: any
   onDelete: () => void
 }
+
+const actionBarBtnStyle = cn(
+  'flex items-center gap-1',
+  buttonVariants({ variant: 'ghost', size: 'sm' }),
+)
+
 export const ActionBar = ({ areRowsSelected, table, onDelete }: ActionBarProps) => {
   return (
     <div
@@ -25,15 +35,31 @@ export const ActionBar = ({ areRowsSelected, table, onDelete }: ActionBarProps) 
         aria-label='Select all'
       />
       <div className='flex items-center gap-4'>
-        <Button variant='ghost' size='sm' className='gap-1 flex'>
-          <IconFolder className='shrink-0' />
-          Add to Folder
-        </Button>
-        <Button variant='ghost' size='sm' className='gap-1 flex'>
-          <IconTag className='shrink-0' />
-          Add Tags
-        </Button>
-        <Button variant='ghost' size='sm' className='gap-1 flex' onClick={onDelete}>
+        <Popover>
+          <PopoverTrigger className={actionBarBtnStyle}>
+            <IconFolder className='shrink-0' />
+            Add to Folder
+          </PopoverTrigger>
+          <PopoverContent className='w-56' align='start'>
+            <AddToFolder />
+          </PopoverContent>
+        </Popover>
+        <Popover>
+          <PopoverTrigger className={actionBarBtnStyle}>
+            <IconTag className='shrink-0' />
+            Add Tags
+          </PopoverTrigger>
+          <PopoverContent className='w-56' align='start'>
+            Tags
+          </PopoverContent>
+        </Popover>
+
+        <Button
+          variant='ghost'
+          size='sm'
+          className='gap-1 flex hover:text-destructive'
+          onClick={onDelete}
+        >
           <TrashIcon width={16} height={16} />
           Delete
         </Button>
