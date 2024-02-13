@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { IconSearch } from '@/components/ui/icons/next-icons'
 import { Typography } from '@/components/typography'
-import { NestedItemInput } from '@/components/left-sidebar/item-input'
+import { NestedItemInput } from '@/components/left-sidebar/nested-sidebar/item-input'
 
 export function AddToFolder() {
   const [state] = useGlobalState()
