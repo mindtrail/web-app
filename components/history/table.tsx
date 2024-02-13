@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
 
@@ -26,6 +26,7 @@ import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
+
 import { ActionBar } from '@/components/history/action-bar'
 
 import {
@@ -91,13 +92,6 @@ export function DataTable<TData>({
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
-  const onDelete = useCallback(() => {
-    const selectedRows = table.getSelectedRowModel()
-    const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
-
-    handleHistoryDelete(itemsToDelete)
-  }, [handleHistoryDelete, table])
-
   return (
     <>
       <div className='flex items-center justify-between py-4'>
@@ -116,7 +110,11 @@ export function DataTable<TData>({
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
-        <ActionBar table={table} onDelete={onDelete} areRowsSelected={areRowsSelected} />
+        <ActionBar
+          table={table}
+          handleHistoryDelete={handleHistoryDelete}
+          areRowsSelected={areRowsSelected}
+        />
 
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>

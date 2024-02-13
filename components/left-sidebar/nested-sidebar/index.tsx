@@ -58,10 +58,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
 
   const [newName, setNewName] = useState('')
   const [newItemInputVisible, setNewItemInputVisible] = useState(false)
+  const [opInProgress, setOpInProgress] = useState(false)
+
   const [searchValue, setSearchValue] = useState('')
   const [createItemfromSearchValue, setCreateItemFromSearchValue] = useState(false)
 
-  const [opInProgress, setOpInProgress] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
@@ -191,11 +192,10 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         const newItemList = [newItem, ...allItems]
 
         setNestedItemsByCategory({ entityType, items: newItemList })
-        router.push(newItem.url)
+        return router.push(newItem.url)
       } else {
         // Handle error case
-        const error = response
-        console.error('Error creating item:', error)
+        console.error('Error creating item:', response)
       }
     } catch (error) {
       console.error('Error:', error)

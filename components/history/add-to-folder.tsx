@@ -1,28 +1,28 @@
 import { useCallback, useState } from 'react'
-import { PlusIcon, Cross2Icon } from '@radix-ui/react-icons'
+import { PlusIcon, Cross2Icon, UploadIcon } from '@radix-ui/react-icons'
 
 import { useGlobalState } from '@/context/global-state'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { IconSearch } from '@/components/ui/icons/next-icons'
-import { Typography } from '@/components/typography'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { NestedItemInput } from '@/components/left-sidebar/nested-sidebar/item-input'
+import { IconFolder } from '@/components/ui/icons/next-icons'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
-export function AddToFolder() {
+type AddToFolderProps = {
+  onAddToFolder: (props: AddItemToFolder) => void
+}
+
+const transitionStyle = 'transition-opacity duration-200 ease-in-out'
+
+export function AddToFolder({ onAddToFolder }: AddToFolderProps) {
   const [state] = useGlobalState()
   const { nestedItemsByCategory } = state
 
   const folderList = nestedItemsByCategory.folder
 
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(folderList)
-  const [loading, setLoading] = useState(true)
-
   const [searchValue, setSearchValue] = useState('')
-
-  console.log(folderList)
 
   const onFilterItems = useCallback(
     (value: string = '') => {
@@ -48,61 +48,75 @@ export function AddToFolder() {
     [folderList],
   )
 
-  const handleFolderClick = useCallback((item: any) => {
-    // TODO - add to collection
-  }, [])
-
   return (
     <div className='flex flex-col gap-3 items-start'>
-      <Button variant='ghost' className='flex items-center gap-2 w-full justify-start'>
-        <PlusIcon />
-        <span>New Folder</span>
-      </Button>
-      <Separator />
       <div className='flex flex-col w-full'>
-        <div className='search flex w-full items-center relative my-2'>
+        <div className='search flex w-full items-center relative  mb-3'>
           <Input
             id='search'
+            autoFocus
             className='w-full pl-4'
             value={searchValue}
             onChange={(e) => onFilterItems(e?.target?.value)}
-            placeholder='Search'
+            placeholder='Type to search or create...'
           />
 
-          {!searchValue ? (
-            <IconSearch className='absolute right-4 opacity-50' />
-          ) : (
+          {searchValue && (
             <Button
               variant='ghost'
               size='icon'
-              className='absolute right-2'
-              // onClick={() => onFilterItems('')}
+              className='absolute right-0'
+              onClick={() => onFilterItems('')}
             >
               <Cross2Icon />
             </Button>
           )}
         </div>
+
         {/* there's some css issue here. Fixed it for now with 254 instead of */}
         <div className='-ml-4 w-[254px]'>
           <ScrollArea className='flex px-4 flex-col max-h-[35vh]'>
-            {filteredItems.map((item: any) => (
-              <Button
-                key={item.id}
-                className='w-full justify-start'
-                variant='ghost'
-                onClick={handleFolderClick}
-              >
-                {item?.name}
-              </Button>
+            {filteredItems?.map(({ id, name }: any) => (
+              <Tooltip key={id}>
+                <TooltipTrigger asChild>
+                  <Button
+                    className='w-full px-2 justify-start flex gap-2 cursor-default group'
+                    variant='ghost'
+                    onClick={() => onAddToFolder({ existingId: id })}
+                  >
+                    <span className='w-4 h-4 relative'>
+                      <IconFolder
+                        className={`${transitionStyle} absolute group-hover:opacity-0`}
+                      />
+                      <UploadIcon
+                        className={`${transitionStyle} absolute opacity-0 group-hover:opacity-100`}
+                      />
+                    </span>
+
+                    {/* <IconFolder className='group-hover:hidden' />
+                    <UploadIcon className='hidden w-4 h-4 group-hover:flex' /> */}
+                    {name}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side='right' sideOffset={-48}>
+                  Add items to {name}
+                </TooltipContent>
+              </Tooltip>
             ))}
           </ScrollArea>
         </div>
 
         {!filteredItems?.length && (
-          <Typography className='w-full mt-2 py-4 px-4 max-w-52 truncate' variant='small'>
-            No folder:
-            <span className='font-semibold text-foreground'> {searchValue}</span>{' '}
-          </Typography>
+          <Button
+            className='flex items-center gap-2 w-full justify-start'
+            variant={filteredItems?.length ? 'ghost' : 'default'}
+            onClick={() => onAddToFolder({ newFolderName: searchValue })}
+          >
+            <PlusIcon className='shrink-0' />
+            <span className='max-w-44 truncate'>
+              Add to Folder {!filteredItems?.length && searchValue}
+            </span>
+          </Button>
         )}
       </div>
     </div>

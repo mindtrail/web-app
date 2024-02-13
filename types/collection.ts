@@ -27,4 +27,9 @@ declare global {
   type UpdateCollection = Partial<CreateCollection> & {
     collectionId: string
   }
+
+  type AddItemToFolder = {
+    existingId?: string
+    newFolderName?: string
+  }
 }

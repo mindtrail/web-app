@@ -12,6 +12,7 @@ const SCRAPER_SERVICE_URL =
 type deletePayload = {
   dataSourceId: string
 }
+
 export const scrapeURLs = async (urls: string[], collectionId?: string) => {
   console.log('scrapeURLs', urls, collectionId)
 
