@@ -5,17 +5,17 @@ import { Input } from '@/components/ui/input'
 
 import { IconCancel, IconFolder, IconSpinner } from '@/components/ui/icons/next-icons'
 
-type EditableInput = {
+type ItemInput = {
   item?: SidebarItem
   itemName: string
   opInProgress?: boolean
   entityType?: string
   setInputVisibility: (isEditing: boolean) => void
   setItemName: (itemName: string) => void
-  callbackFn: () => void
+  callbackFn: any
 }
 
-export const EditableInput = (props: EditableInput) => {
+export const ItemInput = (props: ItemInput) => {
   const {
     item,
     itemName,
@@ -33,6 +33,7 @@ export const EditableInput = (props: EditableInput) => {
     function handleClickOutside(event: { target: any }) {
       if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
         setInputVisibility(false) // Closes the new folder input
+        setItemName(item?.name || '') // Resets the text value
       }
     }
 
@@ -42,13 +43,11 @@ export const EditableInput = (props: EditableInput) => {
       // Unbind the event listener on clean up
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [inputRef, setInputVisibility])
+  }, [inputRef, setInputVisibility, item, setItemName])
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      callbackFn()
-      setInputVisibility(false) // Closes the new folder input
-      return
+      return callbackFn()
     }
 
     if (event.key === 'Escape') {

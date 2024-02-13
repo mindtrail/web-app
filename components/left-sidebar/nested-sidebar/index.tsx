@@ -1,11 +1,17 @@
 import { useEffect, useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlusIcon } from '@radix-ui/react-icons'
 
+import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
+
+import { Input } from '@/components/ui/input'
+import { IconSearch } from '@/components/ui/icons/next-icons'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { useToast } from '@/components/ui/use-toast'
+import { Typography } from '@/components/typography'
+import { ItemInput } from '@/components/left-sidebar/item-input'
+
 import {
   Dialog,
   DialogContent,
@@ -22,7 +28,6 @@ import {
 } from '@/lib/serverActions/collection'
 
 import { NestedItem } from './nested-item'
-import { NestedTopSection } from './nested-top'
 import { Separator } from '@/components/ui/separator'
 
 type SecondSidebarProps = {
@@ -45,10 +50,14 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const router = useRouter()
   const { toast } = useToast()
 
+  const { entityType, name: sidebarName } = activeNestedSidebar
+
   const [allItems, setAllItems] = useState<SidebarItem[]>([])
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>([])
   const [loading, setLoading] = useState(true)
 
+  const [newItemName, setNewItemName] = useState('')
+  const [newItemInputVisible, setNewItemInputVisible] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [createItemfromSearchValue, setCreateItemFromSearchValue] = useState(false)
 
@@ -57,14 +66,12 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
   useEffect(() => {
-    const { entityType } = activeNestedSidebar
-
     if (nestedItemsByCategory && Array.isArray(nestedItemsByCategory[entityType])) {
       setAllItems(nestedItemsByCategory[entityType])
       setFilteredItems(nestedItemsByCategory[entityType])
       setLoading(false)
     }
-  }, [activeNestedSidebar, nestedItemsByCategory])
+  }, [entityType, nestedItemsByCategory])
 
   const onDelete = (item: SidebarItem) => {
     setItemToDelete(item)
@@ -190,6 +197,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       setOpInProgress(false)
       if (createItemfromSearchValue) {
         setSearchValue('')
+        setNewItemInputVisible(false)
         setCreateItemFromSearchValue(false)
       }
     }
@@ -217,52 +225,116 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
 
   return (
     <div className={`flex flex-col flex-1 w-full border-t border-l`}>
-      <NestedTopSection
-        searchValue={searchValue}
-        activeNestedSidebar={activeNestedSidebar}
-        itemsCount={itemsCount}
-        opInProgress={opInProgress}
-        onSaveNewItem={onSaveNewItem}
-        onFilterItems={onFilterItems}
-        setActiveNestedSidebar={setActiveNestedSidebar}
-      />
+      <div className='Header px-2 py-2 flex justify-between items-center'>
+        <div className='flex items-center'>
+          <Button variant='ghost' size='icon' onClick={() => setActiveNestedSidebar()}>
+            <ChevronLeftIcon width={16} height={16} />
+          </Button>
+          <span className='flex-1 overflow-hidden whitespace-nowrap capitalize'>
+            {activeNestedSidebar?.name} ({itemsCount})
+          </span>
+        </div>
+
+        <Button
+          className='invisible group-hover:visible'
+          variant='ghost'
+          size='icon'
+          onClick={() => {
+            setNewItemInputVisible(true)
+            setNewItemName('')
+          }}
+        >
+          <PlusIcon width={16} height={16} />
+        </Button>
+      </div>
+      <div className='Search flex w-full items-center relative'>
+        <Input
+          id='search'
+          className='mx-2'
+          value={searchValue}
+          onChange={(e) => onFilterItems(e?.target?.value)}
+          placeholder='Search'
+        />
+
+        {!searchValue ? (
+          <IconSearch className='absolute right-4 opacity-50' />
+        ) : (
+          <Button
+            variant='ghost'
+            size='icon'
+            className='absolute right-2'
+            onClick={() => onFilterItems('')}
+          >
+            <Cross2Icon />
+          </Button>
+        )}
+      </div>
+
+      {newItemInputVisible && (
+        <div className='pt-4 -mt-[2px] -mb-2 px-2'>
+          <ItemInput
+            itemName={newItemName}
+            opInProgress={opInProgress}
+            entityType={entityType}
+            setItemName={setNewItemName}
+            setInputVisibility={setNewItemInputVisible}
+            callbackFn={onSaveNewItem}
+          />
+        </div>
+      )}
 
       {loading ? (
         <IconSpinner className='self-center mt-24 h-6 w-6 text-foreground/50' />
       ) : (
-        <nav className='h-full'>
-          {/* Viewport height - Top and bottom areas */}
-          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pt-3 pb-1 gap-1'>
-            {/* Added this as a spacer, to have all the border visible on editing */}
-            <Separator className='bg-transparent h-[2px]' />
+        <div className='flex-1 flex flex-col px-2 pt-3 pb-1'>
+          <nav>
+            <ScrollArea className='flex flex-col gap-1 max-h-[calc(100vh-277px)] '>
+              {/* Added this as a spacer, to have all the border visible on editing */}
+              <Separator className='bg-transparent h-[2px]' />
 
-            {filteredItems.map((item) => (
-              <NestedItem
-                key={item.id}
-                item={item}
-                pathname={pathname}
-                activeNestedSidebar={activeNestedSidebar}
-                onUpdateFolderName={onUpdateFolderName}
-                onDuplicate={onDuplicate}
-                onDelete={onDelete}
-              />
-            ))}
+              {filteredItems.map((item) => (
+                <NestedItem
+                  key={item.id}
+                  item={item}
+                  pathname={pathname}
+                  activeNestedSidebar={activeNestedSidebar}
+                  onUpdateFolderName={onUpdateFolderName}
+                  onDuplicate={onDuplicate}
+                  onDelete={onDelete}
+                />
+              ))}
 
-            <Separator className='bg-transparent h-[2px]' />
-          </ScrollArea>
+              <Separator className='bg-transparent h-[2px]' />
+            </ScrollArea>
+          </nav>
 
-          {!filteredItems?.length && (
-            <span className='absolute top-32 w-full text-center text-foreground/75'>
-              No items
-            </span>
+          {!filteredItems?.length && !createItemfromSearchValue && (
+            <div className='flex flex-col w-full gap-4'>
+              <Typography className='py-4 self-center'>No Items</Typography>
+              <Button
+                className='flex gap-2'
+                disabled={opInProgress}
+                onClick={() => onSaveNewItem(searchValue)}
+              >
+                {opInProgress ? (
+                  <IconSpinner className='shrink-0' />
+                ) : (
+                  <PlusIcon className='shrink-0' width={16} height={16} />
+                )}
+
+                <span className='truncate'>
+                  {opInProgress ? 'Creating' : 'Create'} {entityType}
+                </span>
+              </Button>
+            </div>
           )}
-        </nav>
+        </div>
       )}
 
       {createItemfromSearchValue && (
-        <div className='absolute top-48 px-2 flex items-center w-full max-w-full'>
+        <div className='absolute top-24 mt-2 px-2 flex w-full z-10'>
           <Button
-            className='gap-1 flex-1 max-w-full'
+            className='flex flex-1 gap-2 justify-start max-w-full'
             disabled={opInProgress}
             onClick={() => onSaveNewItem(searchValue)}
           >
