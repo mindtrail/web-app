@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, KeyboardEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
@@ -10,7 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { useToast } from '@/components/ui/use-toast'
 import { Typography } from '@/components/typography'
-import { NestedItemInput } from '@/components/left-sidebar/item-input'
+import { NestedItemInput } from '@/components/left-sidebar/nested-sidebar/item-input'
 
 import {
   Dialog,
@@ -79,6 +79,8 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   }
 
   const onUpdateFolderName = async (id: string, newName: string) => {
+    setOpInProgress(true)
+
     try {
       await updateCollection({
         collectionId: id,
@@ -86,7 +88,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         description: '',
       })
 
-      const updatedItemList = filteredItems.map((item) => {
+      const updatedList = allItems.map((item) => {
         if (item.id === id) {
           return {
             ...item,
@@ -96,11 +98,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         return item
       })
 
-      updateItemListCallback(updatedItemList)
+      setNestedItemsByCategory({ entityType, items: updatedList })
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      // Implement your update logic here
+      setOpInProgress(false)
     }
   }
 
@@ -108,32 +110,30 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const onDuplicate = (id: string) => {}
 
   const confirmDelete = async () => {
+    setOpInProgress(true)
+
     if (!itemToDelete?.id) {
       setDeleteDialogOpen(false)
       return
     }
 
-    const { id: itemId, name } = itemToDelete
+    setDeleteDialogOpen(false)
 
     try {
-      await deleteCollection({
-        collectionId: itemId,
-      })
+      const { id: collectionId } = itemToDelete
+      await deleteCollection({ collectionId })
 
-      const remainingItems = filteredItems.filter((item) => item.id !== itemId)
-      updateItemListCallback(remainingItems)
+      const remainingItems = allItems.filter((item) => item.id !== collectionId)
+
+      setNestedItemsByCategory({ entityType, items: remainingItems })
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      setDeleteDialogOpen(false)
+      setOpInProgress(false)
 
-      const itemType = activeNestedSidebar.name.substring(
-        0,
-        activeNestedSidebar.name.length - 1,
-      )
       toast({
-        title: `${itemType} deleted`,
-        description: `${name} has been deleted`,
+        title: `${entityType} deleted`,
+        description: `${itemToDelete?.name} has been deleted`,
       })
     }
   }
@@ -164,16 +164,21 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     [allItems],
   )
 
-  const onSaveNewItem = async (name: string) => {
+  const saveNewItem = async () => {
     setOpInProgress(true)
+
+    const newElementName = createItemfromSearchValue
+      ? searchValue
+      : newName || 'New folder'
 
     try {
       const response = await createCollection({
-        name,
+        name: newElementName,
         userId: '',
         description: '',
       })
 
+      // @TODO: improve this
       if ('id' in response && 'name' in response && 'description' in response) {
         const { id, name, description } = response
         const newItem = {
@@ -182,10 +187,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           description,
           url: `/folder/${response.id}`,
         }
-        const newItemList = [newItem, ...filteredItems]
 
+        const newItemList = [newItem, ...allItems]
+
+        setNestedItemsByCategory({ entityType, items: newItemList })
         router.push(newItem.url)
-        updateItemListCallback(newItemList)
       } else {
         // Handle error case
         const error = response
@@ -195,28 +201,24 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       console.error('Error:', error)
     } finally {
       setOpInProgress(false)
+      setNewItemInputVisible(false)
+
       if (createItemfromSearchValue) {
         setSearchValue('')
-        setNewItemInputVisible(false)
         setCreateItemFromSearchValue(false)
       }
     }
   }
 
-  const updateItemListCallback = useCallback(
-    (newItemList: SidebarItem[]) => {
-      // setFilteredItems(newItemList)
+  const handleSearchKeydown = async (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      return saveNewItem()
+    }
 
-      // @ts-ignore
-      setNestedItemsByCategory((prev) => {
-        return {
-          ...prev,
-          [activeNestedSidebar.entityType]: newItemList,
-        }
-      })
-    },
-    [activeNestedSidebar, setNestedItemsByCategory],
-  )
+    if (event.key === 'Escape') {
+      onFilterItems('')
+    }
+  }
 
   const itemsCount =
     filteredItems?.length === allItems?.length
@@ -253,6 +255,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           className='mx-2'
           value={searchValue}
           onChange={(e) => onFilterItems(e?.target?.value)}
+          onKeyDown={handleSearchKeydown}
           placeholder='Search'
         />
 
@@ -278,7 +281,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             entityType={entityType}
             setNewName={setNewName}
             setInputVisibility={setNewItemInputVisible}
-            callbackFn={onSaveNewItem}
+            callbackFn={saveNewItem}
           />
         </div>
       )}
@@ -314,7 +317,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
               <Button
                 className='flex gap-2'
                 disabled={opInProgress}
-                onClick={() => onSaveNewItem(searchValue)}
+                // onClick={saveNewItem}
               >
                 {opInProgress ? (
                   <IconSpinner className='shrink-0' />
@@ -336,7 +339,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           <Button
             className='flex flex-1 gap-2 justify-start max-w-full'
             disabled={opInProgress}
-            onClick={() => onSaveNewItem(searchValue)}
+            onClick={saveNewItem}
           >
             {opInProgress ? (
               <IconSpinner className='shrink-0' />

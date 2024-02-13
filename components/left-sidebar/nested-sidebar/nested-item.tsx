@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 import { IconFolder } from '@/components/ui/icons/next-icons'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { NestedItemInput } from '@/components/left-sidebar/item-input'
+import { NestedItemInput } from '@/components/left-sidebar/nested-sidebar/item-input'
 
 import {
   DropdownMenu,
@@ -49,6 +49,7 @@ export const NestedItem = (props: NestedItemProps) => {
     return (
       <NestedItemInput
         item={item}
+        opInProgress={renameInputVisible}
         newName={newName}
         setInputVisibility={setRenameInputVisible}
         setNewName={setNewName}
