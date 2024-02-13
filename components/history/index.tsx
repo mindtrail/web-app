@@ -25,7 +25,6 @@ import { getURLPathname } from '@/lib/utils'
 import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
-  collection?: CollectionExtended
   userId: string
   historyItems: HistoryItem[]
   userPreferences?: UserPreferences

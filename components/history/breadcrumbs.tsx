@@ -25,7 +25,10 @@ export function HistoryBreadcrumbs() {
   const pathItems = pathname.split('/').filter((x) => x)
 
   const currentPageTitle = (className = '') => (
-    <Typography variant='small' className={cn('cursor-default', className)}>
+    <Typography
+      variant='small'
+      className={cn('cursor-default text-foreground', className)}
+    >
       {currentTitle}
     </Typography>
   )

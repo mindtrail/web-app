@@ -93,11 +93,9 @@ export function DataTable<TData>({
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
-
     const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
 
     handleHistoryDelete(itemsToDelete)
-    table.resetRowSelection()
   }, [handleHistoryDelete, table])
 
   return (
