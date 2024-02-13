@@ -10,7 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { useToast } from '@/components/ui/use-toast'
 import { Typography } from '@/components/typography'
-import { ItemInput } from '@/components/left-sidebar/item-input'
+import { NestedItemInput } from '@/components/left-sidebar/item-input'
 
 import {
   Dialog,
@@ -56,7 +56,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  const [newItemName, setNewItemName] = useState('')
+  const [newName, setNewName] = useState('')
   const [newItemInputVisible, setNewItemInputVisible] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [createItemfromSearchValue, setCreateItemFromSearchValue] = useState(false)
@@ -241,7 +241,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           size='icon'
           onClick={() => {
             setNewItemInputVisible(true)
-            setNewItemName('')
+            setNewName('')
           }}
         >
           <PlusIcon width={16} height={16} />
@@ -272,11 +272,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
 
       {newItemInputVisible && (
         <div className='pt-4 -mt-[2px] -mb-2 px-2'>
-          <ItemInput
-            itemName={newItemName}
+          <NestedItemInput
+            newName={newName}
             opInProgress={opInProgress}
             entityType={entityType}
-            setItemName={setNewItemName}
+            setNewName={setNewName}
             setInputVisibility={setNewItemInputVisible}
             callbackFn={onSaveNewItem}
           />

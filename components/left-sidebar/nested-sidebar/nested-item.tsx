@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 import { IconFolder } from '@/components/ui/icons/next-icons'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { ItemInput } from '@/components/left-sidebar/item-input'
+import { NestedItemInput } from '@/components/left-sidebar/item-input'
 
 import {
   DropdownMenu,
@@ -35,23 +35,23 @@ export const NestedItem = (props: NestedItemProps) => {
 
   const ItemIcon = entityType === 'folder' ? IconFolder : icon
 
-  const [itemName, setItemName] = useState(name)
+  const [newName, setNewName] = useState(name)
   const [renameInputVisible, setRenameInputVisible] = useState(false)
 
   const itemUrl = `${url}/${id}`
 
   const handleUpdate = () => {
-    onUpdateFolderName(id, itemName)
+    onUpdateFolderName(id, newName)
     setRenameInputVisible(false)
   }
 
   if (renameInputVisible) {
     return (
-      <ItemInput
+      <NestedItemInput
         item={item}
-        itemName={itemName}
+        newName={newName}
         setInputVisibility={setRenameInputVisible}
-        setItemName={setItemName}
+        setNewName={setNewName}
         callbackFn={handleUpdate}
       />
     )
@@ -69,7 +69,7 @@ export const NestedItem = (props: NestedItemProps) => {
     >
       <span className='flex items-center gap-2 '>
         <ItemIcon />
-        <span className='truncate max-w-[110px]'>{itemName}</span>
+        <span className='truncate max-w-[110px]'>{newName}</span>
       </span>
 
       <span className='flex-shrink-0 invisible group-hover/item:visible relative'>
