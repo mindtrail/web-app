@@ -291,7 +291,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       ) : (
         <div className='flex-1 flex flex-col px-2 pt-3 pb-1'>
           <nav>
-            <ScrollArea className='flex flex-col gap-1 max-h-[calc(100vh-277px)] '>
+            <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] '>
               {/* Added this as a spacer, to have all the border visible on editing */}
               <Separator className='bg-transparent h-[2px]' />
 

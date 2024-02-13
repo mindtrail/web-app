@@ -34,13 +34,13 @@ export const ActionBar = ({ areRowsSelected, table, onDelete }: ActionBarProps) 
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
       />
-      <div className='flex items-center gap-4'>
+      <div className='flex items-center gap-4 ml-2'>
         <Popover>
           <PopoverTrigger className={actionBarBtnStyle}>
             <IconFolder className='shrink-0' />
             Add to Folder
           </PopoverTrigger>
-          <PopoverContent className='w-56' align='start'>
+          <PopoverContent className='w-64' align='start'>
             <AddToFolder />
           </PopoverContent>
         </Popover>
@@ -49,7 +49,7 @@ export const ActionBar = ({ areRowsSelected, table, onDelete }: ActionBarProps) 
             <IconTag className='shrink-0' />
             Add Tags
           </PopoverTrigger>
-          <PopoverContent className='w-56' align='start'>
+          <PopoverContent className='w-64' align='start'>
             Tags
           </PopoverContent>
         </Popover>
