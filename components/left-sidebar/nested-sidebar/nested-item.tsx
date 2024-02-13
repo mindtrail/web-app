@@ -33,12 +33,11 @@ export const NestedItem = (props: NestedItemProps) => {
   const { url, entityType, icon } = activeNestedSidebar
   const { id, name } = item
 
-  const ItemIcon = entityType === 'folder' ? IconFolder : icon
-
   const [newName, setNewName] = useState(name)
   const [renameInputVisible, setRenameInputVisible] = useState(false)
 
   const itemUrl = `${url}/${id}`
+  const IconUsed = entityType === 'folder' ? IconFolder : icon
 
   const handleUpdate = () => {
     onUpdateFolderName(id, newName)
@@ -69,7 +68,7 @@ export const NestedItem = (props: NestedItemProps) => {
       )}
     >
       <span className='flex items-center gap-2 '>
-        <ItemIcon />
+        <IconUsed />
         <span className='truncate max-w-[110px]'>{newName}</span>
       </span>
 

@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,10 +9,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { AddToFolder } from '@/components/history/add-to-folder'
 
+import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
+import { createCollection } from '@/lib/serverActions/collection'
+
 type ActionBarProps = {
-  areRowsSelected: boolean
   table: any
-  onDelete: () => void
+  areRowsSelected: boolean
+  handleHistoryDelete: (ids: HistoryItem[]) => void
 }
 
 const actionBarBtnStyle = cn(
@@ -19,7 +23,73 @@ const actionBarBtnStyle = cn(
   buttonVariants({ variant: 'ghost', size: 'sm' }),
 )
 
-export const ActionBar = ({ areRowsSelected, table, onDelete }: ActionBarProps) => {
+const FOLDER_ENTITY = 'folder'
+
+export const ActionBar = (props: ActionBarProps) => {
+  const { areRowsSelected, table, handleHistoryDelete } = props
+
+  const { setNestedItemsByCategory } = useGlobalStateActions()
+  const [state] = useGlobalState()
+  const { nestedItemsByCategory } = state
+
+  const onDelete = useCallback(() => {
+    const selectedRows = table.getSelectedRowModel()
+    // @ts-ignore
+    const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
+
+    handleHistoryDelete(itemsToDelete)
+  }, [handleHistoryDelete, table])
+
+  const onAddToFolder = useCallback(
+    async (payload: AddItemToFolder) => {
+      const { existingId, newFolderName } = payload
+
+      const selectedRows = table.getSelectedRowModel()
+
+      if (existingId) {
+        console.log(existingId)
+        console.log(selectedRows)
+        return
+      }
+
+      if (newFolderName) {
+        console.log(newFolderName)
+        console.log(selectedRows)
+        try {
+          const response = await createCollection({
+            name: newFolderName,
+            userId: '',
+            description: '',
+          })
+
+          console.log(newFolderName)
+          // @TODO: improve this
+          if ('id' in response && 'name' in response && 'description' in response) {
+            const { id, name, description } = response
+            const newItem = {
+              id,
+              name,
+              description,
+              url: `/folder/${response.id}`,
+            }
+
+            const newItemList = [newItem, ...nestedItemsByCategory.folder]
+
+            return setNestedItemsByCategory({
+              entityType: FOLDER_ENTITY,
+              items: newItemList,
+            })
+          }
+
+          console.error('Error creating item:', response)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    },
+    [table, nestedItemsByCategory.folder, setNestedItemsByCategory],
+  )
+
   return (
     <div
       className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
@@ -41,7 +111,7 @@ export const ActionBar = ({ areRowsSelected, table, onDelete }: ActionBarProps) 
             Add to Folder
           </PopoverTrigger>
           <PopoverContent className='w-64' align='start'>
-            <AddToFolder />
+            <AddToFolder onAddToFolder={onAddToFolder} />
           </PopoverContent>
         </Popover>
         <Popover>
