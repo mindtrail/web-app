@@ -82,7 +82,7 @@ export function AddToFolder({ onAddToFolder }: AddToFolderProps) {
                   <Button
                     className='w-full px-2 justify-start flex gap-2 cursor-default group'
                     variant='ghost'
-                    onClick={() => onAddToFolder({ existingId: id })}
+                    onClick={() => onAddToFolder({ existingFolderId: id })}
                   >
                     <span className='w-4 h-4 relative'>
                       <IconFolder

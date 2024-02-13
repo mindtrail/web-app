@@ -29,7 +29,7 @@ declare global {
   }
 
   type AddItemToFolder = {
-    existingId?: string
+    existingFolderId?: string
     newFolderName?: string
   }
 }
