@@ -232,9 +232,12 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           <Button variant='ghost' size='icon' onClick={() => setActiveNestedSidebar()}>
             <ChevronLeftIcon width={16} height={16} />
           </Button>
-          <span className='flex-1 overflow-hidden whitespace-nowrap capitalize'>
+          <Typography
+            variant='small'
+            className='flex-1 overflow-hidden whitespace-nowrap capitalize'
+          >
             {activeNestedSidebar?.name} ({itemsCount})
-          </span>
+          </Typography>
         </div>
 
         <Button
