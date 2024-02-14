@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { ChevronRightIcon } from '@radix-ui/react-icons'
+import { usePathname } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -10,21 +11,21 @@ import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 interface NestedSidebarsListProps {
-  pathname: string
   activeNestedSidebar?: NestedSidebarItem
-  itemListByCategory?: ItemListByCategory
+  nestedItemsByCategory?: NestedItemsByCategory
   setActiveNestedSidebar: (value?: any) => void
-  setItemListByCategory: (value: ItemListByCategory) => void
+  setNestedItemsByCategory: (value: SetNestedItemByCat) => void
 }
 
 export function NestedSidebarsList(props: NestedSidebarsListProps) {
   const {
-    pathname,
     activeNestedSidebar,
-    itemListByCategory,
+    nestedItemsByCategory,
     setActiveNestedSidebar,
-    setItemListByCategory,
+    setNestedItemsByCategory,
   } = props
+
+  const pathname = usePathname()
 
   const handleFolderClick = useCallback(
     (item: any) => {
@@ -50,7 +51,7 @@ export function NestedSidebarsList(props: NestedSidebarsListProps) {
               onClick={() => handleFolderClick(item)}
             >
               <span className='flex flex-1 gap-4'>
-                <Icon />
+                <Icon className='w-5 h-5' />
                 {name}
               </span>
 
@@ -71,9 +72,9 @@ export function NestedSidebarsList(props: NestedSidebarsListProps) {
           <NestedSidebar
             pathname={pathname}
             activeNestedSidebar={activeNestedSidebar}
-            itemListByCategory={itemListByCategory}
+            nestedItemsByCategory={nestedItemsByCategory}
             setActiveNestedSidebar={setActiveNestedSidebar}
-            setItemListByCategory={setItemListByCategory}
+            setNestedItemsByCategory={setNestedItemsByCategory}
           />
         )}
       </div>

@@ -3,10 +3,11 @@
 import { useState, useEffect, useTransition } from 'react'
 import { useTheme } from 'next-themes'
 
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { IconMoon, IconSun } from '@/components/ui/icons/next-icons'
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: ButtonProps) {
   const { setTheme, theme } = useTheme()
   const [_, startTransition] = useTransition()
   const [hasMounted, setHasMounted] = useState(false)
@@ -17,13 +18,12 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant='ghost'
       size='icon'
-      onClick={() => {
-        startTransition(() => {
-          setTheme(theme === 'light' ? 'dark' : 'light')
-        })
-      }}
+      variant='ghost'
+      className={cn(className)}
+      onClick={() =>
+        startTransition(() => setTheme(theme === 'light' ? 'dark' : 'light'))
+      }
     >
       {hasMounted ? (
         !theme ? null : theme === 'dark' ? (

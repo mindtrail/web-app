@@ -25,14 +25,12 @@ import { getURLPathname } from '@/lib/utils'
 import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
-  historyMetadata: HistoryMetadata
   userId: string
   historyItems: HistoryItem[]
   userPreferences?: UserPreferences
 }
 
 export function HistoryComponent({
-  historyMetadata,
   historyItems,
   userId,
   userPreferences,
@@ -104,10 +102,7 @@ export function HistoryComponent({
     () =>
       itemsToDelete?.length &&
       itemsToDelete.map(({ displayName = '', name, type }, index) => (
-        <li
-          key={index}
-          className='max-w-[85%] overflow-hidden whitespace-nowrap text-ellipsis'
-        >
+        <li key={index}>
           {type === DataSourceType.file
             ? displayName
             : displayName + getURLPathname(name)}
@@ -158,7 +153,6 @@ export function HistoryComponent({
       <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
-        historyMetadata={historyMetadata}
         data={filteredItems}
         processing={processing}
         userPreferences={userPreferences}
@@ -170,10 +164,12 @@ export function HistoryComponent({
         <AlertDialogContent content=''>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
-            <AlertDialogDescription className='break-words'>
-              This will delete the history entries and the associated data. The action
-              cannot be undone and will permanently delete:
-              <span className='block mt-4 mb-2 list-disc list-inside '>
+            <AlertDialogDescription className='break-words flex flex-col'>
+              <span>This will delete the history entries and the associated data.</span>
+              <span>
+                The action cannot be undone and will <strong>permanently delete: </strong>
+              </span>
+              <span className='flex flex-col text-start mt-4 mb-2 list-disc gap-2'>
                 {deleteItemsList}
               </span>
             </AlertDialogDescription>

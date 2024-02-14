@@ -22,7 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: 'Categories',
+    title: 'All Items',
+    description: 'All items in your history',
   }
 }
 
@@ -47,18 +48,11 @@ export default async function ChatPage() {
   }
 
   historyItems = historyItems.splice(0, 40)
-  const historyMetadata = {
-    name: 'All items',
-    parent: '',
-    subParent: '',
-    parentLink: '',
-  }
 
   return (
     <HistoryComponent
-      historyMetadata={historyMetadata}
-      userId={userId}
       historyItems={historyItems}
+      userId={userId}
       userPreferences={userPreferences}
     />
   )

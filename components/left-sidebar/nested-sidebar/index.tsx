@@ -1,11 +1,17 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, KeyboardEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlusIcon } from '@radix-ui/react-icons'
 
+import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
+
+import { Input } from '@/components/ui/input'
+import { IconSearch } from '@/components/ui/icons/next-icons'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { useToast } from '@/components/ui/use-toast'
+import { Typography } from '@/components/typography'
+import { NestedItemInput } from '@/components/left-sidebar/nested-sidebar/item-input'
+
 import {
   Dialog,
   DialogContent,
@@ -22,49 +28,51 @@ import {
 } from '@/lib/serverActions/collection'
 
 import { NestedItem } from './nested-item'
-import { NestedTopSection } from './nested-top'
 import { Separator } from '@/components/ui/separator'
 
 type SecondSidebarProps = {
   activeNestedSidebar: NestedSidebarItem
-  itemListByCategory?: ItemListByCategory
+  nestedItemsByCategory?: NestedItemsByCategory
   pathname: string
   setActiveNestedSidebar: (value?: string) => void
-  setItemListByCategory: (value: ItemListByCategory) => void
+  setNestedItemsByCategory: (value: SetNestedItemByCat) => void
 }
 
 export const NestedSidebar = (props: SecondSidebarProps) => {
   const {
     activeNestedSidebar,
-    itemListByCategory,
+    nestedItemsByCategory,
     pathname,
     setActiveNestedSidebar,
-    setItemListByCategory,
+    setNestedItemsByCategory,
   } = props
 
   const router = useRouter()
   const { toast } = useToast()
 
+  const { entityType, name: sidebarName } = activeNestedSidebar
+
   const [allItems, setAllItems] = useState<SidebarItem[]>([])
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>([])
   const [loading, setLoading] = useState(true)
 
+  const [newName, setNewName] = useState('')
+  const [newItemInputVisible, setNewItemInputVisible] = useState(false)
+  const [opInProgress, setOpInProgress] = useState(false)
+
   const [searchValue, setSearchValue] = useState('')
   const [createItemfromSearchValue, setCreateItemFromSearchValue] = useState(false)
 
-  const [opInProgress, setOpInProgress] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
   useEffect(() => {
-    const { entityType } = activeNestedSidebar
-
-    if (itemListByCategory && Array.isArray(itemListByCategory[entityType])) {
-      setAllItems(itemListByCategory[entityType])
-      setFilteredItems(itemListByCategory[entityType])
+    if (nestedItemsByCategory && Array.isArray(nestedItemsByCategory[entityType])) {
+      setAllItems(nestedItemsByCategory[entityType])
+      setFilteredItems(nestedItemsByCategory[entityType])
       setLoading(false)
     }
-  }, [activeNestedSidebar, itemListByCategory])
+  }, [entityType, nestedItemsByCategory])
 
   const onDelete = (item: SidebarItem) => {
     setItemToDelete(item)
@@ -72,6 +80,8 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   }
 
   const onUpdateFolderName = async (id: string, newName: string) => {
+    setOpInProgress(true)
+
     try {
       await updateCollection({
         collectionId: id,
@@ -79,7 +89,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         description: '',
       })
 
-      const updatedItemList = filteredItems.map((item) => {
+      const updatedList = allItems.map((item) => {
         if (item.id === id) {
           return {
             ...item,
@@ -89,11 +99,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         return item
       })
 
-      updateItemListCallback(updatedItemList)
+      setNestedItemsByCategory({ entityType, items: updatedList })
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      // Implement your update logic here
+      setOpInProgress(false)
     }
   }
 
@@ -101,69 +111,75 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const onDuplicate = (id: string) => {}
 
   const confirmDelete = async () => {
+    setOpInProgress(true)
+
     if (!itemToDelete?.id) {
       setDeleteDialogOpen(false)
       return
     }
 
-    const { id: itemId, name } = itemToDelete
+    setDeleteDialogOpen(false)
 
     try {
-      await deleteCollection({
-        collectionId: itemId,
-      })
+      const { id: collectionId } = itemToDelete
+      await deleteCollection({ collectionId })
 
-      const remainingItems = filteredItems.filter((item) => item.id !== itemId)
-      updateItemListCallback(remainingItems)
+      const remainingItems = allItems.filter((item) => item.id !== collectionId)
+
+      setNestedItemsByCategory({ entityType, items: remainingItems })
     } catch (error) {
       console.error('Error:', error)
     } finally {
-      setDeleteDialogOpen(false)
+      setOpInProgress(false)
 
-      const itemType = activeNestedSidebar.name.substring(
-        0,
-        activeNestedSidebar.name.length - 1,
-      )
       toast({
-        title: `${itemType} deleted`,
-        description: `${name} has been deleted`,
+        title: `${entityType} deleted`,
+        description: `${itemToDelete?.name} has been deleted`,
       })
     }
   }
 
-  const onFilterItems = (value: string = '') => {
-    if (!allItems?.length) {
-      return
-    }
+  const onFilterItems = useCallback(
+    (value: string = '') => {
+      if (!allItems?.length) {
+        return
+      }
 
-    if (!value) {
-      setSearchValue('')
-      setFilteredItems(allItems)
-      setCreateItemFromSearchValue(false)
-      return
-    }
+      if (!value) {
+        setSearchValue('')
+        setFilteredItems(allItems)
+        setCreateItemFromSearchValue(false)
+        return
+      }
 
-    setSearchValue(value)
+      setSearchValue(value)
 
-    value = value.toLowerCase()
-    const filterResult = allItems.filter((item: any) =>
-      item.name.toLowerCase().includes(value),
-    )
+      value = value.toLowerCase()
+      const filterResult = allItems.filter((item: any) =>
+        item.name.toLowerCase().includes(value),
+      )
 
-    setFilteredItems(filterResult)
-    setCreateItemFromSearchValue(!filterResult?.length)
-  }
+      setFilteredItems(filterResult)
+      setCreateItemFromSearchValue(!filterResult?.length)
+    },
+    [allItems],
+  )
 
-  const onSaveNewItem = async (name: string) => {
+  const saveNewItem = async () => {
     setOpInProgress(true)
+
+    const newElementName = createItemfromSearchValue
+      ? searchValue
+      : newName || 'New folder'
 
     try {
       const response = await createCollection({
-        name,
+        name: newElementName,
         userId: '',
         description: '',
       })
 
+      // @TODO: improve this
       if ('id' in response && 'name' in response && 'description' in response) {
         const { id, name, description } = response
         const newItem = {
@@ -172,19 +188,21 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           description,
           url: `/folder/${response.id}`,
         }
-        const newItemList = [newItem, ...filteredItems]
 
-        router.push(newItem.url)
-        updateItemListCallback(newItemList)
+        const newItemList = [newItem, ...allItems]
+
+        setNestedItemsByCategory({ entityType, items: newItemList })
+        return router.push(newItem.url)
       } else {
         // Handle error case
-        const error = response
-        console.error('Error creating item:', error)
+        console.error('Error creating item:', response)
       }
     } catch (error) {
       console.error('Error:', error)
     } finally {
       setOpInProgress(false)
+      setNewItemInputVisible(false)
+
       if (createItemfromSearchValue) {
         setSearchValue('')
         setCreateItemFromSearchValue(false)
@@ -192,20 +210,15 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     }
   }
 
-  const updateItemListCallback = useCallback(
-    (newItemList: SidebarItem[]) => {
-      // setFilteredItems(newItemList)
+  const handleSearchKeydown = async (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      return saveNewItem()
+    }
 
-      // @ts-ignore
-      setItemListByCategory((prev) => {
-        return {
-          ...prev,
-          [activeNestedSidebar.entityType]: newItemList,
-        }
-      })
-    },
-    [activeNestedSidebar, setItemListByCategory],
-  )
+    if (event.key === 'Escape') {
+      onFilterItems('')
+    }
+  }
 
   const itemsCount =
     filteredItems?.length === allItems?.length
@@ -214,54 +227,119 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
 
   return (
     <div className={`flex flex-col flex-1 w-full border-t border-l`}>
-      <NestedTopSection
-        searchValue={searchValue}
-        activeNestedSidebar={activeNestedSidebar}
-        itemsCount={itemsCount}
-        opInProgress={opInProgress}
-        onSaveNewItem={onSaveNewItem}
-        onFilterItems={onFilterItems}
-        setActiveNestedSidebar={setActiveNestedSidebar}
-      />
+      <div className='Header px-2 py-2 flex justify-between items-center'>
+        <div className='flex items-center'>
+          <Button variant='ghost' size='icon' onClick={() => setActiveNestedSidebar()}>
+            <ChevronLeftIcon width={16} height={16} />
+          </Button>
+          <span className='flex-1 overflow-hidden whitespace-nowrap capitalize'>
+            {activeNestedSidebar?.name} ({itemsCount})
+          </span>
+        </div>
+
+        <Button
+          className='invisible group-hover:visible'
+          variant='ghost'
+          size='icon'
+          onClick={() => {
+            setNewItemInputVisible(true)
+            setNewName('')
+          }}
+        >
+          <PlusIcon width={16} height={16} />
+        </Button>
+      </div>
+      <div className='Search flex w-full items-center relative'>
+        <Input
+          id='search'
+          className='mx-2'
+          value={searchValue}
+          onChange={(e) => onFilterItems(e?.target?.value)}
+          onKeyDown={handleSearchKeydown}
+          placeholder='Search'
+        />
+
+        {!searchValue ? (
+          <IconSearch className='absolute right-4 opacity-50' />
+        ) : (
+          <Button
+            variant='ghost'
+            size='icon'
+            className='absolute right-2'
+            onClick={() => onFilterItems('')}
+          >
+            <Cross2Icon />
+          </Button>
+        )}
+      </div>
+
+      {newItemInputVisible && (
+        <div className='pt-4 -mt-[2px] -mb-2 px-2'>
+          <NestedItemInput
+            newName={newName}
+            opInProgress={opInProgress}
+            entityType={entityType}
+            setNewName={setNewName}
+            setInputVisibility={setNewItemInputVisible}
+            callbackFn={saveNewItem}
+          />
+        </div>
+      )}
 
       {loading ? (
         <IconSpinner className='self-center mt-24 h-6 w-6 text-foreground/50' />
       ) : (
-        <nav className='h-full'>
-          {/* Viewport height - Top and bottom areas */}
-          <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] px-2 pt-3 pb-1 gap-1'>
-            {/* Added this as a spacer, to have all the border visible on editing */}
-            <Separator className='bg-transparent h-[2px]' />
+        <div className='flex-1 flex flex-col px-2 pt-3 pb-1'>
+          <nav>
+            <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] '>
+              {/* Added this as a spacer, to have all the border visible on editing */}
+              <Separator className='bg-transparent h-[2px]' />
 
-            {filteredItems.map((item) => (
-              <NestedItem
-                key={item.id}
-                item={item}
-                pathname={pathname}
-                activeNestedSidebar={activeNestedSidebar}
-                onUpdateFolderName={onUpdateFolderName}
-                onDuplicate={onDuplicate}
-                onDelete={onDelete}
-              />
-            ))}
+              {filteredItems.map((item) => (
+                <NestedItem
+                  key={item.id}
+                  item={item}
+                  pathname={pathname}
+                  activeNestedSidebar={activeNestedSidebar}
+                  onUpdateFolderName={onUpdateFolderName}
+                  onDuplicate={onDuplicate}
+                  onDelete={onDelete}
+                />
+              ))}
 
-            <Separator className='bg-transparent h-[2px]' />
-          </ScrollArea>
+              <Separator className='bg-transparent h-[2px]' />
+            </ScrollArea>
+          </nav>
 
-          {!filteredItems?.length && (
-            <span className='absolute top-32 w-full text-center text-foreground/75'>
-              No items
-            </span>
+          {!filteredItems?.length && !createItemfromSearchValue && (
+            <div className='flex flex-col w-full gap-4'>
+              <Typography className='py-4 self-center'>No Items</Typography>
+              <Button
+                className='flex gap-2'
+                disabled={opInProgress}
+                // onClick={saveNewItem}
+              >
+                {opInProgress ? (
+                  <IconSpinner className='shrink-0' />
+                ) : (
+                  <PlusIcon className='shrink-0' width={16} height={16} />
+                )}
+
+                <span className='truncate'>
+                  {opInProgress ? 'Creating' : 'Create'} {entityType}
+                </span>
+              </Button>
+            </div>
           )}
-        </nav>
+        </div>
       )}
 
       {createItemfromSearchValue && (
-        <div className='absolute top-48 px-2 flex items-center w-full max-w-full'>
+        <div className='absolute top-24 mt-2 px-2 flex w-full z-10'>
           <Button
-            className='gap-1 flex-1 max-w-full'
+            className='flex flex-1 gap-2 justify-start max-w-full'
             disabled={opInProgress}
-            onClick={() => onSaveNewItem(searchValue)}
+            onClick={saveNewItem}
           >
             {opInProgress ? (
               <IconSpinner className='shrink-0' />

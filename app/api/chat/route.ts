@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { callLangchainChat } from '@/lib/langchain'
-import { callFlowiseChat } from '@/lib/flowise'
+// import { callFlowiseChat } from '@/lib/flowise'
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession

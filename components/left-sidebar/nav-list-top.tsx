@@ -1,5 +1,5 @@
-import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
@@ -25,7 +25,7 @@ export function NavListTop({ setActiveNestedSidebar }: NavListTopProps) {
           className={cn(SIDEBAR_BTN, pathname === url && ACTIVE_BTN)}
           onClick={() => setActiveNestedSidebar()}
         >
-          <Icon />
+          <Icon className='w-5 h-5' />
           {name}
         </Link>
       ))}

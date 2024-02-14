@@ -23,7 +23,7 @@ export function ImportDataSource({ userId }: ImportDataSource) {
   const onSubmit = async (data: ImportFormValues) => {
     try {
       await processImportData(data)
-      router.push('/history?refresh=true')
+      router.push('/all-items?refresh=true')
     } catch (err) {
       console.log(err)
 

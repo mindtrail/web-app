@@ -1,7 +1,12 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react'
-import { db, doc, onSnapshot, WEBSITES_COLLECTION } from '@/lib/firebase' // Assuming firebase.ts is in the same directory
-import { useToast } from '@/components/ui/use-toast'
+import { usePathname } from 'next/navigation'
+
+// import { db, doc, onSnapshot, WEBSITES_COLLECTION } from '@/lib/firebase' // Assuming firebase.ts is in the same directory
 import { globalReducer } from '@/context/global-reducer'
+import { getCollectionsByUserId } from '@/lib/serverActions/collection'
+// import { getFiltersByUserId } from '@/lib/serverActions/filter'
+// import { useToast } from '@/components/ui/use-toast'
+import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 interface Props {
   children: React.ReactNode
@@ -9,6 +14,8 @@ interface Props {
 
 const initialState: GlobalState = {
   unsyncedCollections: [],
+  nestedItemsByCategory: {},
+  activeNestedSidebar: undefined,
 }
 
 export const GlobalStateContext = createContext<[GlobalState, React.Dispatch<Action>]>([
@@ -19,15 +26,49 @@ export const GlobalStateContext = createContext<[GlobalState, React.Dispatch<Act
 export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(globalReducer, initialState)
 
-  const { toast } = useToast()
+  const pathname = usePathname()
 
   useEffect(() => {
-    const unsubscribeList: Function[] = []
-    // Loop through each unsynced collection and set up a Firestore listener
-    state.unsyncedCollections.forEach((collection) => {
-      console.log(collection)
+    const subpath = pathname.split('/')[1]
+    const openedSidebar = SIDEBAR_FOLDERS[subpath]
+
+    dispatch({
+      type: 'SET_ACTIVE_NESTED_SIDEBAR',
+      payload: openedSidebar,
     })
-  }, [state])
+  }, [pathname])
+
+  useEffect(() => {
+    getCollectionsList()
+    getTagsList()
+  }, [])
+
+  const getCollectionsList = async () => {
+    const items = await getCollectionsByUserId()
+    if (Array.isArray(items)) {
+      dispatch({
+        type: 'SET_NESTED_ITEMS_BY_CATEGORY',
+        payload: {
+          entityType: 'folder',
+          items,
+        },
+      })
+    }
+  }
+
+  const getTagsList = async () => {
+    const items = await getCollectionsByUserId()
+    if (Array.isArray(items)) {
+      const newArr = items.splice(3, 7)
+      dispatch({
+        type: 'SET_NESTED_ITEMS_BY_CATEGORY',
+        payload: {
+          entityType: 'tag',
+          items,
+        },
+      })
+    }
+  }
 
   return (
     <GlobalStateContext.Provider value={[state, dispatch]}>
@@ -42,4 +83,21 @@ export const useGlobalState = () => {
     throw new Error('useGlobalState must be used within a GlobalStateProvider')
   }
   return context
+}
+
+export const useGlobalStateActions = () => {
+  const [, dispatch] = useContext(GlobalStateContext)
+
+  const setNestedItemsByCategory = (payload: SetNestedItemByCat) => {
+    dispatch({ type: 'SET_NESTED_ITEMS_BY_CATEGORY', payload })
+  }
+
+  const setActiveNestedSidebar = (payload: NestedSidebarItem) => {
+    dispatch({ type: 'SET_ACTIVE_NESTED_SIDEBAR', payload })
+  }
+
+  return {
+    setNestedItemsByCategory,
+    setActiveNestedSidebar,
+  }
 }

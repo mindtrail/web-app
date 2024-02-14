@@ -1,6 +1,5 @@
 'use client'
 
-import { useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import { DataSourceStatus } from '@prisma/client'
 
@@ -8,7 +7,7 @@ import { Typography } from '@/components/typography'
 import { CollectionForm } from '@/components/collection/create/form'
 import { CollectionFormValues } from '@/components/collection/utils'
 import { useToast } from '@/components/ui/use-toast'
-import { GlobalStateContext } from '@/context/global-state'
+import { useGlobalState } from '@/context/global-state'
 
 import { scrapeURLs } from '@/lib/serverActions/dataSource'
 
@@ -24,8 +23,9 @@ export function CreateCollection({
   userId,
   collection: existingCollection,
 }: CollectionProps) {
-  const [, dispatch] = useContext(GlobalStateContext)
+  const [values, dispatch] = useGlobalState()
 
+  console.log(values)
   const { toast } = useToast()
   const router = useRouter()
 

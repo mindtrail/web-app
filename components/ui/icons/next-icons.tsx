@@ -451,8 +451,7 @@ function IconExternalLink({ className, ...props }: React.ComponentProps<'svg'>) 
 function IconMultipleFolders({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -470,8 +469,7 @@ function IconMultipleFolders({ className, ...props }: React.ComponentProps<'svg'
 function IconFolder({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -489,8 +487,7 @@ function IconFolder({ className, ...props }: React.ComponentProps<'svg'>) {
 function IconAllData({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -548,33 +545,10 @@ function IconIdea({ className, ...props }: React.ComponentProps<'svg'>) {
   )
 }
 
-function IconDotsVertical({ className, ...props }: React.ComponentProps<'svg'>) {
-  return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      className={cn('icon icon-tabler icon-tabler-dots-vertical', className)}
-      width='20'
-      height='20'
-      viewBox='0 0 24 24'
-      strokeWidth='1.5'
-      stroke='#2c3e50'
-      fill='none'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-    >
-      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
-      <path d='M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
-      <path d='M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
-      <path d='M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' />
-    </svg>
-  )
-}
-
 function IconTag({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -613,8 +587,7 @@ function IconSearch({ className, ...props }: React.ComponentProps<'svg'>) {
 function IconHighlight({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <svg
-      width='20'
-      height='20'
+      className={cn('h-4 w-4', className)}
       viewBox='0 0 20 20'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -622,17 +595,17 @@ function IconHighlight({ className, ...props }: React.ComponentProps<'svg'>) {
       <path
         fillRule='evenodd'
         clipRule='evenodd'
-        d='M13.333 2.01514C12.8568 2.05673 12.3984 2.22046 11.9999 2.49132C11.8471 2.59628 10.1869 4.27452 6.88696 7.65974L2 12.6724V16.5581H2.43038V17H6.21449L11.0961 11.983C14.2389 8.75242 16.0293 6.88635 16.1218 6.74383C16.4446 6.24555 16.6028 5.68982 16.6028 5.05012C16.6028 4.18835 16.3241 3.49451 15.7388 2.89238C15.0889 2.22616 14.268 1.92675 13.333 2.01514ZM14.0689 2.95093C14.464 3.03991 14.8261 3.2433 15.1121 3.53701C15.3981 3.83072 15.5962 4.20245 15.6828 4.60819C15.7829 5.09763 15.7237 5.55392 15.4989 6.02237C15.3966 6.23671 15.2804 6.38697 14.9534 6.73278L14.5391 7.1714L13.0554 5.65004L11.5727 4.12869L11.9988 3.70112C12.3366 3.36193 12.4787 3.24592 12.6906 3.13876C13.1147 2.91317 13.6022 2.84673 14.0689 2.95093ZM10.6345 11.172L7.36253 14.5329L5.88203 13.0138L4.4026 11.4946L7.67563 8.13371L10.9476 4.77391L12.4281 6.29306L13.9075 7.8111L10.6345 11.172ZM6.2769 15.6466L5.81962 16.1172L4.3488 16.1073L2.87905 16.0985L2.86937 14.5893L2.85968 13.0801L3.31696 12.6094L3.77424 12.1387L5.25475 13.6579L6.73418 15.177L6.2769 15.6466ZM11.5626 14.7174L9.33861 17H18V12.4337H13.7855L11.5626 14.7174ZM17.121 14.7174V16.0985L14.3149 16.1073C12.7709 16.1128 11.5088 16.104 11.5088 16.0896C11.5088 16.0742 12.1092 15.4444 12.8441 14.6898L14.1804 13.3165L15.6512 13.3264L17.121 13.3364V14.7174Z'
+        d='M17.0973 5.94107C17.3368 6.02246 17.4748 6.26952 17.4284 6.51343L17.4111 6.57975L17.2129 7.17457L15.6155 11.9744C15.3687 12.7109 14.6157 13.1307 13.8797 12.9706L13.5763 13.8754C13.3241 14.6345 12.3771 15.5389 11.6216 15.3391L11.5233 15.3095L11.3647 15.2556L10.8371 16.8372C10.6645 17.3567 10.2281 17.7606 9.70132 17.8636L9.58713 17.8806L2.8684 17.8789C2.54909 17.8675 2.25782 17.6103 2.32123 17.2833L2.33844 17.2177L3.81229 12.7903L3.65263 12.7363C2.90125 12.4817 2.63471 11.2157 2.83279 10.4525L2.86634 10.3403L3.16964 9.43582C2.51855 9.13136 2.16993 8.39567 2.35018 7.68851L2.38122 7.58271L3.7382 3.50206L3.78687 3.35528L4.14349 2.27972C4.23124 2.01569 4.51423 1.87344 4.77558 1.96199C5.01515 2.04316 5.15337 2.29009 5.10716 2.53404L5.08991 2.60038L3.32764 7.90337C3.2472 8.1454 3.35875 8.40573 3.57921 8.51565L3.64197 8.54177L14.0357 11.9697C14.2758 12.0507 14.5342 11.9377 14.6436 11.7154L14.6696 11.6521L16.465 6.25823C16.5529 5.99428 16.8361 5.85229 17.0973 5.94107ZM4.75871 13.111L10.4182 14.935L9.89068 16.5165L9.87318 16.562C9.79817 16.712 9.64516 16.7436 9.47675 16.7631L3.53468 16.7867L4.75871 13.111ZM4.11299 9.7648L12.9298 12.6585L12.6299 13.5548L12.5998 13.631C12.4909 13.8538 12.0807 14.4345 11.8411 14.3533L3.97041 11.7802L3.90764 11.7541C3.68718 11.6442 3.73234 10.903 3.81278 10.661L4.11299 9.7648Z'
         fill='currentColor'
       />
     </svg>
   )
 }
+
 export {
   IconHighlight,
   IconSearch,
   IconTag,
-  IconDotsVertical,
   IconIdea,
   IconCancel,
   IconAllData,

@@ -12,6 +12,7 @@ export const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
       <Component
         ref={ref}
         className={cn(
+          'text-foreground/70',
           {
             'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl':
               variant === 'h1',
