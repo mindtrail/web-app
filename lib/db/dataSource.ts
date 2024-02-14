@@ -16,7 +16,7 @@ export const getDataSourceListForUser = async (userId: string) => {
       },
     },
     orderBy: {
-      createdAt: 'desc',
+      // createdAt: 'desc',
     },
     include: {
       dataSourceTags: {
@@ -219,42 +219,50 @@ export const deleteDataSourceDbOp = async (
   dataSourceIdList: string[],
   userId: string,
 ) => {
-  // Step 1: Delete the m2m relationship between the user and the dataSource
-  await prisma.dataSourceUser.deleteMany({
-    where: {
-      dataSourceId: {
-        in: dataSourceIdList,
+  // Start a transaction
+  return await prisma.$transaction(async (prisma) => {
+    // Step 1: Delete the m2m relationship between dataSources & users / collections
+    const deleteDSUserConnection = prisma.dataSourceUser.deleteMany({
+      where: {
+        dataSourceId: { in: dataSourceIdList },
+        userId,
       },
+    })
+
+    const deleteDSCollectionConnection = removeDataSourceFromCollectionDbOp(
+      dataSourceIdList,
       userId,
-    },
-  })
+    )
 
-  const dataSourcesToDeleteFromDB = await prisma.dataSource.findMany({
-    where: {
-      id: {
-        in: dataSourceIdList,
+    await Promise.all([deleteDSUserConnection, deleteDSCollectionConnection])
+
+    // Step 2: Retrieve only the DS that don't have a user associated with.
+    const dataSourcesWithNoUser = await prisma.dataSource.findMany({
+      where: {
+        id: { in: dataSourceIdList },
+        dataSourceUsers: { none: {} },
       },
-      dataSourceUsers: {
-        none: {},
+    })
+
+    // Step 3: Delete those dataSource
+    const response = await prisma.dataSource.deleteMany({
+      where: {
+        id: {
+          in: dataSourcesWithNoUser.map((dataSource) => dataSource.id),
+        },
       },
-    },
+    })
+
+    if (response.count !== dataSourcesWithNoUser.length) {
+      throw new Error('Not all dataSources were deleted')
+    }
+
+    console.log(
+      'dataSourceDeleted:::',
+      dataSourcesWithNoUser.map((dataSource) => dataSource.id),
+    )
+    return dataSourcesWithNoUser
   })
-
-  // Step 2: Delete the dataSource if there are no more users associated with it
-
-  await prisma.dataSource.deleteMany({
-    where: {
-      id: {
-        in: dataSourcesToDeleteFromDB.map((dataSource) => dataSource.id),
-      },
-    },
-  })
-
-  console.log(
-    'dataSourceDeleted:::',
-    dataSourcesToDeleteFromDB.map((dataSource) => dataSource.id),
-  )
-  return dataSourcesToDeleteFromDB
 }
 
 function getMetadataFromChunk(chunk: Document): Partial<BrowserExtensionData> {
@@ -281,5 +289,17 @@ export const addDataSourcesToCollectionDbOp = async (
       collectionId,
     })),
     skipDuplicates: true,
+  })
+}
+
+export const removeDataSourceFromCollectionDbOp = async (
+  dataSourceIds: string[],
+  collectionId: string,
+) => {
+  return await prisma.collectionDataSource.deleteMany({
+    where: {
+      dataSourceId: { in: dataSourceIds },
+      collectionId,
+    },
   })
 }
