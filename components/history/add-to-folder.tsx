@@ -1,12 +1,11 @@
-import { useCallback, useState } from 'react'
-import { PlusIcon, Cross2Icon } from '@radix-ui/react-icons'
+import { useCallback, useState, useMemo } from 'react'
+import { PlusIcon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconFolder, IconAddToFolder } from '@/components/ui/icons/next-icons'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+
 import { useToast } from '@/components/ui/use-toast'
 import {
   Command,
@@ -18,12 +17,12 @@ import {
 
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
-import { cn } from '@/lib/utils'
 import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 import { createCollection } from '@/lib/serverActions/collection'
 import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
 
 type AddToFolderProps = {
+  currentFolderId?: string
   table: Table<HistoryItem>
   setAddToFolderVisibility: (value: boolean) => void
 }
@@ -31,54 +30,27 @@ type AddToFolderProps = {
 const ENTITY_TYPE = 'folder'
 const transitionStyle = 'transition-opacity duration-200 ease-in-out'
 
-export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProps) {
+export function AddToFolder(props: AddToFolderProps) {
+  const { currentFolderId, table, setAddToFolderVisibility } = props
+
   const { toast } = useToast()
 
   const [{ nestedItemsByCategory }] = useGlobalState()
   const { setNestedItemsByCategory, setActiveNestedSidebar } = useGlobalStateActions()
 
-  const folderList = nestedItemsByCategory.folder
-
-  const [filteredItems, setFilteredItems] = useState(
-    folderList.map(({ id, name }) => ({
-      value: id,
-      label: name,
-    })),
-  )
-
-  const [value, setValue] = useState('')
   const [searchValue, setSearchValue] = useState('')
 
-  const onFilterItems = useCallback(
-    (value: string = '') => {
-      if (!folderList?.length) {
-        return
-      }
+  const allFolders = useMemo(
+    () => nestedItemsByCategory.folder,
+    [nestedItemsByCategory.folder],
+  )
 
-      if (!value) {
-        setSearchValue('')
-        setFilteredItems(
-          folderList.map(({ id, name }) => ({
-            value: id,
-            label: name,
-          })),
-        )
-        return
-      }
-
-      setSearchValue(value)
-
-      value = value.toLowerCase()
-      const filterResult = folderList
-        .filter((item: any) => item.name.toLowerCase().includes(value))
-        .map(({ id, name }) => ({
-          value: id,
-          label: name,
-        }))
-
-      setFilteredItems(filterResult)
-    },
-    [folderList],
+  const filteredItems = useMemo(
+    () =>
+      allFolders
+        .filter(({ id }) => id != currentFolderId)
+        .map(({ id, name }) => ({ value: id, label: name })),
+    [allFolders, currentFolderId],
   )
 
   const onAddToFolder = useCallback(
@@ -102,7 +74,7 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
               url: `/folder/${newCollectionId}`,
             }
 
-            const newItemList = [newItem, ...folderList]
+            const newItemList = [newItem, ...allFolders]
             setNestedItemsByCategory({ entityType: ENTITY_TYPE, items: newItemList })
           }
         } catch (error) {
@@ -151,7 +123,7 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
     },
     [
       table,
-      folderList,
+      allFolders,
       toast,
       setNestedItemsByCategory,
       setActiveNestedSidebar,
