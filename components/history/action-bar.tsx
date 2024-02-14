@@ -13,11 +13,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { AddToFolder } from '@/components/history/add-to-folder'
 
 import { cn, getURLPathname } from '@/lib/utils'
-
-import {
-  deleteDataSource,
-  removeDataSourceFromCollection,
-} from '@/lib/serverActions/dataSource'
+import { deleteDataSource } from '@/lib/serverActions/dataSource'
 
 import {
   AlertDialog,
