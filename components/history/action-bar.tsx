@@ -38,11 +38,15 @@ const actionBarBtnStyle = cn(
   buttonVariants({ variant: 'ghost', size: 'sm' }),
 )
 
+const FOLDER_ENTITY = 'folder'
+
 export const ActionBar = ({ table }: ActionBarProps) => {
   const pathname = usePathname()
   const { toast } = useToast()
 
-  const entityType = pathname.split('/')[1]
+  const pathFragments = pathname.split('/')
+  const entityType = pathFragments[1]
+  const currentFolderId = pathFragments[2]
 
   const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
   const [addTagsOpen, setAddTagsOpen] = useState(false)
@@ -118,6 +122,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
             <PopoverContent className='w-64 px-4' align='start'>
               <AddToFolder
                 table={table}
+                currentFolderId={currentFolderId}
                 setAddToFolderVisibility={setAddToFolderVisibility}
               />
             </PopoverContent>
