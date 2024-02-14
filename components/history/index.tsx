@@ -1,11 +1,9 @@
 'use client'
 
-import { MouseEvent, useCallback, useMemo, useState } from 'react'
+import { MouseEvent, useCallback, useState } from 'react'
 
 import { useDrop } from 'react-dnd'
 import { UserPreferences } from '@prisma/client'
-
-import { Button } from '@/components/ui/button'
 
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'

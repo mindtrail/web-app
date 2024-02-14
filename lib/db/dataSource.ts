@@ -275,7 +275,6 @@ export const removeDataSourceFromCollectionDbOp = async (
   dataSourceIds: string[],
   collectionId: string,
 ) => {
-  console.log(dataSourceIds, collectionId)
   return await prisma.collectionDataSource.deleteMany({
     where: {
       dataSourceId: { in: dataSourceIds },

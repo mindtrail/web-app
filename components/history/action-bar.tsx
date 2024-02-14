@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useState } from 'react'
-import { TrashIcon } from '@radix-ui/react-icons'
-import { Table as ReactTable } from '@tanstack/react-table'
+import { useCallback, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { DataSourceType } from '@prisma/client'
+import { TrashIcon } from '@radix-ui/react-icons'
+import { Table } from '@tanstack/react-table'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -12,11 +13,12 @@ import { useToast } from '@/components/ui/use-toast'
 import { AddToFolder } from '@/components/history/add-to-folder'
 
 import { cn, getURLPathname } from '@/lib/utils'
-import { createCollection } from '@/lib/serverActions/collection'
 import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 
-import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
-import { deleteDataSource } from '@/lib/serverActions/history'
+import {
+  deleteDataSource,
+  removeDataSourceFromCollection,
+} from '@/lib/serverActions/dataSource'
 
 import {
   AlertDialog,
@@ -29,7 +31,7 @@ import {
 } from '@/components/ui/alert-dialog'
 
 type ActionBarProps = {
-  table: ReactTable<HistoryItem>
+  table: Table<HistoryItem>
 }
 
 const actionBarBtnStyle = cn(
@@ -37,22 +39,14 @@ const actionBarBtnStyle = cn(
   buttonVariants({ variant: 'ghost', size: 'sm' }),
 )
 
-const FOLDER_ENTITY = 'folder'
-
 export const ActionBar = ({ table }: ActionBarProps) => {
-  const areRowsSelected = table.getIsSomePageRowsSelected()
-
-  const [addToFolderOpen, setAddToFolderOpen] = useState(false)
-  const [addTagsOpen, setAddTagsOpen] = useState(false)
-  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
-
   const { toast } = useToast()
-  const { setNestedItemsByCategory } = useGlobalStateActions()
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [processing, setProcessing] = useState(false)
 
-  const [state] = useGlobalState()
-  const { nestedItemsByCategory } = state
+  const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
+  const [addTagsOpen, setAddTagsOpen] = useState(false)
+
+  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
@@ -99,90 +93,11 @@ export const ActionBar = ({ table }: ActionBarProps) => {
     }
   }, [itemsToDelete, toast])
 
-  const onAddToFolder = useCallback(
-    async (payload: AddItemToFolder) => {
-      const { existingFolderId, newFolderName } = payload
-
-      let collectionId = existingFolderId
-
-      if (newFolderName) {
-        try {
-          const response = await createCollection({
-            name: newFolderName,
-            userId: '',
-            description: '',
-          })
-
-          // @TODO: improve this
-          if ('id' in response && 'name' in response && 'description' in response) {
-            const { id, name, description } = response
-
-            const newItem = {
-              id,
-              name,
-              description,
-              url: `/folder/${response.id}`,
-            }
-
-            collectionId = id
-            const newItemList = [newItem, ...nestedItemsByCategory.folder]
-
-            setNestedItemsByCategory({
-              entityType: FOLDER_ENTITY,
-              items: newItemList,
-            })
-          }
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
-      if (!collectionId) {
-        return console.log(' No collection ID found')
-      }
-
-      const dataSourceIds = table
-        .getSelectedRowModel() // @ts-ignore
-        .rows.map(({ original }) => original.id)
-
-      const result = await addDataSourcesToCollection(dataSourceIds, collectionId)
-
-      console.log(result)
-      // @ts-ignore
-      if (result?.error) {
-        toast({
-          title: 'Error',
-          variant: 'destructive',
-          description: 'No Items added to folder',
-        })
-        return console.log('No result')
-      }
-
-      // @ts-ignore
-      const nrOfitemsAdded = result?.count
-      const nrOfSelected = dataSourceIds?.length
-      const nrOfExisting = nrOfSelected - nrOfitemsAdded
-
-      toast({
-        title: 'Success',
-        description: `Added: ${nrOfitemsAdded} item(s).
-        ${nrOfExisting ? `Existing: ${nrOfExisting} item(s).` : ''}`,
-      })
-
-      setAddToFolderOpen(false)
-      table.resetRowSelection()
-
-      // @TODO: show a toast, close the popup, and unselect the items
-    },
-    [table, nestedItemsByCategory.folder, setNestedItemsByCategory, toast],
-  )
-
   return (
     <>
       <div
-        className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
-    flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
-    ${areRowsSelected && '!visible'}`}
+        className={`absolute w-full h-10 bg-background border-b shadow-sm
+          flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md`}
       >
         <Checkbox
           checked={
@@ -193,13 +108,16 @@ export const ActionBar = ({ table }: ActionBarProps) => {
           aria-label='Select all'
         />
         <div className='flex items-center gap-4 ml-2'>
-          <Popover open={addToFolderOpen} onOpenChange={setAddToFolderOpen}>
+          <Popover open={addToFolderVisibility} onOpenChange={setAddToFolderVisibility}>
             <PopoverTrigger className={actionBarBtnStyle}>
               <IconFolder className='shrink-0' />
               Add to Folder
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              <AddToFolder onAddToFolder={onAddToFolder} />
+              <AddToFolder
+                table={table}
+                setAddToFolderVisibility={setAddToFolderVisibility}
+              />
             </PopoverContent>
           </Popover>
           <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>

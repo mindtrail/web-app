@@ -1,23 +1,33 @@
 import { useCallback, useState } from 'react'
 import { PlusIcon, Cross2Icon, UploadIcon } from '@radix-ui/react-icons'
-
-import { useGlobalState } from '@/context/global-state'
+import { Table } from '@tanstack/react-table'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconFolder } from '@/components/ui/icons/next-icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useToast } from '@/components/ui/use-toast'
+
+import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
+
+import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
+import { createCollection } from '@/lib/serverActions/collection'
+import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
 
 type AddToFolderProps = {
-  onAddToFolder: (props: AddItemToFolder) => void
+  table: Table<HistoryItem>
+  setAddToFolderVisibility: (value: boolean) => void
 }
 
+const ENTITY_TYPE = 'folder'
 const transitionStyle = 'transition-opacity duration-200 ease-in-out'
 
-export function AddToFolder({ onAddToFolder }: AddToFolderProps) {
-  const [state] = useGlobalState()
-  const { nestedItemsByCategory } = state
+export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProps) {
+  const { toast } = useToast()
+
+  const [{ nestedItemsByCategory }] = useGlobalState()
+  const { setNestedItemsByCategory, setActiveNestedSidebar } = useGlobalStateActions()
 
   const folderList = nestedItemsByCategory.folder
 
@@ -46,6 +56,92 @@ export function AddToFolder({ onAddToFolder }: AddToFolderProps) {
       setFilteredItems(filterResult)
     },
     [folderList],
+  )
+
+  const onAddToFolder = useCallback(
+    async (payload: AddItemToFolder) => {
+      const { existingFolderId, newFolderName } = payload
+
+      let collectionId = existingFolderId
+
+      if (newFolderName) {
+        try {
+          const response = await createCollection({
+            name: newFolderName,
+            userId: '',
+            description: '',
+          })
+
+          // @TODO: improve this
+          if ('id' in response && 'name' in response && 'description' in response) {
+            const { id, name, description } = response
+
+            const newItem = {
+              id,
+              name,
+              description,
+              url: `/folder/${response.id}`,
+            }
+
+            collectionId = id
+            const newItemList = [newItem, ...folderList]
+
+            setNestedItemsByCategory({
+              entityType: ENTITY_TYPE,
+              items: newItemList,
+            })
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+      if (!collectionId) {
+        return console.log(' No collection ID found')
+      }
+
+      const dataSourceIds = table
+        .getSelectedRowModel() // @ts-ignore
+        .rows.map(({ original }) => original.id)
+
+      const result = await addDataSourcesToCollection(dataSourceIds, collectionId)
+
+      console.log(result)
+      // @ts-ignore
+      if (result?.error) {
+        toast({
+          title: 'Error',
+          variant: 'destructive',
+          description: 'No Items added to folder',
+        })
+        return console.log('No result')
+      }
+
+      // @ts-ignore
+      const nrOfitemsAdded = result?.count
+      const nrOfSelected = dataSourceIds?.length
+      const nrOfExisting = nrOfSelected - nrOfitemsAdded
+
+      toast({
+        title: 'Success',
+        description: `Added: ${nrOfitemsAdded} item(s).
+        ${nrOfExisting ? `Existing: ${nrOfExisting} item(s).` : ''}`,
+      })
+
+      setAddToFolderVisibility(false)
+      table.resetRowSelection()
+
+      // @TODO: TBD if I keep this operation
+      setActiveNestedSidebar(SIDEBAR_FOLDERS[ENTITY_TYPE])
+    },
+    [
+      table,
+      folderList,
+      toast,
+      setNestedItemsByCategory,
+      setActiveNestedSidebar,
+      setAddToFolderVisibility,
+    ],
   )
 
   return (
