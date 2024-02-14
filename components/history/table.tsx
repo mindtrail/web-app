@@ -88,6 +88,8 @@ export function DataTable<TData>({
   }) as ReactTable<HistoryItem>
 
   const { rows } = table.getRowModel()
+  const areRowsSelected =
+    table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
   return (
     <>
@@ -107,7 +109,7 @@ export function DataTable<TData>({
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
-        <ActionBar table={table} />
+        {areRowsSelected && <ActionBar table={table} />}
 
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
