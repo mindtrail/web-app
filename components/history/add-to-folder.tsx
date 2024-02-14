@@ -31,13 +31,6 @@ type AddToFolderProps = {
 const ENTITY_TYPE = 'folder'
 const transitionStyle = 'transition-opacity duration-200 ease-in-out'
 
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-]
-
 export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProps) {
   const { toast } = useToast()
 
@@ -96,30 +89,21 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
 
       if (newFolderName) {
         try {
-          const response = await createCollection({
-            name: newFolderName,
-            userId: '',
-            description: '',
-          })
+          const newCollection = await createCollection({ name: newFolderName })
 
           // @TODO: improve this
-          if ('id' in response && 'name' in response && 'description' in response) {
-            const { id, name, description } = response
+          if ('id' in newCollection) {
+            const { id: newCollectionId } = newCollection
 
+            collectionId = newCollectionId
             const newItem = {
-              id,
-              name,
-              description,
-              url: `/folder/${response.id}`,
+              id: newCollectionId,
+              name: newFolderName,
+              url: `/folder/${newCollectionId}`,
             }
 
-            collectionId = id
             const newItemList = [newItem, ...folderList]
-
-            setNestedItemsByCategory({
-              entityType: ENTITY_TYPE,
-              items: newItemList,
-            })
+            setNestedItemsByCategory({ entityType: ENTITY_TYPE, items: newItemList })
           }
         } catch (error) {
           console.log(error)
@@ -136,9 +120,10 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
 
       const result = await addDataSourcesToCollection(seledItemListIds, collectionId)
 
-      console.log(result)
       // @ts-ignore
-      if (result?.error) {
+      const { error, count: nrOfitemsAdded } = result
+
+      if (error) {
         toast({
           title: 'Error',
           variant: 'destructive',
@@ -147,15 +132,13 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
         return console.log('No result')
       }
 
-      // @ts-ignore
-      const nrOfitemsAdded = result?.count
       const nrOfSelected = seledItemListIds?.length
-      const nrOfExisting = nrOfSelected - nrOfitemsAdded
+      const nrOfItemsAlreadyExisting = nrOfSelected - nrOfitemsAdded
 
       toast({
         title: 'Success',
         description: `Added: ${nrOfitemsAdded} item(s).
-        ${nrOfExisting ? `Existing: ${nrOfExisting} item(s).` : ''}`,
+        ${nrOfItemsAlreadyExisting ? `Existing: ${nrOfItemsAlreadyExisting} item(s).` : ''}`,
       })
 
       setAddToFolderVisibility(false)
@@ -163,6 +146,8 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
 
       // @TODO: TBD if I keep this operation
       setActiveNestedSidebar(SIDEBAR_FOLDERS[ENTITY_TYPE])
+      // @TODO: Create an animation for the selected folder
+      // animation...
     },
     [
       table,
@@ -173,82 +158,6 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
       setAddToFolderVisibility,
     ],
   )
-
-  const abc = (
-    <div className='flex flex-col gap-3 items-start'>
-      <div className='flex flex-col w-full'>
-        <div className='search flex w-full items-center relative  mb-3'>
-          <Input
-            id='search'
-            autoFocus
-            className='w-full pl-4'
-            value={searchValue}
-            onChange={(e) => onFilterItems(e?.target?.value)}
-            placeholder='Type to search or create...'
-          />
-
-          {searchValue && (
-            <Button
-              variant='ghost'
-              size='icon'
-              className='absolute right-0'
-              onClick={() => onFilterItems('')}
-            >
-              <Cross2Icon />
-            </Button>
-          )}
-        </div>
-
-        {/* there's some css issue here. Fixed it for now with 254 instead of */}
-        <div className='-ml-4 w-[254px]'>
-          <ScrollArea className='flex px-4 flex-col max-h-[35vh]'>
-            {filteredItems?.map(({ value, label }: any, index) => (
-              <Tooltip key={index}>
-                <TooltipTrigger asChild>
-                  <Button
-                    className='w-full px-2 flex gap-2 justify-start cursor-default group'
-                    variant='ghost'
-                    onClick={() => onAddToFolder({ existingFolderId: value })}
-                  >
-                    <span className='w-4 h-4 relative'>
-                      <IconFolder
-                        className={`${transitionStyle} absolute group-hover:opacity-0`}
-                      />
-                      <IconAddToFolder
-                        className={`${transitionStyle} absolute opacity-0 group-hover:opacity-100`}
-                      />
-                    </span>
-
-                    {/* <IconFolder className='group-hover:hidden' />
-                    <UploadIcon className='hidden w-4 h-4 group-hover:flex' /> */}
-                    {label}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side='right' sideOffset={-48}>
-                  Add items to {label}
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </ScrollArea>
-        </div>
-
-        {!filteredItems?.length && (
-          <Button
-            className='flex items-center gap-2 w-full justify-start'
-            variant='ghost'
-            onClick={() => onAddToFolder({ newFolderName: searchValue })}
-          >
-            <PlusIcon className='shrink-0' />
-            <span className='max-w-44 truncate'>
-              Add to Folder {!filteredItems?.length && searchValue}
-            </span>
-          </Button>
-        )}
-      </div>
-    </div>
-  )
-
-  // return abc
 
   return (
     // @ts-ignore
@@ -272,11 +181,7 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
             <CommandItem
               key={index}
               className='flex gap-2 cursor-default group'
-              onSelect={() => {
-                console.log(value, label)
-                onAddToFolder({ existingFolderId: value })
-                // setValue(currentValue === value ? '' : currentValue)
-              }}
+              onSelect={() => onAddToFolder({ existingFolderId: value })}
             >
               <span className='w-4 h-4 relative'>
                 <IconFolder
