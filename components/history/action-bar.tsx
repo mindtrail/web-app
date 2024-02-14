@@ -1,20 +1,23 @@
-import { useCallback } from 'react'
-import { cn } from '@/lib/utils'
+import { useCallback, useState } from 'react'
+import { TrashIcon } from '@radix-ui/react-icons'
+import { Table as ReactTable } from '@tanstack/react-table'
+
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-
-import { TrashIcon } from '@radix-ui/react-icons'
 import { IconTag, IconFolder } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useToast } from '@/components/ui/use-toast'
 
 import { AddToFolder } from '@/components/history/add-to-folder'
 
-import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
+import { cn } from '@/lib/utils'
 import { createCollection } from '@/lib/serverActions/collection'
+import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
+
 import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
 
 type ActionBarProps = {
-  table: any
+  table: ReactTable<HistoryItem>
   areRowsSelected: boolean
   handleHistoryDelete: (ids: HistoryItem[]) => void
 }
@@ -29,7 +32,12 @@ const FOLDER_ENTITY = 'folder'
 export const ActionBar = (props: ActionBarProps) => {
   const { areRowsSelected, table, handleHistoryDelete } = props
 
+  const [addToFolderOpen, setAddToFolderOpen] = useState(false)
+  const [addTagsOpen, setAddTagsOpen] = useState(false)
+
+  const { toast } = useToast()
   const { setNestedItemsByCategory } = useGlobalStateActions()
+
   const [state] = useGlobalState()
   const { nestedItemsByCategory } = state
 
@@ -48,7 +56,6 @@ export const ActionBar = (props: ActionBarProps) => {
       let collectionId = existingFolderId
 
       if (newFolderName) {
-        console.log(newFolderName)
         try {
           const response = await createCollection({
             name: newFolderName,
@@ -56,7 +63,6 @@ export const ActionBar = (props: ActionBarProps) => {
             description: '',
           })
 
-          console.log(newFolderName)
           // @TODO: improve this
           if ('id' in response && 'name' in response && 'description' in response) {
             const { id, name, description } = response
@@ -89,9 +95,36 @@ export const ActionBar = (props: ActionBarProps) => {
         .getSelectedRowModel() // @ts-ignore
         .rows.map(({ original }) => original.id)
 
-      addDataSourcesToCollection(dataSourceIds, collectionId)
+      const result = await addDataSourcesToCollection(dataSourceIds, collectionId)
+
+      console.log(result)
+      // @ts-ignore
+      if (result?.error) {
+        toast({
+          title: 'Error',
+          variant: 'destructive',
+          description: 'No Items added to folder',
+        })
+        return console.log('No result')
+      }
+
+      // @ts-ignore
+      const nrOfitemsAdded = result?.count
+      const nrOfSelected = dataSourceIds?.length
+      const nrOfExisting = nrOfSelected - nrOfitemsAdded
+
+      toast({
+        title: 'Success',
+        description: `Added: ${nrOfitemsAdded} item(s).
+        ${nrOfExisting ? `Existing: ${nrOfExisting} item(s).` : ''}`,
+      })
+
+      setAddToFolderOpen(false)
+      table.resetRowSelection()
+
+      // @TODO: show a toast, close the popup, and unselect the items
     },
-    [table, nestedItemsByCategory.folder, setNestedItemsByCategory],
+    [table, nestedItemsByCategory.folder, setNestedItemsByCategory, toast],
   )
 
   return (
@@ -109,7 +142,7 @@ export const ActionBar = (props: ActionBarProps) => {
         aria-label='Select all'
       />
       <div className='flex items-center gap-4 ml-2'>
-        <Popover>
+        <Popover open={addToFolderOpen} onOpenChange={setAddToFolderOpen}>
           <PopoverTrigger className={actionBarBtnStyle}>
             <IconFolder className='shrink-0' />
             Add to Folder
@@ -118,7 +151,7 @@ export const ActionBar = (props: ActionBarProps) => {
             <AddToFolder onAddToFolder={onAddToFolder} />
           </PopoverContent>
         </Popover>
-        <Popover>
+        <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
           <PopoverTrigger className={actionBarBtnStyle}>
             <IconTag className='shrink-0' />
             Add Tags

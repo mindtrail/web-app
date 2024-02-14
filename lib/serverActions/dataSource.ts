@@ -72,6 +72,9 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
   }
 }
 
+type AddDSToCollectinResponse = {
+  count: number
+}
 export const addDataSourcesToCollection = async (
   dataSourceIds: string[],
   collectionId: string,
@@ -99,7 +102,7 @@ export const addDataSourcesToCollection = async (
   }
 
   try {
-    const result = await addDataSourcesToCollectionDbOp(dataSourceIds, collectionId)
+    return await addDataSourcesToCollectionDbOp(dataSourceIds, collectionId)
   } catch (e) {
     console.log('Error ---', e)
     const result = {

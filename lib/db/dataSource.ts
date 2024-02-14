@@ -275,10 +275,11 @@ export const addDataSourcesToCollectionDbOp = async (
   dataSourceIds: string[],
   collectionId: string,
 ) => {
-  await prisma.collectionDataSource.createMany({
+  return await prisma.collectionDataSource.createMany({
     data: dataSourceIds.map((dataSourceId) => ({
       dataSourceId,
       collectionId,
     })),
+    skipDuplicates: true,
   })
 }
