@@ -1,11 +1,5 @@
 import { useCallback, useState } from 'react'
-import {
-  PlusIcon,
-  Cross2Icon,
-  UploadIcon,
-  CheckIcon,
-  CheckCircledIcon,
-} from '@radix-ui/react-icons'
+import { PlusIcon, Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
 import { Input } from '@/components/ui/input'
@@ -136,11 +130,11 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
         return console.log(' No collection ID found')
       }
 
-      const dataSourceIds = table
-        .getSelectedRowModel() // @ts-ignore
+      const seledItemListIds = table
+        .getSelectedRowModel()
         .rows.map(({ original }) => original.id)
 
-      const result = await addDataSourcesToCollection(dataSourceIds, collectionId)
+      const result = await addDataSourcesToCollection(seledItemListIds, collectionId)
 
       console.log(result)
       // @ts-ignore
@@ -155,7 +149,7 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
 
       // @ts-ignore
       const nrOfitemsAdded = result?.count
-      const nrOfSelected = dataSourceIds?.length
+      const nrOfSelected = seledItemListIds?.length
       const nrOfExisting = nrOfSelected - nrOfitemsAdded
 
       toast({
@@ -165,7 +159,7 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
       })
 
       setAddToFolderVisibility(false)
-      table.resetRowSelection()
+      // table.resetRowSelection()
 
       // @TODO: TBD if I keep this operation
       setActiveNestedSidebar(SIDEBAR_FOLDERS[ENTITY_TYPE])
@@ -277,11 +271,11 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
           {filteredItems.map(({ value, label }, index) => (
             <CommandItem
               key={index}
-              value={value}
               className='flex gap-2 cursor-default group'
-              onSelect={(currentValue, ...rest) => {
-                console.log(currentValue, rest)
-                setValue(currentValue === value ? '' : currentValue)
+              onSelect={() => {
+                console.log(value, label)
+                onAddToFolder({ existingFolderId: value })
+                // setValue(currentValue === value ? '' : currentValue)
               }}
             >
               <span className='w-4 h-4 relative'>
@@ -295,12 +289,6 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
                 />
               </span>
               {label}
-              <CheckIcon
-                className={cn(
-                  'absolute right-4 h-4 w-4',
-                  value === value ? 'opacity-100' : 'opacity-0',
-                )}
-              />
             </CommandItem>
           ))}
         </CommandGroup>
