@@ -1,16 +1,30 @@
 import { useCallback, useState } from 'react'
-import { PlusIcon, Cross2Icon, UploadIcon } from '@radix-ui/react-icons'
+import {
+  PlusIcon,
+  Cross2Icon,
+  UploadIcon,
+  CheckIcon,
+  CheckCircledIcon,
+} from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { IconFolder } from '@/components/ui/icons/next-icons'
+import { IconFolder, IconAddToFolder } from '@/components/ui/icons/next-icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/components/ui/use-toast'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command'
 
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
+import { cn } from '@/lib/utils'
 import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 import { createCollection } from '@/lib/serverActions/collection'
 import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
@@ -23,6 +37,13 @@ type AddToFolderProps = {
 const ENTITY_TYPE = 'folder'
 const transitionStyle = 'transition-opacity duration-200 ease-in-out'
 
+const frameworks = [
+  {
+    value: 'next.js',
+    label: 'Next.js',
+  },
+]
+
 export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProps) {
   const { toast } = useToast()
 
@@ -31,7 +52,14 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
 
   const folderList = nestedItemsByCategory.folder
 
-  const [filteredItems, setFilteredItems] = useState<SidebarItem[]>(folderList)
+  const [filteredItems, setFilteredItems] = useState(
+    folderList.map(({ id, name }) => ({
+      value: id,
+      label: name,
+    })),
+  )
+
+  const [value, setValue] = useState('')
   const [searchValue, setSearchValue] = useState('')
 
   const onFilterItems = useCallback(
@@ -42,16 +70,24 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
 
       if (!value) {
         setSearchValue('')
-        setFilteredItems(folderList)
+        setFilteredItems(
+          folderList.map(({ id, name }) => ({
+            value: id,
+            label: name,
+          })),
+        )
         return
       }
 
       setSearchValue(value)
 
       value = value.toLowerCase()
-      const filterResult = folderList.filter((item: any) =>
-        item.name.toLowerCase().includes(value),
-      )
+      const filterResult = folderList
+        .filter((item: any) => item.name.toLowerCase().includes(value))
+        .map(({ id, name }) => ({
+          value: id,
+          label: name,
+        }))
 
       setFilteredItems(filterResult)
     },
@@ -144,7 +180,7 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
     ],
   )
 
-  return (
+  const abc = (
     <div className='flex flex-col gap-3 items-start'>
       <div className='flex flex-col w-full'>
         <div className='search flex w-full items-center relative  mb-3'>
@@ -172,30 +208,30 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
         {/* there's some css issue here. Fixed it for now with 254 instead of */}
         <div className='-ml-4 w-[254px]'>
           <ScrollArea className='flex px-4 flex-col max-h-[35vh]'>
-            {filteredItems?.map(({ id, name }: any) => (
-              <Tooltip key={id}>
+            {filteredItems?.map(({ value, label }: any, index) => (
+              <Tooltip key={index}>
                 <TooltipTrigger asChild>
                   <Button
-                    className='w-full px-2 justify-start flex gap-2 cursor-default group'
+                    className='w-full px-2 flex gap-2 justify-start cursor-default group'
                     variant='ghost'
-                    onClick={() => onAddToFolder({ existingFolderId: id })}
+                    onClick={() => onAddToFolder({ existingFolderId: value })}
                   >
                     <span className='w-4 h-4 relative'>
                       <IconFolder
                         className={`${transitionStyle} absolute group-hover:opacity-0`}
                       />
-                      <UploadIcon
+                      <IconAddToFolder
                         className={`${transitionStyle} absolute opacity-0 group-hover:opacity-100`}
                       />
                     </span>
 
                     {/* <IconFolder className='group-hover:hidden' />
                     <UploadIcon className='hidden w-4 h-4 group-hover:flex' /> */}
-                    {name}
+                    {label}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side='right' sideOffset={-48}>
-                  Add items to {name}
+                  Add items to {label}
                 </TooltipContent>
               </Tooltip>
             ))}
@@ -205,7 +241,7 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
         {!filteredItems?.length && (
           <Button
             className='flex items-center gap-2 w-full justify-start'
-            variant={filteredItems?.length ? 'ghost' : 'default'}
+            variant='ghost'
             onClick={() => onAddToFolder({ newFolderName: searchValue })}
           >
             <PlusIcon className='shrink-0' />
@@ -216,5 +252,59 @@ export function AddToFolder({ table, setAddToFolderVisibility }: AddToFolderProp
         )}
       </div>
     </div>
+  )
+
+  // return abc
+
+  return (
+    // @ts-ignore
+    <Command onChange={(e) => setSearchValue(e.target?.value)}>
+      <CommandInput placeholder='Type to search or create...' />
+      <CommandEmpty className='py-4'>
+        <Button
+          className='flex items-center gap-2 px-3 w-full justify-start'
+          variant='ghost'
+          onClick={() => onAddToFolder({ newFolderName: searchValue })}
+        >
+          <PlusIcon className='shrink-0' />
+          <span className='max-w-44 truncate'>
+            Add to <strong>{searchValue}</strong>
+          </span>
+        </Button>
+      </CommandEmpty>
+      <ScrollArea className='flex flex-col max-h-[40vh]'>
+        <CommandGroup className='px-0'>
+          {filteredItems.map(({ value, label }, index) => (
+            <CommandItem
+              key={index}
+              value={value}
+              className='flex gap-2 cursor-default group'
+              onSelect={(currentValue, ...rest) => {
+                console.log(currentValue, rest)
+                setValue(currentValue === value ? '' : currentValue)
+              }}
+            >
+              <span className='w-4 h-4 relative'>
+                <IconFolder
+                  className={`${transitionStyle} absolute
+                    group-data-[selected=true]:opacity-0 `}
+                />
+                <IconAddToFolder
+                  className={`${transitionStyle} absolute opacity-0
+                    group-data-[selected=true]:opacity-100`}
+                />
+              </span>
+              {label}
+              <CheckIcon
+                className={cn(
+                  'absolute right-4 h-4 w-4',
+                  value === value ? 'opacity-100' : 'opacity-0',
+                )}
+              />
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </ScrollArea>
+    </Command>
   )
 }

@@ -1,10 +1,10 @@
 import { useEffect, useCallback, useState, KeyboardEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 
 import { ChevronLeftIcon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons'
 
 import { Input } from '@/components/ui/input'
-import { IconSearch } from '@/components/ui/icons/next-icons'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
@@ -263,7 +263,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
         />
 
         {!searchValue ? (
-          <IconSearch className='absolute right-4 opacity-50' />
+          <MagnifyingGlassIcon className='absolute right-4 h-4 w-4 shrink-0 opacity-50' />
         ) : (
           <Button
             variant='ghost'
@@ -294,7 +294,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
       ) : (
         <div className='flex-1 flex flex-col px-2 pt-3 pb-1'>
           <nav>
-            <ScrollArea className='flex flex-col max-h-[calc(100vh-277px)] '>
+            <ScrollArea className='flex flex-col max-h-[calc(100vh-216px)] '>
               {/* Added this as a spacer, to have all the border visible on editing */}
               <Separator className='bg-transparent h-[2px]' />
 
@@ -314,26 +314,31 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             </ScrollArea>
           </nav>
 
-          {!filteredItems?.length && !createItemfromSearchValue && (
-            <div className='flex flex-col w-full gap-4'>
-              <Typography className='py-4 self-center'>No Items</Typography>
-              <Button
-                className='flex gap-2'
-                disabled={opInProgress}
-                // onClick={saveNewItem}
-              >
-                {opInProgress ? (
-                  <IconSpinner className='shrink-0' />
-                ) : (
-                  <PlusIcon className='shrink-0' width={16} height={16} />
-                )}
+          {!filteredItems?.length &&
+            !createItemfromSearchValue &&
+            !newItemInputVisible && (
+              <div className='flex flex-col w-full gap-4'>
+                <Typography className='py-4 self-center'>No Items</Typography>
+                <Button
+                  className='flex gap-2'
+                  disabled={opInProgress}
+                  onClick={() => {
+                    setNewItemInputVisible(true)
+                    setNewName('')
+                  }}
+                >
+                  {opInProgress ? (
+                    <IconSpinner className='shrink-0' />
+                  ) : (
+                    <PlusIcon className='shrink-0' width={16} height={16} />
+                  )}
 
-                <span className='truncate'>
-                  {opInProgress ? 'Creating' : 'Create'} {entityType}
-                </span>
-              </Button>
-            </div>
-          )}
+                  <span className='truncate'>
+                    {opInProgress ? 'Creating' : 'New'} {entityType}
+                  </span>
+                </Button>
+              </div>
+            )}
         </div>
       )}
 
@@ -342,6 +347,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           <Button
             className='flex flex-1 gap-2 justify-start max-w-full'
             disabled={opInProgress}
+            variant='ghost'
             onClick={saveNewItem}
           >
             {opInProgress ? (
@@ -351,7 +357,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             )}
 
             <span className='truncate'>
-              {opInProgress ? 'Creating' : 'Create'} {searchValue}
+              {opInProgress ? 'Creating' : 'Create'} <strong>{searchValue}</strong>
             </span>
           </Button>
         </div>

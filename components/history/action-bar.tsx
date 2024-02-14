@@ -6,14 +6,13 @@ import { Table } from '@tanstack/react-table'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { IconTag, IconFolder } from '@/components/ui/icons/next-icons'
+import { IconTag, IconAddToFolder } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useToast } from '@/components/ui/use-toast'
 
 import { AddToFolder } from '@/components/history/add-to-folder'
 
 import { cn, getURLPathname } from '@/lib/utils'
-import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 
 import {
   deleteDataSource,
@@ -40,7 +39,10 @@ const actionBarBtnStyle = cn(
 )
 
 export const ActionBar = ({ table }: ActionBarProps) => {
+  const pathname = usePathname()
   const { toast } = useToast()
+
+  const entityType = pathname.split('/')[1]
 
   const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
   const [addTagsOpen, setAddTagsOpen] = useState(false)
@@ -107,13 +109,13 @@ export const ActionBar = ({ table }: ActionBarProps) => {
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
         />
-        <div className='flex items-center gap-4 ml-2'>
+        <div className='flex flex-1 items-center ml-1 gap-2'>
           <Popover open={addToFolderVisibility} onOpenChange={setAddToFolderVisibility}>
             <PopoverTrigger className={actionBarBtnStyle}>
-              <IconFolder className='shrink-0' />
+              <IconAddToFolder className='shrink-0 w-5 h-5 -mt-0.5' />
               Add to Folder
             </PopoverTrigger>
-            <PopoverContent className='w-64' align='start'>
+            <PopoverContent className='w-64 px-4' align='start'>
               <AddToFolder
                 table={table}
                 setAddToFolderVisibility={setAddToFolderVisibility}
@@ -122,21 +124,24 @@ export const ActionBar = ({ table }: ActionBarProps) => {
           </Popover>
           <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
             <PopoverTrigger className={actionBarBtnStyle}>
-              <IconTag className='shrink-0' />
-              Add Tags
+              <IconTag className='shrink-0 w-5 h-5' />
+              Set Tags
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              Tags
+              Set Tags
             </PopoverContent>
           </Popover>
 
           <Button
             variant='ghost'
             size='sm'
-            className='gap-1 flex hover:text-destructive'
+            className='flex gap-1 group/delete hover:text-destructive'
             onClick={onDelete}
           >
-            <TrashIcon width={16} height={16} />
+            <TrashIcon
+              className='shrink-0 w-5 h-5 text-foreground/50
+              group-hover/delete:text-destructive'
+            />
             Delete
           </Button>
         </div>
