@@ -47,8 +47,6 @@ export default async function ChatPage() {
     return <div>Error loading history.</div>
   }
 
-  historyItems = historyItems.splice(0, 40)
-
   return (
     <HistoryComponent
       historyItems={historyItems}

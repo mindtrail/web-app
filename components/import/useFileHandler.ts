@@ -21,7 +21,7 @@ const getFilesMetadata = async (files: AcceptedFile[]) => {
       }
     }),
   )
-  console.log(111, metadataCall)
+
   return metadataCall
 }
 

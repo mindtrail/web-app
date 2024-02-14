@@ -19,9 +19,9 @@ declare global {
   }
 
   type CreateCollection = {
-    userId: string
     name: string
-    description: string
+    userId?: string
+    description?: string
   }
 
   type UpdateCollection = Partial<CreateCollection> & {
