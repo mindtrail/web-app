@@ -22,7 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: 'Categories',
+    title: 'Highlights',
+    description: 'Highlights made by users',
   }
 }
 
@@ -47,12 +48,6 @@ export default async function ChatPage() {
   }
 
   historyItems = historyItems.splice(0, 40)
-  const historyMetadata = {
-    name: 'All items',
-    parent: '',
-    subParent: '',
-    parentLink: '',
-  }
 
   return <div>Highlights</div>
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
 
@@ -17,17 +17,18 @@ import {
 } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
+import { getTableColumns } from '@/components/history/columns'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
 
-import { getTableColumns } from '@/components/history/columns'
+import { ActionBar } from '@/components/history/action-bar'
+
 import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_COLUMN_VISIBILITY,
@@ -35,7 +36,6 @@ import {
 } from '@/lib/constants'
 
 interface DataTableProps<TData> {
-  historyMetadata: { name: string; subParent: string; parent: string; parentLink: string }
   data: TData[]
   processing?: boolean
   userPreferences?: UserPreferences
@@ -44,7 +44,6 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({
-  historyMetadata,
   data,
   processing,
   userPreferences,
@@ -93,19 +92,10 @@ export function DataTable<TData>({
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
-  const onDelete = useCallback(() => {
-    const selectedRows = table.getSelectedRowModel()
-
-    const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
-
-    handleHistoryDelete(itemsToDelete)
-    table.resetRowSelection()
-  }, [handleHistoryDelete, table])
-
   return (
     <>
       <div className='flex items-center justify-between py-4'>
-        <HistoryBreadcrumbs historyMetadata={historyMetadata} />
+        <HistoryBreadcrumbs />
         <div className='flex items-center gap-2'>
           <Button size='sm' variant='ghost' className='shrink-0'>
             <CaretSortIcon className='h-5 w-5' />
@@ -120,25 +110,12 @@ export function DataTable<TData>({
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
-        <div
-          className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
-            flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
-            ${areRowsSelected && '!visible'}`}
-        >
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label='Select all'
-          />
-          <div className='flex items-center gap-2'>
-            <Button variant='outline' size='sm' onClick={onDelete}>
-              Delete
-            </Button>
-          </div>
-        </div>
+        <ActionBar
+          table={table}
+          handleHistoryDelete={handleHistoryDelete}
+          areRowsSelected={areRowsSelected}
+        />
+
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
             {table.getHeaderGroups().map((headerGroup) => (

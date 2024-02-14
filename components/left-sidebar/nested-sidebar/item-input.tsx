@@ -5,24 +5,24 @@ import { Input } from '@/components/ui/input'
 
 import { IconCancel, IconFolder, IconSpinner } from '@/components/ui/icons/next-icons'
 
-type EditableInput = {
+type NestedItemInput = {
   item?: SidebarItem
-  itemName: string
+  newName: string
   opInProgress?: boolean
   entityType?: string
   setInputVisibility: (isEditing: boolean) => void
-  setItemName: (itemName: string) => void
-  callbackFn: () => void
+  setNewName: (newName: string) => void
+  callbackFn: any
 }
 
-export const EditableInput = (props: EditableInput) => {
+export const NestedItemInput = (props: NestedItemInput) => {
   const {
     item,
-    itemName,
+    newName,
     opInProgress,
     entityType = 'folder',
     setInputVisibility,
-    setItemName,
+    setNewName,
     callbackFn,
   } = props
 
@@ -33,6 +33,7 @@ export const EditableInput = (props: EditableInput) => {
     function handleClickOutside(event: { target: any }) {
       if (inputRef.current && !(inputRef.current as HTMLElement).contains(event.target)) {
         setInputVisibility(false) // Closes the new folder input
+        setNewName(item?.name || '') // Resets the text value
       }
     }
 
@@ -42,17 +43,15 @@ export const EditableInput = (props: EditableInput) => {
       // Unbind the event listener on clean up
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [inputRef, setInputVisibility])
+  }, [inputRef, setInputVisibility, item, setNewName])
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      callbackFn()
-      setInputVisibility(false) // Closes the new folder input
-      return
+      return callbackFn()
     }
 
     if (event.key === 'Escape') {
-      setItemName(item?.name || '') // Resets the text value
+      setNewName(item?.name || '') // Resets the text value
       setInputVisibility(false) // Closes the new folder input
     }
   }
@@ -72,10 +71,10 @@ export const EditableInput = (props: EditableInput) => {
       <Input
         autoFocus
         placeholder={`New ${entityType}`}
-        value={itemName}
+        value={newName}
         disabled={opInProgress}
         className='flex-1 border bg-background pl-1 pr-8 h-8'
-        onChange={(e) => setItemName(e?.target?.value)}
+        onChange={(e) => setNewName(e?.target?.value)}
         onKeyDown={handleKeyDown}
       />
       <Button

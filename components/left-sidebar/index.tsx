@@ -1,20 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
 
+import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Separator } from '@/components/ui/separator'
 
 import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
 import { NestedSidebarsList } from '@/components/left-sidebar/nested-list'
 import { NavListTop } from '@/components/left-sidebar/nav-list-top'
-
-import { APP_NAME, SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
-import { getCollectionsByUserId } from '@/lib/serverActions/collection'
-// import { getFiltersByUserId } from '@/lib/serverActions/filter'
+import { APP_NAME } from '@/components/left-sidebar/constants'
 
 type SidebarNavProps = {
   className?: string
@@ -22,49 +18,10 @@ type SidebarNavProps = {
 }
 
 export function LeftSidebar({ user }: SidebarNavProps) {
-  const pathname = usePathname()
+  const [state] = useGlobalState()
 
-  const [itemListByCategory, setItemListByCategory] = useState<ItemListByCategory>()
-  const [activeNestedSidebar, setActiveNestedSidebar] = useState<NestedSidebarItem>()
-
-  useEffect(() => {
-    const subpath = pathname.split('/')[1]
-    const openedSidebar = SIDEBAR_FOLDERS[subpath]
-
-    setActiveNestedSidebar(openedSidebar)
-  }, [pathname])
-
-  useEffect(() => {
-    getCollectionsList()
-    getTagsList()
-  }, [])
-
-  const getCollectionsList = async () => {
-    const items = await getCollectionsByUserId()
-
-    if (Array.isArray(items)) {
-      setItemListByCategory((prev) => {
-        return {
-          ...prev,
-          folder: items,
-        }
-      })
-    }
-  }
-
-  const getTagsList = async () => {
-    const items = await getCollectionsByUserId()
-
-    if (Array.isArray(items)) {
-      const newArr = items.splice(3, 7)
-      setItemListByCategory((prev) => {
-        return {
-          ...prev,
-          tag: newArr,
-        }
-      })
-    }
-  }
+  const { activeNestedSidebar, nestedItemsByCategory } = state
+  const { setActiveNestedSidebar, setNestedItemsByCategory } = useGlobalStateActions()
 
   return (
     <div className='min-h-screen flex flex-col select-none'>
@@ -79,21 +36,19 @@ export function LeftSidebar({ user }: SidebarNavProps) {
           </Link>
         </div>
 
-        <div className='flex-1 flex flex-col relative'>
+        <div className='flex-1 flex flex-col space-between pb-2 relative'>
           <NavListTop setActiveNestedSidebar={setActiveNestedSidebar} />
           <Separator />
           <NestedSidebarsList
-            pathname={pathname}
             activeNestedSidebar={activeNestedSidebar}
-            itemListByCategory={itemListByCategory}
+            nestedItemsByCategory={nestedItemsByCategory}
             setActiveNestedSidebar={setActiveNestedSidebar}
-            setItemListByCategory={setItemListByCategory}
+            setNestedItemsByCategory={setNestedItemsByCategory}
           />
+
+          <ThemeToggle className='ml-2 ' />
         </div>
-        <div className='p-4 border-t'>
-          <ThemeToggle />
-          <LeftSidebarFooter user={user} />
-        </div>
+        <LeftSidebarFooter user={user} />
       </nav>
     </div>
   )

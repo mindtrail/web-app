@@ -7,7 +7,7 @@ import {
   deleteCollectionDbOp,
   getCollectionListDbOp,
   updateCollectionDbOp,
-} from '../db/collection'
+} from '@/lib/db/collection'
 
 export async function getCollectionsByUserId() {
   const session = (await getServerSession(authOptions)) as ExtendedSession

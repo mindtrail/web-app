@@ -7,7 +7,7 @@ const NAV_ITEM_STYLE = 'flex flex-col py-2 items-stretch'
 
 export function LeftSidebarFooter({ user }: { user: any }) {
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col border-t'>
       <div className={NAV_ITEM_STYLE}>
         <div className={TRIGGER_HEADER_STYLE}>
           <Button
