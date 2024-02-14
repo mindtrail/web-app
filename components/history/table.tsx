@@ -39,7 +39,6 @@ interface DataTableProps<TData> {
   data: TData[]
   processing?: boolean
   userPreferences?: UserPreferences
-  handleHistoryDelete: (ids: HistoryItem[]) => void
   handlePreferenceUpdate: (prefs: UserTablePrefs) => void
 }
 
@@ -47,7 +46,7 @@ export function DataTable<TData>({
   data,
   processing,
   userPreferences,
-  handleHistoryDelete,
+
   handlePreferenceUpdate,
 }: DataTableProps<TData>) {
   const {
@@ -110,11 +109,7 @@ export function DataTable<TData>({
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
-        <ActionBar
-          table={table}
-          handleHistoryDelete={handleHistoryDelete}
-          areRowsSelected={areRowsSelected}
-        />
+        {areRowsSelected && <ActionBar table={table} />}
 
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>

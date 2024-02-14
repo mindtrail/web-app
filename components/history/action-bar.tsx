@@ -1,25 +1,32 @@
 import { useCallback, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { DataSourceType } from '@prisma/client'
 import { TrashIcon } from '@radix-ui/react-icons'
-import { Table as ReactTable } from '@tanstack/react-table'
+import { Table } from '@tanstack/react-table'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { IconTag, IconFolder } from '@/components/ui/icons/next-icons'
+import { IconTag, IconAddToFolder } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useToast } from '@/components/ui/use-toast'
 
 import { AddToFolder } from '@/components/history/add-to-folder'
 
-import { cn } from '@/lib/utils'
-import { createCollection } from '@/lib/serverActions/collection'
-import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
+import { cn, getURLPathname } from '@/lib/utils'
+import { deleteDataSource } from '@/lib/serverActions/dataSource'
 
-import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
+import {
+  AlertDialog,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from '@/components/ui/alert-dialog'
 
 type ActionBarProps = {
-  table: ReactTable<HistoryItem>
-  areRowsSelected: boolean
-  handleHistoryDelete: (ids: HistoryItem[]) => void
+  table: Table<HistoryItem>
 }
 
 const actionBarBtnStyle = cn(
@@ -29,148 +36,145 @@ const actionBarBtnStyle = cn(
 
 const FOLDER_ENTITY = 'folder'
 
-export const ActionBar = (props: ActionBarProps) => {
-  const { areRowsSelected, table, handleHistoryDelete } = props
+export const ActionBar = ({ table }: ActionBarProps) => {
+  const pathname = usePathname()
+  const { toast } = useToast()
 
-  const [addToFolderOpen, setAddToFolderOpen] = useState(false)
+  const pathFragments = pathname.split('/')
+  const entityType = pathFragments[1]
+  const currentFolderId = pathFragments[2]
+
+  const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
   const [addTagsOpen, setAddTagsOpen] = useState(false)
 
-  const { toast } = useToast()
-  const { setNestedItemsByCategory } = useGlobalStateActions()
-
-  const [state] = useGlobalState()
-  const { nestedItemsByCategory } = state
+  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
     // @ts-ignore
     const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
+    if (!itemsToDelete?.length) {
+      return
+    }
 
-    handleHistoryDelete(itemsToDelete)
-  }, [handleHistoryDelete, table])
+    setItemsToDelete(itemsToDelete)
+    setDeleteDialogOpen(true)
+  }, [table])
 
-  const onAddToFolder = useCallback(
-    async (payload: AddItemToFolder) => {
-      const { existingFolderId, newFolderName } = payload
+  const confirmHistoryDelete = useCallback(async () => {
+    if (!itemsToDelete?.length) {
+      return
+    }
 
-      let collectionId = existingFolderId
+    const deletedItems = itemsToDelete
+      .map(({ displayName = '' }) => displayName)
+      .join(', ')
 
-      if (newFolderName) {
-        try {
-          const response = await createCollection({
-            name: newFolderName,
-            userId: '',
-            description: '',
-          })
+    const dataSourceIdList = itemsToDelete.map(({ id }) => id)
 
-          // @TODO: improve this
-          if ('id' in response && 'name' in response && 'description' in response) {
-            const { id, name, description } = response
-
-            const newItem = {
-              id,
-              name,
-              description,
-              url: `/folder/${response.id}`,
-            }
-
-            collectionId = id
-            const newItemList = [newItem, ...nestedItemsByCategory.folder]
-
-            setNestedItemsByCategory({
-              entityType: FOLDER_ENTITY,
-              items: newItemList,
-            })
-          }
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
-      if (!collectionId) {
-        return console.log(' No collection ID found')
-      }
-
-      const dataSourceIds = table
-        .getSelectedRowModel() // @ts-ignore
-        .rows.map(({ original }) => original.id)
-
-      const result = await addDataSourcesToCollection(dataSourceIds, collectionId)
-
-      console.log(result)
-      // @ts-ignore
-      if (result?.error) {
-        toast({
-          title: 'Error',
-          variant: 'destructive',
-          description: 'No Items added to folder',
-        })
-        return console.log('No result')
-      }
-
-      // @ts-ignore
-      const nrOfitemsAdded = result?.count
-      const nrOfSelected = dataSourceIds?.length
-      const nrOfExisting = nrOfSelected - nrOfitemsAdded
-
+    try {
+      await deleteDataSource({ dataSourceIdList })
       toast({
-        title: 'Success',
-        description: `Added: ${nrOfitemsAdded} item(s).
-        ${nrOfExisting ? `Existing: ${nrOfExisting} item(s).` : ''}`,
+        title: 'Delete History Entry',
+        description: `${deletedItems} has been deleted`,
       })
 
-      setAddToFolderOpen(false)
-      table.resetRowSelection()
+      setDeleteDialogOpen(false)
+      setItemsToDelete(null)
+    } catch (err) {
+      toast({
+        title: 'Error',
+        variant: 'destructive',
+        description: `Something went wrong while deleting ${deletedItems}`,
+      })
+      console.log(err)
 
-      // @TODO: show a toast, close the popup, and unselect the items
-    },
-    [table, nestedItemsByCategory.folder, setNestedItemsByCategory, toast],
-  )
+      setDeleteDialogOpen(false)
+      setItemsToDelete(null)
+    }
+  }, [itemsToDelete, toast])
 
   return (
-    <div
-      className={`absolute invisible w-full h-10 bg-background border-b shadow-sm
-    flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md
-    ${areRowsSelected && '!visible'}`}
-    >
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-      />
-      <div className='flex items-center gap-4 ml-2'>
-        <Popover open={addToFolderOpen} onOpenChange={setAddToFolderOpen}>
-          <PopoverTrigger className={actionBarBtnStyle}>
-            <IconFolder className='shrink-0' />
-            Add to Folder
-          </PopoverTrigger>
-          <PopoverContent className='w-64' align='start'>
-            <AddToFolder onAddToFolder={onAddToFolder} />
-          </PopoverContent>
-        </Popover>
-        <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
-          <PopoverTrigger className={actionBarBtnStyle}>
-            <IconTag className='shrink-0' />
-            Add Tags
-          </PopoverTrigger>
-          <PopoverContent className='w-64' align='start'>
-            Tags
-          </PopoverContent>
-        </Popover>
+    <>
+      <div
+        className={`absolute w-full h-10 bg-background border-b shadow-sm
+          flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md`}
+      >
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label='Select all'
+        />
+        <div className='flex flex-1 items-center ml-1 gap-2'>
+          <Popover open={addToFolderVisibility} onOpenChange={setAddToFolderVisibility}>
+            <PopoverTrigger className={actionBarBtnStyle}>
+              <IconAddToFolder className='shrink-0 w-5 h-5 -mt-0.5' />
+              Add to Folder
+            </PopoverTrigger>
+            <PopoverContent className='w-64 px-4' align='start'>
+              <AddToFolder
+                table={table}
+                currentFolderId={currentFolderId}
+                setAddToFolderVisibility={setAddToFolderVisibility}
+              />
+            </PopoverContent>
+          </Popover>
+          <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
+            <PopoverTrigger className={actionBarBtnStyle}>
+              <IconTag className='shrink-0 w-5 h-5' />
+              Set Tags
+            </PopoverTrigger>
+            <PopoverContent className='w-64' align='start'>
+              Set Tags
+            </PopoverContent>
+          </Popover>
 
-        <Button
-          variant='ghost'
-          size='sm'
-          className='gap-1 flex hover:text-destructive'
-          onClick={onDelete}
-        >
-          <TrashIcon width={16} height={16} />
-          Delete
-        </Button>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='flex gap-1 group/delete hover:text-destructive'
+            onClick={onDelete}
+          >
+            <TrashIcon
+              className='shrink-0 w-5 h-5 text-foreground/50
+              group-hover/delete:text-destructive'
+            />
+            Delete
+          </Button>
+        </div>
       </div>
-    </div>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent content=''>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete file?</AlertDialogTitle>
+            <AlertDialogDescription className='break-words flex flex-col'>
+              <span>This will delete the history entries and the associated data.</span>
+              <span>
+                The action cannot be undone and will <strong>permanently delete: </strong>
+              </span>
+              <span className='flex flex-col text-start mt-4 mb-2 list-disc gap-2'>
+                {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
+                  <li key={index}>
+                    {type === DataSourceType.file
+                      ? displayName
+                      : displayName + getURLPathname(name)}
+                  </li>
+                ))}
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className='max-w-l'>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button variant='destructive' onClick={confirmHistoryDelete}>
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

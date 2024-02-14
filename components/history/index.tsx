@@ -1,27 +1,13 @@
 'use client'
 
-import { MouseEvent, useCallback, useMemo, useState } from 'react'
+import { MouseEvent, useCallback, useState } from 'react'
 
-import { deleteDataSource } from '@/lib/serverActions/history'
 import { useDrop } from 'react-dnd'
-import { DataSourceType, UserPreferences } from '@prisma/client'
-
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { UserPreferences } from '@prisma/client'
 
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
 
-import { getURLPathname } from '@/lib/utils'
 import { updateUserPreferences } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
@@ -38,12 +24,10 @@ export function HistoryComponent({
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>(historyItems)
 
   const [filters, setFilters] = useState<HistoryFilter[]>()
-  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [processing, setProcessing] = useState(false)
 
   const [, dropRef] = useDrop({ accept: 'column' })
-  const { toast } = useToast()
 
   const handlePreferenceUpdate = useCallback(
     (newTablePrefs: UserTablePrefs) => {
@@ -54,61 +38,6 @@ export function HistoryComponent({
       updateUserPreferences(userId, newTablePrefs)
     },
     [userId],
-  )
-
-  const handleHistoryDelete = useCallback((itemsToDelete: HistoryItem[]) => {
-    if (!itemsToDelete?.length) {
-      return
-    }
-
-    setItemsToDelete(itemsToDelete)
-    setDeleteDialogOpen(true)
-  }, [])
-
-  const confirmHistoryDelete = useCallback(async () => {
-    if (!itemsToDelete?.length) {
-      return
-    }
-
-    const deletedItems = itemsToDelete
-      .map(({ displayName = '' }) => displayName)
-      .join(', ')
-
-    const dataSourceIdList = itemsToDelete.map(({ id }) => id)
-
-    try {
-      await deleteDataSource({ dataSourceIdList })
-      toast({
-        title: 'Delete History Entry',
-        description: `${deletedItems} has been deleted`,
-      })
-
-      setDeleteDialogOpen(false)
-      setItemsToDelete(null)
-    } catch (err) {
-      toast({
-        title: 'Error',
-        variant: 'destructive',
-        description: `Something went wrong while deleting ${deletedItems}`,
-      })
-      console.log(err)
-
-      setDeleteDialogOpen(false)
-      setItemsToDelete(null)
-    }
-  }, [itemsToDelete, toast])
-
-  const deleteItemsList = useMemo(
-    () =>
-      itemsToDelete?.length &&
-      itemsToDelete.map(({ displayName = '', name, type }, index) => (
-        <li key={index}>
-          {type === DataSourceType.file
-            ? displayName
-            : displayName + getURLPathname(name)}
-        </li>
-      )),
-    [itemsToDelete],
   )
 
   const handleSearch = useCallback(
@@ -156,32 +85,8 @@ export function HistoryComponent({
         data={filteredItems}
         processing={processing}
         userPreferences={userPreferences}
-        handleHistoryDelete={handleHistoryDelete}
         handlePreferenceUpdate={handlePreferenceUpdate}
       />
-
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent content=''>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete file?</AlertDialogTitle>
-            <AlertDialogDescription className='break-words flex flex-col'>
-              <span>This will delete the history entries and the associated data.</span>
-              <span>
-                The action cannot be undone and will <strong>permanently delete: </strong>
-              </span>
-              <span className='flex flex-col text-start mt-4 mb-2 list-disc gap-2'>
-                {deleteItemsList}
-              </span>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className='max-w-l'>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button variant='destructive' onClick={confirmHistoryDelete}>
-              Delete
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

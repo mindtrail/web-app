@@ -29,8 +29,8 @@ export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
   const pathname = usePathname()
 
   useEffect(() => {
-    const subpath = pathname.split('/')[1]
-    const openedSidebar = SIDEBAR_FOLDERS[subpath]
+    const entityType = pathname.split('/')[1]
+    const openedSidebar = SIDEBAR_FOLDERS[entityType]
 
     dispatch({
       type: 'SET_ACTIVE_NESTED_SIDEBAR',

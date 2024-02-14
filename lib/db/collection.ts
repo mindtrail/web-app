@@ -48,9 +48,8 @@ export const getCollectionDbOp = async ({
     include: includeDataSource
       ? {
           collectionDataSource: {
-            include: {
-              dataSource: true,
-            },
+            include: { dataSource: true },
+            orderBy: { dataSource: { createdAt: 'desc' } },
           },
         }
       : {},
