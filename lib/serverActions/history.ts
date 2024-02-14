@@ -28,15 +28,13 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
   try {
     const deletedDataSources = await deleteDataSourceDbOp(dataSourceIdList, userId)
 
-    console.log(111, deletedDataSources)
-
     deleteFileFromGCS(deletedDataSources, userId)
     deleteVectorsForDataSource(dataSourceIdList)
 
     revalidatePath('/all-items')
     return { deletedDataSources }
   } catch (error) {
-    console.log(2222, error)
+    console.log(2222, 'errrr')
     return { status: 404 }
   }
 }

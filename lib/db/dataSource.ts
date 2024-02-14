@@ -9,22 +9,12 @@ import { summarizePage } from '@/lib/openAI'
 export const getDataSourceListForUser = async (userId: string) => {
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
-      dataSourceUsers: {
-        some: {
-          userId: userId,
-        },
-      },
-    },
-    orderBy: {
-      // createdAt: 'desc',
+      dataSourceUsers: { some: { userId: userId } },
     },
     include: {
-      dataSourceTags: {
-        include: {
-          tag: true,
-        },
-      },
+      dataSourceTags: { include: { tag: true } },
     },
+    orderBy: { createdAt: 'desc' },
   })
 
   return dataSourceList
@@ -36,21 +26,11 @@ export const getDataSourceListByIds = async (
 ) => {
   const result = await prisma.dataSource.findMany({
     where: {
-      id: {
-        in: dataSourceList,
-      },
-      dataSourceUsers: {
-        some: {
-          userId: userId,
-        },
-      },
+      id: { in: dataSourceList },
+      dataSourceUsers: { some: { userId: userId } },
     },
     include: {
-      dataSourceTags: {
-        include: {
-          tag: true,
-        },
-      },
+      dataSourceTags: { include: { tag: true } },
     },
   })
 
@@ -77,11 +57,7 @@ export const checkDataSourceExists = async (name: string, userId: string) => {
   const dataSource = await prisma.dataSource.findFirst({
     where: {
       name,
-      dataSourceUsers: {
-        some: {
-          userId,
-        },
-      },
+      dataSourceUsers: { some: { userId } },
     },
   })
 
@@ -184,11 +160,7 @@ export const createDataSource = async (props: CreateDS) => {
     data: {
       ...dataSourcePayload,
       dataSourceUsers: {
-        create: {
-          user: {
-            connect: { id: userId },
-          },
-        },
+        create: { user: { connect: { id: userId } } },
       },
     },
   })
@@ -201,15 +173,11 @@ type UpdateDataSourcePayload = {
 } & Partial<CreateDataSourcePayload>
 
 export const updateDataSource = async (payload: UpdateDataSourcePayload) => {
-  const { id, ...rest } = payload
+  const { id, ...data } = payload
 
   const dataSource = await prisma.dataSource.update({
-    where: {
-      id,
-    },
-    data: {
-      ...rest,
-    },
+    where: { id },
+    data,
   })
 
   return dataSource
@@ -229,12 +197,22 @@ export const deleteDataSourceDbOp = async (
       },
     })
 
-    const deleteDSCollectionConnection = removeDataSourceFromCollectionDbOp(
-      dataSourceIdList,
-      userId,
-    )
+    const deleteDSCollectionsConnection = prisma.collectionDataSource.deleteMany({
+      where: {
+        dataSourceId: { in: dataSourceIdList },
+      },
+    })
 
-    await Promise.all([deleteDSUserConnection, deleteDSCollectionConnection])
+    const [userRes, collRes] = await Promise.all([
+      deleteDSUserConnection,
+      deleteDSCollectionsConnection,
+    ])
+    console.log(
+      'deleteDSUserConnection:::',
+      userRes.count,
+      'deleteDSCollectionConnection:::',
+      collRes.count,
+    )
 
     // Step 2: Retrieve only the DS that don't have a user associated with.
     const dataSourcesWithNoUser = await prisma.dataSource.findMany({
@@ -259,6 +237,7 @@ export const deleteDataSourceDbOp = async (
 
     console.log(
       'dataSourceDeleted:::',
+      response.count,
       dataSourcesWithNoUser.map((dataSource) => dataSource.id),
     )
     return dataSourcesWithNoUser
@@ -296,6 +275,7 @@ export const removeDataSourceFromCollectionDbOp = async (
   dataSourceIds: string[],
   collectionId: string,
 ) => {
+  console.log(dataSourceIds, collectionId)
   return await prisma.collectionDataSource.deleteMany({
     where: {
       dataSourceId: { in: dataSourceIds },
