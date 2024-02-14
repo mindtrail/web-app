@@ -7,6 +7,7 @@ import {
   deleteDataSourceDbOp,
   addDataSourcesToCollectionDbOp,
   removeDataSourceFromCollectionDbOp,
+  getCollectionsForDataSourceListDbOp,
 } from '@/lib/db/dataSource'
 import { deleteFileFromGCS } from '@/lib/cloudStorage'
 import { deleteVectorsForDataSource } from '@/lib/qdrant-langchain'
@@ -170,5 +171,15 @@ export async function removeDataSourceFromCollection({
   } catch (error) {
     console.log(2222, error)
     return { status: 404 }
+  }
+}
+
+export async function getCollectionsForDataSourceList(dataSourceIdList: string[]) {
+  try {
+    const result = await getCollectionsForDataSourceListDbOp(dataSourceIdList)
+    return result as []
+  } catch (error) {
+    console.log(2222, error)
+    return []
   }
 }

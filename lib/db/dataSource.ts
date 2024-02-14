@@ -282,3 +282,27 @@ export const removeDataSourceFromCollectionDbOp = async (
     },
   })
 }
+
+export const getCollectionsForDataSourceListDbOp = async (dataSourceIds: string[]) => {
+  // Check if dataSourceIds is a valid, non-empty array
+  if (!Array.isArray(dataSourceIds) || dataSourceIds.length === 0) {
+    return [] // Return an empty array if no valid dataSourceIds are provided
+  }
+
+  const dataSourceIdsList = dataSourceIds.map((id) => `'${id}'`).join(', ')
+  const query = `
+    SELECT c.id  /* and other fields you need */
+
+    FROM "Collections" c
+
+    JOIN "CollectionDataSource" cds ON c.id = cds."collectionId"
+    WHERE cds."dataSourceId" IN (${dataSourceIdsList})
+
+    GROUP BY c.id
+    HAVING COUNT(DISTINCT cds."dataSourceId") = ${dataSourceIds.length}
+  `
+
+  const result = await prisma.$queryRawUnsafe(query)
+  // @ts-ignore
+  return result.map(({ id }) => id)
+}

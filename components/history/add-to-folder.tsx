@@ -1,10 +1,10 @@
-import { useCallback, useState, useMemo } from 'react'
-import { PlusIcon } from '@radix-ui/react-icons'
+import { useCallback, useEffect, useState, useMemo } from 'react'
+import { CheckIcon, PlusIcon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { IconFolder, IconAddToFolder } from '@/components/ui/icons/next-icons'
+import { IconFolder } from '@/components/ui/icons/next-icons'
 
 import { useToast } from '@/components/ui/use-toast'
 import {
@@ -19,7 +19,11 @@ import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 import { createCollection } from '@/lib/serverActions/collection'
-import { addDataSourcesToCollection } from '@/lib/serverActions/dataSource'
+import {
+  addDataSourcesToCollection,
+  getCollectionsForDataSourceList,
+  removeDataSourceFromCollection,
+} from '@/lib/serverActions/dataSource'
 
 type AddToFolderProps = {
   currentFolderId?: string
@@ -28,17 +32,36 @@ type AddToFolderProps = {
 }
 
 const ENTITY_TYPE = 'folder'
-const transitionStyle = 'transition-opacity duration-200 ease-in-out'
 
 export function AddToFolder(props: AddToFolderProps) {
   const { currentFolderId, table, setAddToFolderVisibility } = props
 
   const { toast } = useToast()
-
   const [{ nestedItemsByCategory }] = useGlobalState()
   const { setNestedItemsByCategory, setActiveNestedSidebar } = useGlobalStateActions()
 
+  const itemsToAdd = useMemo(
+    () => table.getSelectedRowModel().rows.map(({ original }) => original.id),
+    [table],
+  )
   const [searchValue, setSearchValue] = useState('')
+
+  const [foldersContainingSelectedDS, setFoldersContainingSelectedDS] = useState<
+    string[]
+  >([])
+
+  useEffect(() => {
+    const getCollectionsForSelectedDS = async () => {
+      const folders = await getCollectionsForDataSourceList(itemsToAdd)
+
+      setFoldersContainingSelectedDS(folders)
+    }
+
+    // A small delay to don't block the UI when first loading the component
+    setTimeout(() => {
+      getCollectionsForSelectedDS()
+    }, 400)
+  }, [itemsToAdd])
 
   const allFolders = useMemo(
     () => nestedItemsByCategory.folder,
@@ -46,11 +69,8 @@ export function AddToFolder(props: AddToFolderProps) {
   )
 
   const filteredItems = useMemo(
-    () =>
-      allFolders
-        .filter(({ id }) => id != currentFolderId)
-        .map(({ id, name }) => ({ value: id, label: name })),
-    [allFolders, currentFolderId],
+    () => allFolders.map(({ id, name }) => ({ value: id, label: name })),
+    [allFolders],
   )
 
   const onAddToFolder = useCallback(
@@ -86,12 +106,14 @@ export function AddToFolder(props: AddToFolderProps) {
         return console.log(' No collection ID found')
       }
 
-      const seledItemListIds = table
-        .getSelectedRowModel()
-        .rows.map(({ original }) => original.id)
+      if (foldersContainingSelectedDS.includes(collectionId)) {
+        // @TODO: remove them from that folder
+        removeDataSourceFromCollection({ collectionId, dataSourceIdList: itemsToAdd })
+        setFoldersContainingSelectedDS((prev) => prev.filter((id) => id != collectionId))
+        return
+      }
 
-      const result = await addDataSourcesToCollection(seledItemListIds, collectionId)
-
+      const result = await addDataSourcesToCollection(itemsToAdd, collectionId)
       // @ts-ignore
       const { error, count: nrOfitemsAdded } = result
 
@@ -104,7 +126,7 @@ export function AddToFolder(props: AddToFolderProps) {
         return console.log('No result')
       }
 
-      const nrOfSelected = seledItemListIds?.length
+      const nrOfSelected = itemsToAdd?.length
       const nrOfItemsAlreadyExisting = nrOfSelected - nrOfitemsAdded
 
       toast({
@@ -113,8 +135,9 @@ export function AddToFolder(props: AddToFolderProps) {
         ${nrOfItemsAlreadyExisting ? `Existing: ${nrOfItemsAlreadyExisting} item(s).` : ''}`,
       })
 
-      setAddToFolderVisibility(false)
+      // setAddToFolderVisibility(false)
       // table.resetRowSelection()
+      setFoldersContainingSelectedDS((prev) => [...prev, collectionId])
 
       // @TODO: TBD if I keep this operation
       setActiveNestedSidebar(SIDEBAR_FOLDERS[ENTITY_TYPE])
@@ -122,12 +145,14 @@ export function AddToFolder(props: AddToFolderProps) {
       // animation...
     },
     [
-      table,
       allFolders,
+      itemsToAdd,
+      foldersContainingSelectedDS,
       toast,
       setNestedItemsByCategory,
       setActiveNestedSidebar,
-      setAddToFolderVisibility,
+      setFoldersContainingSelectedDS,
+      // setAddToFolderVisibility,
     ],
   )
 
@@ -155,17 +180,12 @@ export function AddToFolder(props: AddToFolderProps) {
               className='flex gap-2 cursor-default group'
               onSelect={() => onAddToFolder({ existingFolderId: value })}
             >
-              <span className='w-4 h-4 relative'>
-                <IconFolder
-                  className={`${transitionStyle} absolute
-                    group-data-[selected=true]:opacity-0 `}
-                />
-                <IconAddToFolder
-                  className={`${transitionStyle} absolute opacity-0
-                    group-data-[selected=true]:opacity-100`}
-                />
-              </span>
+              <IconFolder />
               {label}
+              {/* check if the folderId, meaning the value, is in the foldersContainingSelectedDS  array*/}
+              {foldersContainingSelectedDS.includes(value) && (
+                <CheckIcon className='absolute right-4' />
+              )}
             </CommandItem>
           ))}
         </CommandGroup>
