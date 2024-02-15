@@ -1,6 +1,19 @@
 import prisma from '@/lib/db/connection'
 import { DataSourceTag, Tag, DataSource } from '@prisma/client'
 
+type GetTagsPayload = {
+  userId: string
+  tagId: string
+}
+
+export const getTagDbOp = async ({ tagId }: GetTagsPayload) => {
+  const tag = await prisma.tag.findUnique({
+    where: { id: tagId },
+  })
+
+  return tag
+}
+
 export const getTagsListDbOp = async () => {
   const tagList = await prisma.tag.findMany({
     orderBy: { name: 'asc' },
@@ -9,17 +22,12 @@ export const getTagsListDbOp = async () => {
   return tagList
 }
 
-type GetTagWithDS = {
-  userId: string
-  tagId: string
-}
-
 type TagWithDataSources = Tag & {
   dataSourceTags: (DataSourceTag & {
     dataSource: DataSource
   })[]
 }
-export const getTagWithDataSourcesDbOp = async ({ userId, tagId }: GetTagWithDS) => {
+export const getTagWithDataSourcesDbOp = async ({ userId, tagId }: GetTagsPayload) => {
   const tag = (await prisma.tag.findUnique({
     where: { id: tagId },
     include: {

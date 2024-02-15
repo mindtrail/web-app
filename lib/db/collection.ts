@@ -41,7 +41,7 @@ type CollectionWithDataSources = Collection & {
 export const getCollectionDbOp = async ({
   userId,
   collectionId,
-  includeDataSource = true,
+  includeDataSource = false,
 }: GetCollectionProps) => {
   // Fetch data using Prisma based on the user
   const collection = (await prisma.collection.findUnique({
@@ -59,6 +59,11 @@ export const getCollectionDbOp = async ({
   if (!collection) {
     return null
   }
+
+  if (!includeDataSource) {
+    return collection
+  }
+
   const { collectionDataSource, ...rest } = collection
   const dataSources = collectionDataSource.map((item) => item?.dataSource)
 

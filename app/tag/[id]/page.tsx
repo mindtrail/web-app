@@ -3,7 +3,8 @@ import { redirect, useServerInsertedHTML } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { getTagWithDataSourcesDbOp } from '@/lib/db/tags'
+import { getTagDbOp } from '@/lib/db/tags'
+import { getDataSourceListDbOp } from '@/lib/db/dataSource'
 
 import { getUserPreferencesDbOp } from '@/lib/db/preferences'
 import { HistoryComponent } from '@/components/history'
@@ -24,10 +25,11 @@ export async function generateMetadata({ params }: FolderItemProps): Promise<Met
     return {}
   }
 
-  const currentTag = await getTagWithDataSourcesDbOp({ userId, tagId })
+  const currentTag = await getTagDbOp({ userId, tagId })
+
   return {
     title: `#${currentTag?.name}`,
-    description: `Tag page: ${currentTag?.name}`,
+    description: `Tags page: ${currentTag?.name}`,
   }
 }
 
@@ -40,14 +42,17 @@ export default async function FolderItem({ params }: FolderItemProps) {
   }
 
   const tagId = params.id
-  const currentTag = await getTagWithDataSourcesDbOp({ userId, tagId })
+  let userPreferences, historyItems
 
-  if (!currentTag) {
-    return <div>Tag Not Found...</div>
+  try {
+    ;[userPreferences, historyItems] = await Promise.all([
+      getUserPreferencesDbOp(userId),
+      getDataSourceListDbOp({ userId, tagId }),
+    ])
+  } catch (err) {
+    console.error(err, userPreferences, historyItems)
+    return <div>Error loading items for the collection.</div>
   }
-
-  const userPreferences = await getUserPreferencesDbOp(userId)
-  const historyItems = currentTag.dataSources
 
   return (
     <HistoryComponent
