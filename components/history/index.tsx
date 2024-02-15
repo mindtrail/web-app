@@ -1,14 +1,13 @@
 'use client'
 
 import { MouseEvent, useCallback, useState } from 'react'
-
 import { useDrop } from 'react-dnd'
 import { UserPreferences } from '@prisma/client'
 
 import { SearchBasic } from '@/components/search/basic'
 import { DataTable } from '@/components/history/table'
 
-import { updateUserPreferences } from '@/lib/db/preferences'
+import { updateUserPreferencesDbOp } from '@/lib/db/preferences'
 
 type HistoryComponentProps = {
   userId: string
@@ -24,7 +23,6 @@ export function HistoryComponent({
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>(historyItems)
 
   const [filters, setFilters] = useState<HistoryFilter[]>()
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [processing, setProcessing] = useState(false)
 
   const [, dropRef] = useDrop({ accept: 'column' })
@@ -35,7 +33,7 @@ export function HistoryComponent({
         return
       }
 
-      updateUserPreferences(userId, newTablePrefs)
+      updateUserPreferencesDbOp(userId, newTablePrefs)
     },
     [userId],
   )

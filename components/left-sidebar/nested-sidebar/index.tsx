@@ -26,6 +26,7 @@ import {
   deleteCollection,
   updateCollection,
 } from '@/lib/serverActions/collection'
+import { createTag, deleteTag, updateTag } from '@/lib/serverActions/tag'
 
 import { NestedItem } from './nested-item'
 import { Separator } from '@/components/ui/separator'
@@ -36,6 +37,24 @@ type SecondSidebarProps = {
   pathname: string
   setActiveNestedSidebar: (value?: string) => void
   setNestedItemsByCategory: (value: SetNestedItemByCat) => void
+}
+
+type CrudParams = {
+  id: string
+  name: string
+}
+
+const CRUD_OPERATIONS = {
+  folder: {
+    create: createCollection,
+    delete: ({ id }: CrudParams) => deleteCollection({ collectionId: id }),
+    update: ({ id, name }: CrudParams) => updateCollection({ collectionId: id, name }),
+  },
+  tag: {
+    create: createTag,
+    delete: ({ id }: CrudParams) => deleteTag({ tagId: id }),
+    update: ({ id, name }: CrudParams) => updateTag({ tagId: id, name }),
+  },
 }
 
 export const NestedSidebar = (props: SecondSidebarProps) => {
@@ -50,7 +69,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const router = useRouter()
   const { toast } = useToast()
 
-  const { entityType, name: sidebarName } = activeNestedSidebar
+  const entityType = activeNestedSidebar.entityType as 'folder' | 'tag'
 
   const [allItems, setAllItems] = useState<SidebarItem[]>([])
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>([])
@@ -66,6 +85,11 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
 
+  const crudOperation = useCallback(
+    (operation: 'create' | 'delete' | 'update', payload: any) => {},
+    [],
+  )
+
   useEffect(() => {
     if (nestedItemsByCategory && Array.isArray(nestedItemsByCategory[entityType])) {
       setAllItems(nestedItemsByCategory[entityType])
@@ -79,53 +103,90 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     setDeleteDialogOpen(true)
   }
 
-  const onUpdateFolderName = async (id: string, newName: string) => {
+  const onCreateItem = async () => {
     setOpInProgress(true)
 
+    const newElementName = createItemfromSearchValue
+      ? searchValue
+      : newName || 'New' + entityType
+
     try {
-      await updateCollection({
-        collectionId: id,
-        name: newName,
-        description: '',
-      })
+      const response = await CRUD_OPERATIONS[entityType].create({ name: newElementName })
 
-      const updatedList = allItems.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            name: newName,
-          }
+      // @TODO: improve this
+      if ('id' in response) {
+        const newItem = {
+          id: response.id as string,
+          name: newElementName,
+          url: `/${entityType}/${response.id}`,
         }
-        return item
-      })
 
-      setNestedItemsByCategory({ entityType, items: updatedList })
+        const newItemList = [newItem, ...allItems]
+        setNestedItemsByCategory({ entityType, items: newItemList })
+        return router.push(newItem.url)
+      } else {
+        // Handle error case
+        console.error('Error creating item:', response)
+      }
     } catch (error) {
       console.error('Error:', error)
     } finally {
       setOpInProgress(false)
+      setNewItemInputVisible(false)
+
+      if (createItemfromSearchValue) {
+        setSearchValue('')
+        setCreateItemFromSearchValue(false)
+      }
     }
   }
+
+  const onRename = useCallback(
+    async (id: string, newName: string) => {
+      if (newName.length < 3) {
+        toast({
+          variant: 'destructive',
+          title: 'Please enter a name',
+          description: 'Name must be at least 3 characters',
+        })
+        return
+      }
+
+      setOpInProgress(true)
+
+      try {
+        await CRUD_OPERATIONS[entityType].update({ id, name: newName })
+
+        const updatedList = allItems.map((item) =>
+          item.id === id ? { ...item, name: newName } : item,
+        )
+        setNestedItemsByCategory({ entityType, items: updatedList })
+      } catch (error) {
+        console.error('Error:', error)
+      } finally {
+        setOpInProgress(false)
+      }
+    },
+    [entityType, allItems, setNestedItemsByCategory, toast],
+  )
 
   // @TODO: Implement this
   const onDuplicate = (id: string) => {}
 
   const confirmDelete = async () => {
-    setOpInProgress(true)
+    const id = itemToDelete?.id
 
-    if (!itemToDelete?.id) {
+    if (!id) {
       setDeleteDialogOpen(false)
       return
     }
-
     setDeleteDialogOpen(false)
+    setOpInProgress(true)
 
     try {
-      const { id: collectionId } = itemToDelete
-      await deleteCollection({ collectionId })
+      await CRUD_OPERATIONS[entityType].delete({ id, name: '' })
 
-      const remainingItems = allItems.filter((item) => item.id !== collectionId)
-
+      const remainingItems = allItems.filter((item) => item.id !== id)
       setNestedItemsByCategory({ entityType, items: remainingItems })
     } catch (error) {
       console.error('Error:', error)
@@ -165,54 +226,9 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     [allItems],
   )
 
-  const saveNewItem = async () => {
-    setOpInProgress(true)
-
-    const newElementName = createItemfromSearchValue
-      ? searchValue
-      : newName || 'New folder'
-
-    try {
-      const response = await createCollection({
-        name: newElementName,
-        userId: '',
-        description: '',
-      })
-
-      // @TODO: improve this
-      if ('id' in response && 'name' in response && 'description' in response) {
-        const { id, name, description } = response
-        const newItem = {
-          id,
-          name,
-          description,
-          url: `/folder/${response.id}`,
-        }
-
-        const newItemList = [newItem, ...allItems]
-
-        setNestedItemsByCategory({ entityType, items: newItemList })
-        return router.push(newItem.url)
-      } else {
-        // Handle error case
-        console.error('Error creating item:', response)
-      }
-    } catch (error) {
-      console.error('Error:', error)
-    } finally {
-      setOpInProgress(false)
-      setNewItemInputVisible(false)
-
-      if (createItemfromSearchValue) {
-        setSearchValue('')
-        setCreateItemFromSearchValue(false)
-      }
-    }
-  }
-
   const handleSearchKeydown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      return saveNewItem()
+      return onCreateItem()
     }
 
     if (event.key === 'Escape') {
@@ -284,7 +300,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             entityType={entityType}
             setNewName={setNewName}
             setInputVisibility={setNewItemInputVisible}
-            callbackFn={saveNewItem}
+            callbackFn={onCreateItem}
           />
         </div>
       )}
@@ -305,9 +321,9 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
                   pathname={pathname}
                   opInProgress={opInProgress}
                   activeNestedSidebar={activeNestedSidebar}
-                  onUpdateFolderName={onUpdateFolderName}
-                  onDuplicate={onDuplicate}
+                  onRename={onRename}
                   onDelete={onDelete}
+                  onDuplicate={onDuplicate}
                 />
               ))}
 
@@ -349,7 +365,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             className='flex flex-1 gap-2 justify-start max-w-full'
             disabled={opInProgress}
             variant='ghost'
-            onClick={saveNewItem}
+            onClick={onCreateItem}
           >
             {opInProgress ? (
               <IconSpinner className='shrink-0' />

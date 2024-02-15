@@ -4,7 +4,7 @@ declare global {
   type CollectionItem = {
     collectionId: string
     name: string
-    description: string | null
+    description?: string
   }
 
   type CollectionExtended = Collection & {

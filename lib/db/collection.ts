@@ -31,16 +31,17 @@ type GetCollectionProps = {
   includeDataSource?: boolean
 }
 
-type ResultType = Collection & {
+type CollectionWithDataSources = Collection & {
   collectionDataSource: (CollectionDataSource & {
     dataSource: DataSource
   })[]
 }
 
+// OBSOLETE -> instead of this I moved to get data from the DS, and do the join from that direction
 export const getCollectionDbOp = async ({
   userId,
   collectionId,
-  includeDataSource = true,
+  includeDataSource = false,
 }: GetCollectionProps) => {
   // Fetch data using Prisma based on the user
   const collection = (await prisma.collection.findUnique({
@@ -53,20 +54,23 @@ export const getCollectionDbOp = async ({
           },
         }
       : {},
-  })) as ResultType
+  })) as CollectionWithDataSources
 
   if (!collection) {
     return null
   }
+
+  if (!includeDataSource) {
+    return collection
+  }
+
   const { collectionDataSource, ...rest } = collection
   const dataSources = collectionDataSource.map((item) => item?.dataSource)
 
-  const collectionItem = {
+  return {
     ...rest,
     dataSources,
   }
-
-  return collectionItem
 }
 
 export const createCollectionDbOp = async ({

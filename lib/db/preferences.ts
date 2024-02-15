@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/db/connection'
 
-export const getUserPreferences = async (userId: string) => {
+export const getUserPreferencesDbOp = async (userId: string) => {
   const userPreferences = await prisma.userPreferences.findUnique({
     where: {
       userId,
@@ -12,7 +12,7 @@ export const getUserPreferences = async (userId: string) => {
   return userPreferences || undefined
 }
 
-export const updateUserPreferences = async (userId: string, payload: any) => {
+export const updateUserPreferencesDbOp = async (userId: string, payload: any) => {
   // Retrieve existing preferences (if any)
   const existingPrefs = await prisma.userPreferences.findUnique({
     where: { userId },
