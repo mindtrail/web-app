@@ -117,11 +117,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
               Folders
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              <AddToFolder
-                table={table}
-                currentFolderId={currentFolderId}
-                setAddToFolderVisibility={setAddToFolderVisibility}
-              />
+              <AddToFolder table={table} currentFolderId={currentFolderId} />
             </PopoverContent>
           </Popover>
           <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
