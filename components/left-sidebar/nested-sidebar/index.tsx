@@ -26,6 +26,7 @@ import {
   deleteCollection,
   updateCollection,
 } from '@/lib/serverActions/collection'
+import { updateTag } from '@/lib/serverActions/tag'
 
 import { NestedItem } from './nested-item'
 import { Separator } from '@/components/ui/separator'
@@ -79,33 +80,29 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     setDeleteDialogOpen(true)
   }
 
-  const onUpdateFolderName = async (id: string, newName: string) => {
-    setOpInProgress(true)
+  const onRename = useCallback(
+    async (id: string, newName: string) => {
+      setOpInProgress(true)
 
-    try {
-      await updateCollection({
-        collectionId: id,
-        name: newName,
-        description: '',
-      })
-
-      const updatedList = allItems.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            name: newName,
-          }
+      try {
+        if (entityType === 'folder') {
+          await updateCollection({ collectionId: id, name: newName })
+        } else if (entityType === 'tag') {
+          await updateTag({ tagId: id, name: newName })
         }
-        return item
-      })
 
-      setNestedItemsByCategory({ entityType, items: updatedList })
-    } catch (error) {
-      console.error('Error:', error)
-    } finally {
-      setOpInProgress(false)
-    }
-  }
+        const updatedList = allItems.map((item) =>
+          item.id === id ? { ...item, name: newName } : item,
+        )
+        setNestedItemsByCategory({ entityType, items: updatedList })
+      } catch (error) {
+        console.error('Error:', error)
+      } finally {
+        setOpInProgress(false)
+      }
+    },
+    [entityType, allItems, setNestedItemsByCategory],
+  )
 
   // @TODO: Implement this
   const onDuplicate = (id: string) => {}
@@ -305,9 +302,9 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
                   pathname={pathname}
                   opInProgress={opInProgress}
                   activeNestedSidebar={activeNestedSidebar}
-                  onUpdateFolderName={onUpdateFolderName}
-                  onDuplicate={onDuplicate}
+                  onRename={onRename}
                   onDelete={onDelete}
+                  onDuplicate={onDuplicate}
                 />
               ))}
 

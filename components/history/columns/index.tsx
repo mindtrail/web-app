@@ -45,7 +45,9 @@ export function getTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
       header: () => <DefaultHeader id='dataSourceTags' />,
       minSize: MIN_SIZE,
       maxSize: MAX_SIZE,
-      cell: ({ getValue }) => <TagsCell tagList={getValue() as DataSourceTag[]} />,
+      cell: ({ getValue, column }) => (
+        <TagsCell columnSize={column.getSize()} tagList={getValue() as DataSourceTag[]} />
+      ),
     },
   ]
 
