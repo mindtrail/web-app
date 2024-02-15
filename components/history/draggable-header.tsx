@@ -124,8 +124,9 @@ export function DraggableHeader<TData, TValue>({
       <TableHead
         ref={dropRef}
         key={header.id}
-        className={`relative ${isDragging ? 'opacity-50' : ''}`}
-        style={{ width: header.getSize() }}>
+        className={`relative h-12 ${isDragging ? 'opacity-50' : ''}`}
+        style={{ width: header.getSize() }}
+      >
         <div className={`flex items-center group `} ref={dragRef}>
           {header.isPlaceholder
             ? null
@@ -134,7 +135,8 @@ export function DraggableHeader<TData, TValue>({
           {draggableColumn && (
             <Button
               variant='ghost'
-              className={`px-2 invisible group-hover:visible cursor-grab`}>
+              className={`px-2 invisible group-hover:visible cursor-grab`}
+            >
               <DragHandleDots2Icon />
             </Button>
           )}
@@ -148,7 +150,8 @@ export function DraggableHeader<TData, TValue>({
         <div
           onMouseDown={handleMouseDown}
           className={`group absolute flex justify-center items-center w-4
-            -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}>
+            -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}
+        >
           <Separator
             orientation='vertical'
             className={`w-[2px] bg-primary opacity-0 group-hover:opacity-100 h-[70%] rounded-lg

@@ -5,8 +5,9 @@ import { Table } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconFolder } from '@/components/ui/icons/next-icons'
-
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/components/ui/use-toast'
+
 import {
   Command,
   CommandEmpty,
@@ -69,8 +70,13 @@ export function AddToFolder(props: AddToFolderProps) {
   )
 
   const filteredItems = useMemo(
-    () => allFolders.map(({ id, name }) => ({ value: id, label: name })),
-    [allFolders],
+    () =>
+      allFolders.map(({ id, name }) => ({
+        value: id,
+        label: name,
+        containsSelectedItems: foldersContainingSelectedDS.includes(id),
+      })),
+    [allFolders, foldersContainingSelectedDS],
   )
 
   const onAddToFolder = useCallback(
@@ -174,19 +180,27 @@ export function AddToFolder(props: AddToFolderProps) {
       </CommandEmpty>
       <ScrollArea className='flex flex-col max-h-[40vh]'>
         <CommandGroup className='px-0'>
-          {filteredItems.map(({ value, label }, index) => (
-            <CommandItem
-              key={index}
-              className='flex gap-2 cursor-default group'
-              onSelect={() => onAddToFolder({ existingFolderId: value })}
-            >
-              <IconFolder />
-              {label}
-              {/* check if the folderId, meaning the value, is in the foldersContainingSelectedDS  array*/}
-              {foldersContainingSelectedDS.includes(value) && (
-                <CheckIcon className='absolute right-4' />
-              )}
-            </CommandItem>
+          {filteredItems.map(({ value, label, containsSelectedItems }, index) => (
+            <Tooltip key={index}>
+              <TooltipTrigger className='flex w-full relative'>
+                <CommandItem
+                  className='flex flex-1 gap-2'
+                  onSelect={() => onAddToFolder({ existingFolderId: value })}
+                >
+                  <IconFolder />
+                  {label}
+                  {/* check if the folderId, meaning the value, is in the foldersContainingSelectedDS  array*/}
+                  {containsSelectedItems && <CheckIcon className='absolute right-4' />}
+                  <TooltipContent
+                    side='right'
+                    sideOffset={0}
+                    className={containsSelectedItems ? 'bg-destructive text-white' : ''}
+                  >
+                    {containsSelectedItems ? 'Remove from' : 'Add to'} {label}
+                  </TooltipContent>
+                </CommandItem>
+              </TooltipTrigger>
+            </Tooltip>
           ))}
         </CommandGroup>
       </ScrollArea>
