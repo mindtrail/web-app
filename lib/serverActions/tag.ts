@@ -2,7 +2,12 @@
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { getTagsListDbOp, updateTagDbOp, deleteTagDbOp } from '@/lib/db/tags'
+import {
+  getTagsListDbOp,
+  createTagDbOp,
+  updateTagDbOp,
+  deleteTagDbOp,
+} from '@/lib/db/tags'
 
 export const getTagsList = () => {
   try {
@@ -35,6 +40,50 @@ export async function updateTag({ tagId, name }: UpdateTag) {
 
   try {
     return await updateTagDbOp({ tagId, userId, name })
+  } catch (error) {
+    return { status: 404 }
+  }
+}
+
+export async function createTag({ name }: { name: string }) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return {
+      error: {
+        status: 401,
+        message: 'Unauthorized',
+      },
+    }
+  }
+
+  try {
+    return await createTagDbOp({ name })
+  } catch (error) {
+    return { status: 404 }
+  }
+}
+
+type TagPayload = {
+  tagId: string
+}
+
+export async function deleteTag({ tagId }: TagPayload) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return {
+      error: {
+        status: 401,
+        message: 'Unauthorized',
+      },
+    }
+  }
+
+  try {
+    return await deleteTagDbOp({ tagId, userId })
   } catch (error) {
     return { status: 404 }
   }

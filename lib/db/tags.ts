@@ -55,7 +55,10 @@ type CreateTagsPayload = {
   dataSourceId: string
 }
 
-export const createTags = async ({ tags, dataSourceId }: CreateTagsPayload) => {
+export const createTagsAndBindToDataSourceDbOp = async ({
+  tags,
+  dataSourceId,
+}: CreateTagsPayload) => {
   return await prisma.$transaction(async (prisma) => {
     // @TODO -> determine the domain of the tags. Add guardrails
     const tagsArray = tags.map((tag) => ({
@@ -86,6 +89,21 @@ export const createTags = async ({ tags, dataSourceId }: CreateTagsPayload) => {
     }
 
     return createdTagRecords
+  })
+}
+
+export const createTagDbOp = async ({ name }: { name: string }) => {
+  return await prisma.tag.upsert({
+    where: {
+      name,
+    },
+    create: {
+      name,
+      domain: 'new',
+    },
+    update: {
+      name,
+    },
   })
 }
 

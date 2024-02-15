@@ -3,7 +3,7 @@ import { Document } from 'langchain/document'
 
 import { createAndStoreVectors } from '@/lib/qdrant'
 
-import { createTags } from '@/lib/db/tags'
+import { createTagsAndBindToDataSourceDbOp } from '@/lib/db/tags'
 import { getPageTags } from '@/lib/openAI'
 import { createDataSource, updateDataSource } from '@/lib/db/dataSource'
 
@@ -51,7 +51,7 @@ export const createDataSourceAndVectors = async (
     return null
   }
 
-  await createTags({ tags, dataSourceId })
+  await createTagsAndBindToDataSourceDbOp({ tags, dataSourceId })
 
   const docs = chunks
     .map(({ pageContent, metadata }) => ({
