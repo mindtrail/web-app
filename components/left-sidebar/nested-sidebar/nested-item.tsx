@@ -64,7 +64,7 @@ export const NestedItem = (props: NestedItemProps) => {
       className={cn(
         SIDEBAR_BTN,
         pathname === itemUrl && ACTIVE_BTN,
-        'flex justify-between items-center px-2 rounded-sm group/item gap-0',
+        'flex justify-between items-center pl-2 pr-0 rounded-sm group/item gap-0',
       )}
     >
       <span className='flex items-center gap-2 '>

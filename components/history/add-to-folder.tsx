@@ -167,7 +167,7 @@ export function AddToFolder(props: AddToFolderProps) {
 
   return (
     <div className='flex flex-col gap-2'>
-      <Typography >Select folders to Add or Remove the selected items.</Typography>
+      <Typography>Select folders to Add or Remove the selected items.</Typography>
 
       <Command
         className='-ml-4 w-[254px] overflow-auto'

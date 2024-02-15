@@ -60,7 +60,7 @@ export const NestedItemInput = (props: NestedItemInput) => {
   return (
     <div
       ref={inputRef}
-      className='flex items-center relative gap-1 px-2 rounded h-9 bg-accent'
+      className='flex items-center relative gap-1 pl-2 rounded bg-accent'
     >
       {opInProgress ? (
         <span className='w-5 flex justify-center'>
@@ -74,12 +74,12 @@ export const NestedItemInput = (props: NestedItemInput) => {
         placeholder={`New ${entityType}`}
         value={newName}
         disabled={opInProgress}
-        className='flex-1 border bg-background pl-1 pr-8 h-8'
+        className='flex-1 border bg-background pl-1 pr-6'
         onChange={(e) => setNewName(e?.target?.value)}
         onKeyDown={handleKeyDown}
       />
       <Button
-        className='absolute right-2'
+        className='absolute right-0'
         variant='ghost'
         size='icon'
         onClick={() => setInputVisibility(false)}
