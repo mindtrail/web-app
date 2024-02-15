@@ -122,15 +122,12 @@ export const updateTagDbOp = async ({ tagId, name }: UpdateTag) => {
 export const deleteTagDbOp = async ({ tagId }: TagsPayload) => {
   return await prisma.$transaction(async (prisma) => {
     // Delete the tag and it's m2m relationships
-    const deletedRel = await prisma.dataSourceTag.deleteMany({
+    await prisma.dataSourceTag.deleteMany({
       where: { tagId },
     })
 
-    const tag = await prisma.tag.delete({
+    return await prisma.tag.delete({
       where: { id: tagId },
     })
-
-    console.log(deletedRel, tag)
-    return tag
   })
 }
