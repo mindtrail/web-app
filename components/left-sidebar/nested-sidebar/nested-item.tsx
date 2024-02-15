@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { DotsVerticalIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
@@ -20,6 +20,7 @@ type NestedItemProps = {
   activeNestedSidebar: NestedSidebarItem
   item: SidebarItem
   pathname: string
+  opInProgress: boolean
   onUpdateFolderName: (id: string, newName: string) => void
   onDuplicate: (id: string) => void
   onDelete: (item: SidebarItem) => void
@@ -29,11 +30,18 @@ const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 export const NestedItem = (props: NestedItemProps) => {
-  const { activeNestedSidebar, item, pathname, onUpdateFolderName, onDelete } = props
+  const {
+    activeNestedSidebar,
+    item,
+    pathname,
+    opInProgress,
+    onUpdateFolderName,
+    onDelete,
+  } = props
   const { url, entityType, icon } = activeNestedSidebar
-  const { id, name } = item
+  const { id, name: originalName } = item
 
-  const [newName, setNewName] = useState(name)
+  const [newName, setNewName] = useState(originalName)
   const [renameInputVisible, setRenameInputVisible] = useState(false)
 
   const itemUrl = `${url}/${id}`
@@ -41,14 +49,17 @@ export const NestedItem = (props: NestedItemProps) => {
 
   const handleUpdate = () => {
     onUpdateFolderName(id, newName)
-    setRenameInputVisible(false)
   }
+
+  useEffect(() => {
+    setRenameInputVisible(false)
+  }, [originalName])
 
   if (renameInputVisible) {
     return (
       <NestedItemInput
         item={item}
-        opInProgress={renameInputVisible}
+        opInProgress={opInProgress}
         newName={newName}
         setInputVisibility={setRenameInputVisible}
         setNewName={setNewName}

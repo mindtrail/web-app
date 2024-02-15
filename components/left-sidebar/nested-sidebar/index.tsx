@@ -303,6 +303,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
                   key={item.id}
                   item={item}
                   pathname={pathname}
+                  opInProgress={opInProgress}
                   activeNestedSidebar={activeNestedSidebar}
                   onUpdateFolderName={onUpdateFolderName}
                   onDuplicate={onDuplicate}
