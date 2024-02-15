@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DotsVerticalIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
@@ -21,7 +21,7 @@ type NestedItemProps = {
   item: SidebarItem
   pathname: string
   opInProgress: boolean
-  onUpdateFolderName: (id: string, newName: string) => void
+  onRename: (id: string, newName: string) => void
   onDuplicate: (id: string) => void
   onDelete: (item: SidebarItem) => void
 }
@@ -30,14 +30,7 @@ const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 export const NestedItem = (props: NestedItemProps) => {
-  const {
-    activeNestedSidebar,
-    item,
-    pathname,
-    opInProgress,
-    onUpdateFolderName,
-    onDelete,
-  } = props
+  const { activeNestedSidebar, item, pathname, opInProgress, onRename, onDelete } = props
   const { url, entityType, icon } = activeNestedSidebar
   const { id, name: originalName } = item
 
@@ -48,7 +41,7 @@ export const NestedItem = (props: NestedItemProps) => {
   const IconUsed = entityType === 'folder' ? IconFolder : icon
 
   const handleUpdate = () => {
-    onUpdateFolderName(id, newName)
+    onRename(id, newName)
   }
 
   useEffect(() => {

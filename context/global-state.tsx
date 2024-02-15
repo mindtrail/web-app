@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 // import { db, doc, onSnapshot, WEBSITES_COLLECTION } from '@/lib/firebase' // Assuming firebase.ts is in the same directory
 import { globalReducer } from '@/context/global-reducer'
 import { getCollectionsByUserId } from '@/lib/serverActions/collection'
-import { getTagsList } from '@/lib/serverActions/tags'
+import { getTagsList } from '@/lib/serverActions/tag'
 // import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 // import { getFiltersByUserId } from '@/lib/serverActions/filter'
 // import { useToast } from '@/components/ui/use-toast'
