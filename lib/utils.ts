@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import { customAlphabet } from 'nanoid'
 import { DataSourceType } from '@prisma/client'
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[] | any) {
   return twMerge(clsx(inputs))
 }
 

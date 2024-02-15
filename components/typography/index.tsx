@@ -2,14 +2,38 @@ import { cn } from '@/lib/utils'
 import * as React from 'react'
 
 type TypographyProps = {
-  variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'small'
+  variant?:
+    | 'h1'
+    | 'h2'
+    | 'h3'
+    | 'h4'
+    | 'h5'
+    | 'p'
+    | 'small'
+    | 'small-semi'
+    | 'text-lg'
+    | 'text-lg-semi'
 } & React.HTMLAttributes<HTMLElement>
 
 export const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
   function Typography({ variant = 'p', className, ...props }, ref) {
-    const Component = variant
+    const Component =
+      {
+        h1: 'h1',
+        h2: 'h2',
+        h3: 'h3',
+        h4: 'h4',
+        h5: 'h5',
+        p: 'p',
+        small: 'span', // Note: 'small' is a valid HTML element, but might not suit your design system if custom styling is expected
+        'small-semi': 'span', // Assuming 'small-semi' should be rendered in a 'span'
+        'text-lg': 'span', // Assuming 'text-lg' should be rendered in a 'span'; adjust as needed
+        'text-lg-semi': 'span', // Assuming 'text-lg' should be rendered in a 'span'; adjust as needed
+      }[variant] || 'p'
+
     return (
       <Component
+        // @ts-ignore
         ref={ref}
         className={cn(
           'text-foreground/70',
@@ -20,9 +44,12 @@ export const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
               variant === 'h2',
             'scroll-m-20 text-2xl font-semibold tracking-tight': variant === 'h3',
             'scroll-m-20 text-xl font-semibold tracking-tight': variant === 'h4',
-            'scroll-m-20 text-x font-semibold tracking-tight': variant === 'h5',
+            'scroll-m-20 text-l font-semibold tracking-tight': variant === 'h5',
             'leading-': variant === 'p',
-            'text-sm font-medium leading-none': variant === 'small',
+            'text-sm leading-none': variant === 'small',
+            'text-sm font-medium leading-none': variant === 'small-semi',
+            'text-lg': variant === 'text-lg',
+            'text-lg font-semibold': variant === 'text-lg-semi',
           },
           className,
         )}
