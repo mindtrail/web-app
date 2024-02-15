@@ -113,7 +113,6 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
     try {
       const response = await CRUD_OPERATIONS[entityType].create({ name: newElementName })
 
-      console.log(response)
       // @TODO: improve this
       if ('id' in response) {
         const newItem = {
