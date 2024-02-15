@@ -55,7 +55,7 @@ export function AddToFolder(props: AddToFolderProps) {
 
   useEffect(() => {
     const getCollectionsForSelectedDS = async () => {
-      const folders = await getCollectionsForDataSourceList(itemsToAdd)
+      const folders = (await getCollectionsForDataSourceList(itemsToAdd)) as string[]
 
       setFoldersContainingSelectedDS(folders)
     }
@@ -73,13 +73,16 @@ export function AddToFolder(props: AddToFolderProps) {
 
   const filteredItems = useMemo(
     () =>
-      allFolders.map(({ id, name }) => ({
+      allFolders?.map(({ id, name }) => ({
         value: id,
         label: name,
-        containsSelectedItems: foldersContainingSelectedDS.includes(id),
+        containsSelectedItems: foldersContainingSelectedDS?.includes(id),
       })),
     [allFolders, foldersContainingSelectedDS],
   )
+
+  console.log(foldersContainingSelectedDS)
+  console.log(filteredItems)
 
   const onAddToFolder = useCallback(
     async (payload: AddItemToFolder) => {
@@ -143,10 +146,9 @@ export function AddToFolder(props: AddToFolderProps) {
         ${nrOfItemsAlreadyExisting ? `Existing: ${nrOfItemsAlreadyExisting} item(s).` : ''}`,
       })
 
-      // setAddToFolderVisibility(false)
-      // table.resetRowSelection()
-      // @ts-check
-      setFoldersContainingSelectedDS((prev) => [...prev, collectionId])
+      setFoldersContainingSelectedDS((prev: string[]) =>
+        collectionId ? [...prev, collectionId] : prev,
+      )
 
       // @TODO: TBD if I keep this operation
       setActiveNestedSidebar(SIDEBAR_FOLDERS[ENTITY_TYPE])
