@@ -196,6 +196,7 @@ model Tag {
   name            String @unique
   domain          String
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
 
   dataSourceTags  DataSourceTag[] // Relation to DataSourceTag for data sources
   @@map("Tags")
