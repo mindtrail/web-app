@@ -177,9 +177,9 @@ export async function removeDataSourceFromCollection({
 export async function getCollectionsForDataSourceList(dataSourceIdList: string[]) {
   try {
     const result = await getCollectionsForDataSourceListDbOp(dataSourceIdList)
-    return result as []
+    return result as string[]
   } catch (error) {
     console.log(2222, error)
-    return []
+    return [] as string[]
   }
 }
