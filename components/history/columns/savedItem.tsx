@@ -66,16 +66,14 @@ export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) 
         </Typography>
       ) : (
         <Link
-          className={`flex justify-center items-center relative group/saved-item px-4
-              hover:underline max-w-[85%]`}
+          className={`flex items-center max-w-[calc(100%-70px)] px-2
+            relative hover:underline group/saved-item `}
           href={addHttpsIfMissing(name)}
           target='_blank'
         >
-          <Typography className='line-clamp-1 text-ellipsis max-w-full text-center'>
-            {displayName}
-          </Typography>
+          <Typography className='truncate text-ellipsis w-full'>{displayName}</Typography>
           <ExternalLinkIcon
-            className={`absolute -right-1 invisible group-hover/saved-item:visible`}
+            className={`absolute -right-3 invisible group-hover/saved-item:visible`}
           />
         </Link>
       )}

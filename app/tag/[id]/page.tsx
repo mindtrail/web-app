@@ -1,9 +1,9 @@
 import { type Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { redirect, useServerInsertedHTML } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { getCollectionDbOp } from '@/lib/db/collection'
+import { getTagDbOp } from '@/lib/db/tags'
 import { getDataSourceListDbOp } from '@/lib/db/dataSource'
 
 import { getUserPreferencesDbOp } from '@/lib/db/preferences'
@@ -19,16 +19,17 @@ export async function generateMetadata({ params }: FolderItemProps): Promise<Met
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const collectionId = params.id
-  if (!userId || !collectionId) {
+  const tagId = params.id
+
+  if (!userId || !tagId) {
     return {}
   }
 
-  const collection = await getCollectionDbOp({ userId, collectionId })
+  const currentTag = await getTagDbOp({ userId, tagId })
 
   return {
-    title: collection?.name,
-    description: collection?.description,
+    title: `#${currentTag?.name}`,
+    description: `Tags page: ${currentTag?.name}`,
   }
 }
 
@@ -37,16 +38,16 @@ export default async function FolderItem({ params }: FolderItemProps) {
 
   const userId = session?.user?.id
   if (!userId) {
-    redirect(`/api/auth/signin?callbackUrl=/collection/${params.id}`)
+    redirect(`/api/auth/signin?callbackUrl=/tag/${params.id}`)
   }
 
-  const collectionId = params.id
+  const tagId = params.id
   let userPreferences, historyItems
 
   try {
     ;[userPreferences, historyItems] = await Promise.all([
       getUserPreferencesDbOp(userId),
-      getDataSourceListDbOp({ userId, collectionId }),
+      getDataSourceListDbOp({ userId, tagId }),
     ])
   } catch (err) {
     console.error(err, userPreferences, historyItems)
