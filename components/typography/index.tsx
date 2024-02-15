@@ -9,6 +9,7 @@ type TypographyProps = {
     | 'h4'
     | 'h5'
     | 'p'
+    | 'strong'
     | 'small'
     | 'small-semi'
     | 'text-lg'
@@ -25,6 +26,7 @@ export const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
         h4: 'h4',
         h5: 'h5',
         p: 'p',
+        strong: 'strong',
         small: 'span', // Note: 'small' is a valid HTML element, but might not suit your design system if custom styling is expected
         'small-semi': 'span', // Assuming 'small-semi' should be rendered in a 'span'
         'text-lg': 'span', // Assuming 'text-lg' should be rendered in a 'span'; adjust as needed
@@ -50,6 +52,7 @@ export const Typography = React.forwardRef<HTMLHeadingElement, TypographyProps>(
             'text-sm font-medium leading-none': variant === 'small-semi',
             'text-lg': variant === 'text-lg',
             'text-lg font-semibold': variant === 'text-lg-semi',
+            'font-semibold': variant === 'strong',
           },
           className,
         )}
