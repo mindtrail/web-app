@@ -13,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { IconExternalLink } from '@/components/ui/icons/next-icons'
 
 export interface UserMenuProps {
   user: Session['user']

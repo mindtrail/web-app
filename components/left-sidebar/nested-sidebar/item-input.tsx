@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, KeyboardEvent } from 'react'
+import { useEffect, useRef, KeyboardEvent } from 'react'
+import { Cross2Icon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -83,7 +84,7 @@ export const NestedItemInput = (props: NestedItemInput) => {
         size='icon'
         onClick={() => setInputVisibility(false)}
       >
-        <IconCancel />
+        <Cross2Icon className='w-4 h-4' />
       </Button>
     </div>
   )

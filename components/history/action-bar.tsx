@@ -98,7 +98,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
   return (
     <>
       <div
-        className={`absolute w-full h-10 bg-background border-b shadow-sm
+        className={`absolute w-full h-12 bg-background border-b shadow-sm
           flex items-center first-letter:top-0 px-4 z-20 gap-4 rounded-t-md`}
       >
         <Checkbox
@@ -112,8 +112,8 @@ export const ActionBar = ({ table }: ActionBarProps) => {
         <div className='flex flex-1 items-center ml-1 gap-2'>
           <Popover open={addToFolderVisibility} onOpenChange={setAddToFolderVisibility}>
             <PopoverTrigger className={actionBarBtnStyle}>
-              <IconAddToFolder className='shrink-0 w-5 h-5 -mt-0.5' />
-              Add to Folder
+              <IconAddToFolder className='shrink-0 w-5 h-5' />
+              Folders
             </PopoverTrigger>
             <PopoverContent className='w-64 px-4' align='start'>
               <AddToFolder
@@ -126,10 +126,10 @@ export const ActionBar = ({ table }: ActionBarProps) => {
           <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
             <PopoverTrigger className={actionBarBtnStyle}>
               <IconTag className='shrink-0 w-5 h-5' />
-              Set Tags
+              Tags
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              Set Tags
+              Tags
             </PopoverContent>
           </Popover>
 
@@ -139,10 +139,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
             className='flex gap-1 group/delete hover:text-destructive'
             onClick={onDelete}
           >
-            <TrashIcon
-              className='shrink-0 w-5 h-5 text-foreground/50
-              group-hover/delete:text-destructive'
-            />
+            <TrashIcon className='shrink-0 w-5 h-5 group-hover/delete:text-destructive' />
             Delete
           </Button>
         </div>
