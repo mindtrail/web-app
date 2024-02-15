@@ -49,8 +49,6 @@ export default async function FolderItem({ params }: FolderItemProps) {
   const userPreferences = await getUserPreferencesDbOp(userId)
   const historyItems = currentTag.dataSources
 
-  const { content, ...rest } = historyItems[0]
-  console.log(rest)
   return (
     <HistoryComponent
       historyItems={historyItems}
