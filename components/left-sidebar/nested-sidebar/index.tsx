@@ -233,7 +233,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
             <ChevronLeftIcon width={16} height={16} />
           </Button>
           <Typography
-            variant='small'
+            variant='small-semi'
             className='flex-1 overflow-hidden whitespace-nowrap capitalize'
           >
             {activeNestedSidebar?.name} ({itemsCount})
@@ -259,7 +259,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           value={searchValue}
           onChange={(e) => onFilterItems(e?.target?.value)}
           onKeyDown={handleSearchKeydown}
-          placeholder='Search'
+          placeholder='Search or create...'
         />
 
         {!searchValue ? (

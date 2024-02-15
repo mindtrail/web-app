@@ -26,7 +26,7 @@ export function HistoryBreadcrumbs() {
 
   const currentPageTitle = (className = '') => (
     <Typography
-      variant='small'
+      variant='small-semi'
       className={cn('cursor-default text-foreground', className)}
     >
       {currentTitle}
@@ -49,10 +49,7 @@ export function HistoryBreadcrumbs() {
           {parent}
         </Link>
         <ChevronRightIcon />
-        <Typography
-          variant='small'
-          className='text-foreground/70 cursor-default capitalize'
-        >
+        <Typography variant='small-semi' className='cursor-default capitalize'>
           {entity}
         </Typography>
         <ChevronRightIcon />

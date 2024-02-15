@@ -115,7 +115,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
               <IconAddToFolder className='shrink-0 w-5 h-5' />
               Folders
             </PopoverTrigger>
-            <PopoverContent className='w-64 px-4' align='start'>
+            <PopoverContent className='w-64' align='start'>
               <AddToFolder
                 table={table}
                 currentFolderId={currentFolderId}
