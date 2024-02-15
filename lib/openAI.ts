@@ -2,7 +2,7 @@ import { ChatOpenAI } from 'langchain/chat_models/openai'
 import { PromptTemplate } from 'langchain/prompts'
 import { SystemMessage, HumanMessage, AIMessageChunk } from 'langchain/schema'
 
-import { getTagList } from '@/lib/db/tags'
+import { getTagsListDbOp } from '@/lib/db/tags'
 
 const SUMMARY_PROMPT = process.env.SUMMARY_PROMPT || ''
 const GET_TAGS_PROMPT = process.env.GET_TAGS_PROMPT || ''
@@ -28,7 +28,7 @@ export const getOpenAIConnection = () => {
 export const getPageTags = async (pageDescription: string): Promise<string[]> => {
   const openAI = getOpenAIConnection()
 
-  const exsitingTags = (await getTagList()).map((tag) => tag.name)
+  const exsitingTags = (await getTagsListDbOp()).map((tag) => tag.name)
 
   const formattedPrompt = await tagsPromptTemplate.format({
     categories: exsitingTags.join(', '),

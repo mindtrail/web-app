@@ -3,9 +3,7 @@ import { redirect, useServerInsertedHTML } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-
-import { getCollectionDbOp } from '@/lib/db/collection'
-import { getDataSourceListDbOp } from '@/lib/db/dataSource'
+import { getTagWithDataSourcesDbOp } from '@/lib/db/tags'
 
 import { getUserPreferencesDbOp } from '@/lib/db/preferences'
 import { HistoryComponent } from '@/components/history'
@@ -20,16 +18,16 @@ export async function generateMetadata({ params }: FolderItemProps): Promise<Met
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
   const userId = session?.user?.id
-  const collectionId = params.id
-  if (!userId || !collectionId) {
+  const tagId = params.id
+
+  if (!userId || !tagId) {
     return {}
   }
 
-  const collection = await getCollectionDbOp({ userId, collectionId })
-
+  const currentTag = await getTagWithDataSourcesDbOp({ userId, tagId })
   return {
-    title: collection?.name,
-    description: collection?.description,
+    title: `#${currentTag?.name}`,
+    description: `Tag page: ${currentTag?.name}`,
   }
 }
 
@@ -38,23 +36,21 @@ export default async function FolderItem({ params }: FolderItemProps) {
 
   const userId = session?.user?.id
   if (!userId) {
-    redirect(`/api/auth/signin?callbackUrl=/collection/${params.id}`)
+    redirect(`/api/auth/signin?callbackUrl=/tag/${params.id}`)
   }
 
-  const collectionId = params.id
-  const collection = await getCollectionDbOp({ userId, collectionId })
+  const tagId = params.id
+  const currentTag = await getTagWithDataSourcesDbOp({ userId, tagId })
 
-  if (!collection) {
-    return <div>Knowledge Base Not Found...</div>
+  if (!currentTag) {
+    return <div>Tag Not Found...</div>
   }
-
-  // console.log(collection)
-  const dsList = await getDataSourceListDbOp({ userId, collectionId })
-  console.log(111, dsList.length)
 
   const userPreferences = await getUserPreferencesDbOp(userId)
-  const historyItems = collection.dataSources
+  const historyItems = currentTag.dataSources
 
+  const { content, ...rest } = historyItems[0]
+  console.log(rest)
   return (
     <HistoryComponent
       historyItems={historyItems}
