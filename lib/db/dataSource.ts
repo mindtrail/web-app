@@ -15,14 +15,11 @@ type GetDataSourceList = {
 export const getDataSourceListDbOp = async (props: GetDataSourceList) => {
   const { userId, collectionId, tagId } = props
 
-  console.log(collectionId)
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
       dataSourceUsers: { some: { userId } },
-      collectionDataSource: collectionId
-        ? { some: { collectionId: collectionId, collection: { ownerId: userId } } }
-        : {},
-      // dataSourceTags: tagId ? { some: { tagId } } : {},
+      collectionDataSource: collectionId ? { some: { collectionId: collectionId } } : {},
+      dataSourceTags: tagId ? { some: { tagId } } : {},
     },
     include: { dataSourceTags: { include: { tag: true } } },
     orderBy: { createdAt: 'desc' },

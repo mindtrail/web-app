@@ -42,18 +42,17 @@ export default async function FolderItem({ params }: FolderItemProps) {
   }
 
   const collectionId = params.id
-  const collection = await getCollectionDbOp({ userId, collectionId })
+  let userPreferences, historyItems
 
-  if (!collection) {
-    return <div>Knowledge Base Not Found...</div>
+  try {
+    ;[userPreferences, historyItems] = await Promise.all([
+      getUserPreferencesDbOp(userId),
+      getDataSourceListDbOp({ userId, collectionId }),
+    ])
+  } catch (err) {
+    console.error(err, userPreferences, historyItems)
+    return <div>Error loading items for the collection.</div>
   }
-
-  // console.log(collection)
-  const dsList = await getDataSourceListDbOp({ userId, collectionId })
-  console.log(111, dsList.length)
-
-  const userPreferences = await getUserPreferencesDbOp(userId)
-  const historyItems = collection.dataSources
 
   return (
     <HistoryComponent
