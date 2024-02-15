@@ -6,14 +6,25 @@ import { getURLDisplayName } from '@/lib/utils'
 import { cleanHTMLContent } from '@/lib/loaders/utils'
 import { summarizePage } from '@/lib/openAI'
 
-export const getDataSourceListForUser = async (userId: string) => {
+type GetDataSourceList = {
+  userId: string
+  collectionId?: string
+  tagId?: string
+}
+
+export const getDataSourceListDbOp = async (props: GetDataSourceList) => {
+  const { userId, collectionId, tagId } = props
+
+  console.log(collectionId)
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
-      dataSourceUsers: { some: { userId: userId } },
+      dataSourceUsers: { some: { userId } },
+      collectionDataSource: collectionId
+        ? { some: { collectionId: collectionId, collection: { ownerId: userId } } }
+        : {},
+      // dataSourceTags: tagId ? { some: { tagId } } : {},
     },
-    include: {
-      dataSourceTags: { include: { tag: true } },
-    },
+    include: { dataSourceTags: { include: { tag: true } } },
     orderBy: { createdAt: 'desc' },
   })
 
@@ -29,9 +40,7 @@ export const getDataSourceListByIds = async (
       id: { in: dataSourceList },
       dataSourceUsers: { some: { userId: userId } },
     },
-    include: {
-      dataSourceTags: { include: { tag: true } },
-    },
+    include: { dataSourceTags: { include: { tag: true } } },
   })
 
   // Sort the result based on the order in dataSourceList

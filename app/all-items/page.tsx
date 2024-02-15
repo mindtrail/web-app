@@ -4,8 +4,8 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
-import { getDataSourceListForUser } from '@/lib/db/dataSource'
-import { getUserPreferences } from '@/lib/db/preferences'
+import { getDataSourceListDbOp } from '@/lib/db/dataSource'
+import { getUserPreferencesDbOp } from '@/lib/db/preferences'
 
 import { HistoryComponent } from '@/components/history'
 
@@ -39,8 +39,8 @@ export default async function ChatPage() {
 
   try {
     ;[userPreferences, historyItems] = await Promise.all([
-      getUserPreferences(userId),
-      getDataSourceListForUser(userId),
+      getUserPreferencesDbOp(userId),
+      getDataSourceListDbOp({ userId }),
     ])
   } catch (err) {
     console.log(err)

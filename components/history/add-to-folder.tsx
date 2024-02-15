@@ -81,9 +81,6 @@ export function AddToFolder(props: AddToFolderProps) {
     [allFolders, foldersContainingSelectedDS],
   )
 
-  console.log(foldersContainingSelectedDS)
-  console.log(filteredItems)
-
   const onAddToFolder = useCallback(
     async (payload: AddItemToFolder) => {
       const { existingFolderId, newFolderName } = payload
@@ -194,39 +191,35 @@ export function AddToFolder(props: AddToFolderProps) {
             </Button>
           </CommandEmpty>
         </div>
-        {filteredItems && (
-          <ScrollArea className='flex flex-col max-h-[40vh] px-4'>
-            <CommandGroup className='px-0'>
-              {filteredItems.map(({ value, label, containsSelectedItems }, index) => (
-                <Tooltip key={index}>
-                  <TooltipTrigger className='flex w-full relative'>
-                    <CommandItem
-                      className={`flex flex-1 gap-2
+        <ScrollArea className='flex flex-col max-h-[40vh] px-4'>
+          <CommandGroup className='px-0'>
+            {filteredItems.map(({ value, label, containsSelectedItems }, index) => (
+              <Tooltip key={index}>
+                <TooltipTrigger className='flex w-full relative'>
+                  <CommandItem
+                    className={`flex flex-1 gap-2
                       ${containsSelectedItems && 'text-primary data-[selected=true]:text-primary'}`}
-                      onSelect={() => onAddToFolder({ existingFolderId: value })}
+                    onSelect={() => onAddToFolder({ existingFolderId: value })}
+                  >
+                    {containsSelectedItems ? (
+                      <CheckIcon className='w-4 h-4' />
+                    ) : (
+                      <IconFolder />
+                    )}
+                    {label}
+                    <TooltipContent
+                      side='right'
+                      sideOffset={-32}
+                      className={containsSelectedItems ? 'bg-destructive text-white' : ''}
                     >
-                      {containsSelectedItems ? (
-                        <CheckIcon className='w-4 h-4' />
-                      ) : (
-                        <IconFolder />
-                      )}
-                      {label}
-                      <TooltipContent
-                        side='right'
-                        sideOffset={-32}
-                        className={
-                          containsSelectedItems ? 'bg-destructive text-white' : ''
-                        }
-                      >
-                        {containsSelectedItems ? 'Remove from' : 'Add to'} {label}
-                      </TooltipContent>
-                    </CommandItem>
-                  </TooltipTrigger>
-                </Tooltip>
-              ))}
-            </CommandGroup>
-          </ScrollArea>
-        )}
+                      {containsSelectedItems ? 'Remove from' : 'Add to'} {label}
+                    </TooltipContent>
+                  </CommandItem>
+                </TooltipTrigger>
+              </Tooltip>
+            ))}
+          </CommandGroup>
+        </ScrollArea>
       </Command>
     </div>
   )

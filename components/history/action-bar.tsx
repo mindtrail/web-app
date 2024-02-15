@@ -8,6 +8,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { IconTag, IconAddToFolder } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useToast } from '@/components/ui/use-toast'
 
 import { AddToFolder } from '@/components/history/add-to-folder'
@@ -148,20 +149,26 @@ export const ActionBar = ({ table }: ActionBarProps) => {
         <AlertDialogContent content=''>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete file?</AlertDialogTitle>
-            <AlertDialogDescription className='break-words flex flex-col'>
+            <AlertDialogDescription className='flex flex-col cursor-default'>
               <span>This will delete the history entries and the associated data.</span>
               <span>
                 The action cannot be undone and will <strong>permanently delete: </strong>
               </span>
-              <span className='flex flex-col text-start mt-4 mb-2 list-disc gap-2'>
-                {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
-                  <li key={index}>
-                    {type === DataSourceType.file
-                      ? displayName
-                      : displayName + getURLPathname(name)}
-                  </li>
-                ))}
-              </span>
+
+              <ScrollArea className='py-2 max-h-[25vh]'>
+                <ul
+                  className='flex flex-col items-start mt-4 mb-2 gap-2 pl-4 sm:px-2
+                  max-w-[80vw] xs:max-w-[70vw] sm:max-w-md list-disc list-inside'
+                >
+                  {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
+                    <li key={index} className='truncate max-w-full'>
+                      {type === DataSourceType.file
+                        ? displayName
+                        : displayName + getURLPathname(name)}
+                    </li>
+                  ))}
+                </ul>
+              </ScrollArea>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className='max-w-l'>

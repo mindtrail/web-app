@@ -4,6 +4,8 @@ import { usePathname } from 'next/navigation'
 // import { db, doc, onSnapshot, WEBSITES_COLLECTION } from '@/lib/firebase' // Assuming firebase.ts is in the same directory
 import { globalReducer } from '@/context/global-reducer'
 import { getCollectionsByUserId } from '@/lib/serverActions/collection'
+import { getTagsList } from '@/lib/serverActions/tags'
+// import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 // import { getFiltersByUserId } from '@/lib/serverActions/filter'
 // import { useToast } from '@/components/ui/use-toast'
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
@@ -40,31 +42,30 @@ export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     getCollectionsList()
-    getTagsList()
+    getTags()
   }, [])
 
   const getCollectionsList = async () => {
-    const items = await getCollectionsByUserId()
-    if (Array.isArray(items)) {
+    const folders = await getCollectionsByUserId()
+    if (Array.isArray(folders)) {
       dispatch({
         type: 'SET_NESTED_ITEMS_BY_CATEGORY',
         payload: {
           entityType: 'folder',
-          items,
+          items: folders,
         },
       })
     }
   }
 
-  const getTagsList = async () => {
-    const items = await getCollectionsByUserId()
-    if (Array.isArray(items)) {
-      const newArr = items.splice(3, 7)
+  const getTags = async () => {
+    const tags = await getTagsList()
+    if (Array.isArray(tags)) {
       dispatch({
         type: 'SET_NESTED_ITEMS_BY_CATEGORY',
         payload: {
           entityType: 'tag',
-          items,
+          items: tags,
         },
       })
     }

@@ -31,12 +31,13 @@ type GetCollectionProps = {
   includeDataSource?: boolean
 }
 
-type ResultType = Collection & {
+type CollectionWithDataSources = Collection & {
   collectionDataSource: (CollectionDataSource & {
     dataSource: DataSource
   })[]
 }
 
+// OBSOLETE -> instead of this I moved to get data from the DS, and do the join from that direction
 export const getCollectionDbOp = async ({
   userId,
   collectionId,
@@ -53,7 +54,7 @@ export const getCollectionDbOp = async ({
           },
         }
       : {},
-  })) as ResultType
+  })) as CollectionWithDataSources
 
   if (!collection) {
     return null
@@ -61,12 +62,10 @@ export const getCollectionDbOp = async ({
   const { collectionDataSource, ...rest } = collection
   const dataSources = collectionDataSource.map((item) => item?.dataSource)
 
-  const collectionItem = {
+  return {
     ...rest,
     dataSources,
   }
-
-  return collectionItem
 }
 
 export const createCollectionDbOp = async ({
