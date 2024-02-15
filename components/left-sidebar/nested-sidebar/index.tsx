@@ -175,21 +175,19 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const onDuplicate = (id: string) => {}
 
   const confirmDelete = async () => {
-    setOpInProgress(true)
+    const id = itemToDelete?.id
 
-    if (!itemToDelete?.id) {
+    if (!id) {
       setDeleteDialogOpen(false)
       return
     }
-
     setDeleteDialogOpen(false)
+    setOpInProgress(true)
 
     try {
-      const { id: collectionId } = itemToDelete
-      await deleteCollection({ collectionId })
+      await CRUD_OPERATIONS[entityType].delete({ id, name: '' })
 
-      const remainingItems = allItems.filter((item) => item.id !== collectionId)
-
+      const remainingItems = allItems.filter((item) => item.id !== id)
       setNestedItemsByCategory({ entityType, items: remainingItems })
     } catch (error) {
       console.error('Error:', error)
