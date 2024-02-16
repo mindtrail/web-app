@@ -152,14 +152,13 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
 }
 
 type RemoveDSFromCollection = {
+  id: string
   dataSourceIdList: string[]
-  collectionId: string
 }
 
-export async function removeDataSourceFromCollection({
-  collectionId,
-  dataSourceIdList,
-}: RemoveDSFromCollection) {
+export async function removeDataSourceFromCollection(props: RemoveDSFromCollection) {
+  const { id: collectionId, dataSourceIdList } = props
+
   try {
     const result = await removeDataSourceFromCollectionDbOp(
       dataSourceIdList,

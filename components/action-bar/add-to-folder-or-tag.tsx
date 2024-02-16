@@ -23,15 +23,14 @@ import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 import { createCollection } from '@/lib/serverActions/collection'
 import {
   addDataSourcesToCollection,
-  getCollectionsForDataSourceList,
   removeDataSourceFromCollection,
+  getCollectionsForDataSourceList,
 } from '@/lib/serverActions/dataSource'
 
 import {
   addTagToDataSources,
-  // addDataSourcesToCollection,
-  // getCollectionsForDataSourceList,
-  // removeDataSourceFromCollection,
+  removeTagFromDataSources,
+  getTagsForDataSourcesList,
 } from '@/lib/serverActions/tag'
 
 type AddToFolderProps = {
@@ -43,13 +42,13 @@ type AddToFolderProps = {
 const CRUD_OPERATIONS = {
   folder: {
     createEntityAndDSConnection: addDataSourcesToCollection,
-    // delete: ({ id }: CrudParams) => deleteCollection({ collectionId: id }),
-    // update: ({ id, name }: CrudParams) => updateCollection({ collectionId: id, name }),
+    removeEnityAndDSConnection: removeDataSourceFromCollection,
+    getExistingConnections: getCollectionsForDataSourceList,
   },
   tag: {
     createEntityAndDSConnection: addTagToDataSources,
-    // delete: ({ id }: CrudParams) => deleteTag({ tagId: id }),
-    // update: ({ id, name }: CrudParams) => updateTag({ tagId: id, name }),
+    removeEnityAndDSConnection: removeTagFromDataSources,
+    getExistingConnections: getTagsForDataSourcesList,
   },
 }
 
@@ -82,18 +81,18 @@ export function AddToFolder(props: AddToFolderProps) {
 
   useEffect(() => {
     const getCollectionsForSelectedDS = async () => {
-      const folders = (await getCollectionsForDataSourceList(
+      const dropdownItems = (await CRUD_OPERATIONS[entityType].getExistingConnections(
         selectedDataSources,
       )) as string[]
 
-      setDropdownOptsContainingSelectedDS(folders)
+      setDropdownOptsContainingSelectedDS(dropdownItems)
     }
 
     // A small delay to don't block the UI when first loading the component
     setTimeout(() => {
       getCollectionsForSelectedDS()
     }, 400)
-  }, [selectedDataSources])
+  }, [selectedDataSources, entityType])
 
   const onAddToFolder = useCallback(
     async (payload: AddItemToFolder) => {
@@ -133,8 +132,8 @@ export function AddToFolder(props: AddToFolderProps) {
 
       if (dropdownOptsContainingSelectedDS.includes(collectionId)) {
         // @TODO: remove them from that folder
-        removeDataSourceFromCollection({
-          collectionId,
+        await CRUD_OPERATIONS[entityType].removeEnityAndDSConnection({
+          id: collectionId,
           dataSourceIdList: selectedDataSources,
         })
         setDropdownOptsContainingSelectedDS((prev) =>
