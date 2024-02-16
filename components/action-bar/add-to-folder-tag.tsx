@@ -26,7 +26,6 @@ import {
   getCollectionsForDataSourceList,
   removeDataSourceFromCollection,
 } from '@/lib/serverActions/dataSource'
-import { Separator } from '../ui/separator'
 
 type AddToFolderProps = {
   currentFolderId?: string

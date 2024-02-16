@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useToast } from '@/components/ui/use-toast'
 
-import { AddToFolder } from '@/components/action-bar/add-to-folder'
+import { AddToFolder } from '@/components/action-bar/add-to-folder-tag'
 
 import { cn, getURLPathname } from '@/lib/utils'
 import { deleteDataSource } from '@/lib/serverActions/dataSource'

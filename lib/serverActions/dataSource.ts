@@ -75,9 +75,6 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
   }
 }
 
-type AddDSToCollectinResponse = {
-  count: number
-}
 export const addDataSourcesToCollection = async (
   dataSourceIdList: string[],
   collectionId: string,
@@ -164,8 +161,6 @@ export async function removeDataSourceFromCollection({
       dataSourceIdList,
       collectionId,
     )
-
-    console.log(111, result)
 
     return result
   } catch (error) {
