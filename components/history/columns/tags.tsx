@@ -16,7 +16,7 @@ export const TagsCell = ({ columnSize, tagList }: TagsProps) => {
                 key={index}
                 variant='outline'
                 size='sm'
-                className={`max-w-full h-auto py-1 min-h-8`}
+                className={`max-w-full h-auto px-2 py-1 min-h-8`}
               >
                 {tag.name}
               </Button>

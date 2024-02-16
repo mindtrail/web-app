@@ -283,29 +283,28 @@ export const removeDataSourceFromCollectionDbOp = async (
 ) => {
   return await prisma.collectionDataSource.deleteMany({
     where: {
-      dataSourceId: { in: dataSourceIds },
       collectionId,
+      dataSourceId: { in: dataSourceIds },
     },
   })
 }
 
-export const getCollectionsForDataSourceListDbOp = async (dataSourceIds: string[]) => {
-  // Check if dataSourceIds is a valid, non-empty array
-  if (!Array.isArray(dataSourceIds) || dataSourceIds.length === 0) {
-    return [] // Return an empty array if no valid dataSourceIds are provided
+export const getCollectionsForDataSourceListDbOp = async (dataSourceIdList: string[]) => {
+  // Check if dataSourceIdList is a valid, non-empty array
+  if (!Array.isArray(dataSourceIdList) || dataSourceIdList.length === 0) {
+    return [] // Return an empty array if no valid dataSourceIdList are provided
   }
 
-  const dataSourceIdsList = dataSourceIds.map((id) => `'${id}'`).join(', ')
+  const idListString = dataSourceIdList.map((id) => `'${id}'`).join(', ')
   const query = `
-    SELECT c.id  /* and other fields you need */
-
+    SELECT c.id
     FROM "Collections" c
 
     JOIN "CollectionDataSource" cds ON c.id = cds."collectionId"
-    WHERE cds."dataSourceId" IN (${dataSourceIdsList})
+    WHERE cds."dataSourceId" IN (${idListString})
 
     GROUP BY c.id
-    HAVING COUNT(DISTINCT cds."dataSourceId") = ${dataSourceIds.length}
+    HAVING COUNT(DISTINCT cds."dataSourceId") = ${dataSourceIdList.length}
   `
 
   const result = await prisma.$queryRawUnsafe(query)

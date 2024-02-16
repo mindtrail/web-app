@@ -148,3 +148,39 @@ export const addTagToDataSourcesDbOp = async (props: AddTagToDataSources) => {
     skipDuplicates: true,
   })
 }
+
+export const removeTagFromDataSourcesDbOp = async (props: AddTagToDataSources) => {
+  const { tagId, dataSourceIdList } = props
+
+  const res = await prisma.dataSourceTag.deleteMany({
+    where: {
+      tagId,
+      dataSourceId: { in: dataSourceIdList },
+    },
+  })
+  console.log(res)
+  return res
+}
+
+export const getTagsForDataSourcesListDbOp = async (dataSourceIdList: string[]) => {
+  // Check if dataSourceIds is a valid, non-empty array
+  if (!Array.isArray(dataSourceIdList) || dataSourceIdList.length === 0) {
+    return [] // Return an empty array if no valid dataSourceIds are provided
+  }
+
+  const idListString = dataSourceIdList.map((id) => `'${id}'`).join(', ')
+  const query = `
+    SELECT t.id
+    FROM "Tags" t
+
+    JOIN "DataSourceTag" dst ON t.id = dst."tagId"
+    WHERE dst."dataSourceId" IN (${idListString})
+
+    GROUP BY t.id
+    HAVING COUNT(DISTINCT dst."dataSourceId") = ${dataSourceIdList.length}
+  `
+  const result = await prisma.$queryRawUnsafe(query)
+  console.log(3333, result)
+  // @ts-ignore
+  return result.map(({ id }) => id)
+}
