@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useToast } from '@/components/ui/use-toast'
 
-import { AddToFolder } from '@/components/action-bar/add-to-folder-tag'
+import { AddToFolder } from '@/components/action-bar/add-to-folder-or-tag'
 
 import { cn, getURLPathname } from '@/lib/utils'
 import { deleteDataSource } from '@/lib/serverActions/dataSource'
@@ -43,7 +43,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
 
   const pathFragments = pathname.split('/')
   const entityType = pathFragments[1]
-  const currentFolderId = pathFragments[2]
+  const currentItemId = pathFragments[2]
 
   const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
   const [addTagsOpen, setAddTagsOpen] = useState(false)
@@ -117,7 +117,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
               Folders
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              <AddToFolder table={table} currentFolderId={currentFolderId} />
+              <AddToFolder table={table} destintaionEntity='folder' />
             </PopoverContent>
           </Popover>
           <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
@@ -126,7 +126,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
               Tags
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              Tags
+              <AddToFolder table={table} destintaionEntity='tag' />
             </PopoverContent>
           </Popover>
 

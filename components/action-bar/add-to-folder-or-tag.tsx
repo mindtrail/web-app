@@ -28,14 +28,13 @@ import {
 } from '@/lib/serverActions/dataSource'
 
 type AddToFolderProps = {
-  currentFolderId?: string
+  currentItemId?: string
+  destintaionEntity: 'folder' | 'tag'
   table: Table<HistoryItem>
 }
 
-const ENTITY_TYPE = 'folder'
-
 export function AddToFolder(props: AddToFolderProps) {
-  const { currentFolderId, table } = props
+  const { destintaionEntity: entityType, table } = props
 
   const { toast } = useToast()
   const [{ nestedItemsByCategory }] = useGlobalState()
@@ -43,37 +42,38 @@ export function AddToFolder(props: AddToFolderProps) {
 
   const [searchValue, setSearchValue] = useState('')
 
-  const itemsToAdd = useMemo(
+  const selectedDataSources = useMemo(
     () => table.getSelectedRowModel().rows.map(({ original }) => original.id),
     [table],
   )
 
-  const [foldersContainingSelectedDS, setFoldersContainingSelectedDS] = useState<
-    string[]
-  >([])
+  const [dropdownOptsContainingSelectedDS, setDropdownOptsContainingSelectedDS] =
+    useState<string[]>([])
 
-  const foldersList = useMemo(
+  const dopdownList = useMemo(
     () =>
-      nestedItemsByCategory.folder?.map(({ id, name }) => ({
+      nestedItemsByCategory[entityType]?.map(({ id, name }) => ({
         value: id,
         label: name,
-        containsSelectedItems: foldersContainingSelectedDS?.includes(id),
+        containsSelectedItems: dropdownOptsContainingSelectedDS?.includes(id),
       })),
-    [nestedItemsByCategory.folder, foldersContainingSelectedDS],
+    [nestedItemsByCategory, entityType, dropdownOptsContainingSelectedDS],
   )
 
   useEffect(() => {
     const getCollectionsForSelectedDS = async () => {
-      const folders = (await getCollectionsForDataSourceList(itemsToAdd)) as string[]
+      const folders = (await getCollectionsForDataSourceList(
+        selectedDataSources,
+      )) as string[]
 
-      setFoldersContainingSelectedDS(folders)
+      setDropdownOptsContainingSelectedDS(folders)
     }
 
     // A small delay to don't block the UI when first loading the component
     setTimeout(() => {
       getCollectionsForSelectedDS()
     }, 400)
-  }, [itemsToAdd])
+  }, [selectedDataSources])
 
   const onAddToFolder = useCallback(
     async (payload: AddItemToFolder) => {
@@ -93,11 +93,14 @@ export function AddToFolder(props: AddToFolderProps) {
             const newItem = {
               id: newCollectionId,
               name: newFolderName,
-              url: `/folder/${newCollectionId}`,
+              url: `/${entityType}/${newCollectionId}`,
             }
 
-            const newItemList = [newItem, ...nestedItemsByCategory.folder]
-            setNestedItemsByCategory({ entityType: ENTITY_TYPE, items: newItemList })
+            const newItemList = [newItem, ...nestedItemsByCategory[entityType]]
+            setNestedItemsByCategory({
+              entityType,
+              items: newItemList,
+            })
           }
         } catch (error) {
           console.log(error)
@@ -108,19 +111,24 @@ export function AddToFolder(props: AddToFolderProps) {
         return console.log(' No collection ID found')
       }
 
-      if (foldersContainingSelectedDS.includes(collectionId)) {
+      if (dropdownOptsContainingSelectedDS.includes(collectionId)) {
         // @TODO: remove them from that folder
-        removeDataSourceFromCollection({ collectionId, dataSourceIdList: itemsToAdd })
-        setFoldersContainingSelectedDS((prev) => prev.filter((id) => id != collectionId))
+        removeDataSourceFromCollection({
+          collectionId,
+          dataSourceIdList: selectedDataSources,
+        })
+        setDropdownOptsContainingSelectedDS((prev) =>
+          prev.filter((id) => id != collectionId),
+        )
 
         toast({
           title: 'Success',
-          description: `Removed: ${itemsToAdd?.length} item(s).`,
+          description: `Removed: ${selectedDataSources?.length} item(s).`,
         })
         return
       }
 
-      const result = await addDataSourcesToCollection(itemsToAdd, collectionId)
+      const result = await addDataSourcesToCollection(selectedDataSources, collectionId)
       // @ts-ignore
       const { error, count: nrOfitemsAdded } = result
 
@@ -128,12 +136,12 @@ export function AddToFolder(props: AddToFolderProps) {
         toast({
           title: 'Error',
           variant: 'destructive',
-          description: 'No Items added to folder',
+          description: 'No Items added to' + entityType,
         })
         return console.log('No result')
       }
 
-      const nrOfSelected = itemsToAdd?.length
+      const nrOfSelected = selectedDataSources?.length
       const nrOfItemsAlreadyExisting = nrOfSelected - nrOfitemsAdded
 
       toast({
@@ -142,24 +150,24 @@ export function AddToFolder(props: AddToFolderProps) {
         ${nrOfItemsAlreadyExisting ? `Existing: ${nrOfItemsAlreadyExisting} item(s).` : ''}`,
       })
 
-      setFoldersContainingSelectedDS((prev: string[]) =>
+      setDropdownOptsContainingSelectedDS((prev: string[]) =>
         collectionId ? [...prev, collectionId] : prev,
       )
 
       // @TODO: TBD if I keep this operation
-      setActiveNestedSidebar(SIDEBAR_FOLDERS[ENTITY_TYPE])
+      setActiveNestedSidebar(SIDEBAR_FOLDERS[entityType])
       // @TODO: Create an animation for the selected folder
       // animation...
     },
     [
-      itemsToAdd,
-      foldersContainingSelectedDS,
-      nestedItemsByCategory.folder,
+      selectedDataSources,
+      dropdownOptsContainingSelectedDS,
+      nestedItemsByCategory,
+      entityType,
       toast,
       setNestedItemsByCategory,
       setActiveNestedSidebar,
-      setFoldersContainingSelectedDS,
-      // setAddToFolderVisibility,
+      setDropdownOptsContainingSelectedDS,
     ],
   )
 
@@ -172,9 +180,8 @@ export function AddToFolder(props: AddToFolderProps) {
 
   return (
     <div className='flex flex-col gap-2'>
-      <Typography variant='strong'>Folders</Typography>
-      <Typography variant='small' className='text-muted-foreground'>
-        Add selected items to folders
+      <Typography variant='small' className='text-muted-foreground mt-1'>
+        {entityType === 'folder' ? 'Add items to folders' : 'Set tags on selected items'}
       </Typography>
 
       <Command
@@ -204,7 +211,7 @@ export function AddToFolder(props: AddToFolderProps) {
         </div>
         <ScrollArea className='flex flex-col max-h-[40vh] px-4'>
           <CommandGroup className='px-0'>
-            {foldersList.map(({ value, label, containsSelectedItems }, index) => (
+            {dopdownList.map(({ value, label, containsSelectedItems }, index) => (
               <Tooltip key={index}>
                 <TooltipTrigger className='flex w-full relative'>
                   <CommandItem
