@@ -75,10 +75,14 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
   }
 }
 
-export const addDataSourcesToCollection = async (
-  dataSourceIdList: string[],
-  collectionId: string,
-) => {
+type AddItemsInFolder = {
+  id: string
+  dataSourceIdList: string[]
+}
+
+export const addDataSourcesToCollection = async (props: AddItemsInFolder) => {
+  const { id: collectionId, dataSourceIdList } = props
+
   console.log('addDataSourcesToCollection', dataSourceIdList, collectionId)
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
