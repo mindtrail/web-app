@@ -4,7 +4,7 @@ import { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { IconFolder } from '@/components/ui/icons/next-icons'
+import { IconFolder, IconTag } from '@/components/ui/icons/next-icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/components/ui/use-toast'
 import { Typography } from '@/components/typography'
@@ -27,10 +27,30 @@ import {
   removeDataSourceFromCollection,
 } from '@/lib/serverActions/dataSource'
 
+import {
+  addTagToDataSources,
+  // addDataSourcesToCollection,
+  // getCollectionsForDataSourceList,
+  // removeDataSourceFromCollection,
+} from '@/lib/serverActions/tag'
+
 type AddToFolderProps = {
   currentItemId?: string
   destintaionEntity: 'folder' | 'tag'
   table: Table<HistoryItem>
+}
+
+const CRUD_OPERATIONS = {
+  folder: {
+    createEntityAndDSConnection: addDataSourcesToCollection,
+    // delete: ({ id }: CrudParams) => deleteCollection({ collectionId: id }),
+    // update: ({ id, name }: CrudParams) => updateCollection({ collectionId: id, name }),
+  },
+  tag: {
+    createEntityAndDSConnection: addTagToDataSources,
+    // delete: ({ id }: CrudParams) => deleteTag({ tagId: id }),
+    // update: ({ id, name }: CrudParams) => updateTag({ tagId: id, name }),
+  },
 }
 
 export function AddToFolder(props: AddToFolderProps) {
@@ -128,7 +148,10 @@ export function AddToFolder(props: AddToFolderProps) {
         return
       }
 
-      const result = await addDataSourcesToCollection(selectedDataSources, collectionId)
+      const result = await CRUD_OPERATIONS[entityType].createEntityAndDSConnection({
+        id: collectionId,
+        dataSourceIdList: selectedDataSources,
+      })
       // @ts-ignore
       const { error, count: nrOfitemsAdded } = result
 
@@ -221,8 +244,10 @@ export function AddToFolder(props: AddToFolderProps) {
                   >
                     {containsSelectedItems ? (
                       <CheckIcon className='w-4 h-4' />
-                    ) : (
+                    ) : entityType === 'folder' ? (
                       <IconFolder />
+                    ) : (
+                      <IconTag />
                     )}
                     {label}
                     <TooltipContent

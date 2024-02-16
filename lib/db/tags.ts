@@ -131,3 +131,20 @@ export const deleteTagDbOp = async ({ tagId }: TagsPayload) => {
     })
   })
 }
+
+type AddTagToDataSources = {
+  tagId: string
+  dataSourceIdList: string[]
+}
+
+export const addTagToDataSourcesDbOp = async (props: AddTagToDataSources) => {
+  const { tagId, dataSourceIdList } = props
+
+  return await prisma.dataSourceTag.createMany({
+    data: dataSourceIdList.map((dataSourceId) => ({
+      tagId,
+      dataSourceId,
+    })),
+    skipDuplicates: true,
+  })
+}
