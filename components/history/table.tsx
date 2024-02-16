@@ -27,7 +27,7 @@ import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
 
-import { ActionBar } from '@/components/history/action-bar'
+import { ActionBar } from '@/components/action-bar/action-bar'
 
 import {
   DEFAULT_COLUMN_SIZE,
