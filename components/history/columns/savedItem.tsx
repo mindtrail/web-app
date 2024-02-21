@@ -49,39 +49,41 @@ export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) 
     return null
   }
 
-  return (
-    <div className='flex flex-col items-center gap-3 relative -mt-6'>
-      <Checkbox
-        className={`absolute mt-[2px] bg-white left-2 invisible group-hover/row:visible ${
-          (isRowSelected || isCheckboxVisible) && 'visible'
-        }`}
-        checked={isRowSelected}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
-      />
+  const ItemText = <Typography className='truncate max-w-full'>{displayName}</Typography>
 
-      {type === DataSourceType.file ? (
-        <Typography className='line-clamp-1 text-ellipsis text-center max-w-[85%] px-4'>
-          {displayName}
-        </Typography>
-      ) : (
-        <Link
-          className={`flex items-center max-w-[calc(100%-70px)] px-2
-            relative hover:underline group/saved-item `}
-          href={addHttpsIfMissing(name)}
-          target='_blank'
-        >
-          <Typography className='truncate text-ellipsis w-full'>{displayName}</Typography>
-          <ExternalLinkIcon
-            className={`absolute -right-3 invisible group-hover/saved-item:visible`}
-          />
-        </Link>
-      )}
+  return (
+    <div className='flex flex-col gap-3 -mt-6'>
+      <div className='flex items-center justify-center px-8'>
+        <Checkbox
+          className={`absolute mt-[2px] bg-white left-2 invisible group-hover/row:visible ${
+            (isRowSelected || isCheckboxVisible) && 'visible'
+          }`}
+          checked={isRowSelected}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+
+        {type === DataSourceType.file ? (
+          ItemText
+        ) : (
+          <Link
+            target='_blank'
+            href={addHttpsIfMissing(name)}
+            className={`flex px-2 items-center max-w-full text-center
+              hover:underline group/link relative`}
+          >
+            {ItemText}
+            <ExternalLinkIcon
+              className={`absolute -right-3 invisible group-hover/link:visible`}
+            />
+          </Link>
+        )}
+      </div>
 
       <div className={`w-full h-32 flex rounded-md group/car relative`}>
         {image ? (
           <img
-            src={cloudinaryLoader({ src: image, width: cellWidth })}
+            src={cloudinaryLoader({ src: image, width: cellWidth - 16 })}
             alt={title as string}
             className='absolute top-0 left-0 rounded-md border shadow-sm object-cover w-full h-full'
           />
