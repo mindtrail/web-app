@@ -30,14 +30,14 @@ export async function POST(req: Request) {
       websites.map(async ({ name: gcFileName, metadata }) => {
         const { url, ...restMetadata } = metadata
         const baseResourceURL = getBaseResourceURL(url)
-
         // Download the html from GCS
         const html = await downloadWebsiteFromGCS(gcFileName)
         const file = {
-          name: baseResourceURL,
           html,
+          name: baseResourceURL,
           metadata: restMetadata,
         } as HTMLFile
+
 
         if (!file) {
           return null

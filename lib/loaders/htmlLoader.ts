@@ -7,7 +7,7 @@ export async function getChunksFromHTML(file: HTMLFile): Promise<Document[]> {
   const pageContent = cleanHTMLContent(html)
 
   if (!pageContent) {
-    throw new Error('Page has no content to read')
+    throw new Error('Empty page. No content to read')
   }
 
   const loadedDoc = [new Document({ pageContent })]

@@ -18,7 +18,7 @@ export const getChunksFromDoc = async ({
 }: GetChunksFromDocProps): Promise<Document[]> => {
   const { name } = file
 
-  const metadata = DSType === DataSourceType.web_page ? (file as HTMLFile).metadata : {}
+  const metadata = DSType === DataSourceType.web_page ? (file as HTMLFile)?.metadata : {}
   const chunkHeader = `${metadata?.title || name}. `
 
   const loadedDoc =
