@@ -30,6 +30,7 @@ import { createTag, deleteTag, updateTag } from '@/lib/serverActions/tag'
 
 import { NestedItem } from './nested-item'
 import { Separator } from '@/components/ui/separator'
+import { ENTITY_TYPE } from '../constants'
 
 type SecondSidebarProps = {
   activeNestedSidebar: NestedSidebarItem
@@ -45,12 +46,12 @@ type CrudParams = {
 }
 
 const CRUD_OPERATIONS = {
-  folder: {
+  [ENTITY_TYPE.COLLECTION]: {
     create: createCollection,
     delete: ({ id }: CrudParams) => deleteCollection({ collectionId: id }),
     update: ({ id, name }: CrudParams) => updateCollection({ collectionId: id, name }),
   },
-  tag: {
+  [ENTITY_TYPE.TAG]: {
     create: createTag,
     delete: ({ id }: CrudParams) => deleteTag({ tagId: id }),
     update: ({ id, name }: CrudParams) => updateTag({ tagId: id, name }),
@@ -69,7 +70,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
   const router = useRouter()
   const { toast } = useToast()
 
-  const entityType = activeNestedSidebar.entityType as 'folder' | 'tag'
+  const entityType = activeNestedSidebar.entityType as EntityType
 
   const [allItems, setAllItems] = useState<SidebarItem[]>([])
   const [filteredItems, setFilteredItems] = useState<SidebarItem[]>([])
@@ -84,11 +85,6 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<SidebarItem | null>(null)
-
-  const crudOperation = useCallback(
-    (operation: 'create' | 'delete' | 'update', payload: any) => {},
-    [],
-  )
 
   useEffect(() => {
     if (nestedItemsByCategory && Array.isArray(nestedItemsByCategory[entityType])) {

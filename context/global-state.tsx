@@ -8,7 +8,7 @@ import { getTagsList } from '@/lib/serverActions/tag'
 // import { getCollectionsByUserId } from '@/lib/serverActions/collection'
 // import { getFiltersByUserId } from '@/lib/serverActions/filter'
 // import { useToast } from '@/components/ui/use-toast'
-import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
+import { SIDEBAR_FOLDERS, ENTITY_TYPE } from '@/components/left-sidebar/constants'
 
 interface Props {
   children: React.ReactNode
@@ -51,7 +51,7 @@ export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
       dispatch({
         type: 'SET_NESTED_ITEMS_BY_CATEGORY',
         payload: {
-          entityType: 'folder',
+          entityType: ENTITY_TYPE.COLLECTION,
           items: folders,
         },
       })
@@ -64,7 +64,7 @@ export const GlobalStateProvider: React.FC<Props> = ({ children }) => {
       dispatch({
         type: 'SET_NESTED_ITEMS_BY_CATEGORY',
         payload: {
-          entityType: 'tag',
+          entityType: ENTITY_TYPE.TAG,
           items: tags,
         },
       })

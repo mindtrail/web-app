@@ -11,10 +11,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useToast } from '@/components/ui/use-toast'
 
-import { AddToFolder } from '@/components/action-bar/add-to-folder-or-tag'
+import { AddToCollectionOrTag } from '@/components/action-bar/add-to-collection-or-tag'
 
 import { cn, getURLPathname } from '@/lib/utils'
 import { deleteDataSource } from '@/lib/serverActions/dataSource'
+import { ENTITY_TYPE } from '@/components/left-sidebar/constants'
 
 import {
   AlertDialog,
@@ -34,8 +35,6 @@ const actionBarBtnStyle = cn(
   'flex items-center gap-1',
   buttonVariants({ variant: 'ghost', size: 'sm' }),
 )
-
-const FOLDER_ENTITY = 'folder'
 
 export const ActionBar = ({ table }: ActionBarProps) => {
   const pathname = usePathname()
@@ -117,7 +116,10 @@ export const ActionBar = ({ table }: ActionBarProps) => {
               Folders
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              <AddToFolder table={table} destintaionEntity='folder' />
+              <AddToCollectionOrTag
+                table={table}
+                destintaionEntity={ENTITY_TYPE.COLLECTION}
+              />
             </PopoverContent>
           </Popover>
           <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
@@ -126,7 +128,7 @@ export const ActionBar = ({ table }: ActionBarProps) => {
               Tags
             </PopoverTrigger>
             <PopoverContent className='w-64' align='start'>
-              <AddToFolder table={table} destintaionEntity='tag' />
+              <AddToCollectionOrTag table={table} destintaionEntity={ENTITY_TYPE.TAG} />
             </PopoverContent>
           </Popover>
 

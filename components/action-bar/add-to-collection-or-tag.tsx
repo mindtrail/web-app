@@ -4,10 +4,11 @@ import { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { IconFolder, IconTag } from '@/components/ui/icons/next-icons'
+import { IconCollection, IconTag } from '@/components/ui/icons/next-icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/components/ui/use-toast'
 import { Typography } from '@/components/typography'
+import { ENTITY_TYPE } from '@/components/left-sidebar/constants'
 
 import {
   Command,
@@ -33,26 +34,35 @@ import {
   getTagsForDataSourcesList,
 } from '@/lib/serverActions/tag'
 
-type AddToFolderProps = {
+
+type AddToCollectionOrTagProps = {
   currentItemId?: string
-  destintaionEntity: 'folder' | 'tag'
+  destintaionEntity: EntityType
   table: Table<HistoryItem>
 }
 
-const CRUD_OPERATIONS = {
-  folder: {
+type CrudOperations = {
+  [key in EntityType]: {
+    createEntityAndDSConnection: any
+    removeEnityAndDSConnection: any
+    getExistingConnections: any
+  }
+}
+
+const CRUD_OPERATIONS: CrudOperations = {
+  [ENTITY_TYPE.COLLECTION]: {
     createEntityAndDSConnection: addDataSourcesToCollection,
     removeEnityAndDSConnection: removeDataSourceFromCollection,
     getExistingConnections: getCollectionsForDataSourceList,
   },
-  tag: {
+  [ENTITY_TYPE.TAG]: {
     createEntityAndDSConnection: addTagToDataSources,
     removeEnityAndDSConnection: removeTagFromDataSources,
     getExistingConnections: getTagsForDataSourcesList,
   },
 }
 
-export function AddToFolder(props: AddToFolderProps) {
+export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   const { destintaionEntity: entityType, table } = props
 
   const { toast } = useToast()
@@ -94,7 +104,7 @@ export function AddToFolder(props: AddToFolderProps) {
     }, 400)
   }, [selectedDataSources, entityType])
 
-  const onAddToFolder = useCallback(
+  const onAddToCollectionOrTag = useCallback(
     async (payload: AddItemToFolder) => {
       const { existingFolderId, newFolderName } = payload
 
@@ -195,7 +205,7 @@ export function AddToFolder(props: AddToFolderProps) {
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && searchValue?.length > 2) {
-      await onAddToFolder({ newFolderName: searchValue })
+      await onAddToCollectionOrTag({ newFolderName: searchValue })
       setSearchValue('')
     }
   }
@@ -203,7 +213,9 @@ export function AddToFolder(props: AddToFolderProps) {
   return (
     <div className='flex flex-col gap-2'>
       <Typography variant='small' className='text-muted-foreground mt-1'>
-        {entityType === 'folder' ? 'Add items to folders' : 'Set tags on selected items'}
+        {entityType === ENTITY_TYPE.COLLECTION
+          ? 'Add items to folders'
+          : 'Set tags on selected items'}
       </Typography>
 
       <Command
@@ -222,7 +234,7 @@ export function AddToFolder(props: AddToFolderProps) {
             <Button
               className='flex items-center gap-2 px-3 w-full justify-start'
               variant='ghost'
-              onClick={() => onAddToFolder({ newFolderName: searchValue })}
+              onClick={() => onAddToCollectionOrTag({ newFolderName: searchValue })}
             >
               <PlusIcon className='shrink-0' />
               <span className='max-w-44 truncate'>
@@ -239,12 +251,12 @@ export function AddToFolder(props: AddToFolderProps) {
                   <CommandItem
                     className={`flex flex-1 gap-2
                       ${containsSelectedItems && 'text-primary data-[selected=true]:text-primary'}`}
-                    onSelect={() => onAddToFolder({ existingFolderId: value })}
+                    onSelect={() => onAddToCollectionOrTag({ existingFolderId: value })}
                   >
                     {containsSelectedItems ? (
                       <CheckIcon className='w-4 h-4' />
-                    ) : entityType === 'folder' ? (
-                      <IconFolder />
+                    ) : entityType === ENTITY_TYPE.COLLECTION ? (
+                      <IconCollection />
                     ) : (
                       <IconTag />
                     )}

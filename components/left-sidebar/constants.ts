@@ -1,8 +1,8 @@
 import {
   IconAllData,
   IconHighlight,
-  IconMultipleFolders,
   IconTag,
+  IconCollection,
 } from '@/components/ui/icons/next-icons'
 
 export const APP_NAME = 'Mind Trail'
@@ -12,15 +12,20 @@ export const TOP_SIDEBAR_ITEMS = [
   { name: 'Highlights', url: '/highlights', icon: IconHighlight },
 ]
 
+export const ENTITY_TYPE = {
+  COLLECTION: 'collection',
+  TAG: 'tag',
+}
+
 export const SIDEBAR_FOLDERS: Record<string, NestedSidebarItem> = {
-  folder: {
-    entityType: 'folder',
-    name: 'Folders',
-    url: '/folder',
-    icon: IconMultipleFolders,
+  collection: {
+    entityType: ENTITY_TYPE.COLLECTION,
+    name: 'Collections',
+    url: '/collection',
+    icon: IconCollection,
   },
   tag: {
-    entityType: 'tag',
+    entityType: ENTITY_TYPE.TAG,
     name: 'Tags',
     url: '/tag',
     icon: IconTag,
