@@ -78,7 +78,7 @@ export const NestedItemInput = (props: NestedItemInput) => {
         placeholder={`New ${entityType}`}
         value={newName}
         disabled={opInProgress}
-        className='flex-1 border bg-background pl-1 pr-6'
+        className='flex-1 border bg-background pl-1 mr-[1px] pr-6'
         onChange={(e) => setNewName(e?.target?.value)}
         onKeyDown={handleKeyDown}
       />
