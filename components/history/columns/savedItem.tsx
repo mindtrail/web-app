@@ -100,7 +100,7 @@ export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) 
           <div className={`${IMG_STYLE} flex items-center justify-center bg-gray-100`}>
             <Typography
               variant='h3'
-              className='line-clamp-2 break-all text-foreground/30'
+              className='line-clamp-2 break-all text-foreground/25'
             >
               {fileType}
             </Typography>

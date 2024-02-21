@@ -199,6 +199,8 @@ model Tag {
   updatedAt       DateTime @default(now()) @updatedAt
 
   dataSourceTags  DataSourceTag[] // Relation to DataSourceTag for data sources
+  clippingTags    ClippingTag[]
+
   @@map("Tags")
 }
 
@@ -229,8 +231,20 @@ model Clipping {
   dataSource        DataSource @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
 
   notes             Note[] // Relation to Note, assuming users can create/save notes
+  clippingTag       ClippingTag[]
 
   @@map("Clippings")
+}
+
+// Join table for DataSource and Tag many-to-many relationship
+model ClippingTag {
+  clippingId  String
+  tagId         String
+
+  clipping      Clipping @relation(fields: [clippingId], references: [id], onDelete: Cascade)
+  tag           Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([clippingId, tagId])
 }
 
 model Note {
