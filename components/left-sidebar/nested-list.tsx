@@ -10,14 +10,14 @@ import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
-interface NestedSidebarsListProps {
+interface FoldersListProps {
   activeNestedSidebar?: NestedSidebarItem
   nestedItemsByCategory?: NestedItemsByCategory
   setActiveNestedSidebar: (value?: any) => void
   setNestedItemsByCategory: (value: SetNestedItemByCat) => void
 }
 
-export function NestedSidebarsList(props: NestedSidebarsListProps) {
+export function FoldersList(props: FoldersListProps) {
   const {
     activeNestedSidebar,
     nestedItemsByCategory,

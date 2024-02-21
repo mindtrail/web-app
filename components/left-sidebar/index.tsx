@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Separator } from '@/components/ui/separator'
 
 import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
-import { NestedSidebarsList } from '@/components/left-sidebar/nested-list'
+import { FoldersList } from '@/components/left-sidebar/nested-list'
 import { NavListTop } from '@/components/left-sidebar/nav-list-top'
 import { APP_NAME } from '@/components/left-sidebar/constants'
 
@@ -39,7 +39,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
         <div className='flex-1 flex flex-col space-between pb-2 relative'>
           <NavListTop setActiveNestedSidebar={setActiveNestedSidebar} />
           <Separator />
-          <NestedSidebarsList
+          <FoldersList
             activeNestedSidebar={activeNestedSidebar}
             nestedItemsByCategory={nestedItemsByCategory}
             setActiveNestedSidebar={setActiveNestedSidebar}

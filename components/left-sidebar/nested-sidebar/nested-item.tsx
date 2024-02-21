@@ -4,7 +4,6 @@ import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 
-import { IconFolder } from '@/components/ui/icons/next-icons'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { NestedItemInput } from '@/components/left-sidebar/nested-sidebar/item-input'
 
@@ -31,14 +30,13 @@ const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 export const NestedItem = (props: NestedItemProps) => {
   const { activeNestedSidebar, item, pathname, opInProgress, onRename, onDelete } = props
-  const { url, entityType, icon } = activeNestedSidebar
+  const { url, entityType, icon: Icon } = activeNestedSidebar
   const { id, name: originalName } = item
 
   const [newName, setNewName] = useState(originalName)
   const [renameInputVisible, setRenameInputVisible] = useState(false)
 
   const itemUrl = `${url}/${id}`
-  const IconUsed = entityType === 'folder' ? IconFolder : icon
 
   const handleUpdate = () => {
     onRename(id, newName)
@@ -57,6 +55,7 @@ export const NestedItem = (props: NestedItemProps) => {
         setInputVisibility={setRenameInputVisible}
         setNewName={setNewName}
         callbackFn={handleUpdate}
+        entityType={entityType}
       />
     )
   }
@@ -72,7 +71,7 @@ export const NestedItem = (props: NestedItemProps) => {
       )}
     >
       <span className='flex items-center gap-2 '>
-        <IconUsed />
+        <Icon />
         <span className='truncate max-w-[110px]'>{newName}</span>
       </span>
 

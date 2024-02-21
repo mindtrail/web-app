@@ -4,13 +4,14 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-import { IconFolder, IconSpinner } from '@/components/ui/icons/next-icons'
+import { IconCollection, IconTag, IconSpinner } from '@/components/ui/icons/next-icons'
+import { ENTITY_TYPE } from '@/components/left-sidebar/constants'
 
 type NestedItemInput = {
   item?: SidebarItem
   newName: string
   opInProgress?: boolean
-  entityType?: string
+  entityType: string
   setInputVisibility: (isEditing: boolean) => void
   setNewName: (newName: string) => void
   callbackFn: any
@@ -21,13 +22,14 @@ export const NestedItemInput = (props: NestedItemInput) => {
     item,
     newName,
     opInProgress,
-    entityType = 'folder',
+    entityType,
     setInputVisibility,
     setNewName,
     callbackFn,
   } = props
 
   const inputRef = useRef(null)
+  console.log(entityType)
 
   useEffect(() => {
     // Alert if clicked outside of element)
@@ -66,8 +68,10 @@ export const NestedItemInput = (props: NestedItemInput) => {
         <span className='w-5 flex justify-center'>
           <IconSpinner />
         </span>
+      ) : entityType === ENTITY_TYPE.COLLECTION ? (
+        <IconCollection />
       ) : (
-        <IconFolder />
+        <IconTag />
       )}
       <Input
         autoFocus
