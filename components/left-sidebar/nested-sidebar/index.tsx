@@ -269,6 +269,7 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
           id='search'
           className='mx-2'
           value={searchValue}
+          disabled={!allItems?.length}
           onChange={(e) => onFilterItems(e?.target?.value)}
           onKeyDown={handleSearchKeydown}
           placeholder='Search or create...'
@@ -333,22 +334,15 @@ export const NestedSidebar = (props: SecondSidebarProps) => {
               <div className='flex flex-col w-full gap-4'>
                 <Typography className='py-4 self-center'>No Items</Typography>
                 <Button
-                  className='flex gap-2'
+                  className='flex gap-2 capitalize'
                   disabled={opInProgress}
                   onClick={() => {
                     setNewItemInputVisible(true)
                     setNewName('')
                   }}
                 >
-                  {opInProgress ? (
-                    <IconSpinner className='shrink-0' />
-                  ) : (
-                    <PlusIcon className='shrink-0' width={16} height={16} />
-                  )}
-
-                  <span className='truncate'>
-                    {opInProgress ? 'Creating' : 'New'} {entityType}
-                  </span>
+                  <PlusIcon className='shrink-0' width={16} height={16} />
+                  {entityType}
                 </Button>
               </div>
             )}

@@ -108,7 +108,7 @@ export function DataTable<TData>({
           />
         </div>
       </div>
-      <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)]'>
+      <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
         {areRowsSelected && <ActionBar table={table} />}
 
         <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
