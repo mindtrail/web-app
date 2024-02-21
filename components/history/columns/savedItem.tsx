@@ -13,6 +13,9 @@ type SavedItemHeaderProps<TData> = {
   table: Table<TData>
 }
 
+const DEFAULT_IMG_SIZE = 250
+const IMG_STYLE = 'h-full w-full rounded-md border shadow-sm absolute top-0 left-0'
+
 export function SavedItemHeader<TData>({ table }: SavedItemHeaderProps<TData>) {
   return (
     <div className='flex items-center gap-2 px-2 group/saved-item'>
@@ -42,6 +45,10 @@ export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) 
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
   const cellWidth = table.getColumn('displayName')?.getSize() || 200
+
+  // Only use 2 image sizes. Good enough resolution to work with.
+  const imageSize =
+    cellWidth > DEFAULT_IMG_SIZE * 2 ? DEFAULT_IMG_SIZE * 2 : DEFAULT_IMG_SIZE
 
   const { image = '', title = 'Title', name, displayName, type } = original as HistoryItem
 
@@ -80,21 +87,22 @@ export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) 
         )}
       </div>
 
-      <div className={`w-full h-32 flex rounded-md group/car relative`}>
+      <div className={`flex h-32 rounded-md group/car relative`}>
         {image ? (
           <img
-            src={cloudinaryLoader({ src: image, width: cellWidth - 16 })}
+            src={cloudinaryLoader({ src: image, width: imageSize })}
             alt={title as string}
-            className='absolute top-0 left-0 rounded-md border shadow-sm object-cover w-full h-full'
+            className={`${IMG_STYLE} object-cover`}
           />
         ) : (
-          <div className='absolute top-0 left-0 rounded-md border shadow-sm w-48 h-32 bg-gray-100'></div>
+          <div className={`${IMG_STYLE} bg-gray-100`}></div>
         )}
         <div
-          className={`rounded-md h-full w-full flex flex-col justify-end py-2 bg-gradient-to-t from-white from-15% invisible group-hover/row:visible z-10`}
+          className={`rounded-md h-full w-full flex flex-col justify-end py-2
+            bg-gradient-to-t from-white from-15% invisible group-hover/row:visible z-10`}
         >
           <Typography
-            className='line-clamp-2 break-all invisible px-3 group-hover/row:visible rounded-md bottom-0'
+            className='line-clamp-2 break-all invisible px-4 group-hover/row:visible'
             variant='small'
           >
             {title}

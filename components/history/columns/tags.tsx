@@ -8,7 +8,7 @@ type TagsProps = {
 
 export const TagsCell = ({ columnSize, tagList }: TagsProps) => {
   return (
-    <ScrollArea className={`flex-1 relative flex flex-col gap-1 max-h-[150px]`}>
+    <ScrollArea className={`flex-1 relative flex flex-col gap-1 max-h-[130px]`}>
       <div className={`flex flex-wrap gap-2 px-2 max-w-[${columnSize}px] `}>
         {tagList?.length
           ? tagList.map(({ tag }, index) => (
