@@ -8,6 +8,8 @@ import { LeftSidebar } from '@/components/left-sidebar'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
+import Loading from '@/app/loading'
+import { Suspense } from 'react'
 
 // export const dynamic = 'force-dynamic'
 
@@ -39,7 +41,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <Providers>
           <LeftSidebar user={user} />
           <main className='flex flex-1 overflow-auto'>
-            {children}
+            <Suspense fallback={<Loading />}>{children}</Suspense>
             {/* <Separator orientation='vertical' /> */}
             {/* <SidebarRight /> */}
           </main>
