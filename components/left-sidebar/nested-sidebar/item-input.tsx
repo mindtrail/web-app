@@ -29,7 +29,6 @@ export const NestedItemInput = (props: NestedItemInput) => {
   } = props
 
   const inputRef = useRef(null)
-  console.log(entityType)
 
   useEffect(() => {
     // Alert if clicked outside of element)
