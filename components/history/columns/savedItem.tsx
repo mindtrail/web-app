@@ -52,6 +52,8 @@ export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) 
 
   const { image = '', title = 'Title', name, displayName, type } = original as HistoryItem
 
+  const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
+
   if (!name) {
     return null
   }
@@ -95,7 +97,14 @@ export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) 
             className={`${IMG_STYLE} object-cover`}
           />
         ) : (
-          <div className={`${IMG_STYLE} bg-gray-100`}></div>
+          <div className={`${IMG_STYLE} flex items-center justify-center bg-gray-100`}>
+            <Typography
+              variant='h3'
+              className='line-clamp-2 break-all text-foreground/30'
+            >
+              {fileType}
+            </Typography>
+          </div>
         )}
         <div
           className={`rounded-md h-full w-full flex flex-col justify-end py-2
