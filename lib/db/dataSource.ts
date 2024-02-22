@@ -26,6 +26,7 @@ export const getDataSourceListDbOp = async (props: GetDataSourceList) => {
     include: {
       clippings: true,
       dataSourceTags: { include: { tag: true } },
+      collectionDataSource: { include: { collection: true } },
     },
     orderBy: { createdAt: 'desc' },
   })

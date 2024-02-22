@@ -1,15 +1,18 @@
 import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
-import { ExternalLinkIcon } from '@radix-ui/react-icons'
+import { GlobeIcon, FileTextIcon, DividerHorizontalIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
-import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
+import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
+
+import { addHttpsIfMissing, cloudinaryLoader, formatDate } from '@/lib/utils'
 
 const IMG_SIZE = 100
 const IMG_STYLE = `w-full h-full rounded-md shadow-sm absolute top-0 left-0`
+const SECONDARY_TXT_STYLE = 'text-muted-foreground flex gap-1 items-center'
 
 type HighlightsCellProps<TData> = {
   row: Row<TData>
@@ -23,14 +26,16 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
 
   const {
     clippings = [],
+    createdAt,
+    collectionDataSource = [],
+    dataSourceTags = [],
     image = '',
     title = 'Title',
     name,
     displayName,
     type,
   } = original as HistoryItem
-
-  console.log(clippings)
+  console.log(original, type)
 
   const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
 
@@ -39,13 +44,13 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
   }
 
   return (
-    <div className='flex gap-4'>
-      <div className={`flex rounded-md relative w-[100px] h-[100px] shrink-0`}>
+    <div className='flex gap-4 md:gap-6 py-2'>
+      <div className={`flex rounded-md relative w-[100px] h-[80px] shrink-0`}>
         {image ? (
           <img
             src={cloudinaryLoader({ src: image, width: IMG_SIZE * 2 })}
             alt={title as string}
-            style={{ height: `${IMG_SIZE}px`, width: `${IMG_SIZE}px` }}
+            style={{ height: `80px`, width: `${IMG_SIZE}px` }}
             className={`${IMG_STYLE} object-cover object-left-top`}
           />
         ) : (
@@ -75,10 +80,41 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
           />
         </div>
       </div>
-      <div className='flex flex-col gap-2 flex-1'>
-        <Typography className='truncate max-w-[calc(100%-200px)]' variant='small'>
+      <div className='flex flex-col flex-1 gap-2'>
+        <Typography className='truncate max-w-full text-foreground/90' variant='text-lg'>
           {title}
         </Typography>
+        <div className='flex gap-4 items-center'>
+          <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+            {displayName}
+          </Typography>
+          <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+            {formatDate(new Date(createdAt))}
+          </Typography>
+        </div>
+        <div className='flex gap-4 items-center mt-2'>
+          {collectionDataSource?.length ? (
+            collectionDataSource?.map(({ collection }, index) => (
+              <Typography key={index} className={SECONDARY_TXT_STYLE} variant='small'>
+                <IconCollection className='w-3 h-3' />
+                {collection?.name}
+              </Typography>
+            ))
+          ) : (
+            <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+              <IconAllData className='w-3 h-3' />
+              All Items
+            </Typography>
+          )}
+
+          <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+            {dataSourceTags?.map(({ tag }, index) => (
+              <span className='inline-flex items-center gap-1' key={index}>
+                <IconTag className='w-3 h-3' /> {tag?.name}
+              </span>
+            ))}
+          </Typography>
+        </div>
       </div>
     </div>
   )
