@@ -6,6 +6,7 @@ import { Session } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { getDataSourceListDbOp } from '@/lib/db/dataSource'
 import { getUserPreferencesDbOp } from '@/lib/db/preferences'
+// import { getClippingList } from '@/lib/db/clipping'
 
 import { HistoryComponent } from '@/components/history'
 
@@ -40,7 +41,7 @@ export default async function ChatPage() {
   try {
     ;[userPreferences, historyItems] = await Promise.all([
       getUserPreferencesDbOp(userId),
-      getDataSourceListDbOp({ userId }),
+      getDataSourceListDbOp({ userId, containClippings: true }),
     ])
   } catch (err) {
     console.log(err)

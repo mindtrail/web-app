@@ -10,18 +10,23 @@ type GetDataSourceList = {
   userId: string
   collectionId?: string
   tagId?: string
+  containClippings?: boolean
 }
 
 export const getDataSourceListDbOp = async (props: GetDataSourceList) => {
-  const { userId, collectionId, tagId } = props
+  const { userId, collectionId, tagId, containClippings } = props
 
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
       dataSourceUsers: { some: { userId } },
       collectionDataSource: collectionId ? { some: { collectionId: collectionId } } : {},
       dataSourceTags: tagId ? { some: { tagId } } : {},
+      clippings: containClippings ? { some: {} } : {},
     },
-    include: { dataSourceTags: { include: { tag: true } } },
+    include: {
+      clippings: true,
+      dataSourceTags: { include: { tag: true } },
+    },
     orderBy: { createdAt: 'desc' },
   })
 
