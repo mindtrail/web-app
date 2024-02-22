@@ -7,16 +7,20 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
-import { COLUMN_LABELS } from '@/lib/constants'
+import { TABLE_LABELS, DATA_TYPE } from '@/lib/constants'
 
 type SavedItemHeaderProps<TData> = {
   table: Table<TData>
+  resourceType?: string
 }
 
 const DEFAULT_IMG_SIZE = 250
 const IMG_STYLE = 'h-full w-full rounded-md border shadow-sm absolute top-0 left-0'
 
-export function SavedItemHeader<TData>({ table }: SavedItemHeaderProps<TData>) {
+export function SavedItemHeader<TData>({
+  table,
+  resourceType = DATA_TYPE.DEFAULT,
+}: SavedItemHeaderProps<TData>) {
   return (
     <div className='flex items-center gap-2 px-2 group/saved-item'>
       <Link1Icon className='group-hover/saved-item:invisible' />
@@ -29,7 +33,7 @@ export function SavedItemHeader<TData>({ table }: SavedItemHeaderProps<TData>) {
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
       />
-      {COLUMN_LABELS.displayName}
+      {TABLE_LABELS[resourceType].displayName}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
 
@@ -20,12 +21,14 @@ import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
-
-import { getTableColumns } from '@/components/history/columns'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
+import {
+  getDefaultTableColumns,
+  getHighlightsTableColumns,
+} from '@/components/history/columns'
 
 import { ActionBar } from '@/components/action-bar/action-bar'
 
@@ -33,6 +36,7 @@ import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_COLUMN_VISIBILITY,
   DEFAULT_COLUMN_ORDER,
+  DATA_TYPE,
 } from '@/lib/constants'
 
 interface DataTableProps<TData> {
@@ -65,7 +69,17 @@ export function DataTable<TData>({
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const columns = useMemo(() => getTableColumns(), [])
+  const pathname = usePathname()
+  const pathFragments = pathname.split('/')
+  const entityType = pathFragments[1]
+
+  const columns = useMemo(
+    () =>
+      entityType === DATA_TYPE.HIGHLIGHTS
+        ? getHighlightsTableColumns()
+        : getDefaultTableColumns(),
+    [entityType],
+  )
 
   const table = useReactTable({
     data,
@@ -101,11 +115,13 @@ export function DataTable<TData>({
             A-Z
           </Button>
 
-          <VisibilityDropdown
-            table={table}
-            columnOrder={columnOrder}
-            handlePreferenceUpdate={handlePreferenceUpdate}
-          />
+          {entityType !== DATA_TYPE.HIGHLIGHTS && (
+            <VisibilityDropdown
+              table={table}
+              columnOrder={columnOrder}
+              handlePreferenceUpdate={handlePreferenceUpdate}
+            />
+          )}
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>

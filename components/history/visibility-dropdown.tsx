@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { COLUMN_LABELS } from '@/lib/constants'
+import { DEFAULT_COL_LABELS } from '@/lib/constants'
 
 interface VisibilityDropdownProps {
   table: Table<HistoryItem>
@@ -67,8 +67,9 @@ export function VisibilityDropdown(props: VisibilityDropdownProps) {
             key={column.id}
             className='capitalize'
             checked={column.getIsVisible()}
-            onCheckedChange={(checked) => handleVisibilityChange(column, checked)}>
-            {COLUMN_LABELS[column.id]}
+            onCheckedChange={(checked) => handleVisibilityChange(column, checked)}
+          >
+            {DEFAULT_COL_LABELS[column.id]}
           </DropdownMenuCheckboxItem>
         ))}
       </DropdownMenuContent>
