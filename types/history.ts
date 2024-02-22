@@ -1,9 +1,18 @@
-import { Clipping, DataSource } from '@prisma/client'
+import {
+  Clipping,
+  DataSource,
+  DataSourceTag,
+  Tag,
+  Collection,
+  CollectionDataSource,
+} from '@prisma/client'
 
 declare global {
   type HistoryItem = DataSource & {
     displayName: string
-    clippings: Clipping[]
+    clippings?: Clipping[]
+    dataSourceTags?: (DataSourceTag & { tag: Tag })[]
+    collectionDataSource?: (CollectionDataSource & { collection: Collection })[]
   }
 
   type HistoryFilter = {
