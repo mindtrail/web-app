@@ -8,25 +8,20 @@ import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
 
-const DEFAULT_IMG_SIZE = 250
 const IMG_STYLE = 'h-full w-full rounded-md border shadow-sm absolute top-0 left-0'
 
-type MainItemCellProps<TData> = {
+type HighlightsCellProps<TData> = {
   row: Row<TData>
   table: Table<TData>
 }
 
-export function MainItemCell<TData>({ row, table }: MainItemCellProps<TData>) {
+export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
   const { original } = row
 
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
-  const cellWidth = table.getColumn('displayName')?.getSize() || 200
 
-  // Only use 2 image sizes. Good enough resolution to work with.
-  const imageSize =
-    cellWidth > DEFAULT_IMG_SIZE * 2 ? DEFAULT_IMG_SIZE * 2 : DEFAULT_IMG_SIZE
-
+  const imageSize = 100
   const { image = '', title = 'Title', name, displayName, type } = original as HistoryItem
 
   const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
@@ -41,7 +36,7 @@ export function MainItemCell<TData>({ row, table }: MainItemCellProps<TData>) {
     <div className='flex flex-col gap-3 -mt-6'>
       <div className='flex items-center justify-center px-8'>
         <Checkbox
-          className={`absolute mt-[2px] bg-white left-2 invisible group-hover/row:visible ${
+          className={`absolute mt-[2px] bg-white left-4 invisible group-hover/row:visible ${
             (isRowSelected || isCheckboxVisible) && 'visible'
           }`}
           checked={isRowSelected}
