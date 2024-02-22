@@ -8,17 +8,16 @@ import { TagsCell } from '@/components/history/columns/tags'
 import { SavedItemHeader, SavedItemCell } from '@/components/history/columns/savedItem'
 
 import { formatDate } from '@/lib/utils'
-import { MIN_SIZE, MAX_SIZE, COLUMN_LABELS } from '@/lib/constants'
+import { MIN_COL_SIZE, MAX_COL_SIZE, DATA_TYPE } from '@/lib/constants'
 
-export function getTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
+export function getDefaultTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
   const tableColumns: ColumnDef<TData>[] = [
     {
       id: 'displayName',
       accessorKey: 'displayName',
-      accessorFn: (row) => {},
       header: ({ table }) => <SavedItemHeader table={table} />,
-      minSize: MIN_SIZE,
-      maxSize: MAX_SIZE,
+      minSize: MIN_COL_SIZE,
+      maxSize: MAX_COL_SIZE,
       enableHiding: false,
       cell: ({ row, table }) => <SavedItemCell row={row} table={table} />,
     },
@@ -26,8 +25,8 @@ export function getTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
       id: 'description',
       accessorKey: 'description',
       header: () => <DefaultHeader id='description' />,
-      minSize: MIN_SIZE,
-      maxSize: MAX_SIZE * 1.5,
+      minSize: MIN_COL_SIZE,
+      maxSize: MAX_COL_SIZE * 1.5,
 
       cell: ({ getValue }) => <DefaultCell text={getValue() as string} />,
     },
@@ -35,19 +34,37 @@ export function getTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
       id: 'createdAt',
       accessorKey: 'createdAt',
       header: () => <DefaultHeader id='createdAt' />,
-      minSize: MIN_SIZE,
-      maxSize: MAX_SIZE,
+      minSize: MIN_COL_SIZE,
+      maxSize: MAX_COL_SIZE,
       cell: ({ getValue }) => <DefaultCell text={formatDate(getValue() as string)} />,
     },
     {
       id: 'dataSourceTags',
       accessorKey: 'dataSourceTags',
       header: () => <DefaultHeader id='dataSourceTags' />,
-      minSize: MIN_SIZE,
-      maxSize: MAX_SIZE,
+      minSize: MIN_COL_SIZE,
+      maxSize: MAX_COL_SIZE,
       cell: ({ getValue, column }) => (
         <TagsCell columnSize={column.getSize()} tagList={getValue() as DataSourceTag[]} />
       ),
+    },
+  ]
+
+  return tableColumns
+}
+
+export function getHighlightsTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
+  const tableColumns: ColumnDef<TData>[] = [
+    {
+      id: 'displayName',
+      accessorKey: 'displayName',
+      header: ({ table }) => (
+        <SavedItemHeader table={table} resourceType={DATA_TYPE.HIGHLIGHTS} />
+      ),
+      minSize: MIN_COL_SIZE,
+      maxSize: MAX_COL_SIZE,
+      enableHiding: false,
+      cell: ({ row, table }) => <SavedItemCell row={row} table={table} />,
     },
   ]
 

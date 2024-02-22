@@ -1,8 +1,8 @@
 import { ReaderIcon, BookmarkIcon, CalendarIcon } from '@radix-ui/react-icons'
-import { COLUMN_LABELS } from '@/lib/constants'
+import { DEFAULT_COL_LABELS } from '@/lib/constants'
 
 type DefaultHeaderProps = {
-  id: keyof typeof COLUMN_LABELS
+  id: keyof typeof DEFAULT_COL_LABELS
 }
 
 const HEADER_ICON_MAP: Record<string, typeof ReaderIcon> = {
@@ -15,7 +15,7 @@ export const DefaultHeader = ({ id }: DefaultHeaderProps) => {
   const Icon = HEADER_ICON_MAP[id] || ReaderIcon
   return (
     <div className='flex items-center gap-2 px-2'>
-      <Icon /> <span className='capitalize'>{COLUMN_LABELS[id]}</span>
+      <Icon /> <span className='capitalize'>{DEFAULT_COL_LABELS[id]}</span>
     </div>
   )
 }

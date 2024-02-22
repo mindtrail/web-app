@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import { DataSourceType } from '@prisma/client'
 import { TrashIcon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
@@ -29,6 +28,7 @@ import {
 
 type ActionBarProps = {
   table: Table<HistoryItem>
+  dataType?: string
 }
 
 const actionBarBtnStyle = cn(
@@ -37,12 +37,7 @@ const actionBarBtnStyle = cn(
 )
 
 export const ActionBar = ({ table }: ActionBarProps) => {
-  const pathname = usePathname()
   const { toast } = useToast()
-
-  const pathFragments = pathname.split('/')
-  const entityType = pathFragments[1]
-  const currentItemId = pathFragments[2]
 
   const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
   const [addTagsOpen, setAddTagsOpen] = useState(false)

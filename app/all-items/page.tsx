@@ -27,12 +27,12 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function ChatPage() {
+export default async function AllItems() {
   const session = (await getServerSession(authOptions)) as ExtSession
 
   const userId = session?.user?.id
   if (!userId) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/`)
+    redirect(`/api/auth/signin?callbackUrl=/all-items/`)
   }
 
   let userPreferences, historyItems

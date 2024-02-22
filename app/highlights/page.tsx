@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
-// import { getDataSourceListForUser } from '@/lib/db/dataSource'
+import { getDataSourceListDbOp } from '@/lib/db/dataSource'
 import { getUserPreferencesDbOp } from '@/lib/db/preferences'
 
 import { HistoryComponent } from '@/components/history'
@@ -32,22 +32,26 @@ export default async function ChatPage() {
 
   const userId = session?.user?.id
   if (!userId) {
-    redirect(`/api/auth/signin?callbackUrl=/chat/`)
+    redirect(`/api/auth/signin?callbackUrl=/highlights/`)
   }
 
-  // let userPreferences, historyItems
+  let userPreferences, historyItems
 
-  // try {
-  //   ;[userPreferences, historyItems] = await Promise.all([
-  //     getUserPreferencesDbOp(userId),
-  //     // getDataSourceListForUser(userId),
-  //   ])
-  // } catch (err) {
-  //   console.log(err)
-  //   return <div>Error loading history.</div>
-  // }
+  try {
+    ;[userPreferences, historyItems] = await Promise.all([
+      getUserPreferencesDbOp(userId),
+      getDataSourceListDbOp({ userId }),
+    ])
+  } catch (err) {
+    console.log(err)
+    return <div>Error loading history.</div>
+  }
 
-  // historyItems = historyItems.splice(0, 40)
-
-  return <div>Highlights</div>
+  return (
+    <HistoryComponent
+      historyItems={historyItems}
+      userId={userId}
+      userPreferences={userPreferences}
+    />
+  )
 }
