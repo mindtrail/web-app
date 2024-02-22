@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 import { IconCollection, IconTag, IconSpinner } from '@/components/ui/icons/next-icons'
-import { ENTITY_TYPE } from '@/components/left-sidebar/constants'
+import { ENTITY_TYPE } from '@/lib/constants'
 
 type NestedItemInput = {
   item?: SidebarItem

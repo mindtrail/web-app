@@ -8,7 +8,7 @@ import { IconCollection, IconTag } from '@/components/ui/icons/next-icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/components/ui/use-toast'
 import { Typography } from '@/components/typography'
-import { ENTITY_TYPE } from '@/components/left-sidebar/constants'
+import { ENTITY_TYPE } from '@/lib/constants'
 
 import {
   Command,
@@ -33,7 +33,6 @@ import {
   removeTagFromDataSources,
   getTagsForDataSourcesList,
 } from '@/lib/serverActions/tag'
-
 
 type AddToCollectionOrTagProps = {
   currentItemId?: string

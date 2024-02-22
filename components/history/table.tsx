@@ -36,7 +36,7 @@ import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_COLUMN_VISIBILITY,
   DEFAULT_COLUMN_ORDER,
-  DATA_TYPE,
+  ENTITY_TYPE,
 } from '@/lib/constants'
 
 interface DataTableProps<TData> {
@@ -75,7 +75,7 @@ export function DataTable<TData>({
 
   const columns = useMemo(
     () =>
-      entityType === DATA_TYPE.HIGHLIGHTS
+      entityType === ENTITY_TYPE.HIGHLIGHTS
         ? getHighlightsTableColumns()
         : getDefaultTableColumns(),
     [entityType],
@@ -115,7 +115,7 @@ export function DataTable<TData>({
             A-Z
           </Button>
 
-          {entityType !== DATA_TYPE.HIGHLIGHTS && (
+          {entityType !== ENTITY_TYPE.HIGHLIGHTS && (
             <VisibilityDropdown
               table={table}
               columnOrder={columnOrder}

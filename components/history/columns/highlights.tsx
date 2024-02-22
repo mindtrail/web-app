@@ -1,49 +1,22 @@
 import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
-import { Link1Icon, ExternalLinkIcon } from '@radix-ui/react-icons'
+import { ExternalLinkIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
-import { TABLE_LABELS, DATA_TYPE } from '@/lib/constants'
-
-type SavedItemHeaderProps<TData> = {
-  table: Table<TData>
-  resourceType?: string
-}
 
 const DEFAULT_IMG_SIZE = 250
 const IMG_STYLE = 'h-full w-full rounded-md border shadow-sm absolute top-0 left-0'
 
-export function SavedItemHeader<TData>({
-  table,
-  resourceType = DATA_TYPE.DEFAULT,
-}: SavedItemHeaderProps<TData>) {
-  return (
-    <div className='flex items-center gap-2 px-2 group/saved-item'>
-      <Link1Icon className='group-hover/saved-item:invisible' />
-      <Checkbox
-        className='absolute hidden group-hover/saved-item:block'
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-      />
-      {TABLE_LABELS[resourceType].displayName}
-    </div>
-  )
-}
-
-type SavedItemCellProps<TData> = {
+type HighlightsCellProps<TData> = {
   row: Row<TData>
   table: Table<TData>
 }
 
-export function SavedItemCell<TData>({ row, table }: SavedItemCellProps<TData>) {
+export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
   const { original } = row
 
   const isRowSelected = row.getIsSelected()

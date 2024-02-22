@@ -5,21 +5,23 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DefaultHeader } from '@/components/history/columns/defaultHeader'
 import { DefaultCell } from '@/components/history/columns/defaultCell'
 import { TagsCell } from '@/components/history/columns/tags'
-import { SavedItemHeader, SavedItemCell } from '@/components/history/columns/savedItem'
+import { MainItemCell } from '@/components/history/columns/firstColItem'
+import { HighlightsCell } from '@/components/history/columns/highlights'
+import { FirstColHeader } from '@/components/history/columns/firstColHeader'
 
 import { formatDate } from '@/lib/utils'
-import { MIN_COL_SIZE, MAX_COL_SIZE, DATA_TYPE } from '@/lib/constants'
+import { MIN_COL_SIZE, MAX_COL_SIZE } from '@/lib/constants'
 
 export function getDefaultTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
   const tableColumns: ColumnDef<TData>[] = [
     {
       id: 'displayName',
       accessorKey: 'displayName',
-      header: ({ table }) => <SavedItemHeader table={table} />,
+      header: ({ table }) => <FirstColHeader table={table} />,
       minSize: MIN_COL_SIZE,
       maxSize: MAX_COL_SIZE,
       enableHiding: false,
-      cell: ({ row, table }) => <SavedItemCell row={row} table={table} />,
+      cell: ({ row, table }) => <MainItemCell row={row} table={table} />,
     },
     {
       id: 'description',
@@ -56,15 +58,13 @@ export function getDefaultTableColumns<TData, TValue>(): ColumnDef<TData, TValue
 export function getHighlightsTableColumns<TData, TValue>(): ColumnDef<TData, TValue>[] {
   const tableColumns: ColumnDef<TData>[] = [
     {
-      id: 'displayName',
+      id: 'highlights',
       accessorKey: 'displayName',
-      header: ({ table }) => (
-        <SavedItemHeader table={table} resourceType={DATA_TYPE.HIGHLIGHTS} />
-      ),
+      header: ({ table }) => <FirstColHeader table={table} resourceType={'highlights'} />,
       minSize: MIN_COL_SIZE,
       maxSize: MAX_COL_SIZE,
       enableHiding: false,
-      cell: ({ row, table }) => <SavedItemCell row={row} table={table} />,
+      cell: ({ row, table }) => <HighlightsCell row={row} table={table} />,
     },
   ]
 

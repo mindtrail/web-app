@@ -24,20 +24,17 @@ export const DEFAULT_COL_LABELS: Record<string, string> = {
 
 export const HIGHLIGHTS_LABELS: Record<string, string> = {
   displayName: 'Highlight',
-  // description: 'Description',
-  // createdAt: 'Created',
-  // dataSourceTags: 'Tags',
 }
 
-export const DATA_TYPE = {
-  DEFAULT: 'default',
+export const ENTITY_TYPE = {
+  COLLECTION: 'collection',
+  TAG: 'tag',
   HIGHLIGHTS: 'highlights',
+  ALL_ITEMS: 'all-items',
 }
 
-export const TABLE_LABELS = {
-  [DATA_TYPE.DEFAULT]: DEFAULT_COL_LABELS,
-  [DATA_TYPE.HIGHLIGHTS]: HIGHLIGHTS_LABELS,
-}
+export const getTableHeaders = (entityType?: string) =>
+  entityType === ENTITY_TYPE.HIGHLIGHTS ? HIGHLIGHTS_LABELS : DEFAULT_COL_LABELS
 
 export const DEFAULT_COLUMN_VISIBILITY = {
   displayName: true,
