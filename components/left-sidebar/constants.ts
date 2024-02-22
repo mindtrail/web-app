@@ -15,6 +15,8 @@ export const TOP_SIDEBAR_ITEMS = [
 export const ENTITY_TYPE = {
   COLLECTION: 'collection',
   TAG: 'tag',
+  HIGHLIGHTS: 'highlights',
+  ALL_ITEMS: 'all-items',
 }
 
 export const SIDEBAR_FOLDERS: Record<string, NestedSidebarItem> = {
