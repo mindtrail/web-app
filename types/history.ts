@@ -1,8 +1,9 @@
-import { DataSource } from '@prisma/client'
+import { Clipping, DataSource } from '@prisma/client'
 
 declare global {
   type HistoryItem = DataSource & {
     displayName: string
+    clippings: Clipping[]
   }
 
   type HistoryFilter = {

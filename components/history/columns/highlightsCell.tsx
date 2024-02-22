@@ -18,11 +18,19 @@ type HighlightsCellProps<TData> = {
 
 export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
   const { original } = row
-
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
 
-  const { image = '', title = 'Title', name, displayName, type } = original as HistoryItem
+  const {
+    clippings = [],
+    image = '',
+    title = 'Title',
+    name,
+    displayName,
+    type,
+  } = original as HistoryItem
+
+  console.log(clippings)
 
   const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
 
