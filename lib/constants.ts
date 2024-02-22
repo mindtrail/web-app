@@ -5,7 +5,7 @@ export const MAX_CHARS_PER_KB = 500 * 1000 * 1000 //
 export const MIN_COL_SIZE = 130
 export const MAX_COL_SIZE = 600
 
-export const FIXED_COLUMNS = ['displayName']
+export const FIXED_COLUMNS = ['displayName', 'highlights']
 export const DRAG_ITEM_TYPE = 'column'
 
 export const DEFAULT_COLUMN_ORDER = [

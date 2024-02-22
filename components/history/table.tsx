@@ -73,12 +73,11 @@ export function DataTable<TData>({
   const pathFragments = pathname.split('/')
   const entityType = pathFragments[1]
 
+  const onHighlightsPage = entityType === ENTITY_TYPE.HIGHLIGHTS
+
   const columns = useMemo(
-    () =>
-      entityType === ENTITY_TYPE.HIGHLIGHTS
-        ? getHighlightsTableColumns()
-        : getDefaultTableColumns(),
-    [entityType],
+    () => (onHighlightsPage ? getHighlightsTableColumns() : getDefaultTableColumns()),
+    [onHighlightsPage],
   )
 
   const table = useReactTable({
@@ -115,7 +114,7 @@ export function DataTable<TData>({
             A-Z
           </Button>
 
-          {entityType !== ENTITY_TYPE.HIGHLIGHTS && (
+          {!onHighlightsPage && (
             <VisibilityDropdown
               table={table}
               columnOrder={columnOrder}
@@ -127,7 +126,10 @@ export function DataTable<TData>({
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
         {areRowsSelected && <ActionBar table={table} dataType={entityType} />}
 
-        <Table className='table-fixed' style={{ width: table.getTotalSize() }}>
+        <Table
+          className='table-fixed'
+          style={!onHighlightsPage ? { width: table.getTotalSize() } : {}}
+        >
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -156,9 +158,10 @@ export function DataTable<TData>({
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
                       key={id}
-                      className={`align-top pt-10 ${
-                        column.id === 'actions' && 'text-center'
-                      }`}
+                      className={`align-top pt-10
+                        ${column.id === 'actions' && 'text-center'}
+                        ${onHighlightsPage && '!pr-2'}
+                        `}
                     >
                       {flexRender(column.columnDef.cell, getContext())}
                     </TableCell>

@@ -5,8 +5,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DefaultHeader } from '@/components/history/columns/defaultHeader'
 import { DefaultCell } from '@/components/history/columns/defaultCell'
 import { TagsCell } from '@/components/history/columns/tags'
-import { MainItemCell } from '@/components/history/columns/firstColItem'
-import { HighlightsCell } from '@/components/history/columns/highlights'
+import { FirstColumnCell } from '@/components/history/columns/firstColCell'
+import { HighlightsCell } from '@/components/history/columns/highlightsCell'
 import { FirstColHeader } from '@/components/history/columns/firstColHeader'
 
 import { formatDate } from '@/lib/utils'
@@ -21,7 +21,7 @@ export function getDefaultTableColumns<TData, TValue>(): ColumnDef<TData, TValue
       minSize: MIN_COL_SIZE,
       maxSize: MAX_COL_SIZE,
       enableHiding: false,
-      cell: ({ row, table }) => <MainItemCell row={row} table={table} />,
+      cell: ({ row, table }) => <FirstColumnCell row={row} table={table} />,
     },
     {
       id: 'description',
@@ -61,8 +61,8 @@ export function getHighlightsTableColumns<TData, TValue>(): ColumnDef<TData, TVa
       id: 'highlights',
       accessorKey: 'displayName',
       header: ({ table }) => <FirstColHeader table={table} resourceType={'highlights'} />,
-      minSize: MIN_COL_SIZE,
-      maxSize: MAX_COL_SIZE,
+      // minSize: MIN_COL_SIZE,
+      // maxSize: MAX_COL_SIZE,
       enableHiding: false,
       cell: ({ row, table }) => <HighlightsCell row={row} table={table} />,
     },

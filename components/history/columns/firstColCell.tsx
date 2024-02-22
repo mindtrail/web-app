@@ -11,12 +11,12 @@ import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
 const DEFAULT_IMG_SIZE = 250
 const IMG_STYLE = 'h-full w-full rounded-md border shadow-sm absolute top-0 left-0'
 
-type HighlightsCellProps<TData> = {
+type FirstColumnCellProps<TData> = {
   row: Row<TData>
   table: Table<TData>
 }
 
-export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
+export function FirstColumnCell<TData>({ row, table }: FirstColumnCellProps<TData>) {
   const { original } = row
 
   const isRowSelected = row.getIsSelected()
@@ -41,9 +41,8 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
     <div className='flex flex-col gap-3 -mt-6'>
       <div className='flex items-center justify-center px-8'>
         <Checkbox
-          className={`absolute mt-[2px] bg-white left-2 invisible group-hover/row:visible ${
-            (isRowSelected || isCheckboxVisible) && 'visible'
-          }`}
+          className={`absolute mt-[2px] bg-white left-4 invisible group-hover/row:visible
+            ${(isRowSelected || isCheckboxVisible) && 'visible'}`}
           checked={isRowSelected}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label='Select row'
