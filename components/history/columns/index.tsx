@@ -59,10 +59,9 @@ export function getHighlightsTableColumns<TData, TValue>(): ColumnDef<TData, TVa
   const tableColumns: ColumnDef<TData>[] = [
     {
       id: 'highlights',
+      enableResizing: false,
       accessorKey: 'displayName',
       header: ({ table }) => <FirstColHeader table={table} resourceType={'highlights'} />,
-      // minSize: MIN_COL_SIZE,
-      // maxSize: MAX_COL_SIZE,
       enableHiding: false,
       cell: ({ row, table }) => <HighlightsCell row={row} table={table} />,
     },

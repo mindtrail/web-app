@@ -158,10 +158,10 @@ export function DataTable<TData>({
                   {row.getVisibleCells().map(({ id, column, getContext }) => (
                     <TableCell
                       key={id}
-                      className={`align-top pt-10
+                      className={`align-top
                         ${column.id === 'actions' && 'text-center'}
-                        ${onHighlightsPage && '!pr-2'}
-                        `}
+                        ${onHighlightsPage ? '!pr-2' : 'pt-10'}
+                      `}
                     >
                       {flexRender(column.columnDef.cell, getContext())}
                     </TableCell>

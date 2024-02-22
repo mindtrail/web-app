@@ -8,7 +8,8 @@ import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
 
-const IMG_STYLE = 'h-full w-full rounded-md border shadow-sm absolute top-0 left-0'
+const IMG_SIZE = 100
+const IMG_STYLE = `w-full h-full rounded-md shadow-sm absolute top-0 left-0`
 
 type HighlightsCellProps<TData> = {
   row: Row<TData>
@@ -21,7 +22,6 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
 
-  const imageSize = 100
   const { image = '', title = 'Title', name, displayName, type } = original as HistoryItem
 
   const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
@@ -30,46 +30,20 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
     return null
   }
 
-  const ItemText = <Typography className='truncate max-w-full'>{displayName}</Typography>
-
   return (
-    <div className='flex flex-col gap-3 -mt-6'>
-      <div className='flex items-center justify-center px-8'>
-        <Checkbox
-          className={`absolute mt-[2px] bg-white left-4 invisible group-hover/row:visible ${
-            (isRowSelected || isCheckboxVisible) && 'visible'
-          }`}
-          checked={isRowSelected}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-        />
-
-        {type === DataSourceType.file ? (
-          ItemText
-        ) : (
-          <Link
-            target='_blank'
-            href={addHttpsIfMissing(name)}
-            className={`flex px-2 items-center max-w-full text-center
-              hover:underline group/link relative`}
-          >
-            {ItemText}
-            <ExternalLinkIcon
-              className={`absolute -right-3 invisible group-hover/link:visible`}
-            />
-          </Link>
-        )}
-      </div>
-
-      <div className={`flex h-32 rounded-md group/car relative`}>
+    <div className='flex gap-4'>
+      <div className={`flex rounded-md relative w-[100px] h-[100px] shrink-0`}>
         {image ? (
           <img
-            src={cloudinaryLoader({ src: image, width: imageSize })}
+            src={cloudinaryLoader({ src: image, width: IMG_SIZE * 2 })}
             alt={title as string}
-            className={`${IMG_STYLE} object-cover`}
+            style={{ height: `${IMG_SIZE}px`, width: `${IMG_SIZE}px` }}
+            className={`${IMG_STYLE} object-cover object-left-top`}
           />
         ) : (
-          <div className={`${IMG_STYLE} flex items-center justify-center bg-gray-100`}>
+          <div
+            className={`${IMG_STYLE} flex items-center justify-center border bg-secondary`}
+          >
             <Typography
               variant='h3'
               className='line-clamp-2 break-all text-foreground/25'
@@ -79,17 +53,37 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
           </div>
         )}
         <div
-          className={`rounded-md h-full w-full flex flex-col justify-end py-2
-            bg-gradient-to-t from-white from-15% invisible group-hover/row:visible z-10`}
+          className={`rounded-md w-full h-full flex flex-col justify-end py-2
+            bg-gradient-to-br from-secondary/15 from-5% invisible group-hover/row:visible z-10`}
         >
-          <Typography
-            className='line-clamp-2 break-all invisible px-4 group-hover/row:visible'
-            variant='small'
-          >
-            {title}
-          </Typography>
+          <Checkbox
+            className={`absolute top-2 left-2 bg-secondary drop-shadow-lg shadow-white/30
+              invisible group-hover/row:visible
+              ${(isRowSelected || isCheckboxVisible) && 'visible'}
+            `}
+            checked={isRowSelected}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label='Select row'
+          />
         </div>
+      </div>
+      <div className='flex flex-col gap-2 flex-1'>
+        <Typography className='truncate max-w-[calc(100%-200px)]' variant='small'>
+          {title}
+        </Typography>
       </div>
     </div>
   )
 }
+
+// <div className='flex items-center px-8'>
+//         <Checkbox
+//           className={`absolute mt-[2px] bg-white left-4 invisible group-hover/row:visible ${
+//             (isRowSelected || isCheckboxVisible) && 'visible'
+//           }`}
+//           checked={isRowSelected}
+//           onCheckedChange={(value) => row.toggleSelected(!!value)}
+//           aria-label='Select row'
+//         />
+//         <Typography className='truncate max-w-full'>{displayName}</Typography>{' '}
+//       </div>

@@ -40,6 +40,7 @@ export function DraggableHeader<TData, TValue>({
   const { column } = header
 
   const draggableColumn = useMemo(() => !FIXED_COLUMNS.includes(column.id), [column])
+  const canResize = useMemo(() => column.getCanResize(), [column])
 
   const [{ isDragging }, dragRef, previewRef] = useDrag({
     item: () => column,
@@ -147,17 +148,19 @@ export function DraggableHeader<TData, TValue>({
             />
           )}
         </div>
-        <div
-          onMouseDown={handleMouseDown}
-          className={`group absolute flex justify-center items-center w-4
+        {canResize && (
+          <div
+            onMouseDown={handleMouseDown}
+            className={`group absolute flex justify-center items-center w-4
             -right-2 top-0 h-[100%] cursor-col-resize select-none touch-none mx-1`}
-        >
-          <Separator
-            orientation='vertical'
-            className={`w-[2px] bg-primary opacity-0 group-hover:opacity-100 h-[70%] rounded-lg
+          >
+            <Separator
+              orientation='vertical'
+              className={`w-[2px] bg-primary opacity-0 group-hover:opacity-100 h-[70%] rounded-lg
               ${isResizing && 'opacity-100'}`}
-          />
-        </div>
+            />
+          </div>
+        )}
       </TableHead>
     </>
   )

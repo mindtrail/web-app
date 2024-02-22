@@ -41,7 +41,7 @@ export function FirstColumnCell<TData>({ row, table }: FirstColumnCellProps<TDat
     <div className='flex flex-col gap-3 -mt-6'>
       <div className='flex items-center justify-center px-8'>
         <Checkbox
-          className={`absolute mt-[2px] bg-white left-4 invisible group-hover/row:visible
+          className={`absolute mt-[2px] left-4 bg-secondary invisible group-hover/row:visible
             ${(isRowSelected || isCheckboxVisible) && 'visible'}`}
           checked={isRowSelected}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -65,7 +65,7 @@ export function FirstColumnCell<TData>({ row, table }: FirstColumnCellProps<TDat
         )}
       </div>
 
-      <div className={`flex h-32 rounded-md group/car relative`}>
+      <div className={`flex h-32 rounded-md relative`}>
         {image ? (
           <img
             src={cloudinaryLoader({ src: image, width: imageSize })}
@@ -84,7 +84,7 @@ export function FirstColumnCell<TData>({ row, table }: FirstColumnCellProps<TDat
         )}
         <div
           className={`rounded-md h-full w-full flex flex-col justify-end py-2
-            bg-gradient-to-t from-white from-15% invisible group-hover/row:visible z-10`}
+            bg-gradient-to-t from-secondary from-15% invisible group-hover/row:visible z-10`}
         >
           <Typography
             className='line-clamp-2 break-all invisible px-4 group-hover/row:visible'
