@@ -30,7 +30,7 @@ import { createTag, deleteTag, updateTag } from '@/lib/serverActions/tag'
 
 import { NestedItem } from './nested-item'
 import { Separator } from '@/components/ui/separator'
-import { ENTITY_TYPE } from '../constants'
+import { ENTITY_TYPE } from '@/lib/constants'
 
 type SecondSidebarProps = {
   activeNestedSidebar: NestedSidebarItem

@@ -12,9 +12,9 @@ import { useToast } from '@/components/ui/use-toast'
 
 import { AddToCollectionOrTag } from '@/components/action-bar/add-to-collection-or-tag'
 
+import { ENTITY_TYPE } from '@/lib/constants'
 import { cn, getURLPathname } from '@/lib/utils'
 import { deleteDataSource } from '@/lib/serverActions/dataSource'
-import { ENTITY_TYPE } from '@/components/left-sidebar/constants'
 
 import {
   AlertDialog,

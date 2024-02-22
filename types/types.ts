@@ -1,7 +1,7 @@
 import { type Message } from 'ai'
 import { Session } from 'next-auth'
 import { Tag } from '@prisma/client'
-import { ENTITY_TYPE } from '@/components/left-sidebar/constants'
+import { ENTITY_TYPE } from '@/lib/constants'
 
 declare global {
   interface Chat extends Record<string, any> {
