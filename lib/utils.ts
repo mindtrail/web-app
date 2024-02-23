@@ -12,8 +12,16 @@ export const getNanoId = customAlphabet(
   10,
 ) // 10
 
-export function formatDate(input: string | number | Date): string {
+export function formatDate(input: string | number | Date, format?: string): string {
   const date = new Date(input)
+
+  if (format === 'short') {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    })
+  }
+
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
