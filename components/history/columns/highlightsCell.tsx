@@ -1,11 +1,10 @@
 import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
-import { GlobeIcon, FileTextIcon, DividerHorizontalIcon } from '@radix-ui/react-icons'
+import { DotFilledIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
-import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
-
+import { Checkbox } from '@/components/ui/checkbox'
 import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
 
 import { addHttpsIfMissing, cloudinaryLoader, formatDate } from '@/lib/utils'
@@ -80,40 +79,47 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
           />
         </div>
       </div>
-      <div className='flex flex-col flex-1 gap-2'>
+      <div className='flex flex-col flex-1 gap-2 max-w-[calc(100%-120px)]'>
         <Typography className='truncate max-w-full text-foreground/90' variant='text-lg'>
           {title}
         </Typography>
-        <div className='flex gap-4 items-center'>
-          <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+        <div className='flex gap-2 items-center'>
+          <Typography
+            className={`${SECONDARY_TXT_STYLE} truncate max-w-[30%]`}
+            variant='small'
+          >
             {displayName}
           </Typography>
+          <DotFilledIcon className='w-3 h-3 text-muted-foreground' />
           <Typography className={SECONDARY_TXT_STYLE} variant='small'>
-            {formatDate(new Date(createdAt))}
+            {formatDate(new Date(createdAt), 'short')}
           </Typography>
         </div>
-        <div className='flex gap-4 items-center mt-2'>
-          {collectionDataSource?.length ? (
-            collectionDataSource?.map(({ collection }, index) => (
-              <Typography key={index} className={SECONDARY_TXT_STYLE} variant='small'>
-                <IconCollection className='w-3 h-3' />
-                {collection?.name}
+        {/* @ts-ignore */}
+        <div className='flex gap-5 items-center mt-2 truncate max-w-full'>
+          <div className='collections flex gap-2 items-center shrink-0'>
+            {collectionDataSource?.length ? (
+              collectionDataSource?.map(({ collection }, index) => (
+                <Typography key={index} className={SECONDARY_TXT_STYLE} variant='small'>
+                  <IconCollection className='w-3 h-3' />
+                  {collection?.name}
+                </Typography>
+              ))
+            ) : (
+              <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+                <IconAllData className='w-3 h-3' />
+                All Items
               </Typography>
-            ))
-          ) : (
-            <Typography className={SECONDARY_TXT_STYLE} variant='small'>
-              <IconAllData className='w-3 h-3' />
-              All Items
-            </Typography>
-          )}
+            )}
+          </div>
 
-          <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+          <div className='tags flex gap-2 items-center shrink-0'>
             {dataSourceTags?.map(({ tag }, index) => (
-              <span className='inline-flex items-center gap-1' key={index}>
+              <Typography key={index} className={SECONDARY_TXT_STYLE} variant='small'>
                 <IconTag className='w-3 h-3' /> {tag?.name}
-              </span>
+              </Typography>
             ))}
-          </Typography>
+          </div>
         </div>
       </div>
     </div>
