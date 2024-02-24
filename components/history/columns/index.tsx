@@ -63,7 +63,9 @@ export function getHighlightsTableColumns<TData, TValue>(): ColumnDef<TData, TVa
       accessorKey: 'displayName',
       header: ({ table }) => <FirstColHeader table={table} resourceType={'highlights'} />,
       enableHiding: false,
-      cell: ({ row, table }) => <HighlightsCell row={row} table={table} />,
+      cell: ({ row, table }) => {
+        return <HighlightsCell row={row} table={table} />
+      },
     },
   ]
 

@@ -1,11 +1,9 @@
 import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
-import { DotFilledIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { Checkbox } from '@/components/ui/checkbox'
-import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
 
 import { addHttpsIfMissing, cloudinaryLoader, formatDate } from '@/lib/utils'
 
@@ -19,15 +17,12 @@ type HighlightsCellProps<TData> = {
 }
 
 export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
-  const { original } = row
+  const { original, depth } = row
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
 
   const {
     clippings = [],
-    createdAt,
-    collectionDataSource = [],
-    dataSourceTags = [],
     image = '',
     title = 'Title',
     name,
@@ -36,6 +31,24 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
   } = original as HistoryItem
 
   const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
+
+  // This is a clipping
+  if (depth === 1) {
+    const { content } = row.original as SavedClipping
+    return (
+      <div className='flex gap-4 md:gap-6 py-2'>
+        <div className='tags flex flex-col gap-2 mt-1 '>
+          <Typography
+            className={`${SECONDARY_TXT_STYLE}
+                  line-clamp-2 border-l border-yellow-500 pl-2`}
+            variant='small'
+          >
+            {content}
+          </Typography>
+        </div>
+      </div>
+    )
+  }
 
   if (!name) {
     return null
@@ -82,45 +95,6 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
         <Typography className='truncate max-w-full text-foreground/90' variant='text-lg'>
           {title}
         </Typography>
-
-        <div className='flex gap-2 items-center'>
-          <Typography
-            className={`${SECONDARY_TXT_STYLE} truncate max-w-[30%]`}
-            variant='small'
-          >
-            {displayName}
-          </Typography>
-          <DotFilledIcon className='w-3 h-3 text-muted-foreground' />
-          <Typography className={SECONDARY_TXT_STYLE} variant='small'>
-            {formatDate(new Date(createdAt), 'short')}
-          </Typography>
-        </div>
-
-        <div className='flex gap-5 items-center mt-2 truncate max-w-full'>
-          <div className='collections flex gap-2 items-center shrink-0'>
-            {collectionDataSource?.length ? (
-              collectionDataSource?.map(({ collection }, index) => (
-                <Typography key={index} className={SECONDARY_TXT_STYLE} variant='small'>
-                  <IconCollection className='w-3 h-3' />
-                  {collection?.name}
-                </Typography>
-              ))
-            ) : (
-              <Typography className={SECONDARY_TXT_STYLE} variant='small'>
-                <IconAllData className='w-3 h-3' />
-                All Items
-              </Typography>
-            )}
-          </div>
-
-          <div className='tags flex gap-2 items-center shrink-0'>
-            {dataSourceTags?.map(({ tag }, index) => (
-              <Typography key={index} className={SECONDARY_TXT_STYLE} variant='small'>
-                <IconTag className='w-3 h-3' /> {tag?.name}
-              </Typography>
-            ))}
-          </div>
-        </div>
 
         {clippings?.length && (
           <div className='tags flex flex-col gap-2 mt-1 '>
