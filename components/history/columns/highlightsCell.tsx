@@ -1,11 +1,12 @@
-import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
+import { DotFilledIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { Checkbox } from '@/components/ui/checkbox'
+import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
 
-import { addHttpsIfMissing, cloudinaryLoader, formatDate } from '@/lib/utils'
+import { cloudinaryLoader, formatDate } from '@/lib/utils'
 
 const IMG_SIZE = 100
 const IMG_STYLE = `w-full h-full rounded-md shadow-sm absolute top-0 left-0`
@@ -22,10 +23,12 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
 
   const {
+    createdAt,
     clippings = [],
+    collectionDataSource = [],
+    dataSourceTags = [],
     image = '',
     title = 'Title',
-    name,
     displayName,
     type,
   } = original as HistoryItem
@@ -36,32 +39,25 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
   if (depth === 1) {
     const { content } = row.original as SavedClipping
     return (
-      <div className='flex gap-4 md:gap-6 py-2'>
-        <div className='tags flex flex-col gap-2 mt-1 '>
-          <Typography
-            className={`${SECONDARY_TXT_STYLE}
+      <div className='ml-16 py-2'>
+        <Typography
+          className={`${SECONDARY_TXT_STYLE}
                   line-clamp-2 border-l border-yellow-500 pl-2`}
-            variant='small'
-          >
-            {content}
-          </Typography>
-        </div>
+          variant='small'
+        >
+          {content}
+        </Typography>
       </div>
     )
   }
 
-  if (!name) {
-    return null
-  }
-
   return (
-    <div className='flex gap-4 md:gap-6 py-2'>
-      <div className={`flex rounded-md relative w-[100px] shrink-0`}>
+    <div className={`flex gap-4 pt-4 pb-2 ${row.id !== '0' && 'border-t'}`}>
+      <div className={`flex rounded-md relative w-12 h-12 shrink-0`}>
         {image ? (
           <img
-            src={cloudinaryLoader({ src: image, width: IMG_SIZE * 2 })}
+            src={cloudinaryLoader({ src: image, width: IMG_SIZE })}
             alt={title as string}
-            style={{ height: `80px`, width: `${IMG_SIZE}px` }}
             className={`${IMG_STYLE} object-cover object-left-top`}
           />
         ) : (
@@ -91,25 +87,24 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
           />
         </div>
       </div>
-      <div className='flex flex-col flex-1 gap-2 max-w-[calc(100%-120px)]'>
+
+      <div className='flex flex-col flex-1 gap-2 max-w-[calc(100%-64px)]'>
         <Typography className='truncate max-w-full text-foreground/90' variant='text-lg'>
           {title}
         </Typography>
 
-        {clippings?.length && (
-          <div className='tags flex flex-col gap-2 mt-1 '>
-            {clippings?.map(({ content }, index) => (
-              <Typography
-                key={index}
-                className={`${SECONDARY_TXT_STYLE}
-                  line-clamp-2 border-l border-yellow-500 pl-2`}
-                variant='small'
-              >
-                {content}
-              </Typography>
-            ))}
-          </div>
-        )}
+        <div className='flex gap-2 items-center'>
+          <Typography
+            className={`${SECONDARY_TXT_STYLE} truncate max-w-[30%]`}
+            variant='small'
+          >
+            {displayName}
+          </Typography>
+          <DotFilledIcon className='w-3 h-3 text-muted-foreground' />
+          <Typography className={SECONDARY_TXT_STYLE} variant='small'>
+            {formatDate(new Date(createdAt), 'short')}
+          </Typography>
+        </div>
       </div>
     </div>
   )
