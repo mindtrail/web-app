@@ -182,9 +182,8 @@ function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
           <TableRow
             key={row.id}
             data-state={isRowSelected && 'selected'}
-            className={`group/row text-foreground/70 hover:text-foreground ${
-              isRowSelected && 'text-foreground'
-            }`}
+            className={`group/row text-foreground/70 hover:text-foreground border-none
+            ${isRowSelected && 'text-foreground'}`}
           >
             {row.getVisibleCells().map(({ id, column, getContext }) => {
               // console.log(row)
@@ -193,7 +192,7 @@ function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
                   key={id}
                   className={`align-top
                     ${column.id === 'actions' && 'text-center'}
-                    ${entityIsHighlight ? '!pr-2' : 'pt-10'}
+                    ${entityIsHighlight ? '!pr-2 py-0' : 'pt-10'}
                   `}
                 >
                   {flexRender(column.columnDef.cell, getContext())}

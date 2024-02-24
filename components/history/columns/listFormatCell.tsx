@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { Table, Row } from '@tanstack/react-table'
 import { DotFilledIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
@@ -7,7 +6,7 @@ import { Typography } from '@/components/typography'
 import { Checkbox } from '@/components/ui/checkbox'
 import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
 
-import { addHttpsIfMissing, cloudinaryLoader, formatDate } from '@/lib/utils'
+import { cloudinaryLoader, formatDate } from '@/lib/utils'
 
 const IMG_SIZE = 100
 const IMG_STYLE = `w-full h-full rounded-md shadow-sm absolute top-0 left-0`
