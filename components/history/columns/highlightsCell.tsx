@@ -1,10 +1,11 @@
+import { useEffect } from 'react'
 import { Table, Row } from '@tanstack/react-table'
 import { DotFilledIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { Checkbox } from '@/components/ui/checkbox'
-import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
+// import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
 
 import { cloudinaryLoader, formatDate } from '@/lib/utils'
 
@@ -19,14 +20,18 @@ type HighlightsCellProps<TData> = {
 
 export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
   const { original, depth } = row
-  const isRowSelected = row.getIsSelected()
-  const isCheckboxVisible = table.getIsSomePageRowsSelected()
+  const isRowSelected =
+    depth === 1
+      ? row.getIsSelected()
+      : row.getIsAllSubRowsSelected() || (row.getIsSomeSelected() && 'indeterminate')
+
+  const isCheckboxVisible =
+    depth === 0
+      ? table.getIsSomePageRowsSelected()
+      : row.getParentRow()?.getIsSomeSelected()
 
   const {
     createdAt,
-    clippings = [],
-    collectionDataSource = [],
-    dataSourceTags = [],
     image = '',
     title = 'Title',
     displayName,
@@ -35,11 +40,19 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
 
   const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
 
+  const handleParentCheck = () => {
+    const allChildrenSelected = row.getIsAllSubRowsSelected()
+
+    row.subRows.forEach((subRow) => {
+      subRow.toggleSelected(!allChildrenSelected)
+    })
+  }
+
   // This is a clipping
   if (depth === 1) {
     const { content } = row.original as SavedClipping
     return (
-      <div className='ml-16 py-2'>
+      <div className='ml-16 py-2 relative'>
         <Typography
           className={`${SECONDARY_TXT_STYLE}
                   line-clamp-2 border-l border-yellow-500 pl-2`}
@@ -47,6 +60,16 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
         >
           {content}
         </Typography>
+
+        <Checkbox
+          className={`absolute top-2 -left-6 bg-secondary drop-shadow-lg shadow-white/30
+              invisible group-hover/row:visible
+              ${(isRowSelected || isCheckboxVisible) && 'visible'}
+            `}
+          checked={isRowSelected}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
       </div>
     )
   }
@@ -82,7 +105,7 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
               ${(isRowSelected || isCheckboxVisible) && 'visible'}
             `}
             checked={isRowSelected}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            onCheckedChange={handleParentCheck}
             aria-label='Select row'
           />
         </div>
