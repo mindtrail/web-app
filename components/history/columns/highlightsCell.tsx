@@ -27,7 +27,7 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
 
   const isCheckboxVisible =
     depth === 0
-      ? table.getIsSomePageRowsSelected()
+      ? table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
       : row.getParentRow()?.getIsSomeSelected()
 
   const {
@@ -52,17 +52,17 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
   if (depth === 1) {
     const { content } = row.original as SavedClipping
     return (
-      <div className='ml-16 py-2 relative'>
+      <div className='ml-16 pl-8 py-2 flex relative items-center'>
         <Typography
           className={`${SECONDARY_TXT_STYLE}
-                  line-clamp-2 border-l border-yellow-500 pl-2`}
+                  line-clamp-2 border-l-2 border-yellow-500 pl-3`}
           variant='small'
         >
           {content}
         </Typography>
 
         <Checkbox
-          className={`absolute top-2 -left-6 bg-secondary drop-shadow-lg shadow-white/30
+          className={`absolute left-0 bg-secondary drop-shadow-lg shadow-white/30
               invisible group-hover/row:visible
               ${(isRowSelected || isCheckboxVisible) && 'visible'}
             `}
@@ -76,39 +76,39 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
 
   return (
     <div className={`flex gap-4 pt-4 pb-2 ${row.id !== '0' && 'border-t'}`}>
-      <div className={`flex rounded-md relative w-12 h-12 shrink-0`}>
-        {image ? (
-          <img
-            src={cloudinaryLoader({ src: image, width: IMG_SIZE })}
-            alt={title as string}
-            className={`${IMG_STYLE} object-cover object-left-top`}
-          />
-        ) : (
-          <div
-            className={`${IMG_STYLE} flex items-center justify-center border bg-secondary`}
-          >
-            <Typography
-              variant='h3'
-              className='line-clamp-2 break-all text-foreground/25'
-            >
-              {fileType}
-            </Typography>
-          </div>
-        )}
+      <div className={`flex items-center rounded-md relative w-12 h-12 shrink-0`}>
         <div
-          className={`rounded-md w-full h-full flex flex-col justify-end py-2
-            bg-gradient-to-br from-secondary/15 from-5% invisible group-hover/row:visible z-10`}
+          className={`group-hover/row:opacity-50 ${isCheckboxVisible && 'opacity-50'}`}
         >
-          <Checkbox
-            className={`absolute top-2 left-2 bg-secondary drop-shadow-lg shadow-white/30
+          {image ? (
+            <img
+              src={cloudinaryLoader({ src: image, width: IMG_SIZE })}
+              alt={title as string}
+              className={`${IMG_STYLE} object-cover object-left-top`}
+            />
+          ) : (
+            <div
+              className={`${IMG_STYLE} flex items-center justify-center border bg-secondary`}
+            >
+              <Typography
+                variant='h3'
+                className='line-clamp-2 break-all text-foreground/25'
+              >
+                {fileType}
+              </Typography>
+            </div>
+          )}
+        </div>
+
+        <Checkbox
+          className={`absolute top-2 left-2 bg-secondary drop-shadow-lg shadow-white/30
               invisible group-hover/row:visible
               ${(isRowSelected || isCheckboxVisible) && 'visible'}
             `}
-            checked={isRowSelected}
-            onCheckedChange={handleParentCheck}
-            aria-label='Select row'
-          />
-        </div>
+          checked={isRowSelected}
+          onCheckedChange={handleParentCheck}
+          aria-label='Select row'
+        />
       </div>
 
       <div className='flex flex-col flex-1 gap-2 max-w-[calc(100%-64px)]'>
