@@ -5,7 +5,12 @@ import { DataSourceType } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { Checkbox } from '@/components/ui/checkbox'
-import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
+import {
+  IconCollection,
+  IconTag,
+  IconAllData,
+  IconHighlight,
+} from '@/components/ui/icons/next-icons'
 
 import { addHttpsIfMissing, cloudinaryLoader, formatDate } from '@/lib/utils'
 
@@ -34,7 +39,8 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
     displayName,
     type,
   } = original as HistoryItem
-  console.log(original, type)
+
+  console.log(type, clippings)
 
   const fileType = type === DataSourceType.file ? displayName.split('.').pop() : null
 
@@ -44,7 +50,7 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
 
   return (
     <div className='flex gap-4 md:gap-6 py-2'>
-      <div className={`flex rounded-md relative w-[100px] h-[80px] shrink-0`}>
+      <div className={`flex rounded-md relative w-[100px] shrink-0`}>
         {image ? (
           <img
             src={cloudinaryLoader({ src: image, width: IMG_SIZE * 2 })}
@@ -121,6 +127,20 @@ export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>
             ))}
           </div>
         </div>
+        {clippings?.length && (
+          <div className='tags flex flex-col gap-2 mt-1 '>
+            {clippings?.map(({ content }, index) => (
+              <Typography
+                key={index}
+                className={`${SECONDARY_TXT_STYLE}
+                  line-clamp-2 border-l border-yellow-500 pl-2`}
+                variant='small'
+              >
+                {content}
+              </Typography>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
