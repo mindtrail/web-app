@@ -5,7 +5,7 @@ import { Table } from '@tanstack/react-table'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { IconTag, IconAddToFolder } from '@/components/ui/icons/next-icons'
+import { IconTag, IconAddToCollection } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useToast } from '@/components/ui/use-toast'
@@ -28,7 +28,7 @@ import {
 
 type ActionBarProps = {
   table: Table<HistoryItem>
-  dataType?: string
+  entityType?: string
 }
 
 const actionBarBtnStyle = cn(
@@ -36,7 +36,7 @@ const actionBarBtnStyle = cn(
   buttonVariants({ variant: 'ghost', size: 'sm' }),
 )
 
-export const ActionBar = ({ table }: ActionBarProps) => {
+export const ActionBar = ({ table, entityType }: ActionBarProps) => {
   const { toast } = useToast()
 
   const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
@@ -105,28 +105,37 @@ export const ActionBar = ({ table }: ActionBarProps) => {
           aria-label='Select all'
         />
         <div className='flex flex-1 items-center ml-1 gap-2'>
-          <Popover open={addToFolderVisibility} onOpenChange={setAddToFolderVisibility}>
-            <PopoverTrigger className={actionBarBtnStyle}>
-              <IconAddToFolder className='shrink-0 w-5 h-5' />
-              Folders
-            </PopoverTrigger>
-            <PopoverContent className='w-64' align='start'>
-              <AddToCollectionOrTag
-                table={table}
-                destintaionEntity={ENTITY_TYPE.COLLECTION}
-              />
-            </PopoverContent>
-          </Popover>
-          <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
-            <PopoverTrigger className={actionBarBtnStyle}>
-              <IconTag className='shrink-0 w-5 h-5' />
-              Tags
-            </PopoverTrigger>
-            <PopoverContent className='w-64' align='start'>
-              <AddToCollectionOrTag table={table} destintaionEntity={ENTITY_TYPE.TAG} />
-            </PopoverContent>
-          </Popover>
-
+          {entityType !== ENTITY_TYPE.HIGHLIGHTS && (
+            <>
+              <Popover
+                open={addToFolderVisibility}
+                onOpenChange={setAddToFolderVisibility}
+              >
+                <PopoverTrigger className={actionBarBtnStyle}>
+                  <IconAddToCollection className='shrink-0 w-5 h-5' />
+                  Collections
+                </PopoverTrigger>
+                <PopoverContent className='w-64' align='start'>
+                  <AddToCollectionOrTag
+                    table={table}
+                    destintaionEntity={ENTITY_TYPE.COLLECTION}
+                  />
+                </PopoverContent>
+              </Popover>
+              <Popover open={addTagsOpen} onOpenChange={setAddTagsOpen}>
+                <PopoverTrigger className={actionBarBtnStyle}>
+                  <IconTag className='shrink-0 w-5 h-5' />
+                  Tags
+                </PopoverTrigger>
+                <PopoverContent className='w-64' align='start'>
+                  <AddToCollectionOrTag
+                    table={table}
+                    destintaionEntity={ENTITY_TYPE.TAG}
+                  />
+                </PopoverContent>
+              </Popover>
+            </>
+          )}
           <Button
             variant='ghost'
             size='sm'

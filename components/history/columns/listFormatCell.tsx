@@ -13,12 +13,13 @@ const IMG_SIZE = 100
 const IMG_STYLE = `w-full h-full rounded-md shadow-sm absolute top-0 left-0`
 const SECONDARY_TXT_STYLE = 'text-muted-foreground flex gap-1 items-center'
 
-type HighlightsCellProps<TData> = {
+type ListFormatCellProps<TData> = {
   row: Row<TData>
   table: Table<TData>
+  entityType?: EntityType
 }
 
-export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
+export function ListFormatCell<TData>({ row, table }: ListFormatCellProps<TData>) {
   const { original } = row
   const isRowSelected = row.getIsSelected()
   const isCheckboxVisible = table.getIsSomePageRowsSelected()
