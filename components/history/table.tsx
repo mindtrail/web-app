@@ -124,7 +124,7 @@ export function DataTable<TData>({
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
-        {areRowsSelected && <ActionBar table={table} dataType={entityType} />}
+        {areRowsSelected && <ActionBar table={table} entityType={entityType} />}
 
         <Table
           className='table-fixed'
