@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
@@ -73,11 +73,11 @@ export function DataTable<TData>({
   const pathFragments = pathname.split('/')
   const entityType = pathFragments[1]
 
-  const onHighlightsPage = entityType === ENTITY_TYPE.HIGHLIGHTS
+  const entityIsHighlight = entityType === ENTITY_TYPE.HIGHLIGHTS
 
   const columns = useMemo(
-    () => (onHighlightsPage ? getHighlightsTableColumns() : getDefaultTableColumns()),
-    [onHighlightsPage],
+    () => (entityIsHighlight ? getHighlightsTableColumns() : getDefaultTableColumns()),
+    [entityIsHighlight],
   )
 
   const table = useReactTable({
@@ -100,7 +100,7 @@ export function DataTable<TData>({
     },
   }) as ReactTable<HistoryItem>
 
-  const { rows } = table.getRowModel()
+  const isColResizing = !!table.getState().columnSizingInfo.isResizingColumn
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
@@ -114,7 +114,7 @@ export function DataTable<TData>({
             A-Z
           </Button>
 
-          {!onHighlightsPage && (
+          {!entityIsHighlight && (
             <VisibilityDropdown
               table={table}
               columnOrder={columnOrder}
@@ -128,7 +128,7 @@ export function DataTable<TData>({
 
         <Table
           className='table-fixed'
-          style={!onHighlightsPage ? { width: table.getTotalSize() } : {}}
+          style={!entityIsHighlight ? { width: table.getTotalSize() } : {}}
         >
           <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -144,32 +144,12 @@ export function DataTable<TData>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {rows?.map((row) => {
-              const isRowSelected = row.getIsSelected()
-              return (
-                <TableRow
-                  key={row.id}
-                  data-state={isRowSelected && 'selected'}
-                  className={`group/row text-foreground/70 hover:text-foreground ${
-                    isRowSelected && 'text-foreground'
-                  }`}
-                >
-                  {row.getVisibleCells().map(({ id, column, getContext }) => (
-                    <TableCell
-                      key={id}
-                      className={`align-top
-                        ${column.id === 'actions' && 'text-center'}
-                        ${onHighlightsPage ? '!pr-2' : 'pt-10'}
-                      `}
-                    >
-                      {flexRender(column.columnDef.cell, getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              )
-            })}
-          </TableBody>
+          {isColResizing ? (
+            <MemoizedTableBody table={table} />
+          ) : (
+            // <DefaultTableBody table={table} entityIsHighlight={entityIsHighlight} />
+            <DefaultTableBody table={table} entityIsHighlight={entityIsHighlight} />
+          )}
         </Table>
 
         {processing && (
@@ -185,3 +165,46 @@ export function DataTable<TData>({
     </>
   )
 }
+
+interface TableBodyProps {
+  table: ReactTable<HistoryItem>
+  entityIsHighlight: boolean
+}
+
+function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
+  const { rows } = table.getRowModel()
+
+  return (
+    <TableBody>
+      {rows?.map((row) => {
+        const isRowSelected = row.getIsSelected()
+        return (
+          <TableRow
+            key={row.id}
+            data-state={isRowSelected && 'selected'}
+            className={`group/row text-foreground/70 hover:text-foreground ${
+              isRowSelected && 'text-foreground'
+            }`}
+          >
+            {row.getVisibleCells().map(({ id, column, getContext }) => (
+              <TableCell
+                key={id}
+                className={`align-top
+            ${column.id === 'actions' && 'text-center'}
+            ${entityIsHighlight ? '!pr-2' : 'pt-10'}
+          `}
+              >
+                {flexRender(column.columnDef.cell, getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        )
+      })}
+    </TableBody>
+  )
+}
+// @ts-ignore
+const MemoizedTableBody = memo(
+  DefaultTableBody,
+  (prev, next) => prev.table.options.data === next.table.options.data,
+) as typeof TableBody
