@@ -11,6 +11,7 @@ declare global {
   type HistoryItem = DataSource & {
     displayName: string
     clippings?: Clipping[]
+    subRows?: Clipping[]
     dataSourceTags?: (DataSourceTag & { tag: Tag })[]
     collectionDataSource?: (CollectionDataSource & { collection: Collection })[]
   }

@@ -48,6 +48,11 @@ export default async function ChatPage() {
     return <div>Error loading history.</div>
   }
 
+  historyItems = historyItems.map(({ clippings, ...rest }) => ({
+    subRows: clippings,
+    ...rest,
+  }))
+
   return (
     <HistoryComponent
       historyItems={historyItems}

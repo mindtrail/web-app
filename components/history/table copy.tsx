@@ -15,7 +15,6 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  Row,
 } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
@@ -47,9 +46,13 @@ interface DataTableProps<TData> {
   handlePreferenceUpdate: (prefs: UserTablePrefs) => void
 }
 
-export function DataTable<TData>(props: DataTableProps<TData>) {
-  const { data, processing, userPreferences, handlePreferenceUpdate } = props
+export function DataTable<TData>({
+  data,
+  processing,
+  userPreferences,
 
+  handlePreferenceUpdate,
+}: DataTableProps<TData>) {
   const {
     columnOrder: storedColOrder,
     columnSize: storedColSize,
@@ -83,8 +86,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    // @ts-ignore
-    getSubRows: (row) => row.subRows,
     onColumnOrderChange: setColumnOrder,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
@@ -171,13 +172,12 @@ interface TableBodyProps {
 }
 
 function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
-  const { flatRows: rows } = table.getRowModel()
+  const { rows } = table.getRowModel()
 
   return (
     <TableBody>
       {rows?.map((row) => {
         const isRowSelected = row.getIsSelected()
-
         return (
           <TableRow
             key={row.id}
@@ -186,27 +186,23 @@ function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
               isRowSelected && 'text-foreground'
             }`}
           >
-            {row.getVisibleCells().map(({ id, column, getContext }) => {
-              // console.log(row)
-              return (
-                <TableCell
-                  key={id}
-                  className={`align-top
-                    ${column.id === 'actions' && 'text-center'}
-                    ${entityIsHighlight ? '!pr-2' : 'pt-10'}
-                  `}
-                >
-                  {flexRender(column.columnDef.cell, getContext())}
-                </TableCell>
-              )
-            })}
+            {row.getVisibleCells().map(({ id, column, getContext }) => (
+              <TableCell
+                key={id}
+                className={`align-top
+            ${column.id === 'actions' && 'text-center'}
+            ${entityIsHighlight ? '!pr-2' : 'pt-10'}
+          `}
+              >
+                {flexRender(column.columnDef.cell, getContext())}
+              </TableCell>
+            ))}
           </TableRow>
         )
       })}
     </TableBody>
   )
 }
-
 // @ts-ignore
 const MemoizedTableBody = memo(
   DefaultTableBody,
