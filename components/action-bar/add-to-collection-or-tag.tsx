@@ -48,7 +48,7 @@ type CrudOperations = {
   }
 }
 
-const CRUD_OPERATIONS: CrudOperations = {
+const CRUD_OPS: CrudOperations = {
   [ENTITY_TYPE.COLLECTION]: {
     createEntityAndDSConnection: addDataSourcesToCollection,
     removeEnityAndDSConnection: removeDataSourceFromCollection,
@@ -88,9 +88,16 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
     [nestedItemsByCategory, entityType, dropdownOptsContainingSelectedDS],
   )
 
+  const EntityIcon = entityType === ENTITY_TYPE.COLLECTION ? IconCollection : IconTag
+
+  const popupTitle =
+    entityType === ENTITY_TYPE.COLLECTION
+      ? 'Set Collection Items'
+      : 'Set Tags on Selected Items'
+
   useEffect(() => {
     const getCollectionsForSelectedDS = async () => {
-      const dropdownItems = (await CRUD_OPERATIONS[entityType].getExistingConnections(
+      const dropdownItems = (await CRUD_OPS[entityType].getExistingConnections(
         selectedDataSources,
       )) as string[]
 
@@ -103,45 +110,15 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
     }, 400)
   }, [selectedDataSources, entityType])
 
-  const onAddToCollectionOrTag = useCallback(
-    async (payload: AddItemToFolder) => {
-      const { existingFolderId, newFolderName } = payload
-
-      let collectionId = existingFolderId
-
-      if (newFolderName) {
-        try {
-          const newCollection = await createCollection({ name: newFolderName })
-
-          // @TODO: improve this
-          if ('id' in newCollection) {
-            const { id: newCollectionId } = newCollection
-
-            collectionId = newCollectionId
-            const newItem = {
-              id: newCollectionId,
-              name: newFolderName,
-              url: `/${entityType}/${newCollectionId}`,
-            }
-
-            const newItemList = [newItem, ...nestedItemsByCategory[entityType]]
-            setNestedItemsByCategory({
-              entityType,
-              items: newItemList,
-            })
-          }
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
+  const onRemoveFromCollection = useCallback(
+    async ({ collectionId }: { collectionId: string }) => {
       if (!collectionId) {
-        return console.log(' No collection ID found')
+        return console.log(' No collection ID to remove')
       }
 
       if (dropdownOptsContainingSelectedDS.includes(collectionId)) {
         // @TODO: remove them from that folder
-        await CRUD_OPERATIONS[entityType].removeEnityAndDSConnection({
+        await CRUD_OPS[entityType].removeEnityAndDSConnection({
           id: collectionId,
           dataSourceIdList: selectedDataSources,
         })
@@ -155,8 +132,17 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         })
         return
       }
+    },
+    [],
+  )
 
-      const result = await CRUD_OPERATIONS[entityType].createEntityAndDSConnection({
+  const onAddItemsToCollection = useCallback(
+    async ({ collectionId }: { collectionId: string }) => {
+      if (!collectionId) {
+        return console.log(' No collection ID found')
+      }
+
+      const result = await CRUD_OPS[entityType].createEntityAndDSConnection({
         id: collectionId,
         dataSourceIdList: selectedDataSources,
       })
@@ -192,19 +178,53 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
     },
     [
       selectedDataSources,
-      dropdownOptsContainingSelectedDS,
-      nestedItemsByCategory,
       entityType,
       toast,
-      setNestedItemsByCategory,
       setActiveNestedSidebar,
       setDropdownOptsContainingSelectedDS,
     ],
   )
 
+  const createCollectionAndAddItems = useCallback(
+    async ({ name }: { name: string }) => {
+      try {
+        const newCollection = await createCollection({ name })
+        // @TODO: improve this
+        if ('id' in newCollection) {
+          const { id } = newCollection
+
+          const newItem = {
+            id,
+            name,
+            url: `/${entityType}/${id}`,
+          }
+
+          const newItemList = [newItem, ...nestedItemsByCategory[entityType]]
+          setNestedItemsByCategory({
+            entityType,
+            items: newItemList,
+          })
+
+          await onAddItemsToCollection({ collectionId: id })
+
+          return id
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    [entityType, nestedItemsByCategory, onAddItemsToCollection, setNestedItemsByCategory],
+  )
+
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && searchValue?.length > 2) {
-      await onAddToCollectionOrTag({ newFolderName: searchValue })
+    if (event.key === 'Enter' && searchValue?.trim()?.length > 2) {
+      const newFolderName = searchValue.trim()
+      const collectionId = await createCollectionAndAddItems({ name: newFolderName })
+
+      if (!collectionId) {
+        console.error('No collection ID - created')
+        return
+      }
       setSearchValue('')
     }
   }
@@ -212,9 +232,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   return (
     <div className='flex flex-col gap-2'>
       <Typography variant='small' className='text-muted-foreground mt-1'>
-        {entityType === ENTITY_TYPE.COLLECTION
-          ? 'Add items to folders'
-          : 'Set tags on selected items'}
+        {popupTitle}
       </Typography>
 
       <Command
@@ -233,7 +251,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
             <Button
               className='flex items-center gap-2 px-3 w-full justify-start'
               variant='ghost'
-              onClick={() => onAddToCollectionOrTag({ newFolderName: searchValue })}
+              onClick={() => createCollectionAndAddItems({ name: searchValue })}
             >
               <PlusIcon className='shrink-0' />
               <span className='max-w-44 truncate'>
@@ -249,15 +267,14 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
                 <TooltipTrigger className='flex w-full relative'>
                   <CommandItem
                     className={`flex flex-1 gap-2
-                      ${containsSelectedItems && 'text-primary data-[selected=true]:text-primary'}`}
-                    onSelect={() => onAddToCollectionOrTag({ existingFolderId: value })}
+                      ${containsSelectedItems && 'text-primary data-[selected=true]:text-primary'}
+                    `}
+                    onSelect={() => onAddItemsToCollection({ collectionId: value })}
                   >
                     {containsSelectedItems ? (
                       <CheckIcon className='w-4 h-4' />
-                    ) : entityType === ENTITY_TYPE.COLLECTION ? (
-                      <IconCollection />
                     ) : (
-                      <IconTag />
+                      <EntityIcon />
                     )}
                     {label}
                     <TooltipContent
@@ -265,7 +282,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
                       sideOffset={-32}
                       className={containsSelectedItems ? 'bg-destructive text-white' : ''}
                     >
-                      {containsSelectedItems ? 'Remove from' : 'Add to'} {label}
+                      {containsSelectedItems ? 'Remove from:' : 'Add to:'} {label}
                     </TooltipContent>
                   </CommandItem>
                 </TooltipTrigger>
