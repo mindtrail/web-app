@@ -92,8 +92,8 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
 
   const popupTitle =
     entityType === ENTITY_TYPE.COLLECTION
-      ? 'Set Collection Items'
-      : 'Set Tags on Selected Items'
+      ? 'Add/Remove Items to Collection'
+      : 'Set Tags on Items'
 
   useEffect(() => {
     const getCollectionsForSelectedDS = async () => {
