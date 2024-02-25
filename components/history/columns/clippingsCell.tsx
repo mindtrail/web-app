@@ -13,12 +13,12 @@ const IMG_SIZE = 100
 const IMG_STYLE = `w-full h-full rounded-md shadow-sm absolute top-0 left-0`
 const SECONDARY_TXT_STYLE = 'text-muted-foreground flex gap-1 items-center'
 
-type HighlightsCellProps<TData> = {
+type ClippingsCellProps<TData> = {
   row: Row<TData>
   table: Table<TData>
 }
 
-export function HighlightsCell<TData>({ row, table }: HighlightsCellProps<TData>) {
+export function ClippingsCell<TData>({ row, table }: ClippingsCellProps<TData>) {
   const { original, depth } = row
   const isRowSelected =
     depth === 1

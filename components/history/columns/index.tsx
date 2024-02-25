@@ -6,7 +6,7 @@ import { DefaultHeader } from '@/components/history/columns/defaultHeader'
 import { DefaultCell } from '@/components/history/columns/defaultCell'
 import { TagsCell } from '@/components/history/columns/tags'
 import { FirstColumnCell } from '@/components/history/columns/firstColCell'
-import { HighlightsCell } from '@/components/history/columns/highlightsCell'
+import { ClippingsCell } from '@/components/history/columns/clippingsCell'
 import { FirstColHeader } from '@/components/history/columns/firstColHeader'
 
 import { formatDate } from '@/lib/utils'
@@ -64,7 +64,7 @@ export function getHighlightsTableColumns<TData, TValue>(): ColumnDef<TData, TVa
       header: ({ table }) => <FirstColHeader table={table} resourceType={'highlights'} />,
       enableHiding: false,
       cell: ({ row, table }) => {
-        return <HighlightsCell row={row} table={table} />
+        return <ClippingsCell row={row} table={table} />
       },
     },
   ]

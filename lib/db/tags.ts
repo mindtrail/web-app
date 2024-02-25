@@ -180,7 +180,7 @@ export const getTagsForDataSourcesListDbOp = async (dataSourceIdList: string[]) 
     HAVING COUNT(DISTINCT dst."dataSourceId") = ${dataSourceIdList.length}
   `
   const result = await prisma.$queryRawUnsafe(query)
-  console.log(3333, result)
+
   // @ts-ignore
   return result.map(({ id }) => id)
 }
