@@ -110,30 +110,29 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
     }, 400)
   }, [selectedDataSources, entityType])
 
-  const onRemoveFromCollection = useCallback(
+  const onRemoveItemsFromCollection = useCallback(
     async ({ collectionId }: { collectionId: string }) => {
-      if (!collectionId) {
+      if (!collectionId || !dropdownOptsContainingSelectedDS.includes(collectionId)) {
         return console.log(' No collection ID to remove')
       }
 
-      if (dropdownOptsContainingSelectedDS.includes(collectionId)) {
-        // @TODO: remove them from that folder
-        await CRUD_OPS[entityType].removeEnityAndDSConnection({
-          id: collectionId,
-          dataSourceIdList: selectedDataSources,
-        })
-        setDropdownOptsContainingSelectedDS((prev) =>
-          prev.filter((id) => id != collectionId),
-        )
+      // @TODO: remove them from that folder
+      await CRUD_OPS[entityType].removeEnityAndDSConnection({
+        id: collectionId,
+        dataSourceIdList: selectedDataSources,
+      })
 
-        toast({
-          title: 'Success',
-          description: `Removed: ${selectedDataSources?.length} item(s).`,
-        })
-        return
-      }
+      setDropdownOptsContainingSelectedDS((prev) =>
+        prev.filter((id) => id != collectionId),
+      )
+
+      toast({
+        title: 'Success',
+        description: `Removed: ${selectedDataSources?.length} item(s).`,
+      })
+      return
     },
-    [],
+    [dropdownOptsContainingSelectedDS, entityType, selectedDataSources, toast],
   )
 
   const onAddItemsToCollection = useCallback(
@@ -262,32 +261,40 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         </div>
         <ScrollArea className='flex flex-col max-h-[40vh] px-4'>
           <CommandGroup className='px-0'>
-            {dopdownList.map(({ value, label, containsSelectedItems }, index) => (
-              <Tooltip key={index}>
-                <TooltipTrigger className='flex w-full relative'>
-                  <CommandItem
-                    className={`flex flex-1 gap-2
+            {dopdownList.map(
+              ({ value: collectionId, label, containsSelectedItems }, index) => (
+                <Tooltip key={index}>
+                  <TooltipTrigger className='flex w-full relative'>
+                    <CommandItem
+                      className={`flex flex-1 gap-2
                       ${containsSelectedItems && 'text-primary data-[selected=true]:text-primary'}
                     `}
-                    onSelect={() => onAddItemsToCollection({ collectionId: value })}
-                  >
-                    {containsSelectedItems ? (
-                      <CheckIcon className='w-4 h-4' />
-                    ) : (
-                      <EntityIcon />
-                    )}
-                    {label}
-                    <TooltipContent
-                      side='right'
-                      sideOffset={-32}
-                      className={containsSelectedItems ? 'bg-destructive text-white' : ''}
+                      onSelect={() =>
+                        containsSelectedItems
+                          ? onRemoveItemsFromCollection({ collectionId })
+                          : onAddItemsToCollection({ collectionId })
+                      }
                     >
-                      {containsSelectedItems ? 'Remove from:' : 'Add to:'} {label}
-                    </TooltipContent>
-                  </CommandItem>
-                </TooltipTrigger>
-              </Tooltip>
-            ))}
+                      {containsSelectedItems ? (
+                        <CheckIcon className='w-4 h-4' />
+                      ) : (
+                        <EntityIcon />
+                      )}
+                      {label}
+                      <TooltipContent
+                        side='right'
+                        sideOffset={-32}
+                        className={
+                          containsSelectedItems ? 'bg-destructive text-white' : ''
+                        }
+                      >
+                        {containsSelectedItems ? 'Remove from:' : 'Add to:'} {label}
+                      </TooltipContent>
+                    </CommandItem>
+                  </TooltipTrigger>
+                </Tooltip>
+              ),
+            )}
           </CommandGroup>
         </ScrollArea>
       </Command>
