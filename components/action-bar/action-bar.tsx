@@ -15,6 +15,7 @@ import { AddToCollectionOrTag } from '@/components/action-bar/add-to-collection-
 import { ENTITY_TYPE } from '@/lib/constants'
 import { cn, getURLPathname } from '@/lib/utils'
 import { deleteDataSource } from '@/lib/serverActions/dataSource'
+import { deleteClipping } from '@/lib/serverActions/clipping'
 
 import {
   AlertDialog,
