@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useState } from 'react'
 import { DataSourceType } from '@prisma/client'
 import { TrashIcon } from '@radix-ui/react-icons'
@@ -7,7 +9,6 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { IconTag, IconAddToCollection } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { useToast } from '@/components/ui/use-toast'
 
 import { AddToCollectionOrTag } from '@/components/action-bar/add-to-collection-or-tag'
@@ -48,7 +49,7 @@ export const ActionBar = ({ table, entityType }: ActionBarProps) => {
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
-    // @ts-ignore
+
     const itemsToDelete = selectedRows.rows.map(({ original }) => original as HistoryItem)
     if (!itemsToDelete?.length) {
       return
@@ -58,7 +59,7 @@ export const ActionBar = ({ table, entityType }: ActionBarProps) => {
     setDeleteDialogOpen(true)
   }, [table])
 
-  const confirmHistoryDelete = useCallback(async () => {
+  const confirmDelete = useCallback(async () => {
     if (!itemsToDelete?.length) {
       return
     }
@@ -148,6 +149,7 @@ export const ActionBar = ({ table, entityType }: ActionBarProps) => {
           </Button>
         </div>
       </div>
+
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent content=''>
           <AlertDialogHeader>
@@ -158,25 +160,24 @@ export const ActionBar = ({ table, entityType }: ActionBarProps) => {
                 The action cannot be undone and will <strong>permanently delete: </strong>
               </span>
 
-              <ScrollArea className='py-2 max-h-[25vh]'>
-                <ul
-                  className='flex flex-col items-start mt-4 mb-2 gap-2 pl-4 sm:px-2
+              <span
+                className='flex flex-col items-start mt-4 mb-2 gap-2 pl-4 sm:px-2
+                  py-2 max-h-[25vh] overflow-y-auto
                   max-w-[80vw] xs:max-w-[70vw] sm:max-w-md list-disc list-inside'
-                >
-                  {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
-                    <li key={index} className='truncate max-w-full'>
-                      {type === DataSourceType.file
-                        ? displayName
-                        : displayName + getURLPathname(name)}
-                    </li>
-                  ))}
-                </ul>
-              </ScrollArea>
+              >
+                {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
+                  <span key={index} className='truncate max-w-full list-item shrink-0'>
+                    {type === DataSourceType.file
+                      ? displayName
+                      : displayName + getURLPathname(name)}
+                  </span>
+                ))}
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className='max-w-l'>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button variant='destructive' onClick={confirmHistoryDelete}>
+            <Button variant='destructive' onClick={confirmDelete}>
               Delete
             </Button>
           </AlertDialogFooter>
