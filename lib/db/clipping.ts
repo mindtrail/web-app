@@ -49,11 +49,15 @@ export async function createClipping(payload: SavedClipping) {
   return newClipping
 }
 
-export async function deleteClipping(userId: string, clippingId: string) {
-  const deletedClipping = await prisma.clipping.delete({
+type DeleteProps = {
+  userId: string
+  clippingIdList: string[]
+}
+export async function deleteClippingDbOp({ userId, clippingIdList }: DeleteProps) {
+  const deletedClipping = await prisma.clipping.deleteMany({
     where: {
       authorId: userId,
-      id: clippingId,
+      id: { in: clippingIdList },
     },
   })
 
