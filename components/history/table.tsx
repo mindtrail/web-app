@@ -69,6 +69,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const pathname = usePathname()
   const pathFragments = pathname.split('/')
   const entityType = pathFragments[1]
+  const entityId = pathFragments[2]
 
   const entityIsHighlight = entityType === ENTITY_TYPE.HIGHLIGHTS
 
@@ -123,7 +124,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         </div>
       </div>
       <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
-        {areRowsSelected && <ActionBar table={table} entityType={entityType} />}
+        {areRowsSelected && (
+          <ActionBar table={table} entityType={entityType} entityId={entityId} />
+        )}
 
         <Table
           className='table-fixed'

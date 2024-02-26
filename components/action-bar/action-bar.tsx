@@ -19,6 +19,7 @@ import { deleteDataSource } from '@/lib/serverActions/dataSource'
 type ActionBarProps = {
   table: Table<HistoryItem>
   entityType: string
+  entityId?: string
 }
 
 const actionBarBtnStyle = cn(
@@ -26,7 +27,7 @@ const actionBarBtnStyle = cn(
   buttonVariants({ variant: 'ghost', size: 'sm' }),
 )
 
-export const ActionBar = ({ table, entityType }: ActionBarProps) => {
+export const ActionBar = ({ table, entityType, entityId }: ActionBarProps) => {
   const [addToFolderVisibility, setAddToFolderVisibility] = useState(false)
   const [addTagsVisibility, setAddTagsVisibility] = useState(false)
 
@@ -76,7 +77,7 @@ export const ActionBar = ({ table, entityType }: ActionBarProps) => {
               </Popover>
             </>
           )}
-          <DeleteItem table={table} entityType={entityType} />
+          <DeleteItem table={table} entityType={entityType} entityId={entityId}/>
         </div>
       </div>
     </>

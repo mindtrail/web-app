@@ -3,15 +3,18 @@ import { DataSourceType } from '@prisma/client'
 import { TrashIcon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 
 import { ENTITY_TYPE } from '@/lib/constants'
 import { getURLPathname } from '@/lib/utils'
+
 import { deleteDataSource } from '@/lib/serverActions/dataSource'
 import { deleteClipping } from '@/lib/serverActions/clipping'
+import { removeDataSourceFromCollection } from '@/lib/serverActions/dataSource'
+import { removeTagFromDataSources } from '@/lib/serverActions/tag'
 
 import {
   AlertDialog,
@@ -24,23 +27,26 @@ import {
 } from '@/components/ui/alert-dialog'
 
 type DeleteItemProps = {
-  entityType: EntityType
   table: Table<HistoryItem>
+  entityType: EntityType
+  entityId?: string
 }
 
 const DELETE_TITLE = {
   [ENTITY_TYPE.HIGHLIGHTS]: 'Delete Highlight(s)',
   [ENTITY_TYPE.ALL_ITEMS]: 'Delete Item(s)',
-  [ENTITY_TYPE.COLLECTION]: 'Remove Item(s) from Collection',
-  [ENTITY_TYPE.TAG]: 'Remove Tag from Item(s)',
+  [ENTITY_TYPE.COLLECTION]: 'Remove from Collection',
+  [ENTITY_TYPE.TAG]: 'Remove Tag',
 }
 
-export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
+export const DeleteItem = ({ entityType, entityId, table }: DeleteItemProps) => {
   const { toast } = useToast()
 
   const [itemsToDelete, setItemsToDelete] = useState<
     HistoryItem[] | SavedClipping[] | null
   >(null)
+
+  const [deleteDSFromDb, setDeleteDSFromDb] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const bodyMessage = getDeleteMessage(entityType)
@@ -64,34 +70,26 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
       return
     }
 
-    console.log(itemsToDelete)
-    const confirmMessage = await performDeleteOp({ entityType, itemsToDelete })
-
-    const dataSourcesToDelete = itemsToDelete as HistoryItem[]
-
-    const dataSourceIdList = dataSourcesToDelete.map(({ id }) => id)
-
     try {
-      await deleteDataSource({ dataSourceIdList })
-      toast({
-        title: 'Delete History Entry',
-        description: `${confirmMessage} has been deleted`,
+      const confirmMessage = await performDeleteOp({
+        entityType,
+        itemsToDelete,
+        entityId,
       })
 
-      setDeleteDialogOpen(false)
-      setItemsToDelete(null)
+      toast({ ...confirmMessage })
     } catch (err) {
       toast({
         title: 'Error',
         variant: 'destructive',
-        description: `Something went wrong while deleting ${confirmMessage}`,
+        description: `Something went wrong while deleting`,
       })
       console.log(err)
-
+    } finally {
       setDeleteDialogOpen(false)
       setItemsToDelete(null)
     }
-  }, [itemsToDelete, entityType, toast])
+  }, [itemsToDelete, entityType, entityId, toast])
 
   return (
     <>
@@ -186,10 +184,14 @@ const getDeleteModalContent = ({ entityType, itemsToDelete }: DeleteContentProps
 
 type DeleteActionProps = {
   entityType: EntityType
+  entityId?: string
   itemsToDelete: HistoryItem[] | SavedClipping[]
+  deleteDSFromDb?: boolean
 }
 
-const performDeleteOp = async ({ entityType, itemsToDelete }: DeleteActionProps) => {
+const performDeleteOp = async (props: DeleteActionProps) => {
+  let { entityType, entityId, itemsToDelete, deleteDSFromDb } = props
+
   if (entityType === ENTITY_TYPE.HIGHLIGHTS) {
     itemsToDelete = itemsToDelete as SavedClipping[]
     const payload = {
@@ -197,14 +199,50 @@ const performDeleteOp = async ({ entityType, itemsToDelete }: DeleteActionProps)
     }
 
     await deleteClipping(payload)
-    return `${itemsToDelete.length} clipping(s)`
+    return {
+      title: 'Delete Highlights',
+      description: `${itemsToDelete.length} clipping(s) have been deleted`,
+    }
   }
 
   itemsToDelete = itemsToDelete as HistoryItem[]
-  const payload = {
-    dataSourceIdList: itemsToDelete.map(({ id }) => id),
+  const dataSourceIdList = itemsToDelete.map(({ id }) => id)
+
+  // For all items, or from Collections or Tags page that want permanent delete too...
+  if (entityType === ENTITY_TYPE.ALL_ITEMS || deleteDSFromDb) {
+    await deleteDataSource({ dataSourceIdList })
+    return {
+      title: 'Delete History Item(s)',
+      description: `
+        ${itemsToDelete.map(({ displayName = '' }) => displayName).join(', ')}
+        have been deleted`,
+    }
   }
 
-  await deleteDataSource(payload)
-  return itemsToDelete.map(({ displayName = '' }) => displayName).join(', ')
+  if (!entityId) {
+    throw new Error('No entityId provided')
+  }
+
+  if (entityType === ENTITY_TYPE.COLLECTION) {
+    await removeDataSourceFromCollection({
+      id: entityId,
+      dataSourceIdList,
+    })
+
+    return {
+      title: 'Removed from Collection',
+      description: `${itemsToDelete.length} item(s) have been removed from collection`,
+    }
+  }
+  if (entityType === ENTITY_TYPE.TAG) {
+    await removeTagFromDataSources({
+      id: entityId,
+      dataSourceIdList,
+    })
+
+    return {
+      title: 'Tag Removed',
+      description: `${itemsToDelete.length} item(s) have had tag removed`,
+    }
+  }
 }

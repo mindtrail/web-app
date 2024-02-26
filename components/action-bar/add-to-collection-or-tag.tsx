@@ -116,7 +116,6 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         return console.log(' No collection ID to remove')
       }
 
-      // @TODO: remove them from that folder
       await CRUD_OPS[entityType].removeEnityAndDSConnection({
         id: collectionId,
         dataSourceIdList: selectedDataSources,
