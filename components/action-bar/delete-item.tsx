@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 
 import { ENTITY_TYPE } from '@/lib/constants'
-import { cn, getURLPathname } from '@/lib/utils'
+import { getURLPathname } from '@/lib/utils'
 import { deleteDataSource } from '@/lib/serverActions/dataSource'
 import { deleteClipping } from '@/lib/serverActions/clipping'
 
@@ -54,7 +54,7 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
       console.error('No items selected to delete')
       return
     }
-    console.log(itemsToDelete)
+
     setItemsToDelete(itemsToDelete)
     setDeleteDialogOpen(true)
   }, [table])
@@ -64,17 +64,18 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
       return
     }
 
-    const deletedItems = itemsToDelete
-      .map(({ displayName = '' }) => displayName)
-      .join(', ')
+    console.log(itemsToDelete)
+    const confirmMessage = await performDeleteOp({ entityType, itemsToDelete })
 
-    const dataSourceIdList = itemsToDelete.map(({ id }) => id)
+    const dataSourcesToDelete = itemsToDelete as HistoryItem[]
+
+    const dataSourceIdList = dataSourcesToDelete.map(({ id }) => id)
 
     try {
       await deleteDataSource({ dataSourceIdList })
       toast({
         title: 'Delete History Entry',
-        description: `${deletedItems} has been deleted`,
+        description: `${confirmMessage} has been deleted`,
       })
 
       setDeleteDialogOpen(false)
@@ -83,14 +84,14 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
       toast({
         title: 'Error',
         variant: 'destructive',
-        description: `Something went wrong while deleting ${deletedItems}`,
+        description: `Something went wrong while deleting ${confirmMessage}`,
       })
       console.log(err)
 
       setDeleteDialogOpen(false)
       setItemsToDelete(null)
     }
-  }, [itemsToDelete, toast])
+  }, [itemsToDelete, entityType, toast])
 
   return (
     <>
@@ -181,4 +182,29 @@ const getDeleteModalContent = ({ entityType, itemsToDelete }: DeleteContentProps
       ))}
     </>
   )
+}
+
+type DeleteActionProps = {
+  entityType: EntityType
+  itemsToDelete: HistoryItem[] | SavedClipping[]
+}
+
+const performDeleteOp = async ({ entityType, itemsToDelete }: DeleteActionProps) => {
+  if (entityType === ENTITY_TYPE.HIGHLIGHTS) {
+    itemsToDelete = itemsToDelete as SavedClipping[]
+    const payload = {
+      clippingIdList: itemsToDelete.map(({ id }) => id),
+    }
+
+    await deleteClipping(payload)
+    return `${itemsToDelete.length} clipping(s)`
+  }
+
+  itemsToDelete = itemsToDelete as HistoryItem[]
+  const payload = {
+    dataSourceIdList: itemsToDelete.map(({ id }) => id),
+  }
+
+  await deleteDataSource(payload)
+  return itemsToDelete.map(({ displayName = '' }) => displayName).join(', ')
 }
