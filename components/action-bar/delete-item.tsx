@@ -43,21 +43,18 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
   >(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  console.log(entityType)
-
   const bodyMessage = getDeleteMessage(entityType)
 
   const onDelete = useCallback(() => {
-    const selectedRows = table.getSelectedRowModel()
-    console.log(selectedRows)
-
-    const itemsToDelete = selectedRows.flatRows.map(({ original }) => original)
+    const itemsToDelete = table
+      .getSelectedRowModel()
+      .flatRows.map(({ original }) => original)
 
     if (!itemsToDelete?.length) {
       console.error('No items selected to delete')
       return
     }
-
+    console.log(itemsToDelete)
     setItemsToDelete(itemsToDelete)
     setDeleteDialogOpen(true)
   }, [table])
@@ -119,13 +116,7 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
                   py-2 max-h-[25vh] overflow-y-auto
                   max-w-[80vw] xs:max-w-[70vw] sm:max-w-md list-disc list-inside'
               >
-                {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
-                  <span key={index} className='truncate max-w-full list-item shrink-0'>
-                    {type === DataSourceType.file
-                      ? displayName
-                      : displayName + getURLPathname(name)}
-                  </span>
-                ))}
+                {getDeleteModalContent({ entityType, itemsToDelete })}
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -152,3 +143,42 @@ const getDeleteMessage = (entityType: EntityType) => (
     </span>
   </>
 )
+
+type DeleteContentProps = {
+  entityType: EntityType
+  itemsToDelete: HistoryItem[] | SavedClipping[] | null
+}
+
+const getDeleteModalContent = ({ entityType, itemsToDelete }: DeleteContentProps) => {
+  if (!itemsToDelete?.length) {
+    return null
+  }
+
+  if (entityType === ENTITY_TYPE.HIGHLIGHTS) {
+    itemsToDelete = itemsToDelete as SavedClipping[]
+
+    return (
+      <>
+        {itemsToDelete?.map(({ content }, index) => (
+          <span key={index} className='truncate max-w-full list-item shrink-0'>
+            {content}
+          </span>
+        ))}
+      </>
+    )
+  }
+
+  itemsToDelete = itemsToDelete as HistoryItem[]
+
+  return (
+    <>
+      {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
+        <span key={index} className='truncate max-w-full list-item shrink-0'>
+          {type === DataSourceType.file
+            ? displayName
+            : displayName + getURLPathname(name)}
+        </span>
+      ))}
+    </>
+  )
+}
