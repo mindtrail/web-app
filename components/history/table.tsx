@@ -103,8 +103,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
-  console.log(table.getSelectedRowModel().flatRows)
-
   return (
     <>
       <div className='flex items-center justify-between py-4'>
