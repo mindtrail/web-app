@@ -5,16 +5,15 @@ import { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 
 import { ENTITY_TYPE } from '@/lib/constants'
-import { getURLPathname } from '@/lib/utils'
 
 import { deleteDataSource } from '@/lib/serverActions/dataSource'
 import { deleteClipping } from '@/lib/serverActions/clipping'
 import { removeDataSourceFromCollection } from '@/lib/serverActions/dataSource'
 import { removeTagFromDataSources } from '@/lib/serverActions/tag'
+
+import { DeleteContent } from './delete-content'
 
 import {
   AlertDialog,
@@ -39,6 +38,15 @@ const DELETE_TITLE = {
   [ENTITY_TYPE.TAG]: 'Remove Tag',
 }
 
+const DELETE_FROM_DB_TITLE = 'Delete Everywhere'
+
+type DeleteActionProps = {
+  entityType: EntityType
+  entityId?: string
+  itemsToDelete: HistoryItem[] | SavedClipping[]
+  deleteEverywhere?: boolean
+}
+
 export const DeleteItem = ({ entityType, entityId, table }: DeleteItemProps) => {
   const { toast } = useToast()
 
@@ -46,10 +54,8 @@ export const DeleteItem = ({ entityType, entityId, table }: DeleteItemProps) => 
     HistoryItem[] | SavedClipping[] | null
   >(null)
 
-  const [deleteDSFromDb, setDeleteDSFromDb] = useState(false)
+  const [deleteEverywhere, setDeleteEverywhere] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-
-  const bodyMessage = getDeleteMessage(entityType)
 
   const onDelete = useCallback(() => {
     const itemsToDelete = table
@@ -91,6 +97,72 @@ export const DeleteItem = ({ entityType, entityId, table }: DeleteItemProps) => 
     }
   }, [itemsToDelete, entityType, entityId, toast])
 
+  const performDeleteOp = async (props: DeleteActionProps) => {
+    let { entityType, entityId, itemsToDelete, deleteEverywhere } = props
+
+    if (entityType === ENTITY_TYPE.HIGHLIGHTS) {
+      itemsToDelete = itemsToDelete as SavedClipping[]
+      const payload = {
+        clippingIdList: itemsToDelete.map(({ id }) => id),
+      }
+
+      await deleteClipping(payload)
+      return {
+        title: 'Delete Highlights',
+        description: `${itemsToDelete.length} clipping(s) have been deleted`,
+      }
+    }
+
+    itemsToDelete = itemsToDelete as HistoryItem[]
+    const dataSourceIdList = itemsToDelete.map(({ id }) => id)
+
+    // For all items, or from Collections or Tags page that want permanent delete too...
+    if (entityType === ENTITY_TYPE.ALL_ITEMS || deleteEverywhere) {
+      await deleteDataSource({ dataSourceIdList })
+      return {
+        title: 'Delete Item(s)',
+        description: `
+        ${itemsToDelete.map(({ displayName = '' }) => displayName).join(', ')}
+        have been deleted`,
+      }
+    }
+
+    if (!entityId) {
+      throw new Error('No entityId provided')
+    }
+
+    if (entityType === ENTITY_TYPE.COLLECTION) {
+      await removeDataSourceFromCollection({
+        id: entityId,
+        dataSourceIdList,
+      })
+
+      return {
+        title: 'Removed from Collection',
+        description: `${itemsToDelete.length} item(s) have been removed from collection`,
+      }
+    }
+
+    if (entityType === ENTITY_TYPE.TAG) {
+      await removeTagFromDataSources({
+        id: entityId,
+        dataSourceIdList,
+      })
+
+      return {
+        title: 'Tag Removed',
+        description: `${itemsToDelete.length} item(s) have had tag removed`,
+      }
+    }
+  }
+
+  const actionLabel =
+    entityType === ENTITY_TYPE.HIGHLIGHTS ||
+    entityType === ENTITY_TYPE.ALL_ITEMS ||
+    deleteEverywhere
+      ? 'Delete'
+      : 'Remove'
+
   return (
     <>
       <Button
@@ -100,149 +172,32 @@ export const DeleteItem = ({ entityType, entityId, table }: DeleteItemProps) => 
         onClick={onDelete}
       >
         <TrashIcon className='shrink-0 w-5 h-5 group-hover/delete:text-destructive' />
-        Delete
+        {actionLabel}
       </Button>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent content=''>
           <AlertDialogHeader>
-            <AlertDialogTitle>{DELETE_TITLE[entityType]}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {deleteEverywhere ? DELETE_FROM_DB_TITLE : DELETE_TITLE[entityType]}
+            </AlertDialogTitle>
             <AlertDialogDescription className='flex flex-col cursor-default gap-2'>
-              {bodyMessage}
-
-              <span
-                className='flex flex-col items-start mt-2 mb-2 gap-2 pl-4 sm:px-2
-                  py-2 max-h-[25vh] overflow-y-auto
-                  max-w-[80vw] xs:max-w-[70vw] sm:max-w-md list-disc list-inside'
-              >
-                {getDeleteModalContent({ entityType, itemsToDelete })}
-              </span>
+              <DeleteContent
+                entityType={entityType}
+                itemsToDelete={itemsToDelete}
+                deleteEverywhere={deleteEverywhere}
+                setDeleteEverywhere={setDeleteEverywhere}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className='max-w-l'>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <Button variant='destructive' onClick={confirmDelete}>
-              Delete
+              {actionLabel}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
   )
-}
-
-const getDeleteMessage = (entityType: EntityType) => (
-  <>
-    <span>
-      Delete {entityType === ENTITY_TYPE.HIGHLIGHTS ? 'Highlight(s)' : 'Item(s)'} and
-      associated data. <strong>Cannot be reversed.</strong>
-    </span>
-    <span>
-      It will <strong>permanently delete:</strong>
-    </span>
-  </>
-)
-
-type DeleteContentProps = {
-  entityType: EntityType
-  itemsToDelete: HistoryItem[] | SavedClipping[] | null
-}
-
-const getDeleteModalContent = ({ entityType, itemsToDelete }: DeleteContentProps) => {
-  if (!itemsToDelete?.length) {
-    return null
-  }
-
-  if (entityType === ENTITY_TYPE.HIGHLIGHTS) {
-    itemsToDelete = itemsToDelete as SavedClipping[]
-
-    return (
-      <>
-        {itemsToDelete?.map(({ content }, index) => (
-          <span key={index} className='truncate max-w-full list-item shrink-0'>
-            {content}
-          </span>
-        ))}
-      </>
-    )
-  }
-
-  itemsToDelete = itemsToDelete as HistoryItem[]
-
-  return (
-    <>
-      {itemsToDelete?.map(({ displayName = '', name, type }, index) => (
-        <span key={index} className='truncate max-w-full list-item shrink-0'>
-          {type === DataSourceType.file
-            ? displayName
-            : displayName + getURLPathname(name)}
-        </span>
-      ))}
-    </>
-  )
-}
-
-type DeleteActionProps = {
-  entityType: EntityType
-  entityId?: string
-  itemsToDelete: HistoryItem[] | SavedClipping[]
-  deleteDSFromDb?: boolean
-}
-
-const performDeleteOp = async (props: DeleteActionProps) => {
-  let { entityType, entityId, itemsToDelete, deleteDSFromDb } = props
-
-  if (entityType === ENTITY_TYPE.HIGHLIGHTS) {
-    itemsToDelete = itemsToDelete as SavedClipping[]
-    const payload = {
-      clippingIdList: itemsToDelete.map(({ id }) => id),
-    }
-
-    await deleteClipping(payload)
-    return {
-      title: 'Delete Highlights',
-      description: `${itemsToDelete.length} clipping(s) have been deleted`,
-    }
-  }
-
-  itemsToDelete = itemsToDelete as HistoryItem[]
-  const dataSourceIdList = itemsToDelete.map(({ id }) => id)
-
-  // For all items, or from Collections or Tags page that want permanent delete too...
-  if (entityType === ENTITY_TYPE.ALL_ITEMS || deleteDSFromDb) {
-    await deleteDataSource({ dataSourceIdList })
-    return {
-      title: 'Delete History Item(s)',
-      description: `
-        ${itemsToDelete.map(({ displayName = '' }) => displayName).join(', ')}
-        have been deleted`,
-    }
-  }
-
-  if (!entityId) {
-    throw new Error('No entityId provided')
-  }
-
-  if (entityType === ENTITY_TYPE.COLLECTION) {
-    await removeDataSourceFromCollection({
-      id: entityId,
-      dataSourceIdList,
-    })
-
-    return {
-      title: 'Removed from Collection',
-      description: `${itemsToDelete.length} item(s) have been removed from collection`,
-    }
-  }
-  if (entityType === ENTITY_TYPE.TAG) {
-    await removeTagFromDataSources({
-      id: entityId,
-      dataSourceIdList,
-    })
-
-    return {
-      title: 'Tag Removed',
-      description: `${itemsToDelete.length} item(s) have had tag removed`,
-    }
-  }
 }
