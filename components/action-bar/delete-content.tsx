@@ -84,33 +84,38 @@ export const DeleteContent = (props: DeleteContentProps) => {
     </>
   )
 
+  const isCollectionOrTag =
+    entityType === ENTITY_TYPE.COLLECTION || entityType === ENTITY_TYPE.TAG
+
   const infoMessage = deleteEverywhere
     ? deleteEverywhereMessage
-    : entityType === ENTITY_TYPE.HIGHLIGHTS || entityType === ENTITY_TYPE.ALL_ITEMS
-      ? deleteFromDBMessage
-      : removeFromColOrTagMessage
+    : isCollectionOrTag
+      ? removeFromColOrTagMessage
+      : deleteFromDBMessage
 
   return (
     <>
       {infoMessage}
 
-      <span className='flex items-center gap-2 mt-4'>
-        <Switch
-          id='delete-from-db'
-          name='delete-from-db'
-          checked={deleteEverywhere}
-          onCheckedChange={() => setDeleteEverywhere(!deleteEverywhere)}
-        />
-        <Label htmlFor='delete-from-db'>Delete Everywhere</Label>
-      </span>
-
       <span
         className='flex flex-col items-start mt-2 mb-2 gap-2 pl-4 sm:px-2
-          py-2 max-h-[25vh] overflow-y-auto
-          max-w-[80vw] xs:max-w-[70vw] sm:max-w-md list-disc list-inside'
+        py-2 max-h-[25vh] overflow-y-auto
+        max-w-[80vw] xs:max-w-[70vw] sm:max-w-md list-disc list-inside'
       >
         {itemsList}
       </span>
+
+      {isCollectionOrTag && (
+        <span className='flex items-center gap-2 mt-4'>
+          <Switch
+            id='delete-from-db'
+            name='delete-from-db'
+            checked={deleteEverywhere}
+            onCheckedChange={() => setDeleteEverywhere(!deleteEverywhere)}
+          />
+          <Label htmlFor='delete-from-db'>Delete Everywhere</Label>
+        </span>
+      )}
     </>
   )
 }
