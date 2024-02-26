@@ -5,6 +5,8 @@ import { Table } from '@tanstack/react-table'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 
 import { ENTITY_TYPE } from '@/lib/constants'
 import { cn, getURLPathname } from '@/lib/utils'
@@ -25,21 +27,34 @@ type DeleteItemProps = {
   entityType: EntityType
   table: Table<HistoryItem>
 }
+
+const DELETE_TITLE = {
+  [ENTITY_TYPE.HIGHLIGHTS]: 'Delete Highlight(s)',
+  [ENTITY_TYPE.ALL_ITEMS]: 'Delete Item(s)',
+  [ENTITY_TYPE.COLLECTION]: 'Remove Item(s) from Collection',
+  [ENTITY_TYPE.TAG]: 'Remove Tag from Item(s)',
+}
+
 export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
   const { toast } = useToast()
 
-  const [itemsToDelete, setItemsToDelete] = useState<HistoryItem[] | null>(null)
+  const [itemsToDelete, setItemsToDelete] = useState<
+    HistoryItem[] | SavedClipping[] | null
+  >(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  console.log(entityType)
+
+  const bodyMessage = getDeleteMessage(entityType)
 
   const onDelete = useCallback(() => {
     const selectedRows = table.getSelectedRowModel()
     console.log(selectedRows)
 
-    const itemsToDelete = selectedRows.flatRows.map(
-      ({ original }) => original as HistoryItem,
-    )
+    const itemsToDelete = selectedRows.flatRows.map(({ original }) => original)
 
     if (!itemsToDelete?.length) {
+      console.error('No items selected to delete')
       return
     }
 
@@ -95,15 +110,12 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent content=''>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete file?</AlertDialogTitle>
-            <AlertDialogDescription className='flex flex-col cursor-default'>
-              <span>This will delete the history entries and the associated data.</span>
-              <span>
-                The action cannot be undone and will <strong>permanently delete: </strong>
-              </span>
+            <AlertDialogTitle>{DELETE_TITLE[entityType]}</AlertDialogTitle>
+            <AlertDialogDescription className='flex flex-col cursor-default gap-2'>
+              {bodyMessage}
 
               <span
-                className='flex flex-col items-start mt-4 mb-2 gap-2 pl-4 sm:px-2
+                className='flex flex-col items-start mt-2 mb-2 gap-2 pl-4 sm:px-2
                   py-2 max-h-[25vh] overflow-y-auto
                   max-w-[80vw] xs:max-w-[70vw] sm:max-w-md list-disc list-inside'
               >
@@ -128,3 +140,15 @@ export const DeleteItem = ({ entityType, table }: DeleteItemProps) => {
     </>
   )
 }
+
+const getDeleteMessage = (entityType: EntityType) => (
+  <>
+    <span>
+      Delete {entityType === ENTITY_TYPE.HIGHLIGHTS ? 'Highlight(s)' : 'Item(s)'} and
+      associated data. <strong>Cannot be reversed.</strong>
+    </span>
+    <span>
+      It will <strong>permanently delete:</strong>
+    </span>
+  </>
+)
