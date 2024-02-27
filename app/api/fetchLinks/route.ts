@@ -33,7 +33,7 @@ export async function GET(req: Request) {
         })
       }
     } catch (e) {
-      console.log('error', e)
+      console.error('error', e)
       return new Response('Failed to fetch links', {
         status: 500,
       })
@@ -42,7 +42,7 @@ export async function GET(req: Request) {
 
   try {
   } catch (e) {
-    console.log('error', e)
+    console.error('error', e)
     return new Response('Failed to scrape', {
       status: 500,
     })

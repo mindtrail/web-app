@@ -44,7 +44,7 @@ export default async function ChatPage() {
       getDataSourceListDbOp({ userId, hasClippings: true }),
     ])
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return <div>Error loading history.</div>
   }
 

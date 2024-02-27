@@ -43,7 +43,7 @@ export default async function AllItems() {
       getDataSourceListDbOp({ userId }),
     ])
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return <div>Error loading history.</div>
   }
 

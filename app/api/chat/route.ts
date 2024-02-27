@@ -31,7 +31,6 @@ export async function POST(req: Request) {
 }
 
 // if (flowiseURL) {
-//   console.log('000', messages)
 
 //   const payload = {
 //     flowiseURL,
@@ -43,7 +42,6 @@ export async function POST(req: Request) {
 
 //   const result = await callFlowiseChat(payload)
 
-//   console.log('--- flowise --- ', result)
 //   return new Response(result.text, {
 //     status: 200,
 //   })
