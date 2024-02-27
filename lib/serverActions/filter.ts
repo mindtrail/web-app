@@ -18,7 +18,7 @@ export async function getFiltersByUserId() {
   }
 
   try {
-    const items = await { userId: userId }
+    const items = { userId: userId }
 
     // Check if items is an array before mapping over it
     if (Array.isArray(items)) {

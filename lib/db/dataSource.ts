@@ -9,19 +9,21 @@ import { summarizePage } from '@/lib/openAI'
 type GetDataSourceList = {
   userId: string
   collectionId?: string
+  hasClippings?: boolean
   tagId?: string
-  containClippings?: boolean
+  type?: DataSourceType
 }
 
 export const getDataSourceListDbOp = async (props: GetDataSourceList) => {
-  const { userId, collectionId, tagId, containClippings } = props
+  const { userId, collectionId, tagId, hasClippings, type } = props
 
   const dataSourceList = await prisma.dataSource.findMany({
     where: {
       dataSourceUsers: { some: { userId } },
       collectionDataSource: collectionId ? { some: { collectionId: collectionId } } : {},
       dataSourceTags: tagId ? { some: { tagId } } : {},
-      clippings: containClippings ? { some: {} } : {},
+      clippings: hasClippings ? { some: {} } : {},
+      type: { equals: type },
     },
     include: {
       clippings: true,
