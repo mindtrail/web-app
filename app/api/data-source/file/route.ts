@@ -83,8 +83,6 @@ async function processFileUpload({ file, userId, chunks }: ProcessFileUpload) {
   // @TODO: modify this... We get the dataSourceId from the first doc(chunk)
   const { dataSourceId, ...metadata } = docs[0]?.metadata
 
-  // console.log('File metadata:: ', metadata)
-
   await uploadToGCS({
     uploadedFile: file,
     userId,
