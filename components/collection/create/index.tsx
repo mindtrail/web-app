@@ -38,7 +38,7 @@ export function CreateCollection({
 
       // router.push('/search?refresh=true')
     } catch (err) {
-      console.log(err)
+      console.error(err)
 
       toast({
         title: 'Error',

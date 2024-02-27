@@ -25,7 +25,7 @@ export function ImportDataSource({ userId }: ImportDataSource) {
       await processImportData(data)
       router.push('/all-items?refresh=true')
     } catch (err) {
-      console.log(err)
+      console.error(err)
 
       toast({
         title: 'Error',
@@ -94,7 +94,7 @@ export function ImportDataSource({ userId }: ImportDataSource) {
           await uploadFileApiCall(file as File)
           successUpload.push(file.name)
         } catch (err) {
-          console.log(err)
+          console.error(err)
           failedUpload.push(file.name)
         }
       }),
