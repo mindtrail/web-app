@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/qdrant-langchain'
-import { getDataSourceListByIds } from '@/lib/db/dataSource'
+import { getDataSourceListByIdsDbOp } from '@/lib/db/dataSource'
 
 export async function GET(req: Request) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     if (!dataSourceList) {
       return new Response('No website found', { status: 404 })
     }
-    const result = await getDataSourceListByIds(dataSourceList)
+    const result = await getDataSourceListByIdsDbOp(dataSourceList)
 
     return Response.json(result)
     // return callLangchainChat({ searchQuery, chatId, userId })

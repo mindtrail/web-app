@@ -1,7 +1,7 @@
-export const DATASTORE_ENDPOINT = '/api/collection'
+export const COLLECTION_ENDPOINT = '/api/collection'
 
 export async function createCollectionApiCall(data: CreateCollection) {
-  const response = await fetch(DATASTORE_ENDPOINT, {
+  const response = await fetch(COLLECTION_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ export async function updateCollectionApiCall(
   collectionId: string,
   data: Partial<CreateCollection>,
 ) {
-  const response = await fetch(`${DATASTORE_ENDPOINT}/${collectionId}`, {
+  const response = await fetch(`${COLLECTION_ENDPOINT}/${collectionId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export async function updateCollectionApiCall(
 }
 
 export const deleteCollectionApiCall = async (collectionId: string) => {
-  const response = await fetch(`${DATASTORE_ENDPOINT}/${collectionId}`, {
+  const response = await fetch(`${COLLECTION_ENDPOINT}/${collectionId}`, {
     method: 'DELETE',
   })
 
