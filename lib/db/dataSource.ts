@@ -34,7 +34,7 @@ export const getDataSourceListDbOp = async (props: GetDataSourceList) => {
   return dataSourceList
 }
 
-export const getDataSourceListByIds = async (
+export const getDataSourceListByIdsDbOp = async (
   dataSourceList: string[],
   userId?: string,
 ) => {
