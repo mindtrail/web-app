@@ -208,7 +208,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
           return id
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     },
     [entityType, nestedItemsByCategory, onAddItemsToCollection, setNestedItemsByCategory],

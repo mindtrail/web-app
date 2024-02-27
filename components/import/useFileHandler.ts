@@ -65,7 +65,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         setTextSizeLoading(false)
         return acceptedFiles
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     },
     [files?.length],
@@ -115,7 +115,7 @@ export function useFileHandler(initialFiles: AcceptedFile[] = []) {
         variant: 'destructive',
         description: `Something went wrong while deleting ${name}`,
       })
-      console.log(err)
+      console.error(err)
     }
 
     filterOutDeletedFileAndUpdateTextSize(fileToDelete)

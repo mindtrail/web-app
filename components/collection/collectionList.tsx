@@ -62,7 +62,7 @@ export function CollectionList({ collectionList }: CollectionListProps) {
         variant: 'destructive',
         description: `Something went wrong while deleting ${name}`,
       })
-      console.log(err)
+      console.error(err)
     }
   }
 
