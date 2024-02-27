@@ -41,7 +41,7 @@ export default async function ChatPage() {
   try {
     ;[userPreferences, historyItems] = await Promise.all([
       getUserPreferencesDbOp(userId),
-      getDataSourceListDbOp({ userId, containClippings: true }),
+      getDataSourceListDbOp({ userId, hasClippings: true }),
     ])
   } catch (err) {
     console.log(err)
