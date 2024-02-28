@@ -1,7 +1,6 @@
 'use client'
 
-import { MouseEvent, useCallback, useState } from 'react'
-import { useDrop } from 'react-dnd'
+import { useCallback, useState } from 'react'
 import { UserPreferences } from '@prisma/client'
 
 import { SearchBasic } from '@/components/search/basic'
@@ -22,10 +21,7 @@ export function HistoryComponent({
 }: HistoryComponentProps) {
   const [filteredItems, setFilteredItems] = useState<HistoryItem[]>(historyItems)
 
-  const [filters, setFilters] = useState<HistoryFilter[]>()
   const [processing, setProcessing] = useState(false)
-
-  const [, dropRef] = useDrop({ accept: 'column' })
 
   const handlePreferenceUpdate = useCallback(
     (newTablePrefs: UserTablePrefs) => {
@@ -55,28 +51,8 @@ export function HistoryComponent({
     [historyItems],
   )
 
-  const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
-    event.preventDefault()
-    const newTag = event.currentTarget.dataset.value || ''
-
-    setFilters((prevFilters = []) => {
-      const newFilters = prevFilters.filter((prevTag) => prevTag.value !== newTag)
-
-      // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
-      if (newFilters.length === prevFilters.length) {
-        newFilters.push({ value: newTag, label: newTag })
-      }
-
-      return newFilters
-    })
-  }, [])
-
   return (
-    <div
-      ref={dropRef}
-      className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8
-        overflow-auto`}
-    >
+    <div className={`flex flex-col flex-1 gap-2 px-4 py-4 md:px-8 md:pt-8 overflow-auto`}>
       <SearchBasic handleSearch={handleSearch} />
 
       <DataTable
@@ -88,3 +64,19 @@ export function HistoryComponent({
     </div>
   )
 }
+
+// const handleTagListClick = useCallback((event: MouseEvent<HTMLElement>) => {
+//   event.preventDefault()
+//   const newTag = event.currentTarget.dataset.value || ''
+
+//   setFilters((prevFilters = []) => {
+//     const newFilters = prevFilters.filter((prevTag) => prevTag.value !== newTag)
+
+//     // Only add the new tag if it wasn't already present (i.e., if the array length is unchanged).
+//     if (newFilters.length === prevFilters.length) {
+//       newFilters.push({ value: newTag, label: newTag })
+//     }
+
+//     return newFilters
+//   })
+// }, [])

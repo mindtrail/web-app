@@ -15,7 +15,6 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  Row,
 } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
@@ -123,46 +122,49 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           )}
         </div>
       </div>
-      <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
-        {areRowsSelected && (
-          <ActionBar table={table} entityType={entityType} entityId={entityId} />
-        )}
-
-        <Table
-          className='table-fixed'
-          style={!entityIsHighlight ? { width: table.getTotalSize() } : {}}
-        >
-          <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <DraggableHeader
-                    key={header.id}
-                    header={header}
-                    table={table}
-                    handlePreferenceUpdate={handlePreferenceUpdate}
-                  />
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          {isColResizing ? (
-            // @ts-ignore
-            <MemoizedTableBody table={table} />
-          ) : (
-            <DefaultTableBody table={table} entityIsHighlight={entityIsHighlight} />
+      <div>
+        <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
+          {areRowsSelected && (
+            <ActionBar table={table} entityType={entityType} entityId={entityId} />
           )}
-        </Table>
 
-        {processing && (
-          <div className='absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52'>
-            <div className='flex items-center gap-2 h-8'>
-              <IconSpinner /> Searching...
+          <Table
+            className='table-fixed'
+            style={!entityIsHighlight ? { width: table.getTotalSize() } : {}}
+          >
+            <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <DraggableHeader
+                      key={header.id}
+                      header={header}
+                      table={table}
+                      handlePreferenceUpdate={handlePreferenceUpdate}
+                    />
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            {isColResizing ? (
+              // @ts-ignore
+              <MemoizedTableBody table={table} />
+            ) : (
+              <DefaultTableBody table={table} entityIsHighlight={entityIsHighlight} />
+            )}
+          </Table>
+
+          {processing && (
+            <div className='absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52'>
+              <div className='flex items-center gap-2 h-8'>
+                <IconSpinner /> Searching...
+              </div>
             </div>
-          </div>
-        )}
-        <ScrollBar orientation='horizontal' />
-      </ScrollArea>
+          )}
+          <ScrollBar orientation='horizontal' />
+        </ScrollArea>
+      </div>
+
       <ColumnDragLayer />
     </>
   )
