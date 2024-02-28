@@ -102,7 +102,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const isColResizing = !!table.getState().columnSizingInfo.isResizingColumn
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
-  console.log(areRowsSelected)
+  console.log(table.getSelectedRowModel()?.flatRows[0]?.original)
 
   return (
     <>
@@ -167,13 +167,21 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           <ScrollBar orientation='horizontal' />
         </ScrollArea>
         <div
-          className={`absolute w-0 h-[calc(100vh-165px)]
+          className={`absolute h-[calc(100vh-165px)] w-0 invisible
           right-0 top-[131px] md:top-[148px] z-20
-          bg-background shadow-lg rounded-ss-lg rounded-es-lg invisible
-          transition-all duration-300
-          ${areRowsSelected && '!w-[calc(100%-500px)] !visible border p-4'}
+          bg-background shadow-lg rounded-ss-lg rounded-es-lg
+          transition-all
+          ${areRowsSelected && '!visible !w-[calc(100%-500px)] border'}
         `}
-        ></div>
+        >
+          <div
+            className={`overflow-auto
+              ${areRowsSelected ? 'max-w-full' : 'max-w-0'}
+            `}
+          >
+            <div className='p-4'>dsada</div>
+          </div>
+        </div>
       </div>
       <ColumnDragLayer />
     </>
