@@ -102,6 +102,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const isColResizing = !!table.getState().columnSizingInfo.isResizingColumn
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
+  console.log(areRowsSelected)
 
   return (
     <>
@@ -122,7 +123,8 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           )}
         </div>
       </div>
-      <div>
+
+      <div className='flex flex-1'>
         <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
           {areRowsSelected && (
             <ActionBar table={table} entityType={entityType} entityId={entityId} />
@@ -161,10 +163,18 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               </div>
             </div>
           )}
+
           <ScrollBar orientation='horizontal' />
         </ScrollArea>
+        <div
+          className={`absolute w-0 h-[calc(100vh-165px)]
+          right-0 top-[131px] md:top-[148px] z-20
+          bg-background shadow-lg rounded-ss-lg rounded-es-lg invisible
+          transition-all duration-300
+          ${areRowsSelected && '!w-[calc(100%-500px)] !visible border p-4'}
+        `}
+        ></div>
       </div>
-
       <ColumnDragLayer />
     </>
   )
