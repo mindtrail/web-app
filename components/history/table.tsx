@@ -59,6 +59,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const initialSize = storedColSize || DEFAULT_COLUMN_SIZE
   const initialVis = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
 
+  const [previewItem, setPreviewItem] = useState<HistoryItem | null>(null)
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialOrder)
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(initialSize)
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialVis)
@@ -152,7 +153,11 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               // @ts-ignore
               <MemoizedTableBody table={table} />
             ) : (
-              <DefaultTableBody table={table} entityIsHighlight={entityIsHighlight} />
+              <TableBodyContent
+                table={table}
+                entityIsHighlight={entityIsHighlight}
+                setPreviewItem={setPreviewItem}
+              />
             )}
           </Table>
 
@@ -171,12 +176,12 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           right-0 top-[131px] md:top-[148px] z-20
           bg-background shadow-lg rounded-ss-lg rounded-es-lg
           transition-all
-          ${areRowsSelected && '!visible !w-[calc(100%-500px)] border'}
+          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-500px)] border'}
         `}
         >
           <div
-            className={`overflow-auto
-              ${areRowsSelected ? 'max-w-full' : 'max-w-0'}
+            className={`overflow-auto max-w-0
+              ${previewItem && !areRowsSelected && '!max-w-full'}
             `}
           >
             <div className='p-4'>dsada</div>
@@ -191,9 +196,10 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 interface TableBodyProps {
   table: ReactTable<HistoryItem>
   entityIsHighlight: boolean
+  setPreviewItem: (item: HistoryItem) => void
 }
 
-function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
+function TableBodyContent({ table, entityIsHighlight, setPreviewItem }: TableBodyProps) {
   const { flatRows: rows } = table.getRowModel()
 
   return (
@@ -204,16 +210,16 @@ function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
         return (
           <TableRow
             key={row.id}
+            onClick={() => setPreviewItem(row.original)}
             data-state={isRowSelected && 'selected'}
             className={`group/row text-foreground/70 hover:text-foreground border-none
             ${isRowSelected && 'text-foreground'}`}
           >
             {row.getVisibleCells().map(({ id, column, getContext }) => {
-              // console.log(row)
               return (
                 <TableCell
                   key={id}
-                  className={`align-top
+                  className={`align-top cursor-pointer
                     ${column.id === 'actions' && 'text-center'}
                     ${entityIsHighlight ? '!pr-2 py-0' : 'pt-10'}
                   `}
@@ -231,6 +237,6 @@ function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
 
 // @ts-ignore
 const MemoizedTableBody = memo(
-  DefaultTableBody,
+  TableBodyContent,
   (prev, next) => prev.table.options.data === next.table.options.data,
 ) as typeof TableBody

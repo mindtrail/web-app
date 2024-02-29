@@ -1,20 +1,16 @@
-import { useCallback, useState } from 'react'
-import { DataSourceType } from '@prisma/client'
-import { TrashIcon } from '@radix-ui/react-icons'
+import { useState } from 'react'
 import { Table } from '@tanstack/react-table'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { IconTag, IconAddToCollection } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useToast } from '@/components/ui/use-toast'
 
 import { AddToCollectionOrTag } from './add-to-collection-or-tag'
 import { DeleteItem } from './delete-item'
 
 import { ENTITY_TYPE } from '@/lib/constants'
-import { cn, getURLPathname } from '@/lib/utils'
-import { deleteDataSource } from '@/lib/serverActions/dataSource'
+import { cn } from '@/lib/utils'
 
 type ActionBarProps = {
   table: Table<HistoryItem>
@@ -77,7 +73,7 @@ export const ActionBar = ({ table, entityType, entityId }: ActionBarProps) => {
               </Popover>
             </>
           )}
-          <DeleteItem table={table} entityType={entityType} entityId={entityId}/>
+          <DeleteItem table={table} entityType={entityType} entityId={entityId} />
         </div>
       </div>
     </>
