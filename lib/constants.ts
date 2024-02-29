@@ -3,7 +3,7 @@ export const MAX_FILE_SIZE = 100 * 1024 * 1024 // 10 MB
 export const MAX_CHARS_PER_KB = 500 * 1000 * 1000 //
 
 export const MIN_COL_SIZE = 130
-export const MAX_COL_SIZE = 600
+export const MAX_COL_SIZE = 800
 
 export const FIXED_COLUMNS = ['displayName', 'highlights']
 export const DRAG_ITEM_TYPE = 'column'
