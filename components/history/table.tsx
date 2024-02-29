@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
@@ -15,7 +15,6 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
-  Row,
 } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
@@ -26,6 +25,7 @@ import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
+import { PreviewItem } from '@/components/history/preview'
 import {
   getDefaultTableColumns,
   getHighlightsTableColumns,
@@ -56,10 +56,14 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     columnVisibility: storedColVisibility,
   } = (userPreferences?.tablePrefs as UserTablePrefs) || {}
 
+  const tableRef = useRef(null)
+  const previewRef = useRef(null)
+
   const initialOrder = storedColOrder || DEFAULT_COLUMN_ORDER
   const initialSize = storedColSize || DEFAULT_COLUMN_SIZE
   const initialVis = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
 
+  const [previewItem, setPreviewItem] = useState<HistoryItem | null>(null)
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(initialOrder)
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(initialSize)
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialVis)
@@ -104,6 +108,35 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
+  useEffect(() => {
+    if (!Object.keys(rowSelection)?.length) {
+      setPreviewItem(null)
+    }
+  }, [rowSelection])
+
+  const handleClickOutside = useCallback((event: { target: any }) => {
+    const tableEl = tableRef.current
+    const previewEl = previewRef.current
+
+    if (!tableEl || !previewEl) {
+      return
+    }
+
+    if (
+      !(tableEl as HTMLElement)?.contains(event.target) &&
+      !(previewEl as HTMLElement)?.contains(event.target)
+    ) {
+      setPreviewItem(null)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (previewItem) {
+      window.addEventListener('click', handleClickOutside)
+      return () => window.removeEventListener('click', handleClickOutside)
+    }
+  }, [previewItem, handleClickOutside])
+
   return (
     <>
       <div className='flex items-center justify-between py-4'>
@@ -123,46 +156,74 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           )}
         </div>
       </div>
-      <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
-        {areRowsSelected && (
-          <ActionBar table={table} entityType={entityType} entityId={entityId} />
-        )}
 
-        <Table
-          className='table-fixed'
-          style={!entityIsHighlight ? { width: table.getTotalSize() } : {}}
-        >
-          <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <DraggableHeader
-                    key={header.id}
-                    header={header}
-                    table={table}
-                    handlePreferenceUpdate={handlePreferenceUpdate}
-                  />
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          {isColResizing ? (
-            // @ts-ignore
-            <MemoizedTableBody table={table} />
-          ) : (
-            <DefaultTableBody table={table} entityIsHighlight={entityIsHighlight} />
+      <div className='flex flex-1'>
+        <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
+          {areRowsSelected && (
+            <ActionBar table={table} entityType={entityType} entityId={entityId} />
           )}
-        </Table>
 
-        {processing && (
-          <div className='absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52'>
-            <div className='flex items-center gap-2 h-8'>
-              <IconSpinner /> Searching...
+          <Table
+            ref={tableRef}
+            className='table-fixed'
+            style={!entityIsHighlight ? { width: table.getTotalSize() } : {}}
+          >
+            <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <DraggableHeader
+                      key={header.id}
+                      header={header}
+                      table={table}
+                      handlePreferenceUpdate={handlePreferenceUpdate}
+                    />
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            {isColResizing ? (
+              // @ts-ignore
+              <MemoizedTableBody table={table} />
+            ) : (
+              <TableBodyContent
+                table={table}
+                entityIsHighlight={entityIsHighlight}
+                setPreviewItem={setPreviewItem}
+              />
+            )}
+          </Table>
+
+          {processing && (
+            <div className='absolute top-0 w-full h-full border rounded-md bg-white/60 flex justify-center pt-52'>
+              <div className='flex items-center gap-2 h-8'>
+                <IconSpinner /> Searching...
+              </div>
             </div>
+          )}
+
+          <ScrollBar orientation='horizontal' />
+        </ScrollArea>
+        <div
+          ref={previewRef}
+          className={`absolute h-[calc(100vh-165px)] w-0 invisible
+          right-0 top-[131px] md:top-[148px] z-20
+          bg-background shadow-lg rounded-ss-lg rounded-es-lg
+          transition-all
+          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-500px)] border'}
+        `}
+        >
+          <div
+            className={`overflow-auto max-w-0 h-full
+              ${previewItem && !areRowsSelected && '!max-w-full'}
+            `}
+          >
+            {previewItem && (
+              <PreviewItem previewItem={previewItem} setPreviewItem={setPreviewItem} />
+            )}
           </div>
-        )}
-        <ScrollBar orientation='horizontal' />
-      </ScrollArea>
+        </div>
+      </div>
       <ColumnDragLayer />
     </>
   )
@@ -171,9 +232,10 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 interface TableBodyProps {
   table: ReactTable<HistoryItem>
   entityIsHighlight: boolean
+  setPreviewItem: (item: HistoryItem) => void
 }
 
-function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
+function TableBodyContent({ table, entityIsHighlight, setPreviewItem }: TableBodyProps) {
   const { flatRows: rows } = table.getRowModel()
 
   return (
@@ -184,16 +246,16 @@ function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
         return (
           <TableRow
             key={row.id}
+            onClick={() => setPreviewItem(row.original)}
             data-state={isRowSelected && 'selected'}
             className={`group/row text-foreground/70 hover:text-foreground border-none
             ${isRowSelected && 'text-foreground'}`}
           >
             {row.getVisibleCells().map(({ id, column, getContext }) => {
-              // console.log(row)
               return (
                 <TableCell
                   key={id}
-                  className={`align-top
+                  className={`align-top cursor-pointer
                     ${column.id === 'actions' && 'text-center'}
                     ${entityIsHighlight ? '!pr-2 py-0' : 'pt-10'}
                   `}
@@ -211,6 +273,6 @@ function DefaultTableBody({ table, entityIsHighlight }: TableBodyProps) {
 
 // @ts-ignore
 const MemoizedTableBody = memo(
-  DefaultTableBody,
+  TableBodyContent,
   (prev, next) => prev.table.options.data === next.table.options.data,
 ) as typeof TableBody
