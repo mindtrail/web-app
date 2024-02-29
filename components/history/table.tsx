@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
@@ -55,6 +55,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     columnVisibility: storedColVisibility,
   } = (userPreferences?.tablePrefs as UserTablePrefs) || {}
 
+  const tableRef = useRef(null)
+  const previewRef = useRef(null)
+
   const initialOrder = storedColOrder || DEFAULT_COLUMN_ORDER
   const initialSize = storedColSize || DEFAULT_COLUMN_SIZE
   const initialVis = storedColVisibility || DEFAULT_COLUMN_VISIBILITY
@@ -103,7 +106,37 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const isColResizing = !!table.getState().columnSizingInfo.isResizingColumn
   const areRowsSelected =
     table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
-  console.log(table.getSelectedRowModel()?.flatRows[0]?.original)
+
+  useEffect(() => {
+    if (!Object.keys(rowSelection)?.length) {
+      setPreviewItem(null)
+    }
+  }, [rowSelection])
+
+  const handleClickOutside = useCallback((event: { target: any }) => {
+    const tableEl = tableRef.current
+    const previewEl = previewRef.current
+
+    if (!tableEl || !previewEl) {
+      return
+    }
+
+    if (
+      !(tableEl as HTMLElement)?.contains(event.target) &&
+      !(previewEl as HTMLElement)?.contains(event.target)
+    ) {
+      setPreviewItem(null)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (previewItem) {
+      window.addEventListener('click', handleClickOutside)
+      return () => {
+        window.removeEventListener('click', handleClickOutside)
+      }
+    }
+  }, [previewItem, handleClickOutside])
 
   return (
     <>
@@ -132,6 +165,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           )}
 
           <Table
+            ref={tableRef}
             className='table-fixed'
             style={!entityIsHighlight ? { width: table.getTotalSize() } : {}}
           >
@@ -172,6 +206,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           <ScrollBar orientation='horizontal' />
         </ScrollArea>
         <div
+          ref={previewRef}
           className={`absolute h-[calc(100vh-165px)] w-0 invisible
           right-0 top-[131px] md:top-[148px] z-20
           bg-background shadow-lg rounded-ss-lg rounded-es-lg
@@ -184,7 +219,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               ${previewItem && !areRowsSelected && '!max-w-full'}
             `}
           >
-            <div className='p-4'>dsada</div>
+            <div className='p-4'>{previewItem?.name}</div>
           </div>
         </div>
       </div>
