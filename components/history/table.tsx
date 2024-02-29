@@ -133,9 +133,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   useEffect(() => {
     if (previewItem) {
       window.addEventListener('click', handleClickOutside)
-      return () => {
-        window.removeEventListener('click', handleClickOutside)
-      }
+      return () => window.removeEventListener('click', handleClickOutside)
     }
   }, [previewItem, handleClickOutside])
 
@@ -220,7 +218,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               ${previewItem && !areRowsSelected && '!max-w-full'}
             `}
           >
-            {previewItem && <PreviewItem previewItem={previewItem} />}
+            {previewItem && (
+              <PreviewItem previewItem={previewItem} setPreviewItem={setPreviewItem} />
+            )}
           </div>
         </div>
       </div>
