@@ -25,6 +25,7 @@ import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
+import { PreviewItem } from '@/components/history/preview'
 import {
   getDefaultTableColumns,
   getHighlightsTableColumns,
@@ -215,11 +216,11 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         `}
         >
           <div
-            className={`overflow-auto max-w-0
+            className={`overflow-auto max-w-0 h-full
               ${previewItem && !areRowsSelected && '!max-w-full'}
             `}
           >
-            <div className='p-4'>{previewItem?.name}</div>
+            {previewItem && <PreviewItem previewItem={previewItem} />}
           </div>
         </div>
       </div>
