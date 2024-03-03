@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
+import { DataSourceType } from '@prisma/client'
 
 import { Button } from '@/components/ui/button'
 
@@ -10,6 +11,8 @@ type PreviewProps = {
 
 export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
   console.log(previewItem)
+  const { type } = previewItem
+
   useEffect(() => {
     function onMessage(e: any) {
       if (e.data == 'preview-error') {
@@ -20,6 +23,10 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
 
     return () => window.removeEventListener('message', onMessage)
   }, [])
+
+  if (type === DataSourceType.file) {
+    return <div className='flex flex-col h-full bg-muted'>File</div>
+  }
 
   return (
     <div className='flex flex-col h-full bg-muted'>
