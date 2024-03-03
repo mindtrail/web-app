@@ -9,6 +9,7 @@ type PreviewProps = {
 }
 
 export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
+  console.log(previewItem)
   useEffect(() => {
     function onMessage(e: any) {
       if (e.data == 'preview-error') {
