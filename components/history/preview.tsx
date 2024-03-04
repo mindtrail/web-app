@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
+import Link from 'next/link'
+import { ExternalLink } from '@/components/external-link'
 
 import { Button } from '@/components/ui/button'
-// import { getWebsiteFromGCS, getWebsitePreview } from '@/lib/serverActions/dataSource'
-import { getWebsitePreview } from '@/lib/api/preview'
+import { canRenderInIFrame } from '@/lib/serverActions/dataSource'
 
 type PreviewProps = {
   previewItem: HistoryItem
@@ -12,48 +13,33 @@ type PreviewProps = {
 }
 
 export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
-  // console.log(previewItem)
-  const { type, name } = previewItem
+  const { type, name, displayName } = previewItem
 
-  const [iframeURL, setIframeURL] = useState('')
+  const [iframeURL, setIframeURL] = useState(name)
+  const [renderInIFrame, setRenderInIFrame] = useState(true)
 
   useEffect(() => {
-    function onMessage(e: any) {
-      if (e.data == 'preview-error') {
-        console.log(55555, e)
-      }
-    }
-    window.addEventListener('message', onMessage)
-
     async function getWebsite() {
-      // const result = await getWebsiteFromGCS(previewItem)
-      // console.log(result)
-      // if (typeof result === 'string') {
-      //   setIframeURL(result)
-      // } else if (result?.error) {
-      //   console.log(result.error)
-      // }
       try {
-        const result = await getWebsitePreview(name)
+        const result = await canRenderInIFrame(name)
+        setRenderInIFrame(result)
+        setIframeURL(name)
+        console.log(result)
       } catch (error) {
-        console.log(error)
+        setRenderInIFrame(false)
+        setIframeURL('')
+        console.error(error)
       }
-      // const html = await axios.get(name)
-      // console.log(html)
-      // setIframeURL(html.text())
     }
 
     getWebsite()
-    return () => window.removeEventListener('message', onMessage)
   }, [name])
 
   if (type === DataSourceType.file) {
     return <div className='flex flex-col h-full bg-muted'>File</div>
   }
 
-  // if (!iframeURL) {
-  //   return <div className='flex flex-col h-full bg-muted'>Loading...</div>
-  // }
+  console.log(type, iframeURL)
 
   return (
     <div className='flex flex-col h-full bg-muted'>
@@ -64,17 +50,26 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
         {/* {previewItem?.title} */}
       </div>
 
-      {/* <iframe
-        className='flex-1 w-full border'
-        loading='lazy'
-        allow='clipboard-write; encrypted-media; fullscreen'
-        referrerPolicy='no-referrer-when-downgrade'
-        src={name}
-        title='YouTube video player'
-        // onError={(msg) => console.log('111i  frame NOT loaded', msg)}
-        // onLoad={(msg) => console.log('222 iframe loaded', msg)}
-        // onErrorCapture={(msg) => console.log('333 iframe NOT loaded', msg)}
-      /> */}
+      {renderInIFrame ? (
+        <iframe
+          className='flex-1 w-full border'
+          loading='lazy'
+          allow='clipboard-write; encrypted-media; fullscreen'
+          referrerPolicy='no-referrer-when-downgrade'
+          src={iframeURL}
+          title='YouTube video player'
+          // onError={(msg) => console.log('111i  frame NOT loaded', msg)}
+          // onLoad={(msg) => console.log('222 iframe loaded', msg)}
+          // onErrorCapture={(msg) => console.log('333 iframe NOT loaded', msg)}
+        />
+      ) : (
+        <div className='flex flex-col w-full flex-1 items-center justify-center gap-2'>
+          <span className='cursor-default'>Cannot load in iFrame</span>
+          <ExternalLink className='flex-initial' href={name}>
+            {displayName}
+          </ExternalLink>
+        </div>
+      )}
     </div>
   )
 }
