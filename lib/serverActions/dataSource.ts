@@ -212,33 +212,32 @@ export async function getWebsiteFromGCS(item: HistoryItem) {
   // }
 }
 
-
-export async function canRenderInIFrame(item: HistoryItem) {
+export async function canRenderInIFrame(url: string) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 
   if (!userId) {
-    return {
-      error: {
-        status: 401,
-        message: 'Unauthorized',
-      },
-    }
+    throw new Error('Unauthorized')
   }
-  const { id: dataSourceId, type: DSType, name: url } = item
 
+  try {
+    const response = await fetch(url)
+    const XFrameOptions = response.headers.get('x-frame-options')
+    const CSP = response.headers.get('content-security-policy') || ''
 
-  const externalResource = await fetch(url)
-  const html = await externalResource.text()
+    const frameAncestorsMatch = CSP.match('frame-ancestors')
+    const ancestorSelf = CSP.match('self')
 
-  return html
+    // Check if we have any restrictions on x-frame-options
+    if (XFrameOptions || (frameAncestorsMatch && ancestorSelf)) {
+      return false
+    }
 
-  // try {
-  //   // const result = downloadWebsiteFromGCS(url)
-  //   // return result
-  // } catch (error) {
-  //   console.log(2222, error)
-  // }
+    return true
+  } catch (error) {
+    console.log(error)
+    return false
+  }
 }
 
 // https://storage.cloud.google.com/indie-chat-files/clq6rq97400011jm4hb81zu0a/websites/developer.chrome.com/docs-extensions-reference-api-pageCapture
