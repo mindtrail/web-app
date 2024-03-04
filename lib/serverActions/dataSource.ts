@@ -213,7 +213,7 @@ export async function getWebsiteFromGCS(item: HistoryItem) {
 }
 
 
-export async function getWebsitePreview(item: HistoryItem) {
+export async function canRenderInIFrame(item: HistoryItem) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 

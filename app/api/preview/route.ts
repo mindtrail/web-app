@@ -14,20 +14,23 @@ export async function GET(req: NextRequest) {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  const url = new URL(req.url)
-  const previewURL = (url.searchParams.get('url') as DataSourceType) || undefined
+  try {
+    const url = new URL(req.url)
+    const previewURL = (url.searchParams.get('url') as DataSourceType) || undefined
 
-  if (!previewURL) {
+    if (!previewURL) {
+      return new Response('Invalid URL', { status: 400 })
+    }
+
+    const websiteToCheck = await fetch(previewURL)
+
+    // Check if we have any restrictions on x-frame-options
+    if (websiteToCheck.headers.get('x-frame-options')) {
+      return new Response('Invalid URL', { status: 400 })
+    }
+    return NextResponse.json('OK')
+  } catch (error) {
+    console.log(error)
     return new Response('Invalid URL', { status: 400 })
   }
-
-  const externalResource = await fetch(previewURL)
-  const html = await externalResource.text()
-
-  return new NextResponse(html, {
-    status: 200,
-    headers: {
-      'Content-Type': 'text/html',
-    },
-  })
 }
