@@ -12,7 +12,7 @@ type PreviewProps = {
 }
 
 export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
-  console.log(previewItem)
+  // console.log(previewItem)
   const { type, name } = previewItem
 
   const [iframeURL, setIframeURL] = useState('')
@@ -33,7 +33,12 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
       // } else if (result?.error) {
       //   console.log(result.error)
       // }
-      // const html = await getWebsitePreview(name)
+      try {
+        const result = await getWebsitePreview(name)
+      } catch (error) {
+        console.log(error)
+      }
+      // const html = await axios.get(name)
       // console.log(html)
       // setIframeURL(html.text())
     }
@@ -59,7 +64,7 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
         {/* {previewItem?.title} */}
       </div>
 
-      <iframe
+      {/* <iframe
         className='flex-1 w-full border'
         loading='lazy'
         allow='clipboard-write; encrypted-media; fullscreen'
@@ -69,7 +74,7 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
         // onError={(msg) => console.log('111i  frame NOT loaded', msg)}
         // onLoad={(msg) => console.log('222 iframe loaded', msg)}
         // onErrorCapture={(msg) => console.log('333 iframe NOT loaded', msg)}
-      />
+      /> */}
     </div>
   )
 }
