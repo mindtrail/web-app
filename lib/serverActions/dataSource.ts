@@ -1,7 +1,10 @@
 'use server'
 
 import { getServerSession } from 'next-auth/next'
+
 import { authOptions } from '@/lib/authOptions'
+import { downloadWebsiteFromGCS } from '@/lib/cloudStorage'
+import { buildGCSFilePath } from '@/lib/utils'
 
 import {
   deleteDataSourceDbOp,
@@ -181,3 +184,61 @@ export async function getCollectionsForDataSourceList(dataSourceIdList: string[]
     return [] as string[]
   }
 }
+
+export async function getWebsiteFromGCS(item: HistoryItem) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return {
+      error: {
+        status: 401,
+        message: 'Unauthorized',
+      },
+    }
+  }
+  const { id: dataSourceId, type: DSType, name } = item
+
+  // console.log(getWebsiteFromGCS())
+  const GCS_PATH = buildGCSFilePath({ dataSourceId, DSType, name, userId })
+
+  return 'https://storage.cloud.google.com/indie-chat-files/' + GCS_PATH
+
+  // try {
+  //   // const result = downloadWebsiteFromGCS(url)
+  //   // return result
+  // } catch (error) {
+  //   console.log(2222, error)
+  // }
+}
+
+
+export async function getWebsitePreview(item: HistoryItem) {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return {
+      error: {
+        status: 401,
+        message: 'Unauthorized',
+      },
+    }
+  }
+  const { id: dataSourceId, type: DSType, name: url } = item
+
+
+  const externalResource = await fetch(url)
+  const html = await externalResource.text()
+
+  return html
+
+  // try {
+  //   // const result = downloadWebsiteFromGCS(url)
+  //   // return result
+  // } catch (error) {
+  //   console.log(2222, error)
+  // }
+}
+
+// https://storage.cloud.google.com/indie-chat-files/clq6rq97400011jm4hb81zu0a/websites/developer.chrome.com/docs-extensions-reference-api-pageCapture
