@@ -1,5 +1,3 @@
-import { NextResponse } from 'next/server'
-
 export const DATA_SRC = '/api/data-source'
 export const UPLOAD_ENDPOINT = '/api/data-source/file'
 export const METADATA_ENDPOINT = '/api/data-source/metadata'
