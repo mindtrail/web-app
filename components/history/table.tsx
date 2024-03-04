@@ -207,10 +207,10 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         <div
           ref={previewRef}
           className={`absolute h-[calc(100vh-165px)] w-0 invisible
-          right-0 top-[131px] md:top-[148px] z-20
+          right-0 top-[132px] md:top-[148px] z-20
           bg-background shadow-lg rounded-ss-lg rounded-es-lg
           transition-all
-          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-500px)] border'}
+          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-400px)] border'}
         `}
         >
           <div
