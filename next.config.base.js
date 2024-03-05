@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -30,6 +31,8 @@ const nextConfig = {
         'supports-color': 'supports-color',
       })
     }
+
+    config.resolve.alias.canvas = false
 
     return config
   },

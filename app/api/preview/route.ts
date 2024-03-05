@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next'
 import { DataSourceType } from '@prisma/client'
 
 import { authOptions } from '@/lib/authOptions'
-import { buildGCSFilePath } from '@/lib/utils'
 
 // Function that processes the data received from the Browser Extension
 export async function GET(req: NextRequest) {
