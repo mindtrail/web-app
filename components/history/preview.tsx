@@ -23,15 +23,14 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
       try {
         const result = await canRenderInIFrame(name)
         setRenderInIFrame(result)
-        setIframeURL(name)
-        console.log(result)
       } catch (error) {
         setRenderInIFrame(false)
         setIframeURL('')
         console.error(error)
       }
     }
-
+    setRenderInIFrame(true)
+    setIframeURL(name)
     getWebsite()
   }, [name])
 
