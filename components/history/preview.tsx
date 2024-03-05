@@ -1,11 +1,20 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
-import Link from 'next/link'
-import { ExternalLink } from '@/components/external-link'
+import { pdfjs } from 'react-pdf'
+import { Document, Page } from 'react-pdf'
 
+import { ExternalLink } from '@/components/external-link'
 import { Button } from '@/components/ui/button'
-import { canRenderInIFrame } from '@/lib/serverActions/dataSource'
+import { canRenderInIFrame, getFileFromGCS } from '@/lib/serverActions/dataSource'
+
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   'pdfjs-dist/build/pdf.worker.min.js',
+//   import.meta.url,
+// ).toString()
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
 type PreviewProps = {
   previewItem: HistoryItem
@@ -17,6 +26,15 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
 
   const [iframeURL, setIframeURL] = useState(name)
   const [renderInIFrame, setRenderInIFrame] = useState(true)
+  const [fileToRender, setFileToRender] = useState('')
+
+  const [numPages, setNumPages] = useState<number>()
+  const [pageNumber, setPageNumber] = useState<number>(1)
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+    setNumPages(numPages)
+    console.log(numPages)
+  }
 
   useEffect(() => {
     async function getWebsite() {
@@ -28,16 +46,49 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
         setIframeURL('')
       }
     }
-    setRenderInIFrame(true)
-    setIframeURL(name)
-    getWebsite()
-  }, [name])
+
+    if (type === DataSourceType.web_page) {
+      setRenderInIFrame(true)
+      setIframeURL(name)
+      getWebsite()
+    }
+
+    async function getFile() {
+      // @ts-ignore
+      const res = await getFileFromGCS(previewItem)
+      // const file = new File([fileBuffer], previewItem.name, {
+      // type: 'application/pdf',
+      // })
+      console.log(res)
+      //
+      setFileToRender(res)
+    }
+
+    if (type === DataSourceType.file) {
+      getFile()
+    }
+  }, [name, type, previewItem])
 
   if (type === DataSourceType.file) {
-    return <div className='flex flex-col h-full bg-muted'>File</div>
+    console.log(fileToRender)
+    if (!fileToRender) {
+      return
+    }
+
+    return (
+      <div>
+        <Document file={fileToRender} onLoadSuccess={onDocumentLoadSuccess}>
+          <Page pageNumber={pageNumber} />
+        </Document>
+        <p>
+          Page {pageNumber} of {numPages}
+        </p>
+      </div>
+    )
+    // return <div className='flex flex-col h-full bg-muted'>File PDF</div>
   }
 
-  console.log(type, iframeURL)
+  console.log(type, previewItem)
 
   return (
     <div className='flex flex-col h-full bg-muted'>

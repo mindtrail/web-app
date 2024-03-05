@@ -20,6 +20,19 @@ export async function downloadWebsiteFromGCS(
   }
 }
 
+export async function generateSignedUrl(gcFileName: string): Promise<string | null> {
+  try {
+    const expires = Date.now() + 5 * 60 * 1000 // Expiration time in milliseconds.
+    const file = storage.bucket(bucketName)?.file(gcFileName)
+
+    const [url] = await file?.getSignedUrl({ action: 'read', expires })
+    return url
+  } catch (error) {
+    console.error('Error downloading from GCS', error)
+    return null
+  }
+}
+
 interface UploadToGCSProps {
   uploadedFile: File | HTMLFile
   userId: string
