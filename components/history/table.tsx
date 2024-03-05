@@ -131,10 +131,23 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   }, [])
 
   useEffect(() => {
-    if (previewItem) {
-      window.addEventListener('click', handleClickOutside)
-      return () => window.removeEventListener('click', handleClickOutside)
+    if (!previewItem) {
+      return
     }
+
+    // Add event listener for escape key
+    window.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape') {
+          setPreviewItem(null)
+        }
+      },
+      { once: true },
+    )
+
+    window.addEventListener('click', handleClickOutside, { once: true })
+    return () => window.removeEventListener('click', handleClickOutside)
   }, [previewItem, handleClickOutside])
 
   return (
@@ -270,9 +283,3 @@ function TableBodyContent({ table, entityIsHighlight, setPreviewItem }: TableBod
     </TableBody>
   )
 }
-
-// @ts-ignore
-const MemoizedTableBody = memo(
-  TableBodyContent,
-  (prev, next) => prev.table.options.data === next.table.options.data,
-) as typeof TableBody

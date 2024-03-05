@@ -40,7 +40,7 @@ export const NestedItemInput = (props: NestedItemInput) => {
     }
 
     // Bind the event listener
-    window.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('mousedown', handleClickOutside, { once: true })
     return () => {
       // Unbind the event listener on clean up
       window.removeEventListener('mousedown', handleClickOutside)

@@ -26,7 +26,6 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
       } catch (error) {
         setRenderInIFrame(false)
         setIframeURL('')
-        console.error(error)
       }
     }
     setRenderInIFrame(true)
