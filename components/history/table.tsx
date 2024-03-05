@@ -131,11 +131,24 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   }, [])
 
   useEffect(() => {
+    if (!areRowsSelected) {
+      return
+    }
+    window.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape') {
+          setRowSelection({})
+        }
+      },
+      { once: true },
+    )
+  }, [areRowsSelected])
+
+  useEffect(() => {
     if (!previewItem) {
       return
     }
-
-    // Add event listener for escape key
     window.addEventListener(
       'keydown',
       (event) => {
@@ -146,7 +159,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
       { once: true },
     )
 
-    window.addEventListener('click', handleClickOutside, { once: true })
+    window.addEventListener('click', handleClickOutside)
     return () => window.removeEventListener('click', handleClickOutside)
   }, [previewItem, handleClickOutside])
 
@@ -223,7 +236,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           right-0 top-[132px] md:top-[148px] z-20
           bg-background shadow-lg rounded-ss-lg rounded-es-lg
           transition-all
-          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-400px)] border'}
+          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-450px)] border'}
         `}
         >
           <div
