@@ -33,7 +33,6 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages)
-    console.log(numPages)
   }
 
   useEffect(() => {
@@ -56,12 +55,11 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
     async function getFile() {
       // @ts-ignore
       const res = await getFileFromGCS(previewItem)
-      // const file = new File([fileBuffer], previewItem.name, {
-      // type: 'application/pdf',
-      // })
-      console.log(res)
-      //
-      setFileToRender(res)
+
+      if (typeof res === 'string') {
+        setFileToRender(res)
+        return
+      }
     }
 
     if (type === DataSourceType.file) {
@@ -70,7 +68,6 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
   }, [name, type, previewItem])
 
   if (type === DataSourceType.file) {
-    console.log(fileToRender)
     if (!fileToRender) {
       return
     }
@@ -87,8 +84,6 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
     )
     // return <div className='flex flex-col h-full bg-muted'>File PDF</div>
   }
-
-  console.log(type, previewItem)
 
   return (
     <div className='flex flex-col h-full bg-muted'>
@@ -107,9 +102,6 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
           referrerPolicy='no-referrer-when-downgrade'
           src={iframeURL}
           title='YouTube video player'
-          // onError={(msg) => console.log('111i  frame NOT loaded', msg)}
-          // onLoad={(msg) => console.log('222 iframe loaded', msg)}
-          // onErrorCapture={(msg) => console.log('333 iframe NOT loaded', msg)}
         />
       ) : (
         <div className='flex flex-col w-full flex-1 items-center justify-center gap-2'>
