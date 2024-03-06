@@ -114,7 +114,13 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     }
   }, [rowSelection])
 
-  const handleClickOutside = useCallback((event: { target: any }) => {
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    const target = event?.target as HTMLElement
+
+    if (!target) {
+      return
+    }
+
     const tableEl = tableRef.current
     const previewEl = previewRef.current
 
@@ -122,12 +128,19 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
       return
     }
 
+    console.log(target)
+
     if (
-      !(tableEl as HTMLElement)?.contains(event.target) &&
-      !(previewEl as HTMLElement)?.contains(event.target)
+      (tableEl as HTMLElement)?.contains(target) ||
+      (previewEl as HTMLElement)?.contains(target) ||
+      // check if the classlists contains a part of the string rpv-core
+      target.classList.value.includes('rpv-core')
     ) {
-      setPreviewItem(null)
+      console.log(111)
+      return
     }
+
+    setPreviewItem(null)
   }, [])
 
   useEffect(() => {
