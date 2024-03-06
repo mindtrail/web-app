@@ -296,3 +296,9 @@ function TableBodyContent({ table, entityIsHighlight, setPreviewItem }: TableBod
     </TableBody>
   )
 }
+
+// @ts-ignore -> useful for perf optimization on resizing columns
+const MemoizedTableBody = memo(
+  TableBodyContent,
+  (prev, next) => prev.table.options.data === next.table.options.data,
+) as typeof TableBody
