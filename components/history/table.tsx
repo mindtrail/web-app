@@ -128,15 +128,14 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
       return
     }
 
-    console.log(target)
-
     if (
       (tableEl as HTMLElement)?.contains(target) ||
       (previewEl as HTMLElement)?.contains(target) ||
       // check if the classlists contains a part of the string rpv-core
-      target.classList.value.includes('rpv-core')
+      target.classList.value.includes('rpv-core') ||
+      // check if target was the trigger to download the file
+      (target.tagName === 'A' && (target as HTMLAnchorElement).href.startsWith('blob:'))
     ) {
-      console.log(111)
       return
     }
 
