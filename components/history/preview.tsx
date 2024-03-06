@@ -1,19 +1,14 @@
 'use client'
 
-import '@react-pdf-viewer/core/lib/styles/index.css'
-import '@react-pdf-viewer/default-layout/lib/styles/index.css'
-// import '@react-pdf-viewer/toolbar/lib/styles/index.css'
-
 import { useEffect, useState } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
-import { Viewer, Worker } from '@react-pdf-viewer/core'
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
-// import { toolbarPlugin } from '@react-pdf-viewer/toolbar'
 
 import { ExternalLink } from '@/components/external-link'
 import { Button } from '@/components/ui/button'
 import { canRenderInIFrame, getFileFromGCS } from '@/lib/serverActions/dataSource'
+
+import { PDFViewer } from './pdf-viewer'
 
 type PreviewProps = {
   previewItem: HistoryItem
@@ -26,11 +21,6 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
   const [iframeURL, setIframeURL] = useState(name)
   const [renderInIFrame, setRenderInIFrame] = useState(true)
   const [fileToRender, setFileToRender] = useState('')
-
-  const [numPages, setNumPages] = useState<number>()
-  const [pageNumber, setPageNumber] = useState<number>(1)
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
   useEffect(() => {
     async function getWebsite() {
@@ -69,14 +59,8 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
       return
     }
 
-    // /pdf.worker.min.js
-    return (
-      <Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js'>
-        <div style={{ height: '750px' }}>
-          <Viewer fileUrl={fileToRender} plugins={[defaultLayoutPluginInstance]} />
-        </div>
-      </Worker>
-    )
+    return <PDFViewer file={fileToRender} />
+
   }
 
   return (
