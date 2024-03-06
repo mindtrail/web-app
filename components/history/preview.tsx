@@ -54,15 +54,6 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
     }
   }, [name, type, previewItem])
 
-  if (type === DataSourceType.file) {
-    if (!fileToRender) {
-      return
-    }
-
-    return <PDFViewer file={fileToRender} />
-
-  }
-
   return (
     <div className='flex flex-col h-full bg-muted'>
       <div className='flex justify-between items-center h-12 px-2 gap-4'>
@@ -72,7 +63,9 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
         {/* {previewItem?.title} */}
       </div>
 
-      {renderInIFrame ? (
+      {type === DataSourceType.file ? (
+        <PDFViewer file={fileToRender} />
+      ) : renderInIFrame ? (
         <iframe
           className='flex-1 w-full border'
           loading='lazy'
