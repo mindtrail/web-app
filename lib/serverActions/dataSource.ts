@@ -3,7 +3,7 @@
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
-import { downloadWebsiteFromGCS } from '@/lib/cloudStorage'
+import { generateSignedUrl } from '@/lib/cloudStorage'
 import { buildGCSFilePath } from '@/lib/utils'
 
 import {
@@ -185,7 +185,7 @@ export async function getCollectionsForDataSourceList(dataSourceIdList: string[]
   }
 }
 
-export async function getWebsiteFromGCS(item: HistoryItem) {
+export async function getFileFromGCS(item: HistoryItem) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 
@@ -199,17 +199,10 @@ export async function getWebsiteFromGCS(item: HistoryItem) {
   }
   const { id: dataSourceId, type: DSType, name } = item
 
-  // console.log(getWebsiteFromGCS())
   const GCS_PATH = buildGCSFilePath({ dataSourceId, DSType, name, userId })
+  const filePath = await generateSignedUrl(GCS_PATH)
 
-  return 'https://storage.cloud.google.com/indie-chat-files/' + GCS_PATH
-
-  // try {
-  //   // const result = downloadWebsiteFromGCS(url)
-  //   // return result
-  // } catch (error) {
-  //   console.log(2222, error)
-  // }
+  return filePath
 }
 
 export async function canRenderInIFrame(url: string) {

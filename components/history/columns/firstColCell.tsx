@@ -35,7 +35,11 @@ export function FirstColumnCell<TData>({ row, table }: FirstColumnCellProps<TDat
     return null
   }
 
-  const ItemText = <Typography className='truncate max-w-full'>{displayName}</Typography>
+  const ItemText = (
+    <Typography className='truncate max-w-full group-hover/row:text-foreground'>
+      {displayName}
+    </Typography>
+  )
 
   return (
     <div className='flex flex-col gap-3 -mt-6'>
@@ -55,7 +59,8 @@ export function FirstColumnCell<TData>({ row, table }: FirstColumnCellProps<TDat
             target='_blank'
             href={addHttpsIfMissing(name)}
             className={`flex px-2 items-center max-w-full text-center
-              hover:underline group/link relative`}
+              hover:underline group/link relative group-hover/row:text-foreground
+            `}
           >
             {ItemText}
             <ExternalLinkIcon

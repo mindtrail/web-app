@@ -131,10 +131,36 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   }, [])
 
   useEffect(() => {
-    if (previewItem) {
-      window.addEventListener('click', handleClickOutside)
-      return () => window.removeEventListener('click', handleClickOutside)
+    if (!areRowsSelected) {
+      return
     }
+    window.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape') {
+          setRowSelection({})
+        }
+      },
+      { once: true },
+    )
+  }, [areRowsSelected])
+
+  useEffect(() => {
+    if (!previewItem) {
+      return
+    }
+    window.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape') {
+          setPreviewItem(null)
+        }
+      },
+      { once: true },
+    )
+
+    window.addEventListener('click', handleClickOutside)
+    return () => window.removeEventListener('click', handleClickOutside)
   }, [previewItem, handleClickOutside])
 
   return (
@@ -210,7 +236,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           right-0 top-[132px] md:top-[148px] z-20
           bg-background shadow-lg rounded-ss-lg rounded-es-lg
           transition-all
-          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-400px)] border'}
+          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-450px)] border'}
         `}
         >
           <div
@@ -271,7 +297,7 @@ function TableBodyContent({ table, entityIsHighlight, setPreviewItem }: TableBod
   )
 }
 
-// @ts-ignore
+// @ts-ignore -> useful for perf optimization on resizing columns
 const MemoizedTableBody = memo(
   TableBodyContent,
   (prev, next) => prev.table.options.data === next.table.options.data,
