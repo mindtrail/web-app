@@ -1,20 +1,19 @@
 'use client'
 
+import '@react-pdf-viewer/core/lib/styles/index.css'
+import '@react-pdf-viewer/default-layout/lib/styles/index.css'
+// import '@react-pdf-viewer/toolbar/lib/styles/index.css'
+
 import { useEffect, useState } from 'react'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
-import { pdfjs } from 'react-pdf'
-import { Document, Page } from 'react-pdf'
+import { Viewer, Worker } from '@react-pdf-viewer/core'
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
+// import { toolbarPlugin } from '@react-pdf-viewer/toolbar'
 
 import { ExternalLink } from '@/components/external-link'
 import { Button } from '@/components/ui/button'
 import { canRenderInIFrame, getFileFromGCS } from '@/lib/serverActions/dataSource'
-
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   'pdfjs-dist/build/pdf.worker.min.js',
-//   import.meta.url,
-// ).toString()
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
 type PreviewProps = {
   previewItem: HistoryItem
@@ -31,9 +30,7 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
   const [numPages, setNumPages] = useState<number>()
   const [pageNumber, setPageNumber] = useState<number>(1)
 
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
-    setNumPages(numPages)
-  }
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
 
   useEffect(() => {
     async function getWebsite() {
@@ -72,17 +69,14 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
       return
     }
 
+    // /pdf.worker.min.js
     return (
-      <div>
-        <Document file={fileToRender} onLoadSuccess={onDocumentLoadSuccess}>
-          <Page pageNumber={pageNumber} />
-        </Document>
-        <p>
-          Page {pageNumber} of {numPages}
-        </p>
-      </div>
+      <Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js'>
+        <div style={{ height: '750px' }}>
+          <Viewer fileUrl={fileToRender} plugins={[defaultLayoutPluginInstance]} />
+        </div>
+      </Worker>
     )
-    // return <div className='flex flex-col h-full bg-muted'>File PDF</div>
   }
 
   return (
