@@ -259,10 +259,10 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             `}
           >
             {previewItem && (
-              <>
+              <div className='flex flex-1 h-full bg-muted'>
                 <PreviewItem previewItem={previewItem} setPreviewItem={setPreviewItem} />
-                <Chat className='w-56 sm:w-64 md:w-72' />
-              </>
+                <Chat className='w-56 sm:w-64 md:w-72 lg:w-80 2xl:w-96 border-l bg-background' />
+              </div>
             )}
           </div>
         </div>
