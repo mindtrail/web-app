@@ -30,34 +30,37 @@ export function PromptForm({
   }, [])
 
   return (
-    <form onSubmit={onSubmit} ref={formRef}>
-      <div className='relative flex w-full grow flex-col overflow-hidden bg-background px-6 sm:rounded-t-md sm:border sm:px-8'>
-        <Textarea
-          ref={inputRef}
-          tabIndex={0}
-          onKeyDown={onKeyDown}
-          rows={1}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder='Send a message.'
-          spellCheck={false}
-          className='min-h-[60px] w-full resize-none bg-transparent py-[1.3rem] focus-within:outline-none sm:text-sm'
-        />
-        <div className='absolute right-0 top-4 sm:right-4'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                type='submit'
-                size='icon'
-                disabled={isLoading || input === '' || notInitialised}
-              >
-                <IconArrowElbow />
-                <span className='sr-only'>Send message</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Send message</TooltipContent>
-          </Tooltip>
-        </div>
+    <form
+      onSubmit={onSubmit}
+      ref={formRef}
+      className='relative flex w-full pl-4 pr-6 border-t items-center
+        overflow-hidden bg-background'
+    >
+      <Textarea
+        ref={inputRef}
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        rows={1}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder='Send a message.'
+        spellCheck={false}
+        className='min-h-[60px] w-full resize-none bg-transparent py-[1.3rem] focus-within:outline-none sm:text-sm'
+      />
+      <div className='absolute right-0'>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type='submit'
+              size='icon'
+              disabled={isLoading || input === '' || notInitialised}
+            >
+              <IconArrowElbow />
+              <span className='sr-only'>Send message</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Send message</TooltipContent>
+        </Tooltip>
       </div>
     </form>
   )
