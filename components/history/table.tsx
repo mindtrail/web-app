@@ -21,17 +21,19 @@ import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+
+import { ActionBar } from '@/components/action-bar/action-bar'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
 import { DraggableHeader } from '@/components/history/draggable-header'
 import { ColumnDragLayer } from '@/components/history/drag-layer'
 import { VisibilityDropdown } from '@/components/history/visibility-dropdown'
 import { PreviewItem } from '@/components/history/preview'
+import { Chat } from '@/components/chat'
+
 import {
   getDefaultTableColumns,
   getHighlightsTableColumns,
 } from '@/components/history/columns'
-
-import { ActionBar } from '@/components/action-bar/action-bar'
 
 import {
   DEFAULT_COLUMN_SIZE,
@@ -248,16 +250,19 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           right-0 top-[132px] md:top-[148px] z-20
           bg-background shadow-lg rounded-ss-lg rounded-es-lg
           transition-all
-          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-450px)] border'}
+          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-10px)] border'}
         `}
         >
           <div
-            className={`overflow-auto max-w-0 h-full
+            className={`overflow-auto max-w-0 h-full flex
               ${previewItem && !areRowsSelected && '!max-w-full'}
             `}
           >
             {previewItem && (
-              <PreviewItem previewItem={previewItem} setPreviewItem={setPreviewItem} />
+              <>
+                <PreviewItem previewItem={previewItem} setPreviewItem={setPreviewItem} />
+                <Chat className='w-56 sm:w-64 md:w-72' />
+              </>
             )}
           </div>
         </div>

@@ -34,7 +34,7 @@ export interface ChatProps extends React.ComponentProps<'div'> {
 }
 
 export function Chat(props: ChatProps) {
-  const { id, initialMessages, className, name, flowiseURLEnvVar, userId } = props
+  const { id, initialMessages, className, flowiseURLEnvVar } = props
 
   const [previewToken, setPreviewToken] = useLocalStorage<string | null>('ai-token', null)
   const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
@@ -50,7 +50,6 @@ export function Chat(props: ChatProps) {
     },
   }
 
-  console.log(chatProps)
   const { messages, handleSubmit, reload, stop, isLoading, input, setInput } =
     useChat(chatProps)
 
@@ -58,7 +57,7 @@ export function Chat(props: ChatProps) {
     <>
       <div
         className={cn(
-          'w-full flex flex-col flex-1 mb-[200px] pt-4 px-6 md:pt-8 md:px-8 md:py-8 gap-4',
+          'flex flex-col pb-[200px] pt-4 px-6 md:pt-8 md:px-8 md:py-8 gap-4 relative',
           className,
         )}
       >
@@ -77,17 +76,17 @@ export function Chat(props: ChatProps) {
           // @ts-ignore
           <EmptyChat setInput={setInput} />
         )}
-      </div>
 
-      <ChatPanel
-        isLoading={isLoading}
-        stop={stop}
-        handleSubmit={handleSubmit}
-        reload={reload}
-        messages={messages}
-        input={input}
-        setInput={setInput}
-      />
+        <ChatPanel
+          isLoading={isLoading}
+          stop={stop}
+          handleSubmit={handleSubmit}
+          reload={reload}
+          messages={messages}
+          input={input}
+          setInput={setInput}
+        />
+      </div>
 
       <Dialog open={previewTokenDialog} onOpenChange={setPreviewTokenDialog}>
         <DialogContent>

@@ -8,7 +8,7 @@ import { ExternalLink } from '@/components/external-link'
 import { Button } from '@/components/ui/button'
 import { canRenderInIFrame, getFileFromGCS } from '@/lib/serverActions/dataSource'
 
-import { PDFViewer } from './pdf-viewer'
+import { PDFViewer } from '@/components/history/pdf-viewer'
 
 type PreviewProps = {
   previewItem: HistoryItem
@@ -55,7 +55,7 @@ export const PreviewItem = ({ previewItem, setPreviewItem }: PreviewProps) => {
   }, [name, type, previewItem])
 
   return (
-    <div className='flex flex-col h-full bg-muted'>
+    <div className='flex flex-1 flex-col h-full bg-muted'>
       <div className='flex justify-between items-center h-12 px-2 gap-4'>
         <Button onClick={() => setPreviewItem(null)} variant='ghost'>
           <Cross1Icon className='w-4 h-4' />
