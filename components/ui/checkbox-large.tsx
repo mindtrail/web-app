@@ -13,7 +13,13 @@ const CheckboxWithLabel = ({
   checkboxClassName,
   ...props
 }: CheckboxWithLabelProps) => (
-  <label className={cn('', className)} onClick={(e) => e.stopPropagation()}>
+  <label
+    className={cn(
+      'flex items-center justify-center w-12 h-12 p-4 cursor-pointer',
+      className,
+    )}
+    onClick={(e) => e.stopPropagation()}
+  >
     <Checkbox className={checkboxClassName} {...props} />
   </label>
 )
