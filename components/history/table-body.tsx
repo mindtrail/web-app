@@ -20,8 +20,6 @@ export function TableBodyComponent(props: TableBodyProps) {
       const areRowsSelected =
         table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
 
-      console.log(areRowsSelected)
-      console.log(row)
       if (areRowsSelected) {
         row.toggleSelected()
       } else {
