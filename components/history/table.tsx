@@ -35,6 +35,8 @@ import {
   getHighlightsTableColumns,
 } from '@/components/history/columns'
 
+import { TableBodyComponent, MemoizedTableBody } from '@/components/history/table-body'
+
 import {
   DEFAULT_COLUMN_SIZE,
   DEFAULT_COLUMN_VISIBILITY,
@@ -226,7 +228,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               // @ts-ignore
               <MemoizedTableBody table={table} />
             ) : (
-              <TableBodyContent
+              <TableBodyComponent
                 table={table}
                 entityIsHighlight={entityIsHighlight}
                 setPreviewItem={setPreviewItem}
@@ -271,51 +273,3 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     </>
   )
 }
-
-interface TableBodyProps {
-  table: ReactTable<HistoryItem>
-  entityIsHighlight: boolean
-  setPreviewItem: (item: HistoryItem) => void
-}
-
-function TableBodyContent({ table, entityIsHighlight, setPreviewItem }: TableBodyProps) {
-  const { flatRows: rows } = table.getRowModel()
-
-  return (
-    <TableBody>
-      {rows?.map((row) => {
-        const isRowSelected = row.getIsSelected()
-
-        return (
-          <TableRow
-            key={row.id}
-            onClick={() => setPreviewItem(row.original)}
-            data-state={isRowSelected && 'selected'}
-            className={`group/row text-foreground/70 hover:text-foreground border-none
-            ${isRowSelected && 'text-foreground'}`}
-          >
-            {row.getVisibleCells().map(({ id, column, getContext }) => {
-              return (
-                <TableCell
-                  key={id}
-                  className={`align-top cursor-pointer
-                    ${column.id === 'actions' && 'text-center'}
-                    ${entityIsHighlight ? '!pr-2 py-0' : 'pt-10'}
-                  `}
-                >
-                  {flexRender(column.columnDef.cell, getContext())}
-                </TableCell>
-              )
-            })}
-          </TableRow>
-        )
-      })}
-    </TableBody>
-  )
-}
-
-// @ts-ignore -> useful for perf optimization on resizing columns
-const MemoizedTableBody = memo(
-  TableBodyContent,
-  (prev, next) => prev.table.options.data === next.table.options.data,
-) as typeof TableBody
