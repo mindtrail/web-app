@@ -42,7 +42,7 @@ export function TableBodyComponent(props: TableBodyProps) {
               return (
                 <TableCell
                   key={id}
-                  className={`align-top cursor-pointer
+                  className={`align-top
                     ${column.id === 'actions' && 'text-center'}
                     ${entityIsHighlight ? '!pr-2 py-0' : 'pt-10'}
                   `}
