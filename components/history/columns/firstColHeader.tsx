@@ -1,7 +1,7 @@
 import { Table } from '@tanstack/react-table'
 import { Link1Icon } from '@radix-ui/react-icons'
 
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxLarge } from '@/components/ui/checkbox-large'
 import { Typography } from '@/components/typography'
 
 import { getTableHeaders } from '@/lib/constants'
@@ -12,12 +12,14 @@ type FirstColHeadProps<TData> = {
 }
 
 export function FirstColHeader<TData>({ table, resourceType }: FirstColHeadProps<TData>) {
+  const columnName = getTableHeaders(resourceType).displayName
+
   return (
     <div className='flex items-center gap-2 px-2 group/saved-item'>
       <Link1Icon className='w-4 h-4 group-hover/saved-item:invisible' />
-      <Checkbox
+      <CheckboxLarge
         id='select-all'
-        className='absolute hidden group-hover/saved-item:block'
+        className='absolute left-0 hidden group-hover/saved-item:flex'
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && 'indeterminate')

@@ -8,20 +8,18 @@ type CheckboxLargeProps = CheckboxProps & {
   checkboxClassName?: string
 }
 
-const CheckboxLarge = ({
-  className,
-  checkboxClassName,
-  ...props
-}: CheckboxLargeProps) => (
-  <label
-    className={cn(
-      'flex items-center justify-center w-12 h-12 p-4 cursor-pointer',
-      className,
-    )}
-    onClick={(e) => e.stopPropagation()}
-  >
-    <Checkbox className={checkboxClassName} {...props} />
-  </label>
-)
+export const CheckboxLarge = (props: CheckboxLargeProps) => {
+  const { className, checkboxClassName, ...rest } = props
 
-export { CheckboxLarge }
+  return (
+    <label
+      className={cn(
+        'flex items-center justify-center w-12 h-12 p-4 cursor-pointer',
+        className,
+      )}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <Checkbox className={checkboxClassName} {...rest} />
+    </label>
+  )
+}
