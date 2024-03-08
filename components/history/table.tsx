@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
@@ -11,7 +11,6 @@ import {
   ColumnSizingState,
   SortingState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
@@ -20,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { Table,  TableHeader, TableRow } from '@/components/ui/table'
 
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'

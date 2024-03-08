@@ -1,8 +1,8 @@
 import { memo, useCallback } from 'react'
 
-import { Table as ReactTable, flexRender } from '@tanstack/react-table'
+import { Table as ReactTable, flexRender, Row } from '@tanstack/react-table'
 
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { TableBody, TableCell, TableRow } from '@/components/ui/table'
 
 interface TableBodyProps {
   table: ReactTable<HistoryItem>
@@ -15,15 +15,21 @@ export function TableBodyComponent(props: TableBodyProps) {
 
   const { flatRows: rows } = table.getRowModel()
 
-  const handleRowClick = useCallback((event: React.MouseEvent<HTMLTableRowElement>) => {
-    console.log(event)
-    // const row = table.getRow(event.currentTarget)
-    // if (row.getIsSelected()) {
-    //   setRowSelection({})
-    // } else {
-    //   setRowSelection({ [row.id]: true })
-    // }
-  }, [])
+  const handleRowClick = useCallback(
+    (row: Row<HistoryItem>) => {
+      const areRowsSelected =
+        table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()
+
+      console.log(areRowsSelected)
+      console.log(row)
+      if (areRowsSelected) {
+        row.toggleSelected()
+      } else {
+        setPreviewItem(row.original)
+      }
+    },
+    [table, setPreviewItem],
+  )
 
   return (
     <TableBody>
@@ -33,7 +39,7 @@ export function TableBodyComponent(props: TableBodyProps) {
         return (
           <TableRow
             key={row.id}
-            onClick={handleRowClick}
+            onClick={() => handleRowClick(row)}
             data-state={isRowSelected && 'selected'}
             className={`group/row text-foreground/70 hover:text-foreground border-none
             ${isRowSelected && 'text-foreground'}`}
