@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Table } from '@tanstack/react-table'
 
 import { buttonVariants } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxWithLabel } from '@/components/ui/checkbox-with-label'
 import { IconTag, IconAddToCollection } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
@@ -31,11 +31,13 @@ export const ActionBar = ({ table, entityType, entityId, className }: ActionBarP
   return (
     <div
       className={cn(
-        `w-full flex items-center h-12 bg-background first-letter:top-0 px-4 gap-4 rounded-t-md`,
+        `w-full flex items-center h-12 bg-background first-letter:top-0 pl-12 pr-4 rounded-t-md`,
         className,
       )}
     >
-      <Checkbox
+      <CheckboxWithLabel
+        className='absolute left-0 flex items-center justify-center w-12 h-12 p-4
+          cursor-pointer group/checkbox'
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && 'indeterminate')

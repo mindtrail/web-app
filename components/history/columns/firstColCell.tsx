@@ -4,7 +4,6 @@ import { ExternalLinkIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
 import { CheckboxWithLabel } from '@/components/ui/checkbox-with-label'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
