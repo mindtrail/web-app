@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { Table,  TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableHeader, TableRow } from '@/components/ui/table'
 
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { HistoryBreadcrumbs } from '@/components/history/breadcrumbs'
@@ -200,18 +200,25 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 
       <div className='flex flex-1'>
         <ScrollArea className='rounded-md border cursor-default max-h-[calc(100vh-165px)] pb-2'>
-          {areRowsSelected && (
-            <ActionBar table={table} entityType={entityType} entityId={entityId} />
-          )}
+          <div
+            className={`absolute w-full flex items-center h-12 bg-background border-b
+              shadow-sm first-letter:top-0 rounded-t-md
+              ${areRowsSelected && 'z-20'}
+            `}
+          >
+            {areRowsSelected && (
+              <ActionBar table={table} entityType={entityType} entityId={entityId} />
+            )}
+          </div>
 
           <Table
             ref={tableRef}
             className='table-fixed'
             style={!entityIsHighlight ? { width: table.getTotalSize() } : {}}
           >
-            <TableHeader className='sticky top-0 bg-background border-b shadow-sm z-10'>
+            <TableHeader className='sticky top-0 bg-background shadow-sm z-10'>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className='border-none'>
                   {headerGroup.headers.map((header) => (
                     <DraggableHeader
                       key={header.id}
@@ -223,6 +230,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                 </TableRow>
               ))}
             </TableHeader>
+
             {isColResizing ? (
               // @ts-ignore
               <MemoizedTableBody table={table} />
