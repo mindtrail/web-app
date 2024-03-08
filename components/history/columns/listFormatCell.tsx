@@ -4,7 +4,7 @@ import { DataSourceType } from '@prisma/client'
 
 import { Typography } from '@/components/typography'
 import { Checkbox } from '@/components/ui/checkbox'
-import { CheckboxWithLabel } from '@/components/ui/checkbox-large'
+import { CheckboxLarge } from '@/components/ui/checkbox-large'
 import { IconCollection, IconTag, IconAllData } from '@/components/ui/icons/next-icons'
 
 import { cloudinaryLoader, formatDate } from '@/lib/utils'

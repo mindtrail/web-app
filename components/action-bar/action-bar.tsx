@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Table } from '@tanstack/react-table'
 
 import { buttonVariants } from '@/components/ui/button'
-import { CheckboxWithLabel } from '@/components/ui/checkbox-large'
+import { CheckboxLarge } from '@/components/ui/checkbox-large'
 import { IconTag, IconAddToCollection } from '@/components/ui/icons/next-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
@@ -41,7 +41,7 @@ export const ActionBar = ({ table, entityType, entityId, className }: ActionBarP
         className,
       )}
     >
-      <CheckboxWithLabel
+      <CheckboxLarge
         className='absolute left-0'
         checked={checkBoxStatus}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}

@@ -3,16 +3,16 @@
 import { Checkbox, type CheckboxProps } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 
-type CheckboxWithLabelProps = CheckboxProps & {
+type CheckboxLargeProps = CheckboxProps & {
   className?: string
   checkboxClassName?: string
 }
 
-const CheckboxWithLabel = ({
+const CheckboxLarge = ({
   className,
   checkboxClassName,
   ...props
-}: CheckboxWithLabelProps) => (
+}: CheckboxLargeProps) => (
   <label
     className={cn(
       'flex items-center justify-center w-12 h-12 p-4 cursor-pointer',
@@ -24,4 +24,4 @@ const CheckboxWithLabel = ({
   </label>
 )
 
-export { CheckboxWithLabel }
+export { CheckboxLarge }
