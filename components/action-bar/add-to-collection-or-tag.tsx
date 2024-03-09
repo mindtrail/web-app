@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, useMemo, KeyboardEvent } from 'react'
 import { CheckIcon, PlusIcon } from '@radix-ui/react-icons'
-import { Table } from '@tanstack/react-table'
 
 import { Typography } from '@/components/typography'
 import { Button } from '@/components/ui/button'
@@ -10,58 +9,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useToast } from '@/components/ui/use-toast'
 import { Command, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
 
+import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
+
 import { ENTITY_TYPE } from '@/lib/constants'
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
-import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
-import { createCollection } from '@/lib/serverActions/collection'
-import {
-  addDataSourcesToCollection,
-  removeDataSourceFromCollection,
-  getCollectionsForDataSourceList,
-} from '@/lib/serverActions/dataSource'
-import {
-  createTag,
-  addTagToDataSources,
-  removeTagFromDataSources,
-  getTagsForDataSourcesList,
-} from '@/lib/serverActions/tag'
-
-type AddToCollectionOrTagProps = {
-  currentItemId?: string
-  destintaionEntity: EntityType
-  table: Table<HistoryItem>
-}
-
-type DropdownItem = {
-  value: string
-  label: string
-  containsSelectedItems?: boolean
-}
-
-type CrudOperations = {
-  [key in EntityType]: {
-    createEntity: any
-    createDSAndEntityConnection: any
-    removeDSAndEntityConnection: any
-    getExistingConnections: any
-  }
-}
-
-const CRUD_OPS: CrudOperations = {
-  [ENTITY_TYPE.COLLECTION]: {
-    createEntity: createCollection,
-    createDSAndEntityConnection: addDataSourcesToCollection,
-    removeDSAndEntityConnection: removeDataSourceFromCollection,
-    getExistingConnections: getCollectionsForDataSourceList,
-  },
-  [ENTITY_TYPE.TAG]: {
-    createEntity: createTag,
-    createDSAndEntityConnection: addTagToDataSources,
-    removeDSAndEntityConnection: removeTagFromDataSources,
-    getExistingConnections: getTagsForDataSourcesList,
-  },
-}
+import type { AddToCollectionOrTagProps, DropdownItem } from './constants'
+import { CRUD_OPS, LABELS } from './constants'
 
 export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   const { destintaionEntity: entityType, table } = props
@@ -71,27 +25,27 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   const { setNestedItemsByCategory, setActiveNestedSidebar } = useGlobalStateActions()
 
   const [searchValue, setSearchValue] = useState('')
-  const [connectedDropdownOptions, setConnectedDropdownOptions] = useState<string[]>([])
+  const [existingConnections, setExistingConnections] = useState<string[]>([])
 
   const selectedDataSources = useMemo(
     () => table.getSelectedRowModel().rows.map(({ original }) => original.id),
     [table],
   )
 
-  const dropdownOptions = useMemo(
+  const dropdownOptions: DropdownItem[] = useMemo(
     () =>
       nestedItemsByCategory[entityType]?.map(({ id, name }) => ({
         value: id,
         label: name,
-        containsSelectedItems: connectedDropdownOptions?.includes(id),
+        containsSelectedItems: existingConnections?.includes(id) ? 1 : 0,
       })),
-    [connectedDropdownOptions, entityType, nestedItemsByCategory],
+    [existingConnections, entityType, nestedItemsByCategory],
   )
 
   const dropdownOpsMap: Record<string, string> = useMemo(
     () =>
       nestedItemsByCategory[entityType]?.reduce(
-        (acc, { id, name }) => ({ ...acc, [name]: true }),
+        (acc, { name }) => ({ ...acc, [name]: true }),
         {},
       ),
     [entityType, nestedItemsByCategory],
@@ -99,18 +53,13 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
 
   const EntityIcon = entityType === ENTITY_TYPE.COLLECTION ? IconCollection : IconTag
 
-  const popupTitle =
-    entityType === ENTITY_TYPE.COLLECTION
-      ? 'Add/Remove Items to Collection'
-      : 'Set Tags on Items'
-
   useEffect(() => {
     const getCollectionsForSelectedDS = async () => {
       const existingConnections = (await CRUD_OPS[entityType].getExistingConnections(
         selectedDataSources,
       )) as string[]
 
-      setConnectedDropdownOptions(existingConnections)
+      setExistingConnections(existingConnections)
     }
 
     // A small delay to don't block the UI when first loading the component
@@ -121,7 +70,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
 
   const onRemoveItemFromList = useCallback(
     async (itemId: string) => {
-      if (!itemId || !connectedDropdownOptions.includes(itemId)) {
+      if (!itemId || !existingConnections.includes(itemId)) {
         return console.error(' No collection ID to remove')
       }
 
@@ -130,7 +79,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         dataSourceIdList: selectedDataSources,
       })
 
-      setConnectedDropdownOptions((prev) => prev.filter((id) => id !== itemId))
+      setExistingConnections((prev) => prev.filter((id) => id !== itemId))
 
       toast({
         title: 'Success',
@@ -138,7 +87,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
       })
       return
     },
-    [connectedDropdownOptions, entityType, selectedDataSources, toast],
+    [existingConnections, entityType, selectedDataSources, toast],
   )
 
   const onAddItemsToList = useCallback(
@@ -172,7 +121,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         ${nrOfItemsAlreadyExisting ? `Existing: ${nrOfItemsAlreadyExisting} item(s).` : ''}`,
       })
 
-      setConnectedDropdownOptions((prev: string[]) => [...prev, itemId])
+      setExistingConnections((prev: string[]) => [...prev, itemId])
 
       // @TODO: TBD if I keep this operation
       setActiveNestedSidebar(SIDEBAR_FOLDERS[entityType])
@@ -183,17 +132,17 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
       entityType,
       toast,
       setActiveNestedSidebar,
-      setConnectedDropdownOptions,
+      setExistingConnections,
     ],
   )
 
-  const createCollectionAndAddItems = useCallback(
+  const createEntityAndAddItems = useCallback(
     async (name: string) => {
       try {
-        const newCollection = await createCollection({ name })
+        const newEntity = await CRUD_OPS[entityType].createEntity({ name })
         // @TODO: improve this
-        if ('id' in newCollection) {
-          const { id } = newCollection
+        if ('id' in newEntity) {
+          const { id } = newEntity
 
           const newItem = {
             id,
@@ -202,6 +151,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
           }
 
           const newItemList = [newItem, ...nestedItemsByCategory[entityType]]
+
           setNestedItemsByCategory({
             entityType,
             items: newItemList,
@@ -209,8 +159,6 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
 
           setSearchValue('')
           await onAddItemsToList(id)
-
-          return id
         }
       } catch (error) {
         console.error(error)
@@ -231,19 +179,14 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         return
       }
 
-      const collectionId = await createCollectionAndAddItems(newFolderName)
-
-      if (!collectionId) {
-        console.error('No collection ID - created')
-        return
-      }
+      createEntityAndAddItems(newFolderName)
     }
   }
 
   return (
     <div className='flex flex-col gap-2'>
       <Typography variant='small' className='text-muted-foreground mt-1'>
-        {popupTitle}
+        {LABELS[entityType].TITLE}
       </Typography>
 
       <Command
@@ -285,7 +228,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
                       sideOffset={-32}
                       className={containsSelectedItems ? 'bg-destructive text-white' : ''}
                     >
-                      {containsSelectedItems ? 'Remove from:' : 'Add to:'} {label}
+                      {LABELS[entityType].TOOLTIP[containsSelectedItems]} {label}
                     </TooltipContent>
                   </CommandItem>
                 </TooltipTrigger>
@@ -301,7 +244,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
               className='flex items-center gap-2 px-3 w-full justify-start'
               variant='ghost'
               disabled={searchValue?.trim()?.length < 2}
-              onClick={() => createCollectionAndAddItems(searchValue?.trim())}
+              onClick={() => createEntityAndAddItems(searchValue?.trim())}
             >
               <PlusIcon className='shrink-0' />
               <span className='max-w-44 truncate'>
@@ -310,9 +253,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent side='right' sideOffset={-32}>
-            {entityType === 'collection'
-              ? 'Create Collection and add Items to it'
-              : 'Create Tag and set it on Items'}
+            {LABELS[entityType].TOOLTIP.CREATE}
           </TooltipContent>
         </Tooltip>
       )}
