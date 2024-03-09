@@ -8,19 +8,12 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconCollection, IconTag } from '@/components/ui/icons/next-icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/components/ui/use-toast'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command'
+import { Command, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
 
 import { ENTITY_TYPE } from '@/lib/constants'
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
-
 import { createCollection } from '@/lib/serverActions/collection'
 import {
   addDataSourcesToCollection,
@@ -78,14 +71,31 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   const { setNestedItemsByCategory, setActiveNestedSidebar } = useGlobalStateActions()
 
   const [searchValue, setSearchValue] = useState('')
-  const [dropdownOptions, setDropdownOptions] = useState<DropdownItem[]>([])
+  const [connectedDropdownOptions, setConnectedDropdownOptions] = useState<string[]>([])
 
   const selectedDataSources = useMemo(
     () => table.getSelectedRowModel().rows.map(({ original }) => original.id),
     [table],
   )
 
-  const [connectedDropdownOptions, setConnectedDropdownOptions] = useState<string[]>([])
+  const dropdownOptions = useMemo(
+    () =>
+      nestedItemsByCategory[entityType]?.map(({ id, name }) => ({
+        value: id,
+        label: name,
+        containsSelectedItems: connectedDropdownOptions?.includes(id),
+      })),
+    [connectedDropdownOptions, entityType, nestedItemsByCategory],
+  )
+
+  const dropdownOpsMap: Record<string, string> = useMemo(
+    () =>
+      nestedItemsByCategory[entityType]?.reduce(
+        (acc, { id, name }) => ({ ...acc, [name]: true }),
+        {},
+      ),
+    [entityType, nestedItemsByCategory],
+  )
 
   const EntityIcon = entityType === ENTITY_TYPE.COLLECTION ? IconCollection : IconTag
 
@@ -112,7 +122,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   const onRemoveItemFromList = useCallback(
     async (itemId: string) => {
       if (!itemId || !connectedDropdownOptions.includes(itemId)) {
-        return console.log(' No collection ID to remove')
+        return console.error(' No collection ID to remove')
       }
 
       await CRUD_OPS[entityType].removeDSAndEntityConnection({
@@ -134,7 +144,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   const onAddItemsToList = useCallback(
     async (itemId: string) => {
       if (!itemId) {
-        return console.log(' No collection ID found')
+        return console.error(' No collection ID found')
       }
 
       const result = await CRUD_OPS[entityType].createDSAndEntityConnection({
@@ -150,7 +160,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
           variant: 'destructive',
           description: 'No Items added to' + entityType,
         })
-        return console.log('No result')
+        return console.error('No result')
       }
 
       const nrOfSelected = selectedDataSources?.length
@@ -197,6 +207,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
             items: newItemList,
           })
 
+          setSearchValue('')
           await onAddItemsToList(id)
 
           return id
@@ -211,27 +222,23 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     const newFolderName = searchValue?.trim() || ''
 
-    console.log(searchValue)
+    if (event.key === 'Enter' && newFolderName?.length >= 2) {
+      const filteredOpts = dropdownOptions.filter(({ label }) =>
+        label.includes(searchValue) ? 1 : 0,
+      )
 
-    // if (event.key === 'Enter' && newFolderName?.length >= 2) {
-    //   const collectionId = await createCollectionAndAddItems(newFolderName)
+      if (filteredOpts.length > 0) {
+        return
+      }
 
-    //   if (!collectionId) {
-    //     console.error('No collection ID - created')
-    //     return
-    //   }
-    //   setSearchValue('')
-    // }
+      const collectionId = await createCollectionAndAddItems(newFolderName)
+
+      if (!collectionId) {
+        console.error('No collection ID - created')
+        return
+      }
+    }
   }
-
-  useEffect(() => {
-    const dropdownOps = nestedItemsByCategory[entityType]?.map(({ id, name }) => ({
-      value: id,
-      label: name,
-      containsSelectedItems: connectedDropdownOptions?.includes(id),
-    }))
-    setDropdownOptions(dropdownOps)
-  }, [nestedItemsByCategory, entityType, connectedDropdownOptions])
 
   return (
     <div className='flex flex-col gap-2'>
@@ -251,19 +258,6 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
             onValueChange={setSearchValue}
             placeholder='Type to search or create...'
           />
-          <CommandEmpty className='py-4'>
-            <Button
-              className='flex items-center gap-2 px-3 w-full justify-start'
-              variant='ghost'
-              disabled={searchValue?.trim()?.length < 2}
-              onClick={() => createCollectionAndAddItems(searchValue?.trim())}
-            >
-              <PlusIcon className='shrink-0' />
-              <span className='max-w-44 truncate'>
-                Add to <strong>{searchValue}</strong>
-              </span>
-            </Button>
-          </CommandEmpty>
         </div>
         <ScrollArea className='flex flex-col max-h-[40vh] px-4'>
           <CommandGroup className='px-0'>
@@ -274,9 +268,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
                     className={`flex flex-1 gap-2
                       ${containsSelectedItems && 'text-primary data-[selected=true]:text-primary'}
                     `}
-                    onSelect={(event) => {
-                      console.log(event)
-
+                    onSelect={() => {
                       containsSelectedItems
                         ? onRemoveItemFromList(value)
                         : onAddItemsToList(value)
@@ -299,29 +291,31 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
                 </TooltipTrigger>
               </Tooltip>
             ))}
-            {/* {searchValue?.trim()?.length >= 2 && (
-              <Tooltip>
-                <TooltipTrigger className='flex w-full relative'>
-                  <CommandItem
-                    className={`flex flex-1 gap-2`}
-                    onSelect={(event) => {
-                      console.log(event)
-
-                      onAddItemsToList(searchValue?.trim())
-                    }}
-                  >
-                    <EntityIcon />
-                    {searchValue}
-                    <TooltipContent side='right' sideOffset={-32}>
-                      Add to: {searchValue}
-                    </TooltipContent>
-                  </CommandItem>
-                </TooltipTrigger>
-              </Tooltip>
-            )} */}
           </CommandGroup>
         </ScrollArea>
       </Command>
+      {searchValue?.trim()?.length >= 2 && !dropdownOpsMap[searchValue?.trim()] && (
+        <Tooltip>
+          <TooltipTrigger asChild className='flex w-full relative'>
+            <Button
+              className='flex items-center gap-2 px-3 w-full justify-start'
+              variant='ghost'
+              disabled={searchValue?.trim()?.length < 2}
+              onClick={() => createCollectionAndAddItems(searchValue?.trim())}
+            >
+              <PlusIcon className='shrink-0' />
+              <span className='max-w-44 truncate'>
+                Add to: <strong>{searchValue}</strong>
+              </span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side='right' sideOffset={-32}>
+            {entityType === 'collection'
+              ? 'Create Collection and add Items to it'
+              : 'Create Tag and set it on Items'}
+          </TooltipContent>
+        </Tooltip>
+      )}
     </div>
   )
 }
