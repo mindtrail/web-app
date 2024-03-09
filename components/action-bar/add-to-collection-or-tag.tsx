@@ -110,20 +110,18 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
     }, 400)
   }, [selectedDataSources, entityType])
 
-  const onRemoveItemsFromCollection = useCallback(
-    async ({ collectionId }: { collectionId: string }) => {
-      if (!collectionId || !dropdownOptsContainingSelectedDS.includes(collectionId)) {
+  const onRemoveItemFromList = useCallback(
+    async (itemId: string) => {
+      if (!itemId || !dropdownOptsContainingSelectedDS.includes(itemId)) {
         return console.log(' No collection ID to remove')
       }
 
       await CRUD_OPS[entityType].removeEnityAndDSConnection({
-        id: collectionId,
+        id: itemId,
         dataSourceIdList: selectedDataSources,
       })
 
-      setDropdownOptsContainingSelectedDS((prev) =>
-        prev.filter((id) => id != collectionId),
-      )
+      setDropdownOptsContainingSelectedDS((prev) => prev.filter((id) => id !== itemId))
 
       toast({
         title: 'Success',
@@ -134,14 +132,14 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
     [dropdownOptsContainingSelectedDS, entityType, selectedDataSources, toast],
   )
 
-  const onAddItemsToCollection = useCallback(
-    async ({ collectionId }: { collectionId: string }) => {
-      if (!collectionId) {
+  const onAddItemsToList = useCallback(
+    async (itemId: string) => {
+      if (!itemId) {
         return console.log(' No collection ID found')
       }
 
       const result = await CRUD_OPS[entityType].createEntityAndDSConnection({
-        id: collectionId,
+        id: itemId,
         dataSourceIdList: selectedDataSources,
       })
       // @ts-ignore
@@ -165,14 +163,11 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         ${nrOfItemsAlreadyExisting ? `Existing: ${nrOfItemsAlreadyExisting} item(s).` : ''}`,
       })
 
-      setDropdownOptsContainingSelectedDS((prev: string[]) =>
-        collectionId ? [...prev, collectionId] : prev,
-      )
+      setDropdownOptsContainingSelectedDS((prev: string[]) => [...prev, itemId])
 
       // @TODO: TBD if I keep this operation
       setActiveNestedSidebar(SIDEBAR_FOLDERS[entityType])
       // @TODO: Create an animation for the selected folder
-      // animation...
     },
     [
       selectedDataSources,
@@ -203,7 +198,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
             items: newItemList,
           })
 
-          await onAddItemsToCollection({ collectionId: id })
+          await onAddItemsToList(id)
 
           return id
         }
@@ -211,7 +206,7 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         console.error(error)
       }
     },
-    [entityType, nestedItemsByCategory, onAddItemsToCollection, setNestedItemsByCategory],
+    [entityType, nestedItemsByCategory, onAddItemsToList, setNestedItemsByCategory],
   )
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
@@ -260,40 +255,36 @@ export function AddToCollectionOrTag(props: AddToCollectionOrTagProps) {
         </div>
         <ScrollArea className='flex flex-col max-h-[40vh] px-4'>
           <CommandGroup className='px-0'>
-            {dopdownList.map(
-              ({ value: collectionId, label, containsSelectedItems }, index) => (
-                <Tooltip key={index}>
-                  <TooltipTrigger className='flex w-full relative'>
-                    <CommandItem
-                      className={`flex flex-1 gap-2
+            {dopdownList.map(({ value, label, containsSelectedItems }, index) => (
+              <Tooltip key={index}>
+                <TooltipTrigger className='flex w-full relative'>
+                  <CommandItem
+                    className={`flex flex-1 gap-2
                       ${containsSelectedItems && 'text-primary data-[selected=true]:text-primary'}
                     `}
-                      onSelect={() =>
-                        containsSelectedItems
-                          ? onRemoveItemsFromCollection({ collectionId })
-                          : onAddItemsToCollection({ collectionId })
-                      }
+                    onSelect={() =>
+                      containsSelectedItems
+                        ? onRemoveItemFromList(value)
+                        : onAddItemsToList(value)
+                    }
+                  >
+                    {containsSelectedItems ? (
+                      <CheckIcon className='w-4 h-4' />
+                    ) : (
+                      <EntityIcon />
+                    )}
+                    {label}
+                    <TooltipContent
+                      side='right'
+                      sideOffset={-32}
+                      className={containsSelectedItems ? 'bg-destructive text-white' : ''}
                     >
-                      {containsSelectedItems ? (
-                        <CheckIcon className='w-4 h-4' />
-                      ) : (
-                        <EntityIcon />
-                      )}
-                      {label}
-                      <TooltipContent
-                        side='right'
-                        sideOffset={-32}
-                        className={
-                          containsSelectedItems ? 'bg-destructive text-white' : ''
-                        }
-                      >
-                        {containsSelectedItems ? 'Remove from:' : 'Add to:'} {label}
-                      </TooltipContent>
-                    </CommandItem>
-                  </TooltipTrigger>
-                </Tooltip>
-              ),
-            )}
+                      {containsSelectedItems ? 'Remove from:' : 'Add to:'} {label}
+                    </TooltipContent>
+                  </CommandItem>
+                </TooltipTrigger>
+              </Tooltip>
+            ))}
           </CommandGroup>
         </ScrollArea>
       </Command>
