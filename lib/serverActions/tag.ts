@@ -24,7 +24,9 @@ async function checkAuthUser() {
 }
 
 function genericErrorHandler(error: any) {
-  if (error.message === 'Unauthorized') {
+  console.error(400, 500, error)
+
+  if (error?.message === 'Unauthorized') {
     return {
       error: {
         status: 401,
@@ -33,7 +35,21 @@ function genericErrorHandler(error: any) {
     }
   }
 
-  return { status: 404 }
+  if (error?.message === 'Not found') {
+    return {
+      error: {
+        status: 404,
+        message: 'Not found',
+      },
+    }
+  }
+
+  return {
+    error: {
+      status: 500,
+      message: error?.message,
+    },
+  }
 }
 
 export const getTagsList = () => {
@@ -94,76 +110,52 @@ type UpdateDSTagConnection = {
 export async function addTagToDataSources(props: UpdateDSTagConnection) {
   const { id: tagId, dataSourceIdList } = props
 
-  const auth = await checkAuth()
-  if (auth.error) {
-    return auth
-  }
-
   if (!dataSourceIdList?.length || !tagId) {
     return {
       error: {
         status: 400,
-        message: 'Invalid request, No DataSources or Tags provided',
+        message: 'Invalid request. No data',
       },
     }
   }
 
   try {
-    return await addTagToDataSourcesDbOp({ dataSourceIdList, tagId })
-  } catch (e) {
-    console.log('Error ---', e)
-    const result = {
-      error: {
-        status: 500,
-        message: 'Error setting Tag to DataSources',
-      },
-    }
+    await checkAuthUser()
 
-    console.log(result)
-    return result
+    return await addTagToDataSourcesDbOp({ dataSourceIdList, tagId })
+  } catch (error) {
+    return genericErrorHandler(error)
   }
 }
 
 export async function removeTagFromDataSources(props: UpdateDSTagConnection) {
   const { id: tagId, dataSourceIdList } = props
 
-  console.log(dataSourceIdList, tagId)
-  const auth = await checkAuth()
-  if (auth.error) {
-    return auth
-  }
-
   if (!dataSourceIdList?.length || !tagId) {
     return {
       error: {
         status: 400,
-        message: 'Invalid request, No DataSources or Tags provided',
+        message: 'Invalid request. No Data.',
       },
     }
   }
 
   try {
-    return await removeTagFromDataSourcesDbOp({ dataSourceIdList, tagId })
-  } catch (e) {
-    console.log('Error ---', e)
-    const result = {
-      error: {
-        status: 500,
-        message: 'Error setting Tag to DataSources',
-      },
-    }
+    await checkAuthUser()
 
-    console.log(result)
-    return result
+    return await removeTagFromDataSourcesDbOp({ dataSourceIdList, tagId })
+  } catch (error) {
+    return genericErrorHandler(error)
   }
 }
 
 export async function getTagsForDataSourcesList(dataSourceIdList: string[]) {
   try {
+    await checkAuthUser()
+
     const result = await getTagsForDataSourcesListDbOp(dataSourceIdList)
     return result as string[]
   } catch (error) {
-    console.log(2222, error)
-    return [] as string[]
+    return genericErrorHandler(error)
   }
 }

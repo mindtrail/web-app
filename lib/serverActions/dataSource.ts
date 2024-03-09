@@ -21,7 +21,7 @@ const SCRAPER_SERVICE_URL =
     ? process.env.LOCAL_SCRAPER_SERVICE_URL
     : process.env.SCRAPER_SERVICE_URL
 
-async function checkAuth() {
+async function checkAuthUser() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 
@@ -32,13 +32,10 @@ async function checkAuth() {
   return userId
 }
 
-export const scrapeURLs = async (urls: string[], collectionId?: string) => {
-  console.log('scrapeURLs', urls, collectionId)
+function genericErrorHandler(error: any) {
+  console.error(400, 500, error)
 
-  const session = (await getServerSession(authOptions)) as ExtendedSession
-  const userId = session?.user?.id
-
-  if (!userId) {
+  if (error?.message === 'Unauthorized') {
     return {
       error: {
         status: 401,
@@ -46,6 +43,25 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
       },
     }
   }
+
+  if (error?.message === 'Not found') {
+    return {
+      error: {
+        status: 404,
+        message: 'Not found',
+      },
+    }
+  }
+
+  return {
+    error: {
+      status: 500,
+      message: error?.message,
+    },
+  }
+}
+export const scrapeURLs = async (urls: string[], collectionId?: string) => {
+  console.log('scrapeURLs', urls, collectionId)
 
   if (!urls?.length) {
     return {
@@ -66,6 +82,8 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
   }
 
   try {
+    const userId = await checkAuthUser()
+
     const result = await fetch(SCRAPER_SERVICE_URL, {
       method: 'POST',
       headers: {
@@ -77,15 +95,8 @@ export const scrapeURLs = async (urls: string[], collectionId?: string) => {
     const res = await result?.json()
 
     return res
-  } catch (e) {
-    console.log('Error ---', e)
-
-    return {
-      error: {
-        status: 500,
-        message: 'Scraper service Error',
-      },
-    }
+  } catch (error) {
+    return genericErrorHandler(error)
   }
 }
 
@@ -97,19 +108,6 @@ type AddItemsInFolder = {
 export const addDataSourcesToCollection = async (props: AddItemsInFolder) => {
   const { id: collectionId, dataSourceIdList } = props
 
-  console.log('addDataSourcesToCollection', dataSourceIdList, collectionId)
-  const session = (await getServerSession(authOptions)) as ExtendedSession
-  const userId = session?.user?.id
-
-  if (!userId) {
-    return {
-      error: {
-        status: 401,
-        message: 'Unauthorized',
-      },
-    }
-  }
-
   if (!dataSourceIdList?.length || !collectionId) {
     return {
       error: {
@@ -120,18 +118,12 @@ export const addDataSourcesToCollection = async (props: AddItemsInFolder) => {
   }
 
   try {
-    return await addDataSourcesToCollectionDbOp(dataSourceIdList, collectionId)
-  } catch (e) {
-    console.log('Error ---', e)
-    const result = {
-      error: {
-        status: 500,
-        message: 'Error adding DataSources to Collection',
-      },
-    }
+    await checkAuthUser()
 
-    console.log(result)
-    return result
+    return await addDataSourcesToCollectionDbOp(dataSourceIdList, collectionId)
+  } catch (error: any) {
+    error?.message === 'Error adding dataSources to collection'
+    return genericErrorHandler(error)
   }
 }
 
@@ -140,19 +132,8 @@ type deletePayload = {
 }
 
 export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
-  const userId = session?.user?.id
-
-  if (!userId) {
-    return {
-      error: {
-        status: 401,
-        message: 'Unauthorized',
-      },
-    }
-  }
-
   try {
+    const userId = await checkAuthUser()
     const deletedDataSources = await deleteDataSourceDbOp(dataSourceIdList, userId)
 
     deleteFileFromGCS(deletedDataSources, userId)
@@ -160,8 +141,7 @@ export async function deleteDataSource({ dataSourceIdList }: deletePayload) {
 
     return { deletedDataSources }
   } catch (error) {
-    console.log(2222, 'errrr')
-    return { status: 404 }
+    return genericErrorHandler(error)
   }
 }
 
@@ -174,6 +154,8 @@ export async function removeDataSourceFromCollection(props: RemoveDSFromCollecti
   const { id: collectionId, dataSourceIdList } = props
 
   try {
+    await checkAuthUser()
+
     const result = await removeDataSourceFromCollectionDbOp(
       dataSourceIdList,
       collectionId,
@@ -181,50 +163,39 @@ export async function removeDataSourceFromCollection(props: RemoveDSFromCollecti
 
     return result
   } catch (error) {
-    console.log(2222, error)
-    return { status: 404 }
+    return genericErrorHandler(error)
   }
 }
 
 export async function getCollectionsForDataSourceList(dataSourceIdList: string[]) {
   try {
+    await checkAuthUser()
     const result = await getCollectionsForDataSourceListDbOp(dataSourceIdList)
     return result as string[]
   } catch (error) {
-    console.log(2222, error)
-    return [] as string[]
+    return genericErrorHandler(error)
   }
 }
 
 export async function getFileFromGCS(item: HistoryItem) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
-  const userId = session?.user?.id
+  try {
+    const userId = await checkAuthUser()
 
-  if (!userId) {
-    return {
-      error: {
-        status: 401,
-        message: 'Unauthorized',
-      },
-    }
+    const { id: dataSourceId, type: DSType, name } = item
+
+    const GCS_PATH = buildGCSFilePath({ dataSourceId, DSType, name, userId })
+    const filePath = await generateSignedUrl(GCS_PATH)
+
+    return filePath
+  } catch (error) {
+    return genericErrorHandler(error)
   }
-  const { id: dataSourceId, type: DSType, name } = item
-
-  const GCS_PATH = buildGCSFilePath({ dataSourceId, DSType, name, userId })
-  const filePath = await generateSignedUrl(GCS_PATH)
-
-  return filePath
 }
 
 export async function canRenderInIFrame(url: string) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
-  const userId = session?.user?.id
-
-  if (!userId) {
-    throw new Error('Unauthorized')
-  }
-
   try {
+    await checkAuthUser()
+
     const response = await fetch(url)
     const XFrameOptions = response.headers.get('x-frame-options')
     const CSP = response.headers.get('content-security-policy') || ''
@@ -243,5 +214,3 @@ export async function canRenderInIFrame(url: string) {
     return false
   }
 }
-
-// https://storage.cloud.google.com/indie-chat-files/clq6rq97400011jm4hb81zu0a/websites/developer.chrome.com/docs-extensions-reference-api-pageCapture
