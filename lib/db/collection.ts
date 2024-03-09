@@ -137,6 +137,7 @@ export const deleteAllCollectionsForUser = async (userId: string) => {
 }
 
 export const deleteCollectionDbOp = async (userId: string, collectionId: string) => {
+  console.log(2222, userId, collectionId)
   // Delete all data sources for the collection
   const collection = await prisma.collection.delete({
     where: {
@@ -144,6 +145,7 @@ export const deleteCollectionDbOp = async (userId: string, collectionId: string)
       ownerId: userId,
     },
   })
+  console.log('DELETE --- ', collection)
 
   return collection
 }
