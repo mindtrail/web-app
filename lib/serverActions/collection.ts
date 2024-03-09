@@ -78,6 +78,7 @@ export async function deleteCollection({ collectionId }: { collectionId: string 
   try {
     await deleteCollectionDbOp(userId, collectionId)
   } catch (error) {
+    console.error(error)
     return { status: 404 }
   }
 }
