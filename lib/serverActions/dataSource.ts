@@ -21,6 +21,17 @@ const SCRAPER_SERVICE_URL =
     ? process.env.LOCAL_SCRAPER_SERVICE_URL
     : process.env.SCRAPER_SERVICE_URL
 
+async function checkAuth() {
+  const session = (await getServerSession(authOptions)) as ExtendedSession
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error('Unauthorized')
+  }
+
+  return userId
+}
+
 export const scrapeURLs = async (urls: string[], collectionId?: string) => {
   console.log('scrapeURLs', urls, collectionId)
 

@@ -2,14 +2,12 @@ import { useCallback, useEffect, useState, useMemo, KeyboardEvent } from 'react'
 import { CheckIcon, PlusIcon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
+import { Typography } from '@/components/typography'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { IconCollection, IconTag } from '@/components/ui/icons/next-icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/components/ui/use-toast'
-import { Typography } from '@/components/typography'
-import { ENTITY_TYPE } from '@/lib/constants'
-
 import {
   Command,
   CommandEmpty,
@@ -18,16 +16,18 @@ import {
   CommandItem,
 } from '@/components/ui/command'
 
+import { ENTITY_TYPE } from '@/lib/constants'
 import { SIDEBAR_FOLDERS } from '@/components/left-sidebar/constants'
 
 import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
+
 import { createCollection } from '@/lib/serverActions/collection'
+import { createTag } from '@/lib/serverActions/tag'
 import {
   addDataSourcesToCollection,
   removeDataSourceFromCollection,
   getCollectionsForDataSourceList,
 } from '@/lib/serverActions/dataSource'
-
 import {
   addTagToDataSources,
   removeTagFromDataSources,

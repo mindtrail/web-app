@@ -12,11 +12,19 @@ import {
   getTagsForDataSourcesListDbOp,
 } from '@/lib/db/tags'
 
-async function checkAuth() {
+async function checkAuthUser() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
   const userId = session?.user?.id
 
   if (!userId) {
+    throw new Error('Unauthorized')
+  }
+
+  return userId
+}
+
+function genericErrorHandler(error: any) {
+  if (error.message === 'Unauthorized') {
     return {
       error: {
         status: 401,
@@ -24,7 +32,8 @@ async function checkAuth() {
       },
     }
   }
-  return { userId }
+
+  return { status: 404 }
 }
 
 export const getTagsList = () => {
@@ -44,36 +53,22 @@ type UpdateTag = {
 }
 
 export async function updateTag({ tagId, name }: UpdateTag) {
-  const auth = await checkAuth()
-  if (auth.error) {
-    return auth
-  }
-  const { userId } = auth
-
   try {
+    const userId = await checkAuthUser()
+
     return await updateTagDbOp({ tagId, userId, name })
   } catch (error) {
-    return { status: 404 }
+    return genericErrorHandler(error)
   }
 }
 
 export async function createTag({ name }: { name: string }) {
-  const session = (await getServerSession(authOptions)) as ExtendedSession
-  const userId = session?.user?.id
-
-  if (!userId) {
-    return {
-      error: {
-        status: 401,
-        message: 'Unauthorized',
-      },
-    }
-  }
-
   try {
+    checkAuthUser()
+
     return await createTagDbOp({ name })
   } catch (error) {
-    return { status: 404 }
+    return genericErrorHandler(error)
   }
 }
 
@@ -82,16 +77,12 @@ type TagPayload = {
 }
 
 export async function deleteTag({ tagId }: TagPayload) {
-  const auth = await checkAuth()
-  if (auth.error) {
-    return auth
-  }
-  const { userId } = auth
-
   try {
+    const userId = await checkAuthUser()
+
     return await deleteTagDbOp({ tagId, userId })
-  } catch (error) {
-    return { status: 404 }
+  } catch (error: any) {
+    return genericErrorHandler(error)
   }
 }
 
