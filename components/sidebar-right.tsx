@@ -7,7 +7,6 @@ import { authOptions } from '@/lib/authOptions'
 
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
-import { Separator } from '@/components/ui/separator'
 
 export async function SidebarRight() {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -24,8 +23,9 @@ export async function SidebarRight() {
           </>
         )}
       </div>
-      <Separator />
-      <div className='flex flex-1 flex-col items-center justify-center'>Chat Section</div>
+      <div className='flex mt-20 flex-1 flex-col items-center justify-center  border-t  border-l'>
+        Chat Section
+      </div>
     </div>
   )
 }
