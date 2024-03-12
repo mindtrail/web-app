@@ -256,10 +256,10 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         <div
           ref={previewRef}
           className={`absolute h-[calc(100vh-165px)] w-0 invisible
-          right-0 top-[132px] md:top-[148px] z-20
-          bg-background shadow-lg rounded-ss-lg rounded-es-lg
-          transition-all
-          ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-10px)] border'}
+            right-0 top-[132px] md:top-[148px] z-20
+            bg-background shadow-xl rounded-ss-lg rounded-es-lg
+            transition-all
+            ${previewItem && !areRowsSelected && '!visible !w-[calc(100%-470px)] border'}
         `}
         >
           <div
