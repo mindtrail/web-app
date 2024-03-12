@@ -29,6 +29,13 @@ export function TableBodyComponent(props: TableBodyProps) {
     [table, setPreviewItem],
   )
 
+  if (!rows?.length) {
+    return (
+      <div className='flex w-full100%-10px) items-center justify-center py-10 text-foreground/70'>
+        No Results
+      </div>
+    )
+  }
   return (
     <TableBody>
       {rows?.map((row) => {
