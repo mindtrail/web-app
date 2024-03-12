@@ -23,10 +23,11 @@ export async function GET(req: Request) {
   try {
     const dataSourceList = await searchSimilarText(searchQuery)
 
-    if (!dataSourceList) {
+    console.log(5555, dataSourceList)
+    if (!dataSourceList?.length) {
       return new Response('No website found', { status: 404 })
     }
-    const result = await getDataSourceListByIdsDbOp(dataSourceList)
+    const result = await getDataSourceListByIdsDbOp(dataSourceList, userId)
 
     return Response.json(result)
     // return callLangchainChat({ searchQuery, chatId, userId })
