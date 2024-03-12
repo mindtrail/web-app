@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
 import { Session } from 'next-auth'
 
-import { Search } from '@/components/search'
+import { Search } from '@/components/search-old'
 import { authOptions } from '@/lib/authOptions'
 
 interface UserWithId {

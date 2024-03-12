@@ -9,9 +9,7 @@ export async function searchHistory(searchQuery: string) {
     const websiteFound = await searchSimilarText(searchQuery)
 
     if (!websiteFound) {
-      return new NextResponse('No website found', {
-        status: 404,
-      })
+      return NextResponse.json([])
     }
 
     const dataSourceList = websiteFound
