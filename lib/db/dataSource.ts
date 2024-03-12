@@ -40,6 +40,7 @@ export const getDataSourceListByIdsDbOp = async (
   dataSourceList: string[],
   userId?: string,
 ) => {
+  console.log(userId)
   const result = await prisma.dataSource.findMany({
     where: {
       id: { in: dataSourceList },
