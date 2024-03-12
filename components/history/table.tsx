@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { UserPreferences } from '@prisma/client'
+import { Cross1Icon } from '@radix-ui/react-icons'
 
 import {
   Table as ReactTable,
@@ -263,14 +264,26 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         `}
         >
           <div
-            className={`overflow-auto max-w-0 h-full flex
+            className={`max-w-0 h-full flex
               ${previewItem && !areRowsSelected && '!max-w-full'}
             `}
           >
             {previewItem && (
-              <div className='flex flex-1 h-full bg-muted'>
-                <PreviewItem previewItem={previewItem} setPreviewItem={setPreviewItem} />
-                <Chat className='w-56 sm:w-64 md:w-72 lg:w-80 2xl:w-96 border-l bg-background' />
+              <div className='flex flex-col w-full'>
+                <div className='flex justify-between items-center h-12 px-2 gap-4 bg-muted'>
+                  <Button onClick={() => setPreviewItem(null)} variant='ghost'>
+                    <Cross1Icon className='w-4 h-4' />
+                  </Button>
+                  {/* {previewItem?.title} */}
+                </div>
+
+                <div className='flex flex-1 overflow-auto'>
+                  <PreviewItem
+                    previewItem={previewItem}
+                    setPreviewItem={setPreviewItem}
+                  />
+                  <Chat className='w-56 sm:w-64 md:w-72 lg:w-80 2xl:w-96 border-l bg-background' />
+                </div>
               </div>
             )}
           </div>
