@@ -19,13 +19,11 @@ export async function GET(req: Request) {
     return new Response('No message provided', { status: 400 })
   }
 
-  console.log('searchQuery:::', searchQuery)
   try {
     const dataSourceList = await searchSimilarText(searchQuery)
 
-    console.log(5555, dataSourceList)
     if (!dataSourceList?.length) {
-      return new Response('No website found', { status: 404 })
+      return Response.json([])
     }
     const result = await getDataSourceListByIdsDbOp(dataSourceList, userId)
 
