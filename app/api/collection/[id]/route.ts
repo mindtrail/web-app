@@ -20,6 +20,7 @@ export async function DELETE(req: Request, { params }: EditRouteParams) {
     const collectionList = await deleteCollectionDbOp(userId, collectionId)
     return NextResponse.json({ collectionList })
   } catch (error) {
+    console.error(error)
     return new NextResponse('Collection not found', { status: 404 })
   }
 }

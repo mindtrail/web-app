@@ -51,19 +51,28 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   return result
 }
 
-export const searchSimilarText = async (message: string): Promise<string[]> => {
+export const searchSimilarText = async (
+  message: string,
+  returnDoc: boolean = false,
+): Promise<string[]> => {
   const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
     collectionName: QDRANT_COLLECTION,
   })
 
   const allChunks = await vectorStore.similaritySearchWithScore(message, 10)
+
   const docs = allChunks
-    .filter((chunk) => chunk[1] > SIMILARITY_THRESHOLD)
-    .map((chunk) => chunk[0])
+    .filter(([_, similarityScore]) => similarityScore > SIMILARITY_THRESHOLD)
+    .map(([chunk]) => chunk)
 
-  const dataSourceList = getDataSourcesOrderByNrOfHits(docs)
+  const dataSourceIdList = getDataSourcesOrderByNrOfHits(docs)
 
-  return dataSourceList
+  if (returnDoc) {
+    // @ts-ignore
+    return docs
+  }
+
+  return dataSourceIdList
 }
 
 export const deleteVectorsForDataSource = async (dataSourceIdList: string[]) => {
@@ -93,13 +102,12 @@ export const deleteVectorsForDataSource = async (dataSourceIdList: string[]) => 
   return res
 }
 
-function getDataSourcesOrderByNrOfHits(dataArray: Document[]): string[] {
-  // dataSourceId: string
-
+function getDataSourcesOrderByNrOfHits(documentsArray: Document[]): string[] {
   const websitesFound: { [key: string]: number } = {}
 
-  for (const data of dataArray) {
-    const { dataSourceId } = data.metadata
+  for (const doc of documentsArray) {
+    const { dataSourceId } = doc.metadata
+    websitesFound[dataSourceId] = websitesFound[dataSourceId] || 0
     websitesFound[dataSourceId]++
   }
 

@@ -19,14 +19,13 @@ export async function GET(req: Request) {
     return new Response('No message provided', { status: 400 })
   }
 
-  console.log('searchQuery:::', searchQuery)
   try {
     const dataSourceList = await searchSimilarText(searchQuery)
 
-    if (!dataSourceList) {
-      return new Response('No website found', { status: 404 })
+    if (!dataSourceList?.length) {
+      return Response.json([])
     }
-    const result = await getDataSourceListByIdsDbOp(dataSourceList)
+    const result = await getDataSourceListByIdsDbOp(dataSourceList, userId)
 
     return Response.json(result)
     // return callLangchainChat({ searchQuery, chatId, userId })
