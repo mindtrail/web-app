@@ -57,15 +57,15 @@ export function Chat(props: ChatProps) {
     <>
       <div
         className={cn(
-          'flex flex-col pb-[200px] pt-4 px-6 md:pt-8 md:px-8 md:py-8 gap-4 relative',
+          'flex flex-col pb-[200px] pt-4 px-4 md:pt-8 md:px-8 md:py-8 gap-4 relative overflow-auto',
           className,
         )}
       >
-        <div className='flex flex-col w-full gap-2'>
+        {/* <div className='flex flex-col w-full gap-2'>
           <Typography variant='h4' className='mb-4 text-gray-700'>
             Chat
           </Typography>
-        </div>
+        </div> */}
 
         {messages?.length ? (
           <>
