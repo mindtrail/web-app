@@ -3,7 +3,7 @@ import { Table, Row } from '@tanstack/react-table'
 import { ExternalLinkIcon } from '@radix-ui/react-icons'
 import { DataSourceType } from '@prisma/client'
 
-import { Checkbox } from '@/components/ui/checkbox'
+import { CheckboxLarge } from '@/components/ui/checkbox-large'
 import { Typography } from '@/components/typography'
 
 import { addHttpsIfMissing, cloudinaryLoader } from '@/lib/utils'
@@ -44,9 +44,15 @@ export function FirstColumnCell<TData>({ row, table }: FirstColumnCellProps<TDat
   return (
     <div className='flex flex-col gap-3 -mt-6'>
       <div className='flex items-center justify-center px-8'>
-        <Checkbox
-          className={`absolute mt-[2px] left-4 bg-secondary invisible group-hover/row:visible
-            ${(isRowSelected || isCheckboxVisible) && 'visible'}`}
+        <CheckboxLarge
+          className='absolute left-0 group/checkbox'
+          checkboxClassName={`invisible group-hover/row:visible
+            ${(isRowSelected || isCheckboxVisible) && 'visible '}
+            ${
+              !isRowSelected &&
+              'group-hover/checkbox:bg-secondary group-hover/checkbox:border-primary/90'
+            }
+          `}
           checked={isRowSelected}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label='Select row'

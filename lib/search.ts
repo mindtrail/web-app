@@ -1,36 +1,7 @@
 import * as cheerio from 'cheerio'
 import { NextResponse } from 'next/server'
 
-import { searchSimilarText } from '@/lib/qdrant-langchain'
 import { getDataSourceById } from '@/lib/db/dataSource'
-
-export async function searchHistory(searchQuery: string) {
-  try {
-    const websiteFound = await searchSimilarText(searchQuery)
-
-    if (!websiteFound) {
-      return new NextResponse('No website found', {
-        status: 404,
-      })
-    }
-
-    const dataSourceList = websiteFound
-    // const dataSource = await getDataSourceById(dataSourceId)
-    // const image = await getOGImage(url)
-
-    // return NextResponse.json({
-    //   ...websiteFound,
-    //   image,
-    //   summary: dataSource?.summary || '',
-    // })
-  } catch (error) {
-    console.error('An error occurred:', error)
-
-    return new NextResponse('Server Error', {
-      status: 500,
-    })
-  }
-}
 
 async function getOGImage(website: string) {
   try {

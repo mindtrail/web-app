@@ -138,12 +138,18 @@ export const deleteAllCollectionsForUser = async (userId: string) => {
 
 export const deleteCollectionDbOp = async (userId: string, collectionId: string) => {
   // Delete all data sources for the collection
-  const collection = await prisma.collection.delete({
-    where: {
-      id: collectionId,
-      ownerId: userId,
-    },
-  })
+  return await prisma.$transaction(async (prisma) => {
+    await prisma.collectionDataSource.deleteMany({
+      where: {
+        collectionId: collectionId,
+      },
+    })
 
-  return collection
+    return await prisma.collection.delete({
+      where: {
+        id: collectionId,
+        ownerId: userId,
+      },
+    })
+  })
 }
