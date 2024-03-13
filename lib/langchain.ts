@@ -28,7 +28,6 @@ export async function callLangchainChat({ messages, chatId, userId }: chatWithAI
   }
 
   let lastMessage = messages[messages.length - 1].content
-  const collectionName = `${userId}-${chatId}`
 
   const model = new ChatOpenAI({
     streaming: true,
@@ -38,61 +37,55 @@ export async function callLangchainChat({ messages, chatId, userId }: chatWithAI
   // const chain = RetrievalQAChain.fromLLM(model)
 
   console.time('searchDB ---')
-  // let kbData = (await searchSimilarText(
-  //   lastMessage,
-  //   collectionName,
-  // )) as Document[]
-  // console.timeEnd('searchDB ---')
+  // @ts-ignore
+  let kbData = (await searchSimilarText(lastMessage, true)) as Document[]
+  console.timeEnd('searchDB ---')
 
-  // console.log('kbData', kbData.length)
+  if (!kbData?.length) {
+    // kbData = (await searchSimilarText(
+    //   'tell me more about latest yc batch from summer 2023',
+    //   collectionName,
+    // )) as Document[]
+    // return a plain text response
+    return new Response(
+      'Sorry, I could not find related information in your browsing history',
+      {
+        status: 200,
+      },
+    )
+  }
 
-  // if (!kbData?.length) {
-  //   kbData = (await searchSimilarText(
-  //     'tell me more about latest yc batch from summer 2023',
-  //     collectionName,
-  //   )) as Document[]
-  //   // return a plain text response
-  //   // return new Response(
-  //   //   'Sorry, I could not find related information in your browsing history',
-  //   //   {
-  //   //     status: 200,
-  //   //   },
-  //   // )
-  // }
+  const sources = kbData.map(({ pageContent, metadata }) => {
+    return {
+      pageContent,
+      name: metadata.name,
+    }
+  })
 
-  // const sources = kbData.map(({ pageContent, metadata }) => {
-  //   return {
-  //     pageContent,
-  //     name: metadata.name,
-  //   }
-  // })
+  const context = sources.map(({ pageContent }) => pageContent).join(' \n ')
 
-  // const context = sources.map(({ pageContent }) => pageContent).join(' \n ')
+  const formattedChatPrompt = await chatPrompt.format({
+    question: lastMessage,
+    context,
+  })
 
-  // const formattedChatPrompt = await chatPrompt.format({
-  //   question: lastMessage,
-  //   context,
-  // })
+  const systemMessage = new SystemMessage(CHAT_SYSTEM)
+  const humanMessage = new HumanMessage(formattedChatPrompt)
 
-  // const systemMessage = new SystemMessage(CHAT_SYSTEM)
-  // const humanMessage = new HumanMessage(formattedChatPrompt)
+  const { stream, handlers } = LangChainStream()
+  const initialEndHandler = handlers.handleLLMEnd
+  // Adding my own handler for chat completion
+  handlers.handleLLMEnd = (message, runId) => {
+    return initialEndHandler(message, runId)
+  }
 
-  // const { stream, handlers } = LangChainStream()
-  // const initialEndHandler = handlers.handleLLMEnd
-  // // Adding my own handler for chat completion
-  // handlers.handleLLMEnd = (message, runId) => {
-  //   return initialEndHandler(message, runId)
-  // }
+  const preparedMessages = (messages as Message[]).map(({ role, content }) =>
+    role == 'user' ? new HumanMessage(content) : new AIMessage(content),
+  )
 
-  // const preparedMessages = (messages as Message[]).map(({ role, content }) =>
-  //   role == 'user' ? new HumanMessage(content) : new AIMessage(content),
-  // )
+  model
+    .call(preparedMessages.concat([systemMessage, humanMessage]), {}, [handlers])
+    .catch(console.error)
 
-  // model
-  //   .call(preparedMessages.concat([systemMessage, humanMessage]), {}, [
-  //     handlers,
-  //   ])
-  //   .catch(console.error)
-
-  // return new StreamingTextResponse(stream)
+  return new StreamingTextResponse(stream)
 }
