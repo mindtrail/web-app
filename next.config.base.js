@@ -15,9 +15,30 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'mindtrail.ai',
+      },
     ],
     // loader: 'cloudinary',
     // path: 'https://res.cloudinary.com/',
+  },
+  headers: {
+    source: '/api/(.*)',
+    headers: [
+      {
+        key: 'Access-Control-Allow-Origin',
+        value: 'mindtrail.ai',
+      },
+      {
+        key: 'Access-Control-Allow-Methods',
+        value: 'GET, POST, PUT, DELETE, OPTIONS',
+      },
+      {
+        key: 'Access-Control-Allow-Headers',
+        value: 'Content-Type, Authorization',
+      },
+    ],
   },
   experimental: {
     serverComponentsExternalPackages: ['langchain', 'cheerio', 'html-to-text'],
