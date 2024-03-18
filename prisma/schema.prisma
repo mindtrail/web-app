@@ -247,6 +247,14 @@ model ClippingTag {
   @@id([clippingId, tagId])
 }
 
+
+model EarlyAccess {
+  email         String   @id
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+  status        String
+}
+
 model Note {
   id            String   @id @default(cuid())
   content       String
