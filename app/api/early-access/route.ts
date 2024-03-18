@@ -1,4 +1,45 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
+
+const getCorsHeaders = (origin: string) => {
+  // Default options
+  const headers = {
+    'Access-Control-Allow-Methods': `${process.env.ALLOWED_METHODS}`,
+    'Access-Control-Allow-Headers': `${process.env.ALLOWED_HEADERS}`,
+    'Access-Control-Allow-Origin': `${process.env.DOMAIN_URL}`,
+  }
+
+  // If no allowed origin is set to default server origin
+  if (!process.env.ALLOWED_ORIGIN || !origin) return headers
+
+  // If allowed origin is set, check if origin is in allowed origins
+  const allowedOrigins = process.env.ALLOWED_ORIGIN.split(',')
+
+  // Validate server origin
+  if (allowedOrigins.includes('*')) {
+    headers['Access-Control-Allow-Origin'] = '*'
+  } else if (allowedOrigins.includes(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin
+  }
+
+  // Return result
+  return headers
+}
+
+// Endpoints
+// ========================================================
+/**
+ * Basic OPTIONS Request to simuluate OPTIONS preflight request for mutative requests
+ */
+export const OPTIONS = async (request: NextRequest) => {
+  // Return Response
+  return NextResponse.json(
+    {},
+    {
+      status: 200,
+      headers: getCorsHeaders(request.headers.get('origin') || ''),
+    },
+  )
+}
 
 export async function POST(req: Request) {
   const payload = (await req.json()) as SavedClipping
@@ -6,7 +47,13 @@ export async function POST(req: Request) {
   console.log(payload)
 
   try {
-    return NextResponse.json({ success: true })
+    return NextResponse.json(
+      { payload },
+      {
+        status: 200,
+        headers: getCorsHeaders(req.headers.get('origin') || ''),
+      },
+    )
   } catch (error) {
     console.error(error)
     return new Response('Error creating collection', {
