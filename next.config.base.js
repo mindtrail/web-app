@@ -17,27 +17,7 @@ const nextConfig = {
       },
     ],
   },
-  async headers() {
-    return [
-      {
-        source: '/api/early-access',
-        headers: [
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: 'https://www.mindtrail.ai',
-          },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET, POST, PUT, DELETE, OPTIONS',
-          },
-          {
-            key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization',
-          },
-        ],
-      },
-    ]
-  },
+
   experimental: {
     serverComponentsExternalPackages: ['langchain', 'cheerio', 'html-to-text'],
   },
