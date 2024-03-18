@@ -41,13 +41,17 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     return (
       <html lang='en' suppressHydrationWarning>
         <body className='flex min-h-screen'>
-          <Providers>
-            <main className='flex flex-1 overflow-auto items-start sm:items-center sm:justify-center'>
-              <Image src='/soon.jpg' alt='comning soon' width={600} height={400} />
-            </main>
-            <TailwindIndicator />
-            <Toaster />
-          </Providers>
+          <main className='flex flex-1 overflow-auto items-start sm:items-center justify-center pt-24 sm:pt-0'>
+            <Image
+              src='/soon.jpg'
+              alt='comning soon'
+              width={600}
+              height={400}
+              quality={85}
+              className='max-w-[75%]'
+              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw'
+            />
+          </main>
         </body>
       </html>
     )
