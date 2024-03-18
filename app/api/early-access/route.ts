@@ -3,9 +3,9 @@ import { NextResponse, NextRequest } from 'next/server'
 const getCorsHeaders = (origin: string) => {
   // Default options
   const headers = {
-    'Access-Control-Allow-Methods': `${process.env.ALLOWED_METHODS}`,
-    'Access-Control-Allow-Headers': `${process.env.ALLOWED_HEADERS}`,
-    'Access-Control-Allow-Origin': `${process.env.DOMAIN_URL}`,
+    'Access-Control-Allow-Methods': `GET, POST, OPTIONS`,
+    'Access-Control-Allow-Headers': `Content-Type, Authorization`,
+    'Access-Control-Allow-Origin': `https://www.mindtrail.ai`,
   }
 
   // If no allowed origin is set to default server origin
