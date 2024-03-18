@@ -16,8 +16,6 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
       },
     ],
-    // loader: 'cloudinary',
-    // path: 'https://res.cloudinary.com/',
   },
   async headers() {
     return [
@@ -26,7 +24,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'mindtrail.ai', // Set your origin
+            value: 'https://www.mindtrail.ai',
           },
           {
             key: 'Access-Control-Allow-Methods',
