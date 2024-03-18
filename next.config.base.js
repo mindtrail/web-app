@@ -22,11 +22,11 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/api/ealy-access',
+        source: '/api/early-access',
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'www.mindtrail.ai', // Set your origin
+            value: 'mindtrail.ai', // Set your origin
           },
           {
             key: 'Access-Control-Allow-Methods',
