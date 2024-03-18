@@ -11,6 +11,8 @@ import { TailwindIndicator } from '@/components/tailwind-indicator'
 import Loading from '@/app/loading'
 import { Suspense } from 'react'
 
+import Image from 'next/image'
+
 // export const dynamic = 'force-dynamic'
 
 export const viewport: Viewport = {
@@ -34,6 +36,22 @@ interface RootLayoutProps {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
+
+  if (!session?.user?.id) {
+    return (
+      <html lang='en' suppressHydrationWarning>
+        <body className='flex min-h-screen'>
+          <Providers>
+            <main className='flex flex-1 overflow-auto items-start sm:items-center sm:justify-center'>
+              <Image src='/soon.jpg' alt='comning soon' width={600} height={400} />
+            </main>
+            <TailwindIndicator />
+            <Toaster />
+          </Providers>
+        </body>
+      </html>
+    )
+  }
   const user = session?.user
   return (
     <html lang='en' suppressHydrationWarning>
