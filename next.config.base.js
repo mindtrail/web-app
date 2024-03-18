@@ -19,22 +19,26 @@ const nextConfig = {
     // loader: 'cloudinary',
     // path: 'https://res.cloudinary.com/',
   },
-  headers: {
-    source: '/api/(.*)',
-    headers: [
+  async headers() {
+    return [
       {
-        key: 'Access-Control-Allow-Origin',
-        value: 'www.mindtrail.ai',
+        source: '/api/ealy-access',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'www.mindtrail.ai', // Set your origin
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
+          },
+        ],
       },
-      {
-        key: 'Access-Control-Allow-Methods',
-        value: 'GET, POST, PUT, DELETE, OPTIONS',
-      },
-      {
-        key: 'Access-Control-Allow-Headers',
-        value: 'Content-Type, Authorization',
-      },
-    ],
+    ]
   },
   experimental: {
     serverComponentsExternalPackages: ['langchain', 'cheerio', 'html-to-text'],
