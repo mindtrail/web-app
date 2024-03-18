@@ -44,7 +44,7 @@ export const OPTIONS = async (request: NextRequest) => {
 export async function POST(req: Request) {
   const payload = (await req.json()) as SavedClipping
 
-  console.log(payload)
+  console.log('EMAIL ---- EMAIL --- ', payload)
 
   try {
     return NextResponse.json(
