@@ -40,7 +40,6 @@ export function ChatDemo({ id, initialMessages, className }: ChatProps) {
         )}
         <div className='absolute bottom-[-0.5rem] w-full'>
           <ChatPanel
-            demo
             isLoading={isLoading}
             stop={stop}
             handleSubmit={handleSubmit}
