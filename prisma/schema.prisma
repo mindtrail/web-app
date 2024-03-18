@@ -252,7 +252,7 @@ model EarlyAccess {
   email         String   @id
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
-  status        String
+  status        EarlyAccessStatus
 }
 
 model Note {
@@ -393,6 +393,14 @@ model Subscription {
   updatedAt DateTime @updatedAt
 
   @@map("Subscriptions")
+}
+
+
+
+enum EarlyAccessStatus {
+  new
+  contacted
+  unsubscribed
 }
 
 

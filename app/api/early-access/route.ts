@@ -1,11 +1,15 @@
 import { NextResponse, NextRequest } from 'next/server'
 
+import { createEarlyAccessDbOp } from '@/lib/db/earlyAccess'
+
 const getCorsHeaders = (origin: string) => {
-  // Default options
+  const nodeEnv = process.env.NODE_ENV
+  const allowedOrign = nodeEnv === 'development' ? '*' : 'https://www.mindtrail.ai'
+
   const headers = {
     'Access-Control-Allow-Methods': `GET, POST, OPTIONS`,
     'Access-Control-Allow-Headers': `Content-Type, Authorization`,
-    'Access-Control-Allow-Origin': `https://www.mindtrail.ai`,
+    'Access-Control-Allow-Origin': allowedOrign,
   }
 
   // If no allowed origin is set to default server origin
@@ -42,12 +46,14 @@ export const OPTIONS = async (request: NextRequest) => {
 }
 
 export async function POST(req: Request) {
-  const payload = (await req.json()) as SavedClipping
+  const payload = (await req.json()) as { email: string }
 
   console.log('EMAIL ---- EMAIL --- ', payload)
-  
 
   try {
+    const result = await createEarlyAccessDbOp(payload?.email)
+    console.log('RESULT ---- RESULT --- ', result)
+
     return NextResponse.json(
       { payload },
       {
