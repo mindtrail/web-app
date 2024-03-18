@@ -15,10 +15,6 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
-      {
-        protocol: 'https',
-        hostname: 'mindtrail.ai',
-      },
     ],
     // loader: 'cloudinary',
     // path: 'https://res.cloudinary.com/',
@@ -28,7 +24,7 @@ const nextConfig = {
     headers: [
       {
         key: 'Access-Control-Allow-Origin',
-        value: 'mindtrail.ai',
+        value: 'www.mindtrail.ai',
       },
       {
         key: 'Access-Control-Allow-Methods',
