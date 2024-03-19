@@ -37,25 +37,25 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const session = (await getServerSession(authOptions)) as ExtendedSession
 
-  if (!session?.user?.id) {
-    return (
-      <html lang='en' suppressHydrationWarning>
-        <body className='flex min-h-screen'>
-          <main className='flex flex-1 overflow-auto items-start sm:items-center justify-center pt-24 sm:pt-0'>
-            <Image
-              src='/soon.jpg'
-              alt='comning soon'
-              width={600}
-              height={400}
-              quality={85}
-              className='max-w-[75%]'
-              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw'
-            />
-          </main>
-        </body>
-      </html>
-    )
-  }
+  // if (!session?.user?.id) {
+  //   return (
+  //     <html lang='en' suppressHydrationWarning>
+  //       <body className='flex min-h-screen'>
+  //         <main className='flex flex-1 overflow-auto items-start sm:items-center justify-center pt-24 sm:pt-0'>
+  //           <Image
+  //             src='/soon.jpg'
+  //             alt='comning soon'
+  //             width={600}
+  //             height={400}
+  //             quality={85}
+  //             className='max-w-[75%]'
+  //             sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw'
+  //           />
+  //         </main>
+  //       </body>
+  //     </html>
+  //   )
+  // }
   const user = session?.user
   return (
     <html lang='en' suppressHydrationWarning>
