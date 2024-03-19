@@ -35,6 +35,12 @@ declare global {
     description?: string | null
   }
 
+  type SidebarNavItem = {
+    name: string
+    url: string
+    icon: any
+  }
+
   type NestedItemsByCategory = {
     [key: string]: SidebarItem[]
   }
