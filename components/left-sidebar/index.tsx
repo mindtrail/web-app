@@ -9,8 +9,12 @@ import { Separator } from '@/components/ui/separator'
 
 import { LeftSidebarFooter } from '@/components/left-sidebar/footer'
 import { FoldersList } from '@/components/left-sidebar/nested-list'
-import { NavListTop } from '@/components/left-sidebar/nav-list-top'
-import { APP_NAME } from '@/components/left-sidebar/constants'
+import { NavItemList } from '@/components/left-sidebar/nav-item-list'
+import {
+  APP_NAME,
+  TOP_SIDEBAR_ITEMS,
+  OTHER_SIDEBAR_ITEMS,
+} from '@/components/left-sidebar/constants'
 
 type SidebarNavProps = {
   className?: string
@@ -36,14 +40,22 @@ export function LeftSidebar({ user }: SidebarNavProps) {
           </Link>
         </div>
 
-        <div className='flex-1 flex flex-col space-between pb-2 relative'>
-          <NavListTop setActiveNestedSidebar={setActiveNestedSidebar} />
-          <Separator />
+        <div className='flex-1 flex flex-col pb-2 relative'>
+          <NavItemList
+            setActiveNestedSidebar={setActiveNestedSidebar}
+            list={TOP_SIDEBAR_ITEMS}
+          />
           <FoldersList
             activeNestedSidebar={activeNestedSidebar}
             nestedItemsByCategory={nestedItemsByCategory}
             setActiveNestedSidebar={setActiveNestedSidebar}
             setNestedItemsByCategory={setNestedItemsByCategory}
+          />
+          <Separator />
+
+          <NavItemList
+            setActiveNestedSidebar={setActiveNestedSidebar}
+            list={OTHER_SIDEBAR_ITEMS}
           />
 
           <ThemeToggle className='ml-2 ' />

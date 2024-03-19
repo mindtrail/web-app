@@ -40,7 +40,7 @@ export function FoldersList(props: FoldersListProps) {
 
   return (
     <>
-      <div className='flex flex-col flex-1 gap-1 py-2 mt-[2px]'>
+      <div className='flex flex-col gap-1 py-2 mt-[2px]'>
         {Object.values(SIDEBAR_FOLDERS).map((item, index) => {
           const { name, url, icon: Icon } = item
           return (
