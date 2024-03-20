@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react'
-import EditorJS from '@editorjs/editorjs'
-import Header from '@editorjs/header'
-import Link from '@editorjs/link'
-import List from '@editorjs/list'
+import { useEffect, useRef, memo } from 'react'
+import EditorJS, { EditorConfig, OutputData } from '@editorjs/editorjs' // @ts-ignore
+import Header from '@editorjs/header' // @ts-ignore
+import Link from '@editorjs/link' // @ts-ignore
+import List from '@editorjs/list' // @ts-ignore
 
-const DEFAULT_INITIAL_DATA = {
+import { EDITORJS_TOOLS } from './tools'
+
+const DEFAULT_INITIAL_DATA: OutputData = {
   time: new Date().getTime(),
   blocks: [
     {
@@ -17,37 +19,33 @@ const DEFAULT_INITIAL_DATA = {
   ],
 }
 
-const EDITOR_CONFIG = {
+const EDITOR_CONFIG: EditorConfig = {
   holder: 'editor-wrapper',
   autofocus: true,
   data: DEFAULT_INITIAL_DATA,
-  tools: {
-    header: Header,
-    link: Link,
-    list: List,
-  },
+  tools: EDITORJS_TOOLS,
 }
 
-export default function EditorWrapper() {
+function EditorWrapper() {
   const editorRef = useRef<EditorJS | null>(null)
-
-  const initEditor = () => {
-    const editor = new EditorJS({
-      ...EDITOR_CONFIG,
-      onReady: () => {
-        editorRef.current = editor
-      },
-      onChange: async () => {
-        let content = await editor.saver.save()
-
-        console.log(content)
-      },
-    })
-  }
 
   useEffect(() => {
     if (!editorRef?.current) {
       initEditor()
+    }
+
+    function initEditor() {
+      const editor = new EditorJS({
+        ...EDITOR_CONFIG,
+        onReady: () => {
+          editorRef.current = editor
+        },
+        onChange: async () => {
+          let content = await editor.saver.save()
+
+          console.log(content)
+        },
+      })
     }
 
     return () => {
@@ -58,3 +56,5 @@ export default function EditorWrapper() {
 
   return <div id='editor-wrapper' />
 }
+
+export default memo(EditorWrapper)
