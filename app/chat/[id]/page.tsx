@@ -16,13 +16,8 @@ export interface ChatPageProps {
   }
 }
 
-interface UserWithId {
-  id: string | null
-}
-type ExtSession = Session & { user: UserWithId | null }
-
 export async function generateMetadata(): Promise<Metadata> {
-  const session = (await getServerSession(authOptions)) as ExtSession
+  const session = (await getServerSession(authOptions)) as ExtendedSession
 
   if (!session?.user?.id) {
     return {}
@@ -34,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ChatPage({ params }: ChatPageProps) {
-  const session = (await getServerSession(authOptions)) as ExtSession
+  const session = (await getServerSession(authOptions)) as ExtendedSession
   if (!session?.user?.id) {
     redirect(`/api/auth/signin?callbackUrl=/chat/`)
   }

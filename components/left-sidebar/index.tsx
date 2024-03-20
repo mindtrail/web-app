@@ -58,7 +58,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
             list={OTHER_SIDEBAR_ITEMS}
           />
 
-          <ThemeToggle className='ml-2 ' />
+          <ThemeToggle className='ml-2 absolute bottom-2' />
         </div>
         <LeftSidebarFooter user={user} />
       </nav>
