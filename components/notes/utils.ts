@@ -1,3 +1,4 @@
+import EditorJS, { EditorConfig, OutputData } from '@editorjs/editorjs' // @ts-ignore
 import Header from '@editorjs/header'
 import List from '@editorjs/list'
 import Paragraph from '@editorjs/paragraph'
@@ -41,4 +42,23 @@ export const EDITORJS_TOOLS = {
   delimiter: Delimiter,
   inlineCode: InlineCode,
   simpleImage: SimpleImage,
+}
+
+const DEFAULT_INITIAL_DATA: OutputData = {
+  time: new Date().getTime(),
+  blocks: [
+    {
+      type: 'header',
+      data: {
+        text: 'This is my awesome editor!',
+        level: 1,
+      },
+    },
+  ],
+}
+
+export const EDITORJS_CONFIG: EditorConfig = {
+  autofocus: true,
+  data: DEFAULT_INITIAL_DATA,
+  tools: EDITORJS_TOOLS,
 }
