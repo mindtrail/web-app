@@ -1,5 +1,8 @@
 import { useEffect, useRef } from 'react'
 import EditorJS from '@editorjs/editorjs'
+import Header from '@editorjs/header'
+import Link from '@editorjs/link'
+import List from '@editorjs/list'
 
 const DEFAULT_INITIAL_DATA = {
   time: new Date().getTime(),
@@ -18,6 +21,11 @@ const EDITOR_CONFIG = {
   holder: 'editor-wrapper',
   autofocus: true,
   data: DEFAULT_INITIAL_DATA,
+  tools: {
+    header: Header,
+    link: Link,
+    list: List,
+  },
 }
 
 export default function EditorWrapper() {
@@ -38,7 +46,7 @@ export default function EditorWrapper() {
   }
 
   useEffect(() => {
-    if (editorRef.current === null) {
+    if (!editorRef?.current) {
       initEditor()
     }
 
@@ -48,5 +56,5 @@ export default function EditorWrapper() {
     }
   }, [])
 
-  return <div id='editor-wrapper'>salut</div>
+  return <div id='editor-wrapper' />
 }
