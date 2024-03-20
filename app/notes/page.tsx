@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/authOptions'
 import { getDataSourceListDbOp } from '@/lib/db/dataSource'
 import { getUserPreferencesDbOp } from '@/lib/db/preferences'
 
-import { HistoryComponent } from '@/components/history'
+import { NotesComponent } from '@/components/notes'
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -42,10 +42,10 @@ export default async function AllItems() {
   }
 
   return (
-    <HistoryComponent
-      historyItems={historyItems}
-      userId={userId}
-      userPreferences={userPreferences}
+    <NotesComponent
+    // historyItems={historyItems}
+    // userId={userId}
+    // userPreferences={userPreferences}
     />
   )
 }
