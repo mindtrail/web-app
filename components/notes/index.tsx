@@ -19,10 +19,8 @@ export function NotesComponent() {
   // const { setActiveNestedSidebar, setNestedItemsByCategory } = useGlobalStateActions()
 
   return (
-    <div id='notes' className='flex-1'>
-      <div id='editor'>
-        <Editor />
-      </div>
+    <div id='notes' className='flex-1 py-10 px-8 '>
+      <Editor />
     </div>
   )
 }
