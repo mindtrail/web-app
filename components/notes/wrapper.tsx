@@ -37,7 +37,7 @@ function EditorWrapper() {
     }
   }, [])
 
-  return <div id='editor-wrapper' />
+  return <div id='editor-wrapper' className='rounder-lg border h-full' />
 }
 
-export default memo(EditorWrapper)
+export default EditorWrapper
