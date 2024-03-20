@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server'
 
 import { createEarlyAccessDbOp } from '@/lib/db/earlyAccess'
+import { isEmailValid } from '@/lib/utils'
 
 const getCorsHeaders = (origin: string) => {
   const nodeEnv = process.env.NODE_ENV
@@ -49,6 +50,15 @@ export async function POST(req: Request) {
   const payload = (await req.json()) as { email: string }
 
   console.log('EMAIL ---- EMAIL --- ', payload)
+
+  const email = payload?.email
+
+  // Validate the email address
+  if (!email || !isEmailValid(email)) {
+    return new Response('Please enter a valid email address', {
+      status: 400,
+    })
+  }
 
   try {
     const result = await createEarlyAccessDbOp(payload?.email)

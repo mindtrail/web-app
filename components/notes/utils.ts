@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import EditorJS, { EditorConfig, OutputData } from '@editorjs/editorjs' // @ts-ignore
 import Header from '@editorjs/header'
 import List from '@editorjs/list'
