@@ -1,7 +1,6 @@
 import { type Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth/next'
-import { Session } from 'next-auth'
 
 import { authOptions } from '@/lib/authOptions'
 import { getDataSourceListDbOp } from '@/lib/db/dataSource'
