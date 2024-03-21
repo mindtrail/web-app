@@ -18,18 +18,30 @@ import Delimiter from '@editorjs/delimiter'
 import InlineCode from '@editorjs/inline-code'
 import SimpleImage from '@editorjs/simple-image'
 
+const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
+
 export const EDITORJS_TOOLS = {
   header: {
     class: Header,
     inlineToolbar: true,
+    config: {
+      defaultLevel: 2,
+      placeholder: 'Heading...',
+    },
   },
   list: {
     class: List,
     inlineToolbar: true,
+    config: {
+      placeholder: 'List...',
+    },
   },
   paragraph: {
     class: Paragraph,
     inlineToolbar: true,
+    config: {
+      placeholder: PLACEHOLDER_MSG,
+    },
   },
   embed: Embed,
   table: Table,
