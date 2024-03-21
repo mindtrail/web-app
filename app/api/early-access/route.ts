@@ -61,7 +61,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const result = await createEarlyAccessDbOp(payload?.email)
+    const result = await createEarlyAccessDbOp(email)
     console.log('RESULT ---- RESULT --- ', result)
 
     return NextResponse.json(
