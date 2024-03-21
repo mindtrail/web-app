@@ -176,6 +176,13 @@
   dependencies:
     "@codexteam/icons" "^0.0.5"
 
+"@editorjs/link-autocomplete@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/link-autocomplete/-/link-autocomplete-0.1.0.tgz#acd51517cd1acba16efc11b4f6cc4a97ea479390"
+  integrity sha512-Suij3TwZZREAUB2aNASrxPSsCwNN3gBAkQGL2N6rnrxwr2RI6KWw98QC/GFCTP2/hTctfNvXRbxnFi2fsJldZA==
+  dependencies:
+    "@codexteam/icons" "^0.0.5"
+
 "@editorjs/link@^2.6.2":
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/@editorjs/link/-/link-2.6.2.tgz#d9c17e01ecc3518ae4be61e0a024f7f225e09e5a"

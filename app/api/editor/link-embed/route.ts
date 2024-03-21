@@ -14,6 +14,8 @@ export async function GET(req: Request) {
   }
 
   const reqURL = new URL(req.url)
+  console.log(reqURL)
+
   const linkToFetch = validateAndPrependUrl(reqURL.searchParams.get('url') as string)
 
   try {
