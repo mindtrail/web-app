@@ -44,7 +44,10 @@ export const EDITORJS_TOOLS = {
   raw: Raw,
   quote: Quote,
   marker: Marker,
-  checklist: CheckList,
+  checklist: {
+    class: CheckList,
+    inlineToolbar: ['link', 'bold', 'italic'],
+  },
   delimiter: Delimiter,
   // inlineCode: InlineCode,
   simpleImage: SimpleImage,
@@ -86,14 +89,14 @@ const mockData = [
       ],
     },
   },
-  {
-    type: 'quote',
-    data: {
-      text: 'A quote',
-      caption: 'With a caption',
-      alignment: 'left',
-    },
-  },
+  // {
+  //   type: 'quote',
+  //   data: {
+  //     text: 'A quote',
+  //     caption: 'With a caption',
+  //     alignment: 'left',
+  //   },
+  // },
   {
     type: 'checklist',
     data: {
@@ -113,16 +116,13 @@ const mockData = [
       ],
     },
   },
-  {
-    type: 'simpleImage',
-    data: {
-      url: 'https://thedriven.io/wp-content/uploads/2020/01/Model-Y-Side-Blue.jpg',
-      caption: 'Paste image URL',
-      withBorder: false,
-      withBackground: false,
-      stretched: true,
-    },
-  },
+  // {
+  //   type: 'simpleImage',
+  //   data: {
+  //     url: 'https://thedriven.io/wp-content/uploads/2020/01/Model-Y-Side-Blue.jpg',
+  //     caption: 'Paste image URL',
+  //   },
+  // },
 ]
 
 const DEFAULT_INITIAL_DATA: OutputData = {
