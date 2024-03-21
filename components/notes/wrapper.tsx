@@ -7,33 +7,34 @@ import { EDITORJS_CONFIG } from './utils'
 
 function EditorWrapper() {
   const editorRef = useRef<EditorJS | null>(null)
-  const [editorInstance, setEditor] = useState<EditorJS | null>(null)
+  const [editorInstance, setEditorInstance] = useState<EditorJS | null>(null)
 
   // initialize
   useEffect(() => {
     const editor = new EditorJS({
       ...EDITORJS_CONFIG,
       holder: 'editor-wrapper',
-      onReady: () => {
-        console.log(editorRef.current)
-        // new Undo({ editor: editorRef.current })
-        new DragDrop(editorRef.current)
+      onReady: async () => {
+        // console.log(editorRef.current)
+        setTimeout(() => {
+          setEditorInstance(editor)
+        }, 300)
       },
       onChange: async (editor) => {
         // let content = await editor.saver.save()
         // console.log(content)
-        // console.log(editor.selection)
-        // new Undo({ editor })
       },
     })
-    setEditor(editor)
-    // editor.
 
     return () => {
+      if (!editor) {
+        setEditorInstance(null)
+        return
+      }
       editor.isReady
         .then(() => {
           editor.destroy()
-          setEditor(null)
+          setEditorInstance(null)
         })
         .catch((e) => console.error('ERROR editor cleanup', e))
     }
@@ -44,11 +45,11 @@ function EditorWrapper() {
     if (!editorInstance) {
       return
     }
+    console.log(editorInstance)
     // Send instance to the parent
-    if (editorRef) {
-      editorRef.current = editorInstance
-    }
-  }, [editorInstance, editorRef])
+    // if (editorRef) {
+    // }
+  }, [editorInstance])
 
   return <div id='editor-wrapper' className='h-full' />
 }

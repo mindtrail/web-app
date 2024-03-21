@@ -15,9 +15,10 @@ import TextAlignment from 'editorjs-text-alignment-blocktune'
 import TextVariantTune from '@editorjs/text-variant-tune'
 import Strikethrough from '@sotaproject/strikethrough'
 import Underline from '@editorjs/underline'
+// import AIText from './ai-autocomplete'
+// import AIText from '@alkhipce/editorjs-aitext'
 
 const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
-
 const mockData = [
   {
     type: 'header',
@@ -106,7 +107,6 @@ const EDITORJS_TOOLS = {
     shortcut: 'CMD+SHIFT+M',
     tunes: ['textAlign', 'textVariant', 'indentTune'],
   },
-
   textVariant: TextVariantTune,
   indentTune: IndentTune,
   textAlign: TextAlignment,
