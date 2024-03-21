@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, memo } from 'react'
 import EditorJS from '@editorjs/editorjs' // @ts-ignore
+// import Undo from 'editorjs-undo'
+import DragDrop from 'editorjs-drag-drop'
 
 import { EDITORJS_CONFIG } from './utils'
 
@@ -12,11 +14,16 @@ function EditorWrapper() {
     const editor = new EditorJS({
       ...EDITORJS_CONFIG,
       holder: 'editor-wrapper',
-      onChange: async (api) => {
-        let content = await api.saver.save()
-        console.log(content)
-        console.log(api.selection)
-        // api.blocks.
+      onReady: () => {
+        console.log(editorRef.current)
+        // new Undo({ editor: editorRef.current })
+        new DragDrop(editorRef.current)
+      },
+      onChange: async (editor) => {
+        // let content = await editor.saver.save()
+        // console.log(content)
+        // console.log(editor.selection)
+        // new Undo({ editor })
       },
     })
     setEditor(editor)
