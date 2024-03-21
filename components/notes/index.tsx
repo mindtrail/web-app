@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/typography'
-import { ScrollBar } from '../ui/scroll-area'
 
 // import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 // import { Separator } from '@/components/ui/separator'

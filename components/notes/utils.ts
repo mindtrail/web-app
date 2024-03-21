@@ -79,16 +79,16 @@ const mockData = [
       text: 'Save new data.',
     },
   },
-  {
-    type: 'table',
-    data: {
-      content: [
-        ['Col 1', 'Col 2'],
-        ['Cell 1', 'Cell 2'],
-        ['Cell 3', 'Cell 4'],
-      ],
-    },
-  },
+  // {
+  //   type: 'table',
+  //   data: {
+  //     content: [
+  //       ['Col 1', 'Col 2'],
+  //       ['Cell 1', 'Cell 2'],
+  //       ['Cell 3', 'Cell 4'],
+  //     ],
+  //   },
+  // },
   // {
   //   type: 'quote',
   //   data: {

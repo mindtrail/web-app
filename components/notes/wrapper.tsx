@@ -9,7 +9,13 @@ function EditorWrapper() {
 
   // initialize
   useEffect(() => {
-    const editor = new EditorJS({ ...EDITORJS_CONFIG, holder: 'editor-wrapper' })
+    const editor = new EditorJS({
+      ...EDITORJS_CONFIG,
+      holder: 'editor-wrapper',
+      onChange: async (api) => {
+        // let content = await api.saver.save()
+      },
+    })
     setEditor(editor)
 
     return () => {
@@ -24,7 +30,6 @@ function EditorWrapper() {
 
   // set reference
   useEffect(() => {
-    console.log(editorInstance, editorRef)
     if (!editorInstance) {
       return
     }
