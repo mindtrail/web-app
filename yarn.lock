@@ -7,6 +7,14 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
+"@alkhipce/editorjs-aitext@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@alkhipce/editorjs-aitext/-/editorjs-aitext-1.0.3.tgz#1775eafe3936614b318c126407f6a44123acb970"
+  integrity sha512-Usbwo2g8tbHhmS+MoCEhJV4WElsO5MKIJP1WnLNPS4TVP079Lqx7RzNN8/2l6MACChQwhps8LAonoXTHMUQ3qw==
+  dependencies:
+    "@editorjs/paragraph" "^2.11.3"
+    openai "^4.17.3"
+
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
@@ -133,6 +141,11 @@
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.3.0.tgz#62380b4053d487a257de443864b5c72dafab95e6"
   integrity sha512-fJE9dfFdgq8xU+sbsxjH0Kt8Yeatw9xHBJWb77DhRkEXz3OCoIS6hrRC1ewHEryxzIjxD8IyQrRq2f+Gz3BcmA==
+
+"@codexteam/shortcuts@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@codexteam/shortcuts/-/shortcuts-1.2.0.tgz#b8dd7396962b0bd845a5c8f8f19bc6119b520e19"
+  integrity sha512-Udb8lkwhXEiPoLm7krtUv2f8jYQTutHxsLecmsMvMbOxMJ49LA/EUUzn8Fo32mxOFrI7qozOovspLhHb+y60nQ==
 
 "@editorjs/checklist@^1.6.0":
   version "1.6.0"
@@ -6059,6 +6072,21 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   integrity sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==
   dependencies:
     wrappy "1"
+
+openai@^4.17.3, openai@^4.29.2:
+  version "4.29.2"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-4.29.2.tgz#45e83cb49dbd052626637b267c749785a24f411c"
+  integrity sha512-cPkT6zjEcE4qU5OW/SoDDuXEsdOLrXlAORhzmaguj5xZSPlgKvLhi27sFWhLKj07Y6WKNWxcwIbzm512FzTBNQ==
+  dependencies:
+    "@types/node" "^18.11.18"
+    "@types/node-fetch" "^2.6.4"
+    abort-controller "^3.0.0"
+    agentkeepalive "^4.2.1"
+    digest-fetch "^1.3.0"
+    form-data-encoder "1.7.2"
+    formdata-node "^4.3.2"
+    node-fetch "^2.6.7"
+    web-streams-polyfill "^3.2.1"
 
 openai@^4.26.0:
   version "4.28.0"
