@@ -119,3 +119,7 @@ body {
   right: auto !important;
   left: 0 !important;
 }
+
+.ce-paragraph[data-placeholder]:empty:focus:before {
+  opacity: 1 !important;
+}

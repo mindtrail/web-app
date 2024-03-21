@@ -13,10 +13,14 @@ function EditorWrapper() {
       ...EDITORJS_CONFIG,
       holder: 'editor-wrapper',
       onChange: async (api) => {
-        // let content = await api.saver.save()
+        let content = await api.saver.save()
+        console.log(content)
+        console.log(api.selection)
+        // api.blocks.
       },
     })
     setEditor(editor)
+    // editor.
 
     return () => {
       editor.isReady
