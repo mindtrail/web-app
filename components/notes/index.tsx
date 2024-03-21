@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/typography'
+import { ScrollBar } from '../ui/scroll-area'
 
 // import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 // import { Separator } from '@/components/ui/separator'
@@ -20,10 +21,14 @@ export function NotesComponent() {
   // const { setActiveNestedSidebar, setNestedItemsByCategory } = useGlobalStateActions()
 
   return (
-    <div id='notes' className='flex flex-col gap-8 flex-1 py-12 px-16 '>
-      <Typography variant='h1'>Notes</Typography>
+    <div id='notes' className='flex flex-col flex-1 h-screen overflow-hidden'>
+      <div className='py-8 px-16'>
+        <Typography variant='h1'>Notes</Typography>
+      </div>
       <Separator />
-      <Editor />
+      <div className='py-8 px-16 overflow-auto'>
+        <Editor />
+      </div>
     </div>
   )
 }
