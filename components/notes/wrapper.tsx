@@ -37,7 +37,7 @@ function EditorWrapper() {
     }
   }, [])
 
-  return <div id='editor-wrapper' className='rounder-lg border h-full' />
+  return <div id='editor-wrapper' className='h-full' />
 }
 
 export default EditorWrapper

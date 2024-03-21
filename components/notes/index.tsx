@@ -1,9 +1,10 @@
 'use client'
 import { useEffect, useRef, useState, memo } from 'react'
 
-import Link from 'next/link'
-import Image from 'next/image'
 import dynamic from 'next/dynamic'
+
+import { Separator } from '@/components/ui/separator'
+import { Typography } from '@/components/typography'
 
 // import { useGlobalState, useGlobalStateActions } from '@/context/global-state'
 // import { Separator } from '@/components/ui/separator'
@@ -19,7 +20,9 @@ export function NotesComponent() {
   // const { setActiveNestedSidebar, setNestedItemsByCategory } = useGlobalStateActions()
 
   return (
-    <div id='notes' className='flex-1 py-10 px-8 '>
+    <div id='notes' className='flex flex-col gap-8 flex-1 py-12 px-16 '>
+      <Typography variant='h2'>Notes</Typography>
+      <Separator />
       <Editor />
     </div>
   )
