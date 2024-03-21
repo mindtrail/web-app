@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { DataSourceStatus } from '@prisma/client'
 import { MAX_FILE_SIZE } from '@/lib/constants'
+import { validateAndPrependUrl } from '@/lib/utils'
 
 export type ImportFormValues = z.infer<typeof importFormSchema>
 
@@ -90,10 +91,8 @@ function validateUrls(urls: string = '') {
 
   // Check each URL string to see if it's valid
   for (let urlString of urlList) {
-    try {
-      new URL(urlString)
-    } catch (e) {
-      // If any URL string is invalid, return false
+    console.log(validateAndPrependUrl(urlString))
+    if (!validateAndPrependUrl(urlString)) {
       return false
     }
   }
