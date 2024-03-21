@@ -5,15 +5,16 @@ import Header from '@editorjs/header'
 import List from '@editorjs/list'
 import Paragraph from '@editorjs/paragraph'
 import Embed from '@editorjs/embed'
-import Table from '@editorjs/table'
+// import Table from '@editorjs/table'
 // import Warning from '@editorjs/warning'
 import Code from '@editorjs/code'
 import LinkTool from '@editorjs/link'
+import LinkAutocomplete from '@editorjs/link-autocomplete'
 // import Image from '@editorjs/image'
 import Raw from '@editorjs/raw'
 import Quote from '@editorjs/quote'
 import Marker from '@editorjs/marker'
-import CheckList from '@editorjs/checklist'
+// import CheckList from '@editorjs/checklist'
 import Delimiter from '@editorjs/delimiter'
 import InlineCode from '@editorjs/inline-code'
 import SimpleImage from '@editorjs/simple-image'
@@ -44,24 +45,31 @@ export const EDITORJS_TOOLS = {
     },
   },
   embed: Embed,
-  table: Table,
+  // table: Table,
   // warning: Warning,
   code: Code,
   linkTool: {
     class: LinkTool,
     config: {
-      endpoint: '/api/fetch-metadata', // Your backend endpoint for url data fetching,
+      endpoint: '/api/editor/link-embed', // Your backend endpoint for url data fetching,
     },
   }, // image: Image,
+  link: {
+    class: LinkAutocomplete,
+    config: {
+      endpoint: '/api/editor/link-autocomplete',
+      queryParam: 'url',
+    },
+  },
   raw: Raw,
   quote: Quote,
   marker: Marker,
-  checklist: {
-    class: CheckList,
-    inlineToolbar: ['link', 'bold', 'italic'],
-  },
+  // checklist: {
+  //   class: CheckList,
+  //   inlineToolbar: ['link', 'bold', 'italic'],
+  // },
   delimiter: Delimiter,
-  // inlineCode: InlineCode,
+  inlineCode: InlineCode,
   simpleImage: SimpleImage,
 }
 
@@ -109,25 +117,25 @@ const mockData = [
   //     alignment: 'left',
   //   },
   // },
-  {
-    type: 'checklist',
-    data: {
-      items: [
-        {
-          text: 'Check 1',
-          checked: false,
-        },
-        {
-          text: 'Check 2',
-          checked: true,
-        },
-        {
-          text: 'Check 3',
-          checked: false,
-        },
-      ],
-    },
-  },
+  // {
+  //   type: 'checklist',
+  //   data: {
+  //     items: [
+  //       {
+  //         text: 'Check 1',
+  //         checked: false,
+  //       },
+  //       {
+  //         text: 'Check 2',
+  //         checked: true,
+  //       },
+  //       {
+  //         text: 'Check 3',
+  //         checked: false,
+  //       },
+  //     ],
+  //   },
+  // },
   // {
   //   type: 'simpleImage',
   //   data: {
