@@ -138,3 +138,18 @@ export function isEmailValid(email: string) {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
   return emailRegex.test(email)
 }
+
+export function validateAndPrependUrl(url: string = '') {
+  try {
+    let parsedUrl = new URL(url)
+    return parsedUrl.href
+  } catch (error) {
+    try {
+      // If used added the URL without protocol, attempt to prepend and parse again
+      let parsedUrl = new URL(`https://${url}`)
+      return parsedUrl.href
+    } catch (error) {
+      return null // Invalid URL
+    }
+  }
+}

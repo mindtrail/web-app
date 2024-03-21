@@ -1,12 +1,12 @@
 // @ts-nocheck
 
-import EditorJS, { EditorConfig, OutputData } from '@editorjs/editorjs' // @ts-ignore
+import { EditorConfig, OutputData } from '@editorjs/editorjs' // @ts-ignore
 import Header from '@editorjs/header'
 import List from '@editorjs/list'
 import Paragraph from '@editorjs/paragraph'
 import Embed from '@editorjs/embed'
 import Table from '@editorjs/table'
-import Warning from '@editorjs/warning'
+// import Warning from '@editorjs/warning'
 import Code from '@editorjs/code'
 import LinkTool from '@editorjs/link'
 // import Image from '@editorjs/image'
@@ -33,16 +33,20 @@ export const EDITORJS_TOOLS = {
   },
   embed: Embed,
   table: Table,
-  warning: Warning,
+  // warning: Warning,
   code: Code,
-  linkTool: LinkTool,
-  // image: Image,
+  linkTool: {
+    class: LinkTool,
+    config: {
+      endpoint: '/api/fetch-metadata', // Your backend endpoint for url data fetching,
+    },
+  }, // image: Image,
   raw: Raw,
   quote: Quote,
   marker: Marker,
   checklist: CheckList,
   delimiter: Delimiter,
-  inlineCode: InlineCode,
+  // inlineCode: InlineCode,
   simpleImage: SimpleImage,
 }
 
