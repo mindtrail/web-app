@@ -2,76 +2,20 @@
 
 import { EditorConfig, OutputData } from '@editorjs/editorjs' // @ts-ignore
 import Header from '@editorjs/header'
-import List from '@editorjs/list'
+import NestedList from '@editorjs/nested-list'
 import Paragraph from '@editorjs/paragraph'
-import Embed from '@editorjs/embed'
-// import Table from '@editorjs/table'
-// import Warning from '@editorjs/warning'
-import Code from '@editorjs/code'
 import LinkTool from '@editorjs/link'
 import LinkAutocomplete from '@editorjs/link-autocomplete'
-// import Image from '@editorjs/image'
-import Raw from '@editorjs/raw'
-import Quote from '@editorjs/quote'
-import Marker from '@editorjs/marker'
-// import CheckList from '@editorjs/checklist'
 import Delimiter from '@editorjs/delimiter'
-import InlineCode from '@editorjs/inline-code'
 import SimpleImage from '@editorjs/simple-image'
+import Embed from '@editorjs/embed'
+import EJLaTeX from 'editorjs-latex'
+import ChangeCase from 'editorjs-change-case'
+import IndentTune from 'editorjs-indent-tune'
+import TextAlignment from 'editorjs-text-alignment-blocktune'
+import TextVariantTune from '@editorjs/text-variant-tune'
 
 const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
-
-export const EDITORJS_TOOLS = {
-  header: {
-    class: Header,
-    inlineToolbar: true,
-    config: {
-      defaultLevel: 2,
-      placeholder: 'Heading...',
-    },
-  },
-  list: {
-    class: List,
-    inlineToolbar: true,
-    config: {
-      placeholder: 'List...',
-    },
-  },
-  paragraph: {
-    class: Paragraph,
-    inlineToolbar: true,
-    config: {
-      placeholder: PLACEHOLDER_MSG,
-    },
-  },
-  embed: Embed,
-  // table: Table,
-  // warning: Warning,
-  code: Code,
-  linkTool: {
-    class: LinkTool,
-    config: {
-      endpoint: '/api/editor/link-embed', // Your backend endpoint for url data fetching,
-    },
-  }, // image: Image,
-  link: {
-    class: LinkAutocomplete,
-    config: {
-      endpoint: '/api/editor/link-autocomplete',
-      queryParam: 'url',
-    },
-  },
-  raw: Raw,
-  quote: Quote,
-  marker: Marker,
-  // checklist: {
-  //   class: CheckList,
-  //   inlineToolbar: ['link', 'bold', 'italic'],
-  // },
-  delimiter: Delimiter,
-  inlineCode: InlineCode,
-  simpleImage: SimpleImage,
-}
 
 const mockData = [
   {
@@ -148,6 +92,70 @@ const mockData = [
 const DEFAULT_INITIAL_DATA: OutputData = {
   time: new Date().getTime(),
   blocks: mockData,
+}
+
+const EDITORJS_TOOLS = {
+  paragraph: {
+    class: Paragraph,
+    inlineToolbar: true,
+    config: {
+      placeholder: PLACEHOLDER_MSG,
+    },
+    tunes: ['textAlign', 'indentTune'],
+  },
+  header: {
+    class: Header,
+    inlineToolbar: true,
+    config: {
+      defaultLevel: 2,
+      placeholder: 'Heading...',
+    },
+    tunes: ['textAlign', 'indentTune'],
+  },
+  list: {
+    class: NestedList,
+    inlineToolbar: true,
+    config: {
+      defaultStyle: 'unordered',
+    },
+    tunes: [],
+  },
+  // embed: Embed,
+  embed: {
+    class: LinkTool,
+    config: {
+      endpoint: '/api/editor/link-embed', // Your backend endpoint for url data fetching,
+    },
+  },
+  link: {
+    class: LinkAutocomplete,
+    config: {
+      endpoint: '/api/editor/link-autocomplete',
+      queryParam: 'url',
+    },
+  },
+  simpleImage: {
+    class: SimpleImage,
+    tunes: ['textAlign', 'indentTune'],
+  },
+
+  delimiter: Delimiter,
+  Math: {
+    class: EJLaTeX,
+    shortcut: 'CMD+SHIFT+M',
+    tunes: ['textAlign', 'indentTune'],
+  },
+  changeCase: {
+    class: ChangeCase,
+    config: {
+      showLocaleOption: true, // enable locale case options
+      locale: 'tr', // or ['tr', 'TR', 'tr-TR']
+    },
+  },
+  textVariant: TextVariantTune,
+
+  indentTune: IndentTune,
+  textAlign: TextAlignment,
 }
 
 export const EDITORJS_CONFIG: EditorConfig = {
