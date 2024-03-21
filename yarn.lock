@@ -262,6 +262,13 @@
   resolved "https://registry.yarnpkg.com/@editorjs/text-variant-tune/-/text-variant-tune-1.0.1.tgz#1fc90bbef473576ae8033d4f5ad597584dbdff4a"
   integrity sha512-uVRbiMeJ14XjlP4cLqHxgQpdqbQnuQgUhlMQUFDLi7yanbEqWmb0gguZjmbdl6gnBYeUYRv9IbyOva3Iaif6ZQ==
 
+"@editorjs/underline@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/underline/-/underline-1.1.0.tgz#24a356f0d0d527b99b24542c8645d29dceb711dd"
+  integrity sha512-vQj2ROW1KreD31QHlhaPikmDJGWYzRBusN4Zyfwl9nIIQCByt4S8fZQpsrRvH4sct5mkirsHllNT00rJlqHK7Q==
+  dependencies:
+    "@codexteam/icons" "^0.0.6"
+
 "@editorjs/warning@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@editorjs/warning/-/warning-1.4.0.tgz#6f7d6f5c82224e3ff7ad71aa1a2b53fa9830e5e2"
@@ -3427,6 +3434,11 @@ editorjs-text-alignment-blocktune@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/editorjs-text-alignment-blocktune/-/editorjs-text-alignment-blocktune-1.0.3.tgz#7942fe2d3fbdbd7fcfd10fbb9b341c97ec3eb84f"
   integrity sha512-DAJ2LJP+WjETvU4lVOJCqZ1kZkKHp0GkujkqZgza9DRv7bO46m1M/s2d5Ba5hPFdmqk1vA/ci++MQXgWD7mWYw==
+
+editorjs-text-color-plugin@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/editorjs-text-color-plugin/-/editorjs-text-color-plugin-2.0.4.tgz#6e143c9507abe59da54ca0f8d6f9ffb14447c29d"
+  integrity sha512-QpibTkOxs3ndlKNOLT8ZlC4ktc3/eKIajiLO0Jm/hh9AJug/CrM1/rAvHy+ldfUKavbWeI+YZvgjad0YTyoyGw==
 
 editorjs-undo@^2.0.26:
   version "2.0.26"

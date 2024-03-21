@@ -10,10 +10,11 @@ import Delimiter from '@editorjs/delimiter'
 import SimpleImage from '@editorjs/simple-image'
 import Embed from '@editorjs/embed'
 import EJLaTeX from 'editorjs-latex'
-import ChangeCase from 'editorjs-change-case'
 import IndentTune from 'editorjs-indent-tune'
 import TextAlignment from 'editorjs-text-alignment-blocktune'
 import TextVariantTune from '@editorjs/text-variant-tune'
+import Strikethrough from '@sotaproject/strikethrough'
+import Underline from '@editorjs/underline'
 
 const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
 
@@ -43,50 +44,6 @@ const mockData = [
       text: 'Save new data.',
     },
   },
-  // {
-  //   type: 'table',
-  //   data: {
-  //     content: [
-  //       ['Col 1', 'Col 2'],
-  //       ['Cell 1', 'Cell 2'],
-  //       ['Cell 3', 'Cell 4'],
-  //     ],
-  //   },
-  // },
-  // {
-  //   type: 'quote',
-  //   data: {
-  //     text: 'A quote',
-  //     caption: 'With a caption',
-  //     alignment: 'left',
-  //   },
-  // },
-  // {
-  //   type: 'checklist',
-  //   data: {
-  //     items: [
-  //       {
-  //         text: 'Check 1',
-  //         checked: false,
-  //       },
-  //       {
-  //         text: 'Check 2',
-  //         checked: true,
-  //       },
-  //       {
-  //         text: 'Check 3',
-  //         checked: false,
-  //       },
-  //     ],
-  //   },
-  // },
-  // {
-  //   type: 'simpleImage',
-  //   data: {
-  //     url: 'https://thedriven.io/wp-content/uploads/2020/01/Model-Y-Side-Blue.jpg',
-  //     caption: 'Paste image URL',
-  //   },
-  // },
 ]
 
 const DEFAULT_INITIAL_DATA: OutputData = {
@@ -101,7 +58,7 @@ const EDITORJS_TOOLS = {
     config: {
       placeholder: PLACEHOLDER_MSG,
     },
-    tunes: ['textAlign', 'indentTune'],
+    tunes: ['textAlign', 'textVariant', 'indentTune'],
   },
   header: {
     class: Header,
@@ -110,7 +67,7 @@ const EDITORJS_TOOLS = {
       defaultLevel: 2,
       placeholder: 'Heading...',
     },
-    tunes: ['textAlign', 'indentTune'],
+    tunes: ['textAlign', 'textVariant', 'indentTune'],
   },
   list: {
     class: NestedList,
@@ -120,13 +77,17 @@ const EDITORJS_TOOLS = {
     },
     tunes: [],
   },
-  // embed: Embed,
   embed: {
+    class: Embed,
+  },
+  linkTool: {
     class: LinkTool,
     config: {
-      endpoint: '/api/editor/link-embed', // Your backend endpoint for url data fetching,
+      endpoint: '/api/editor/link-embed',
     },
   },
+  underline: Underline,
+  strikethrough: Strikethrough,
   link: {
     class: LinkAutocomplete,
     config: {
@@ -143,17 +104,10 @@ const EDITORJS_TOOLS = {
   Math: {
     class: EJLaTeX,
     shortcut: 'CMD+SHIFT+M',
-    tunes: ['textAlign', 'indentTune'],
+    tunes: ['textAlign', 'textVariant', 'indentTune'],
   },
-  changeCase: {
-    class: ChangeCase,
-    config: {
-      showLocaleOption: true, // enable locale case options
-      locale: 'tr', // or ['tr', 'TR', 'tr-TR']
-    },
-  },
-  textVariant: TextVariantTune,
 
+  textVariant: TextVariantTune,
   indentTune: IndentTune,
   textAlign: TextAlignment,
 }
