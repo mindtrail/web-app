@@ -140,16 +140,11 @@ export function isEmailValid(email: string) {
 }
 
 export function validateAndPrependUrl(url: string = '') {
-  try {
-    let parsedUrl = new URL(url)
-    return parsedUrl.href
-  } catch (error) {
-    try {
-      // If used added the URL without protocol, attempt to prepend and parse again
-      let parsedUrl = new URL(`https://${url}`)
-      return parsedUrl.href
-    } catch (error) {
-      return null // Invalid URL
-    }
+  if (!/^https?:\/\//i.test(url)) {
+    url = `https://${url}`
   }
+
+  const regex =
+    /^(https?:\/\/)?[\w-]+(\.[\w-]+)*\.[\w-]{2,}([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/i
+  return regex.test(url) ? url : null
 }
