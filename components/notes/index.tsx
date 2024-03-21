@@ -21,7 +21,7 @@ export function NotesComponent() {
 
   return (
     <div id='notes' className='flex flex-col gap-8 flex-1 py-12 px-16 '>
-      <Typography variant='h2'>Notes</Typography>
+      <Typography variant='h1'>Notes</Typography>
       <Separator />
       <Editor />
     </div>
