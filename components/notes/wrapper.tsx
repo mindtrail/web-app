@@ -24,7 +24,7 @@ function EditorWrapper() {
         },
         onChange: async () => {
           let content = await editor.saver.save()
-          console.log(content)
+          // console.log(content)
         },
       })
       editorRef.current = editor
