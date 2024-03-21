@@ -5,36 +5,44 @@ import DragDrop from 'editorjs-drag-drop'
 
 import { EDITORJS_CONFIG } from './utils'
 
+let count = 0
+let editor: EditorJS | null = null
+
 function EditorWrapper() {
   const editorRef = useRef<EditorJS | null>(null)
   const [editorInstance, setEditorInstance] = useState<EditorJS | null>(null)
 
   // initialize
   useEffect(() => {
-    const editor = new EditorJS({
+    if (editor) {
+      return
+    }
+
+    editor = new EditorJS({
       ...EDITORJS_CONFIG,
       holder: 'editor-wrapper',
       onReady: async () => {
-        // console.log(editorRef.current)
-        setTimeout(() => {
-          setEditorInstance(editor)
-        }, 300)
+        ++count
+        new DragDrop(editor)
+        // setEditorInstance(editor)
       },
       onChange: async (editor) => {
         // let content = await editor.saver.save()
         // console.log(content)
       },
     })
+    editorRef.current = editor
 
+    // cleanup
     return () => {
       if (!editor) {
-        setEditorInstance(null)
         return
       }
+
+      console.log(count, editor)
       editor.isReady
         .then(() => {
-          editor.destroy()
-          setEditorInstance(null)
+          // editor?.destroy()
         })
         .catch((e) => console.error('ERROR editor cleanup', e))
     }
@@ -42,12 +50,8 @@ function EditorWrapper() {
 
   // set reference
   useEffect(() => {
-    if (!editorInstance) {
-      return
-    }
-    console.log(editorInstance)
-    // Send instance to the parent
-    // if (editorRef) {
+    // if (!editorInstance) {
+    // return
     // }
   }, [editorInstance])
 
