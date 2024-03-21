@@ -50,17 +50,84 @@ export const EDITORJS_TOOLS = {
   simpleImage: SimpleImage,
 }
 
+const mockData = [
+  {
+    type: 'header',
+    data: {
+      text: 'A heading',
+      level: 2,
+    },
+  },
+  {
+    type: 'paragraph',
+    data: {
+      text: 'Paragraph with some <b>bold</b>&nbsp;text. And <a href="https://google.com">some</a> <i>italic</i>&nbsp;text.',
+    },
+  },
+  {
+    type: 'paragraph',
+    data: {
+      text: 'A lovely editor I must say.',
+    },
+  },
+  {
+    type: 'paragraph',
+    data: {
+      text: 'Save new data.',
+    },
+  },
+  {
+    type: 'table',
+    data: {
+      content: [
+        ['Col 1', 'Col 2'],
+        ['Cell 1', 'Cell 2'],
+        ['Cell 3', 'Cell 4'],
+      ],
+    },
+  },
+  {
+    type: 'quote',
+    data: {
+      text: 'A quote',
+      caption: 'With a caption',
+      alignment: 'left',
+    },
+  },
+  {
+    type: 'checklist',
+    data: {
+      items: [
+        {
+          text: 'Check 1',
+          checked: false,
+        },
+        {
+          text: 'Check 2',
+          checked: true,
+        },
+        {
+          text: 'Check 3',
+          checked: false,
+        },
+      ],
+    },
+  },
+  {
+    type: 'simpleImage',
+    data: {
+      url: 'https://thedriven.io/wp-content/uploads/2020/01/Model-Y-Side-Blue.jpg',
+      caption: 'Paste image URL',
+      withBorder: false,
+      withBackground: false,
+      stretched: true,
+    },
+  },
+]
+
 const DEFAULT_INITIAL_DATA: OutputData = {
   time: new Date().getTime(),
-  blocks: [
-    {
-      type: 'header',
-      data: {
-        text: 'This is my awesome editor!',
-        level: 1,
-      },
-    },
-  ],
+  blocks: mockData,
 }
 
 export const EDITORJS_CONFIG: EditorConfig = {
