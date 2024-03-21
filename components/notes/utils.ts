@@ -107,6 +107,14 @@ const EDITORJS_TOOLS = {
     shortcut: 'CMD+SHIFT+M',
     tunes: ['textAlign', 'textVariant', 'indentTune'],
   },
+
+  // aiText: {
+  //   // if you do not use TypeScript you need to remove "as unknown as ToolConstructable" construction
+  //   class: AIText as unknown as ToolConstructable,
+  //   config: {
+  //     openaiKey: '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',
+  //   },
+  // },
   textVariant: TextVariantTune,
   indentTune: IndentTune,
   textAlign: TextAlignment,
