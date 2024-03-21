@@ -123,3 +123,9 @@ body {
 .ce-paragraph[data-placeholder]:empty:focus:before {
   opacity: 1 !important;
 }
+
+.cdx-nested-list__item:before {
+  width: 24px;
+  text-align: center;
+  margin-right: 0 !important;
+}
