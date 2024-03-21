@@ -21,7 +21,7 @@ import SimpleImage from '@editorjs/simple-image'
 export const EDITORJS_TOOLS = {
   header: {
     class: Header,
-    inlineToolbar: ['link'],
+    inlineToolbar: true,
   },
   list: {
     class: List,
