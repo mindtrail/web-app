@@ -129,3 +129,18 @@ body {
   text-align: center;
   margin-right: 0 !important;
 }
+
+.ce-inline-toolbar__dropdown-content svg,
+.ce-inline-tool svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ce-inline-tool {
+  padding: 0 2px;
+  color: hsl(220, 3%, 23%);
+}
+
+.ce-inline-tool--active {
+  color: hsl(221.2 83.2% 53.3%);
+}

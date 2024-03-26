@@ -15,7 +15,7 @@ import TextAlignment from 'editorjs-text-alignment-blocktune'
 import TextVariantTune from '@editorjs/text-variant-tune'
 import Strikethrough from '@sotaproject/strikethrough'
 import Underline from '@editorjs/underline'
-// import AIText from './ai-autocomplete'
+import AIText from './ai-autocomplete'
 // import AIText from '@alkhipce/editorjs-aitext'
 
 const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
@@ -108,13 +108,12 @@ const EDITORJS_TOOLS = {
     tunes: ['textAlign', 'textVariant', 'indentTune'],
   },
 
-  // aiText: {
-  //   // if you do not use TypeScript you need to remove "as unknown as ToolConstructable" construction
-  //   class: AIText as unknown as ToolConstructable,
-  //   config: {
-  //     openaiKey: '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',
-  //   },
-  // },
+  aiText: {
+    class: AIText as unknown as ToolConstructable,
+    config: {
+      openaiKey: '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',
+    },
+  },
   textVariant: TextVariantTune,
   indentTune: IndentTune,
   textAlign: TextAlignment,

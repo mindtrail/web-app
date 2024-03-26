@@ -1,59 +1,54 @@
-import { useEffect, useRef, useState, memo } from 'react'
-import EditorJS from '@editorjs/editorjs' // @ts-ignore
-// import Undo from 'editorjs-undo'
+import { useEffect, useRef, useState } from 'react'
+import EditorJS, { EditorConfig } from '@editorjs/editorjs'
+// @ts-ignore
 import DragDrop from 'editorjs-drag-drop'
-
 import { EDITORJS_CONFIG } from './utils'
 
-let count = 0
-let editor: EditorJS | null = null
+let instanceNr = 0
 
 function EditorWrapper() {
   const editorRef = useRef<EditorJS | null>(null)
-  const [editorInstance, setEditorInstance] = useState<EditorJS | null>(null)
+  const [val, setValue] = useState('')
 
-  // initialize
+  console.log(1232114)
   useEffect(() => {
-    if (editor) {
+    // Because of react strict mode, the component loads twice, and destroys the editor
+    // on first cleanup. So we skip the initialization in this case.
+    if (process.env.NODE_ENV === 'development' && instanceNr === 0) {
+      instanceNr++
       return
     }
 
-    editor = new EditorJS({
+    const EditorOpts: EditorConfig = {
       ...EDITORJS_CONFIG,
       holder: 'editor-wrapper',
       onReady: async () => {
-        ++count
-        new DragDrop(editor)
+        // new DragDrop(editor)
         // setEditorInstance(editor)
       },
-      onChange: async (editor) => {
-        // let content = await editor.saver.save()
-        // console.log(content)
+      onChange: async (api) => {
+        // Handle change if needed
+        console.log(await api.saver.save())
       },
-    })
-    editorRef.current = editor
+    }
 
-    // cleanup
+    editorRef.current = new EditorJS(EditorOpts)
+
     return () => {
-      if (!editor) {
-        return
+      if (editorRef.current) {
+        try {
+          editorRef.current?.destroy()
+        } catch (e) {
+          console.error(e)
+        } finally {
+          console.log(333)
+          // reset the count and ref
+          instanceNr = 0
+          editorRef.current = null
+        }
       }
-
-      console.log(count, editor)
-      editor.isReady
-        .then(() => {
-          // editor?.destroy()
-        })
-        .catch((e) => console.error('ERROR editor cleanup', e))
     }
   }, [])
-
-  // set reference
-  useEffect(() => {
-    // if (!editorInstance) {
-    // return
-    // }
-  }, [editorInstance])
 
   return <div id='editor-wrapper' className='h-full' />
 }
