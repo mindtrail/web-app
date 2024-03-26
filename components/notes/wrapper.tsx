@@ -59,7 +59,16 @@ export default function EditorWrapper() {
     }))
   }
 
-  const editor = useCreateBlockNote({ ...EDITOR_OPTIONS, schema })
+  const editor = useCreateBlockNote({
+    ...EDITOR_OPTIONS,
+    schema,
+    placeholders: {
+      default: 'Enter text, or pres "space" for AI, "/" for commands',
+      heading: 'Heading',
+      bulletListItem: 'List',
+      numberedListItem: 'List',
+    },
+  })
   const { theme } = useTheme()
 
   // Stores the selected blocks as an array of Block objects.
