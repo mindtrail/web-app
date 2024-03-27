@@ -10,7 +10,7 @@ import { Typography } from '@/components/typography'
 // import { Separator } from '@/components/ui/separator'
 
 // This will crash if rendered server side and this solves it
-const Editor = dynamic(() => import('./wrapper'), { ssr: false })
+const Editor = dynamic(() => import('./editor'), { ssr: false })
 
 export function NotesComponent() {
   const [editor, setEditor] = useState(null)

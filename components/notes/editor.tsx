@@ -63,7 +63,7 @@ export default function EditorWrapper() {
     ...EDITOR_OPTIONS,
     schema,
     placeholders: {
-      default: 'Enter text, or pres "space" for AI, "/" for commands',
+      default: "Write something, or press 'space' for AI, '/' for commands",
       heading: 'Heading',
       bulletListItem: 'List',
       numberedListItem: 'List',
@@ -114,7 +114,6 @@ export default function EditorWrapper() {
       setBlocks([editor.getTextCursorPosition().block as Block])
     }
 
-    console.log(selection, textCursorPosition)
   }
 
   const editorTheme = useMemo(() => {
