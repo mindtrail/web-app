@@ -1,46 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from 'next-themes'
 
+import { Block, BlockNoteSchema, defaultInlineContentSpecs } from '@blocknote/core'
+import { BlockNoteView, useCreateBlockNote } from '@blocknote/react'
+
+import { DEFAULT_EDITOR_OPTIONS } from './utils'
+
+import { CustomSuggestionMenus, customSuggestionSchema } from './custom/suggestion-menu'
+import { CustomSideMenu } from './custom/side-menu'
+
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/react/style.css'
-import {
-  Block,
-  BlockNoteSchema,
-  defaultInlineContentSpecs,
-  filterSuggestionItems,
-} from '@blocknote/core'
-
-import {
-  BlockColorsItem,
-  BlockNoteView,
-  DragHandleMenu,
-  DragHandleMenuItem,
-  BlockTypeSelect,
-  RemoveBlockItem,
-  SideMenu,
-  SideMenuController,
-  useCreateBlockNote,
-  DefaultReactSuggestionItem,
-  SuggestionMenuController,
-  SuggestionMenuItem,
-  getFormattingToolbarItems,
-  getDefaultReactSlashMenuItems,
-} from '@blocknote/react'
-
-import { Separator } from '@/components/ui/separator'
-import { DEFAULT_EDITOR_OPTIONS } from './utils'
-import { MentionSchema, getMentionMenuItems } from './mention'
-import { HashTagSchema, getHashtagsMenuItems } from './hashtag'
 
 export default function EditorWrapper() {
   const { theme } = useTheme()
 
   const schema = BlockNoteSchema.create({
-    inlineContentSpecs: {
-      ...defaultInlineContentSpecs,
-      mention: MentionSchema,
-      hashtag: HashTagSchema,
-    },
+    inlineContentSpecs: customSuggestionSchema,
   })
 
   const editor = useCreateBlockNote({
@@ -110,44 +86,8 @@ export default function EditorWrapper() {
       onSelectionChange={onSelectionChange}
       sideMenu={false}
     >
-      <SideMenuController
-        sideMenu={(props) => (
-          <SideMenu
-            {...props}
-            dragHandleMenu={(props) => (
-              <DragHandleMenu {...props} data-theming-mindtrail-demo='true'>
-                <BlockColorsItem {...props}>Colors</BlockColorsItem>
-                {/* Item which resets the hovered block's type. */}
-                <DragHandleMenuItem
-                  onClick={() => {
-                    editor.updateBlock(props.block, { type: 'paragraph' })
-                  }}
-                  className='width-64'
-                >
-                  Change Type
-                </DragHandleMenuItem>
-                {/* <BlockTypeSelect>Change Type</BlockTypeSelect> */}
-                <Separator />
-                <RemoveBlockItem {...props}>Delete</RemoveBlockItem>
-              </DragHandleMenu>
-            )}
-          />
-        )}
-      />
-      <SuggestionMenuController
-        triggerCharacter={'@'}
-        getItems={async (query) =>
-          // Gets the mentions menu items
-          filterSuggestionItems(getMentionMenuItems(editor), query)
-        }
-      />
-      <SuggestionMenuController
-        triggerCharacter={'#'}
-        getItems={async (query) =>
-          // Gets the mentions menu items
-          filterSuggestionItems(getHashtagsMenuItems(editor), query)
-        }
-      />
+      <CustomSideMenu editor={editor} />
+      <CustomSuggestionMenus editor={editor} />
     </BlockNoteView>
   )
 }

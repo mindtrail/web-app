@@ -1,5 +1,5 @@
-import { PartialBlock } from '@blocknote/core' // @ts-ignore
-import AIText from './ai-autocomplete'
+import { PartialBlock } from '@blocknote/core'
+// import AIText from './ai-autocomplete'
 // import AIText from '@alkhipce/editorjs-aitext'
 
 const initialContent: PartialBlock[] = [
