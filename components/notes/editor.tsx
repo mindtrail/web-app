@@ -21,6 +21,8 @@ import {
   useCreateBlockNote,
   DefaultReactSuggestionItem,
   SuggestionMenuController,
+  getFormattingToolbarItems,
+  getDefaultReactSlashMenuItems,
 } from '@blocknote/react'
 
 import { Separator } from '@/components/ui/separator'
