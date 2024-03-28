@@ -1,6 +1,7 @@
 import { BlockNoteEditor } from '@blocknote/core'
 import {
   BlockColorsItem,
+  ColorStyleButton,
   DragHandleMenu,
   DragHandleMenuItem,
   RemoveBlockItem,
@@ -8,6 +9,9 @@ import {
   SideMenuController,
 } from '@blocknote/react'
 
+import { TrashIcon, SymbolIcon } from '@radix-ui/react-icons'
+
+import { ColorPaletteIcon } from '@/components/ui/icons/next-icons'
 import { Separator } from '@/components/ui/separator'
 
 interface CustomSideMenuProps {
@@ -21,19 +25,31 @@ export function CustomSideMenu({ editor }: CustomSideMenuProps) {
           {...props}
           dragHandleMenu={(props) => (
             <DragHandleMenu {...props} data-theming-mindtrail-demo='true'>
-              <BlockColorsItem {...props}>Colors</BlockColorsItem>
+              <BlockColorsItem {...props}>
+                <div className='flex gap-1'>
+                  <ColorPaletteIcon className='w-4 h-4' />
+                  Colors
+                </div>
+              </BlockColorsItem>
               {/* Item which resets the hovered block's type. */}
               <DragHandleMenuItem
                 onClick={() => {
                   editor.updateBlock(props.block, { type: 'paragraph' })
                 }}
-                className='width-64'
               >
-                Change Type
+                <div className='flex gap-1'>
+                  <SymbolIcon className='w-4 h-4' />
+                  Turn into
+                </div>
               </DragHandleMenuItem>
               {/* <BlockTypeSelect>Change Type</BlockTypeSelect> */}
-              <Separator />
-              <RemoveBlockItem {...props}>Delete</RemoveBlockItem>
+              <Separator className='my-2' />
+              <RemoveBlockItem {...props}>
+                <div className='flex gap-1'>
+                  <TrashIcon className='w-4 h-4' />
+                  Delete
+                </div>
+              </RemoveBlockItem>
             </DragHandleMenu>
           )}
         />
