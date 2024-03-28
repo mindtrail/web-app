@@ -9,6 +9,7 @@ import {
   defaultInlineContentSpecs,
   filterSuggestionItems,
 } from '@blocknote/core'
+
 import {
   BlockColorsItem,
   BlockNoteView,
@@ -21,57 +22,29 @@ import {
   useCreateBlockNote,
   DefaultReactSuggestionItem,
   SuggestionMenuController,
+  SuggestionMenuItem,
   getFormattingToolbarItems,
   getDefaultReactSlashMenuItems,
 } from '@blocknote/react'
 
 import { Separator } from '@/components/ui/separator'
-import { EDITOR_OPTIONS } from './utils'
-import { Mention } from './mention'
+import { DEFAULT_EDITOR_OPTIONS } from './utils'
+import { MentionSchema, getMentionMenuItems } from './mention'
 
 export default function EditorWrapper() {
-  // Our schema with inline content specs, which contain the configs and
-  // implementations for inline content  that we want our editor to use.
+  const { theme } = useTheme()
+
   const schema = BlockNoteSchema.create({
     inlineContentSpecs: {
-      // Adds all default inline content.
       ...defaultInlineContentSpecs,
-      // Adds the mention tag.
-      mention: Mention,
+      mention: MentionSchema,
     },
   })
-
-  // Function which gets all users for the mentions menu.
-  const getMentionMenuItems = (
-    editor: typeof schema.BlockNoteEditor,
-  ): DefaultReactSuggestionItem[] => {
-    const users = ['Steve', 'Bob', 'Joe', 'Mike']
-
-    return users.map((user) => ({
-      title: user,
-      onItemClick: () => {
-        editor.insertInlineContent([
-          {
-            type: 'mention',
-            props: { user },
-          },
-          ' ', // add a space after the mention
-        ])
-      },
-    }))
-  }
 
   const editor = useCreateBlockNote({
-    ...EDITOR_OPTIONS,
+    ...DEFAULT_EDITOR_OPTIONS,
     schema,
-    placeholders: {
-      default: "Write something, or press 'space' for AI, '/' for commands",
-      heading: 'Heading',
-      bulletListItem: 'List',
-      numberedListItem: 'List',
-    },
   })
-  const { theme } = useTheme()
 
   // Stores the selected blocks as an array of Block objects.
   const [blocks, setBlocks] = useState<Block[]>([])
@@ -115,7 +88,6 @@ export default function EditorWrapper() {
     } else {
       setBlocks([editor.getTextCursorPosition().block as Block])
     }
-
   }
 
   const editorTheme = useMemo(() => {

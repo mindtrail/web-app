@@ -100,8 +100,14 @@ const initialContent: PartialBlock[] = [
 ]
 
 const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
-export const EDITOR_OPTIONS = {
+export const DEFAULT_EDITOR_OPTIONS = {
   initialContent,
+  placeholders: {
+    default: "Write something, or press 'space' for AI, '/' for commands",
+    heading: 'Heading',
+    bulletListItem: 'List',
+    numberedListItem: 'List',
+  },
   uploadFile: async (file: File): Promise<string> => {
     console.log('file', file)
     const result = await new Promise((resolve, reject) => {
