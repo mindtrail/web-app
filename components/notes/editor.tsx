@@ -30,6 +30,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { DEFAULT_EDITOR_OPTIONS } from './utils'
 import { MentionSchema, getMentionMenuItems } from './mention'
+import { HashTagSchema, getHashtagsMenuItems } from './hashtag'
 
 export default function EditorWrapper() {
   const { theme } = useTheme()
@@ -38,6 +39,7 @@ export default function EditorWrapper() {
     inlineContentSpecs: {
       ...defaultInlineContentSpecs,
       mention: MentionSchema,
+      hashtag: HashTagSchema,
     },
   })
 
@@ -113,13 +115,14 @@ export default function EditorWrapper() {
           <SideMenu
             {...props}
             dragHandleMenu={(props) => (
-              <DragHandleMenu {...props}>
+              <DragHandleMenu {...props} data-theming-mindtrail-demo='true'>
                 <BlockColorsItem {...props}>Colors</BlockColorsItem>
                 {/* Item which resets the hovered block's type. */}
                 <DragHandleMenuItem
                   onClick={() => {
                     editor.updateBlock(props.block, { type: 'paragraph' })
                   }}
+                  className='width-64'
                 >
                   Change Type
                 </DragHandleMenuItem>
@@ -136,6 +139,13 @@ export default function EditorWrapper() {
         getItems={async (query) =>
           // Gets the mentions menu items
           filterSuggestionItems(getMentionMenuItems(editor), query)
+        }
+      />
+      <SuggestionMenuController
+        triggerCharacter={'#'}
+        getItems={async (query) =>
+          // Gets the mentions menu items
+          filterSuggestionItems(getHashtagsMenuItems(editor), query)
         }
       />
     </BlockNoteView>
