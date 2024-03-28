@@ -6,8 +6,8 @@ import { BlockNoteView, useCreateBlockNote } from '@blocknote/react'
 
 import { DEFAULT_EDITOR_OPTIONS } from './utils'
 
-import { CustomSuggestionMenus, customSuggestionSchema } from './custom/suggestion-menu'
-import { CustomSideMenu } from './custom/side-menu'
+import { CustomSuggestionMenus, customSuggestionSchema } from './inline-suggestion-menu'
+import { CustomSideMenu } from './side-menu'
 
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/react/style.css'
