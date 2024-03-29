@@ -1,4 +1,6 @@
 import '@/styles/globals.css'
+import "@/styles/prosemirror.css";
+
 import { Metadata, Viewport } from 'next'
 
 import { Providers } from '@/context/providers'

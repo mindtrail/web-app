@@ -1,6 +1,5 @@
 // @ts-nocheck
 import OpenAI from 'openai'
-import Paragraph from '@editorjs/paragraph'
 
 function debounce(func: any, timeout = 1000) {
   let timer: any

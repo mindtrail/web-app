@@ -72,6 +72,7 @@
     "next-auth": "^4.24.4",
     "next-themes": "^0.2.1",
     "nodemailer": "^6.9.7",
+    "novel": "^0.3.0",
     "openai": "^4.29.2",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "3.4.120",
@@ -94,6 +95,7 @@
     "socket.io-client": "^4.7.2",
     "srt-parser-2": "^1.2.3",
     "stream": "^0.0.2",
+    "use-debounce": "^10.0.0",
     "utf-8-validate": "^6.0.3",
     "zod": "^3.22.4"
   },
