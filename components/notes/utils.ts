@@ -1,8 +1,7 @@
-import { PartialBlock } from '@blocknote/core' // @ts-ignore
 import AIText from './ai-autocomplete'
 // import AIText from '@alkhipce/editorjs-aitext'
 
-const initialContent: PartialBlock[] = [
+const initialContent = [
   {
     type: 'paragraph',
     content: 'Welcome to this demo!',
