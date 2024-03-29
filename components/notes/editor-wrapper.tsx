@@ -5,23 +5,25 @@ import { useTheme } from 'next-themes'
 import { useDebouncedCallback } from 'use-debounce'
 
 import {
-  EditorBubble,
-  EditorBubbleItem,
+  EditorRoot,
   EditorCommand,
   EditorCommandItem,
+  EditorCommandEmpty,
   EditorContent,
-  EditorRoot,
-  JSONContent,
-  EditorInstance,
+  type JSONContent,
+  EditorCommandList,
+  EditorBubble,
 } from 'novel'
 
+import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
+
 import { Separator } from '@/components/ui/separator'
-import { DEFAULT_EDITOR_OPTIONS } from './utils'
+import { defaultValue } from './utils'
 
 export default function EditorWrapper() {
   const { theme } = useTheme()
 
-  const [content, setContent] = useState<JSONContent | undefined>()
+  const [content, setContent] = useState<JSONContent>(defaultValue)
   const [saveStatus, setSaveStatus] = useState('Unsaved')
 
   console.log(content)
@@ -35,7 +37,7 @@ export default function EditorWrapper() {
   return (
     <EditorRoot>
       {/* @ts-ignore */}
-      <EditorContent>
+      <EditorContent initialContent={content}>
         {/* <EditorCommand>
           <EditorCommandItem onCommand={() => {}} />
         </EditorCommand>

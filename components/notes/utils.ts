@@ -1,132 +1,95 @@
-import AIText from './ai-autocomplete'
-// import AIText from '@alkhipce/editorjs-aitext'
-
-const initialContent = [
-  {
-    type: 'paragraph',
-    content: 'Welcome to this demo!',
-  },
-  {
-    type: 'paragraph',
-  },
-  {
-    type: 'paragraph',
-    content: [
-      {
-        type: 'text',
-        text: 'Blocks:',
-        styles: { bold: true },
-      },
-    ],
-  },
-  {
-    type: 'paragraph',
-    content: 'Paragraph',
-  },
-  {
-    type: 'heading',
-    content: 'Heading',
-  },
-  {
-    type: 'bulletListItem',
-    content: 'Bullet List Item',
-  },
-  {
-    type: 'numberedListItem',
-    content: 'Numbered List Item',
-  },
-  {
-    type: 'image',
-  },
-  {
-    type: 'table',
-    content: {
-      type: 'tableContent',
-      rows: [
+export const defaultValue = {
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      content: [
         {
-          cells: ['Table Cell', 'Table Cell', 'Table Cell'],
-        },
-        {
-          cells: ['Table Cell', 'Table Cell', 'Table Cell'],
-        },
-        {
-          cells: ['Table Cell', 'Table Cell', 'Table Cell'],
+          type: 'text',
+          text: 'This is an example for the editor',
         },
       ],
     },
-  },
-  {
-    type: 'paragraph',
-  },
-  {
-    type: 'paragraph',
-    content: [
-      {
-        type: 'text',
-        text: 'Inline Content:',
-        styles: { bold: true },
+    {
+      type: 'heading',
+      attrs: {
+        level: 1,
       },
-    ],
-  },
-  {
-    type: 'paragraph',
-    content: [
-      {
-        type: 'text',
-        text: 'Styled Text',
-        styles: {
-          bold: true,
-          italic: true,
-          textColor: 'red',
-          backgroundColor: 'blue',
+      content: [
+        {
+          type: 'text',
+          text: 'H1',
         },
+      ],
+    },
+    {
+      type: 'heading',
+      attrs: {
+        level: 2,
       },
-      {
-        type: 'text',
-        text: ' ',
-        styles: {},
+      content: [
+        {
+          type: 'text',
+          text: 'H2',
+        },
+      ],
+    },
+    {
+      type: 'heading',
+      attrs: {
+        level: 3,
       },
-      {
-        type: 'link',
-        content: 'Link',
-        href: 'https://www.blocknotejs.org',
+      content: [
+        {
+          type: 'text',
+          text: 'H3',
+        },
+      ],
+    },
+    {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: 'text',
+        },
+      ],
+    },
+    {
+      type: 'bulletList',
+      attrs: {
+        tight: true,
       },
-    ],
-  },
-  {
-    type: 'paragraph',
-  },
-]
-
-const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
-export const DEFAULT_EDITOR_OPTIONS = {
-  initialContent,
-  placeholders: {
-    default: "Write something, or press 'space' for AI, '/' for commands",
-    heading: 'Heading',
-    bulletListItem: 'List',
-    numberedListItem: 'List',
-  },
-  uploadFile: async (file: File): Promise<string> => {
-    console.log('file', file)
-    const result = await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const res = {
-          success: true,
-          file: {
-            url: URL.createObjectURL(file),
-            name: file.name,
-            size: file.size,
-            type: file.type,
-          },
-        }
-
-        resolve(res)
-      }, 1000)
-
-      console.log(result)
-    })
-
-    return 'true'
-  },
+      content: [
+        {
+          type: 'listItem',
+          content: [
+            {
+              type: 'paragraph',
+              content: [
+                {
+                  type: 'text',
+                  text: 'new idea',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'listItem',
+          content: [
+            {
+              type: 'paragraph',
+              content: [
+                {
+                  type: 'text',
+                  text: 'idea',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
 }
