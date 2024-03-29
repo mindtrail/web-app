@@ -32,29 +32,9 @@ const initialContent: PartialBlock[] = [
     type: 'bulletListItem',
     content: 'Bullet List Item',
   },
-  {
-    type: 'numberedListItem',
-    content: 'Numbered List Item',
-  },
+
   {
     type: 'image',
-  },
-  {
-    type: 'table',
-    content: {
-      type: 'tableContent',
-      rows: [
-        {
-          cells: ['Table Cell', 'Table Cell', 'Table Cell'],
-        },
-        {
-          cells: ['Table Cell', 'Table Cell', 'Table Cell'],
-        },
-        {
-          cells: ['Table Cell', 'Table Cell', 'Table Cell'],
-        },
-      ],
-    },
   },
   {
     type: 'paragraph',

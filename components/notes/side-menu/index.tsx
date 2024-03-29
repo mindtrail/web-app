@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { BlockNoteEditor } from '@blocknote/core'
 import {
   useSelectedBlocks,
@@ -9,7 +9,6 @@ import {
   RemoveBlockItem,
   SideMenu,
   SideMenuController,
-  useEditorSelectionChange,
 } from '@blocknote/react'
 
 import { TrashIcon, SymbolIcon } from '@radix-ui/react-icons'
@@ -43,15 +42,12 @@ export function CustomSideMenu({ editor }: CustomSideMenuProps) {
 
   const updateSelectedBlocks = useCallback(
     (block: any) => {
-      console.log(block)
       if (!targetBlock) {
         return
       }
 
       // If the targetBlock is not among the selected blocks, only highlight it,
       // and change the selection to it
-      console.log(selectedBlocks, targetBlock)
-
       if (!selectedBlocks.find((block) => block.id === targetBlock.id)) {
         // selector for the id and a specific classname
         return
@@ -61,7 +57,7 @@ export function CustomSideMenu({ editor }: CustomSideMenuProps) {
       // editor.focus()
       console.log(state)
     },
-    [editor, targetBlock, state],
+    [targetBlock, selectedBlocks],
   )
 
   if (!targetBlock) {
