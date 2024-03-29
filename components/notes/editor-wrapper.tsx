@@ -25,7 +25,7 @@ export default function EditorWrapper() {
   })
 
   // Stores the selected blocks as an array of Block objects.
-  const [blocks, setBlocks] = useState<Block[]>([])
+  // const [blocks, setBlocks] = useState<Block[]>([])
 
   const addContent = (content: string) => {
     // const block = editor.getBlock(blockIdentifier);
@@ -62,9 +62,9 @@ export default function EditorWrapper() {
     // instead.
     if (selection !== undefined) {
       // console.log(selection)
-      setBlocks(selection.blocks as Block[])
+      // setBlocks(selection.blocks as Block[])
     } else {
-      setBlocks([editor.getTextCursorPosition().block as Block])
+      // setBlocks([editor.getTextCursorPosition().block as Block])
     }
   }
 

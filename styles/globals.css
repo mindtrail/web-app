@@ -98,3 +98,7 @@ body {
 .bn-drag-handle-menu {
   width: 128px !important;
 }
+
+.menu-selection-highlight {
+  background: #b4d5fe !important;
+}
