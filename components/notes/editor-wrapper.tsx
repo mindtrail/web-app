@@ -61,7 +61,7 @@ export default function EditorWrapper() {
     // the selection is empty, store the block containing the text cursor
     // instead.
     if (selection !== undefined) {
-      console.log(selection)
+      // console.log(selection)
       setBlocks(selection.blocks as Block[])
     } else {
       setBlocks([editor.getTextCursorPosition().block as Block])

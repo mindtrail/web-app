@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { BlockNoteEditor } from '@blocknote/core'
 import {
   BlockColorsItem,
@@ -5,20 +6,30 @@ import {
   RemoveBlockItem,
   SideMenu,
   SideMenuController,
-  DragHandleMenuItem,
+  useSelectedBlocks,
 } from '@blocknote/react'
 
 import { TrashIcon, SymbolIcon } from '@radix-ui/react-icons'
-
-import { ColorPaletteIcon } from '@/components/ui/icons/next-icons'
 import { Separator } from '@/components/ui/separator'
 
 import { TurnIntoMenuItem } from './turn-into'
+import { ColorIcon } from './color-icon'
 
 interface CustomSideMenuProps {
   editor: BlockNoteEditor<any, any, any>
 }
 export function CustomSideMenu({ editor }: CustomSideMenuProps) {
+  const selectedBlocks = useSelectedBlocks()
+  console.log(selectedBlocks)
+
+  const selectionContainsImgOrTablse = useMemo(
+    () =>
+      selectedBlocks.find((block) => block.type === 'image' || block.type === 'table'),
+    [selectedBlocks],
+  )
+
+  console.log(selectionContainsImgOrTablse)
+
   return (
     <SideMenuController
       sideMenu={(props) => (
@@ -28,12 +39,16 @@ export function CustomSideMenu({ editor }: CustomSideMenuProps) {
             <DragHandleMenu {...props} data-theming-mindtrail-demo='true'>
               <BlockColorsItem {...props}>
                 <div className='flex gap-1 '>
-                  <ColorPaletteIcon className='w-4 h-4' />
+                  <ColorIcon
+                    textColor={'currentTextColor'}
+                    backgroundColor={'currentBackgroundColor'}
+                    size={20}
+                  />
                   Colors
                 </div>
               </BlockColorsItem>
 
-              {props.block.type !== 'image' && (
+              {!selectionContainsImgOrTablse && (
                 <TurnIntoMenuItem {...props}>
                   <div className='flex gap-1'>
                     <SymbolIcon className='w-4 h-4' />
