@@ -13,17 +13,18 @@ import {
   type JSONContent,
   EditorCommandList,
   EditorBubble,
+  EditorInstance,
 } from 'novel'
 
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
 
 import { Separator } from '@/components/ui/separator'
-import { defaultValue } from './utils'
+import { defaultEditorContent } from './utils'
 
 export default function EditorWrapper() {
   const { theme } = useTheme()
 
-  const [content, setContent] = useState<JSONContent>(defaultValue)
+  const [content, setContent] = useState<JSONContent>(defaultEditorContent)
   const [saveStatus, setSaveStatus] = useState('Unsaved')
 
   console.log(content)
