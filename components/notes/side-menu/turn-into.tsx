@@ -1,5 +1,6 @@
-import { ReactNode, useCallback, useRef, useState } from 'react'
+import { ReactNode, useCallback, useRef, useMemo, useState } from 'react'
 import {
+  checkDefaultBlockTypeInSchema,
   BlockSchema,
   DefaultBlockSchema,
   DefaultInlineContentSchema,
@@ -11,6 +12,10 @@ import {
   useBlockNoteEditor,
   DragHandleMenuItem,
   DragHandleMenuProps,
+  blockTypeSelectItems,
+  useSelectedBlocks,
+  BlockTypeSelectItem,
+  useEditorContentOrSelectionChange,
 } from '@blocknote/react'
 
 import { Box, Menu } from '@mantine/core'
@@ -32,6 +37,7 @@ export const TurnIntoMenuItem = <
   const editor = useBlockNoteEditor<BSchema, I, S>()
 
   const [opened, setOpened] = useState(false)
+  const selectedBlocks = useSelectedBlocks()
 
   const menuCloseTimer = useRef<ReturnType<typeof setTimeout> | undefined>()
 
@@ -51,7 +57,38 @@ export const TurnIntoMenuItem = <
     setOpened(true)
   }, [])
 
-  console.log(1111, props.block.type)
+  const [block, setBlock] = useState(editor.getTextCursorPosition().block)
+
+  const fullItems = useMemo(() => {
+    const onClick = (item: BlockTypeSelectItem) => {
+      editor.focus()
+
+      for (const block of selectedBlocks) {
+        editor.updateBlock(block, {
+          type: item.type as any,
+          props: item.props as any,
+        })
+      }
+    }
+
+    const filteredItems = blockTypeSelectItems.filter((item) =>
+      checkDefaultBlockTypeInSchema(item.type as keyof DefaultBlockSchema, editor),
+    )
+
+    return filteredItems.map((item) => ({
+      text: item.name,
+      icon: item.icon,
+      onClick: () => onClick(item),
+      // @ts-ignore
+      isSelected: item.isSelected(block),
+    }))
+  }, [block, editor, selectedBlocks])
+
+  useEditorContentOrSelectionChange(() => {
+    setBlock(editor.getTextCursorPosition().block)
+  }, editor)
+
+  console.log(selectedBlocks)
 
   return (
     <DragHandleMenuItem
