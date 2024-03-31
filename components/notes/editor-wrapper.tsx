@@ -20,12 +20,16 @@ import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
 
 import { Separator } from '@/components/ui/separator'
 import { defaultEditorContent } from './utils'
+import { defaultExtensions } from './extensions'
+import { slashCommand } from './slash-command'
 
 export default function EditorWrapper() {
   const { theme } = useTheme()
 
   const [content, setContent] = useState<JSONContent>(defaultEditorContent)
   const [saveStatus, setSaveStatus] = useState('Unsaved')
+
+  const extensions = [...defaultExtensions, slashCommand]
 
   console.log(content)
 
@@ -38,7 +42,11 @@ export default function EditorWrapper() {
   return (
     <EditorRoot>
       {/* @ts-ignore */}
-      <EditorContent initialContent={content}>
+      <EditorContent
+        initialContent={content}
+        extensions={extensions}
+        onSave={debouncedUpdates}
+      >
         {/* <EditorCommand>
           <EditorCommandItem onCommand={() => {}} />
         </EditorCommand>
