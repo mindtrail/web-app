@@ -7,6 +7,7 @@ import { removeAIHighlight } from 'novel/extensions'
 import { Button } from '@/components/ui/button'
 import { MagicIcon } from '@/components/ui/icons/custom'
 import { Separator } from '@/components/ui/separator'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components//ui/popover'
 
 import { AISelector } from '../generative/ai-selector'
 import { NodeSelector } from './selectors/node-selector'
@@ -20,7 +21,7 @@ interface InlineToolbarProps {
 export const InlineToolbar = (props: InlineToolbarProps) => {
   const { children } = props
   const { editor } = useEditor()
-  const toolbarRef = useRef<HTMLDivElement>(null)
+  // const toolbarRef = useRef<HTMLDivElement>(null)
 
   const [openNode, setOpenNode] = useState(false)
   const [openColor, setOpenColor] = useState(false)
@@ -39,23 +40,34 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
     <EditorBubble
       tippyOptions={{
         // appendTo: document.body, // @TODO: check the warning when removing this from Tippy.js
-        placement: 'top', // openAIEditor ? 'bottom-start' :
+        placement: openAIEditor ? 'bottom-start' : 'top', //  :
         onHidden: () => {
           setOpenAIEditor(false)
           editor.chain().unsetHighlight().run()
         },
       }}
-      className='flex w-fit max-w-[90vw] rounded-md border border-muted bg-background shadow-xl'
+      className={`flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl ${openAIEditor && 'opacity-0'}`}
     >
-      <Button
-        className='gap-1 rounded-none text-purple-500'
-        variant='ghost'
-        onClick={() => setOpenAIEditor(true)}
-        size='sm'
-      >
-        <MagicIcon className='h-5 w-5' />
-        Ask AI
-      </Button>
+      <Popover modal={true} open={openAIEditor} onOpenChange={setOpenAIEditor}>
+        <PopoverTrigger
+          asChild
+          className='gap-2 rounded-none border-none hover:bg-accent focus:ring-0'
+        >
+          <Button
+            className={`gap-1 rounded-none text-purple-500`}
+            variant='ghost'
+            onClick={() => setOpenAIEditor(true)}
+            size='sm'
+          >
+            <MagicIcon className='h-5 w-5' />
+            Ask AI
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent sideOffset={-35} align='start' className='w-48 p-1'>
+          <AISelector onOpenChange={setOpenAIEditor} />
+        </PopoverContent>
+      </Popover>
+
       <Separator orientation='vertical' />
       <NodeSelector open={openNode} onOpenChange={setOpenNode} />
       <Separator orientation='vertical' />
@@ -66,8 +78,6 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
       <Separator orientation='vertical' />
       <ColorSelector open={openColor} onOpenChange={setOpenColor} />
       {children}
-
-      {openAIEditor && <AISelector open={openAIEditor} onOpenChange={setOpenAIEditor} />}
     </EditorBubble>
   )
 }
