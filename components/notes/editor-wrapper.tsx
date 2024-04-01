@@ -21,17 +21,13 @@ const extensions = [...defaultExtensions, slashCommand]
 export default function EditorWrapper() {
   const [content, setContent] = useState<JSONContent>(defaultEditorContent)
 
-  const [openAI, setOpenAI] = useState(false)
-
-  // console.log(content)
   useEffect(() => {
     const content = window.localStorage.getItem('novel-content')
-
     if (content) {
-      setContent(JSON.parse(content))
-    } else {
-      setContent(defaultEditorContent)
+      return setContent(JSON.parse(content))
     }
+
+    setContent(defaultEditorContent)
   }, [])
 
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
