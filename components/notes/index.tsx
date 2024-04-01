@@ -18,7 +18,7 @@ export function NotesComponent() {
         <Typography variant='h1'>Notes</Typography>
       </div>
       <Separator />
-      <div className='py-8  overflow-auto'>
+      <div className='py-8 px-16 overflow-auto'>
         <Editor />
       </div>
     </div>
