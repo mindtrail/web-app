@@ -14,7 +14,15 @@ import {
 import { cx } from 'class-variance-authority'
 
 const aiHighlight = AIHighlight
-const placeholder = Placeholder
+const placeholder = Placeholder.configure({
+  placeholder: ({ node }) => {
+    if (node.type.name === 'heading') {
+      return `Heading ${node.attrs.level}`
+    }
+    return "Write something, or press 'space' for AI, '/' for commands."
+  },
+  includeChildren: false,
+})
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
