@@ -14,8 +14,8 @@ import { Button } from '@/components/ui/button'
 
 import { MagicIcon, CrazySpinnerIcon } from '@/components/ui/icons/custom'
 
-import AISelectorCommands from './ai-selector-commands'
-import AICompletionCommands from './ai-completion-command'
+import { AISelectorCommands } from './ai-selector-commands'
+import { AICompletionCommands } from './ai-completion-command'
 //TODO: I think it makes more sense to create a custom Tiptap extension for this functionality https://tiptap.dev/docs/editor/ai/introduction
 
 interface AISelectorProps {

@@ -11,7 +11,7 @@ interface GenerativeMenuSwitchProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
-const GenerativeMenuSwitch = ({
+export const GenerativeMenuSwitch = ({
   children,
   open,
   onOpenChange,
@@ -55,5 +55,3 @@ const GenerativeMenuSwitch = ({
     </EditorBubble>
   )
 }
-
-export default GenerativeMenuSwitch
