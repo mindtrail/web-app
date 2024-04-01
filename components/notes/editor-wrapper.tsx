@@ -72,8 +72,8 @@ export default function EditorWrapper() {
           onUpdate={onUpdate}
           slotAfter={<ImageResizer />}
         >
-          <InlineToolbar />
           <SuggestionMenuCommand />
+          <InlineToolbar />
         </EditorContent>
       </EditorRoot>
     </div>
