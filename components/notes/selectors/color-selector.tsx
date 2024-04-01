@@ -1,5 +1,5 @@
 import { Check, ChevronDown } from 'lucide-react'
-import { EditorBubbleItem, useEditor, EditorInstance } from 'novel'
+import { EditorBubbleItem, useEditor } from 'novel'
 
 import { PopoverTrigger, Popover, PopoverContent } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
