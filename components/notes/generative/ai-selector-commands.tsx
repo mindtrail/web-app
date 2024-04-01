@@ -1,5 +1,6 @@
-import React from 'react'
-import { CommandGroup, CommandItem, CommandSeparator } from '@/components/ui/command'
+import { useEditor } from 'novel'
+import { getPrevText } from 'novel/extensions'
+
 import {
   ArrowDownWideNarrow,
   CheckCheck,
@@ -7,10 +8,10 @@ import {
   StepForward,
   WrapText,
 } from 'lucide-react'
-import { useEditor } from 'novel'
-import { getPrevText } from 'novel/extensions'
 
-const options = [
+import { CommandGroup, CommandItem, CommandSeparator } from '@/components/ui/command'
+
+const AIActions = [
   {
     value: 'improve',
     label: 'Improve writing',
@@ -38,20 +39,22 @@ interface AISelectorCommandsProps {
   onSelect: (value: string, option: string) => void
 }
 
-const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
+export const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
   const { editor } = useEditor()
   if (!editor) return null
+
+  const handleSelect = (value: string) => {
+    const slice = editor.state.selection.content()
+    const text = editor.storage.markdown.serializer.serialize(slice.content)
+    onSelect(text, value)
+  }
 
   return (
     <>
       <CommandGroup heading='Edit or review selection'>
-        {options.map((option) => (
+        {AIActions.map((option) => (
           <CommandItem
-            onSelect={(value) => {
-              const slice = editor.state.selection.content()
-              const text = editor.storage.markdown.serializer.serialize(slice.content)
-              onSelect(text, value)
-            }}
+            onSelect={handleSelect}
             className='flex gap-2 px-4'
             key={option.value}
             value={option.value}
@@ -78,5 +81,3 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
     </>
   )
 }
-
-export default AISelectorCommands
