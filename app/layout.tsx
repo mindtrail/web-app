@@ -1,8 +1,11 @@
 import '@/styles/globals.css'
+import '@/styles/prosemirror.css'
+
 import { Metadata, Viewport } from 'next'
 
 import { Providers } from '@/context/providers'
 import { Toaster } from '@/components/ui/toaster'
+import { Toaster as SonnerToaster } from '@/components/ui/sonner'
 import { LeftSidebar } from '@/components/left-sidebar'
 import { SidebarRight } from '@/components/sidebar-right'
 import { getServerSession } from 'next-auth'
@@ -68,7 +71,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             {/* <SidebarRight /> */}
           </main>
           <TailwindIndicator />
+          {/* @TODO: keep only one of the toasters -> Sonner seems really nice */}
           <Toaster />
+          <SonnerToaster />
         </Providers>
       </body>
     </html>
