@@ -34,45 +34,40 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
   }, [openAIEditor, editor])
 
   if (!editor) return null
-  console.log(111)
 
   return (
-    <div ref={toolbarRef} className='1234'>
-      <EditorBubble
-        tippyOptions={{
-          appendTo: document.body,
-          placement: 'top', // openAIEditor ? 'bottom-start' :
-          onHidden: () => {
-            setOpenAIEditor(false)
-            editor.chain().unsetHighlight().run()
-          },
-        }}
-        className='flex w-fit max-w-[90vw] rounded-md border border-muted bg-background shadow-xl'
+    <EditorBubble
+      tippyOptions={{
+        // appendTo: document.body, // @TODO: check the warning when removing this from Tippy.js
+        placement: 'top', // openAIEditor ? 'bottom-start' :
+        onHidden: () => {
+          setOpenAIEditor(false)
+          editor.chain().unsetHighlight().run()
+        },
+      }}
+      className='flex w-fit max-w-[90vw] rounded-md border border-muted bg-background shadow-xl'
+    >
+      <Button
+        className='gap-1 rounded-none text-purple-500'
+        variant='ghost'
+        onClick={() => setOpenAIEditor(true)}
+        size='sm'
       >
-        <Button
-          className='gap-1 rounded-none text-purple-500'
-          variant='ghost'
-          onClick={() => setOpenAIEditor(true)}
-          size='sm'
-        >
-          <MagicIcon className='h-5 w-5' />
-          Ask AI
-        </Button>
-        <Separator orientation='vertical' />
-        <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-        <Separator orientation='vertical' />
+        <MagicIcon className='h-5 w-5' />
+        Ask AI
+      </Button>
+      <Separator orientation='vertical' />
+      <NodeSelector open={openNode} onOpenChange={setOpenNode} />
+      <Separator orientation='vertical' />
 
-        <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-        <Separator orientation='vertical' />
-        <TextButtons />
-        <Separator orientation='vertical' />
-        <ColorSelector open={openColor} onOpenChange={setOpenColor} />
-        {children}
+      <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+      <Separator orientation='vertical' />
+      <TextButtons />
+      <Separator orientation='vertical' />
+      <ColorSelector open={openColor} onOpenChange={setOpenColor} />
+      {children}
 
-        {openAIEditor && (
-          <AISelector open={openAIEditor} onOpenChange={setOpenAIEditor} />
-        )}
-      </EditorBubble>
-    </div>
+      {openAIEditor && <AISelector open={openAIEditor} onOpenChange={setOpenAIEditor} />}
+    </EditorBubble>
   )
 }
