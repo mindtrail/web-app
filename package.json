@@ -47,6 +47,7 @@
     "@react-pdf-viewer/scroll-mode": "^3.12.0",
     "@sotaproject/strikethrough": "^1.0.1",
     "@tanstack/react-table": "^8.11.2",
+    "@upstash/ratelimit": "^1.0.1",
     "@vercel/analytics": "^1.1.1",
     "@vercel/kv": "^0.2.4",
     "@yaireo/tagify": "^4.17.9",
@@ -105,6 +106,7 @@
     "sonner": "^1.4.41",
     "srt-parser-2": "^1.2.3",
     "stream": "^0.0.2",
+    "ts-pattern": "^5.1.0",
     "use-debounce": "^10.0.0",
     "utf-8-validate": "^6.0.3",
     "zod": "^3.22.4"
