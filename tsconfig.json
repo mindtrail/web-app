@@ -14,7 +14,7 @@
       "@/styles/*": ["styles/*"],
       "@/types/*": ["types/*"],
       "@/typography/*": ["components/typography/*"],
-      "@/context/*": ["context/*"],
+      "@/context/*": ["context/*"]
     },
     "typeRoots": ["./node_modules/@types", "./types", "@/types/*"],
     "strict": true,
@@ -22,23 +22,23 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
     "plugins": [
       {
-        "name": "next",
-      },
-    ],
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "migration.ts",
+    "migration.ts"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

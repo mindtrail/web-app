@@ -1,127 +1,231 @@
-// @ts-nocheck
-
-import { EditorConfig, OutputData } from '@editorjs/editorjs' // @ts-ignore
-import Header from '@editorjs/header'
-import NestedList from '@editorjs/nested-list'
-import Paragraph from '@editorjs/paragraph'
-import LinkTool from '@editorjs/link'
-import LinkAutocomplete from '@editorjs/link-autocomplete'
-import Delimiter from '@editorjs/delimiter'
-import SimpleImage from '@editorjs/simple-image'
-import Embed from '@editorjs/embed'
-import EJLaTeX from 'editorjs-latex'
-import IndentTune from 'editorjs-indent-tune'
-import TextAlignment from 'editorjs-text-alignment-blocktune'
-import TextVariantTune from '@editorjs/text-variant-tune'
-import Strikethrough from '@sotaproject/strikethrough'
-import Underline from '@editorjs/underline'
-// import AIText from './ai-autocomplete'
-// import AIText from '@alkhipce/editorjs-aitext'
-
-const PLACEHOLDER_MSG = "Write, press 'space' for AI or '/' for more"
-const mockData = [
-  {
-    type: 'header',
-    data: {
-      text: 'A heading',
-      level: 2,
+export const defaultEditorContent = {
+  type: "doc",
+  content: [
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Introducing Novel" }],
     },
-  },
-  {
-    type: 'paragraph',
-    data: {
-      text: 'Paragraph with some <b>bold</b>&nbsp;text. And <a href="https://google.com">some</a> <i>italic</i>&nbsp;text.',
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          marks: [
+            {
+              type: "link",
+              attrs: {
+                href: "https://github.com/steven-tey/novel",
+                target: "_blank",
+              },
+            },
+          ],
+          text: "Novel",
+        },
+        {
+          type: "text",
+          text: " is a Notion-style WYSIWYG editor with AI-powered autocompletion. Built with ",
+        },
+        {
+          type: "text",
+          marks: [
+            {
+              type: "link",
+              attrs: {
+                href: "https://tiptap.dev/",
+                target: "_blank",
+              },
+            },
+          ],
+          text: "Tiptap",
+        },
+        { type: "text", text: " + " },
+        {
+          type: "text",
+          marks: [
+            {
+              type: "link",
+              attrs: {
+                href: "https://sdk.vercel.ai/docs",
+                target: "_blank",
+              },
+            },
+          ],
+          text: "Vercel AI SDK",
+        },
+        { type: "text", text: "." },
+      ],
     },
-  },
-  {
-    type: 'paragraph',
-    data: {
-      text: 'A lovely editor I must say.',
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Installation" }],
     },
-  },
-  {
-    type: 'paragraph',
-    data: {
-      text: 'Save new data.',
+    {
+      type: "codeBlock",
+      attrs: { language: null },
+      content: [{ type: "text", text: "npm i novel" }],
     },
-  },
-]
-
-const DEFAULT_INITIAL_DATA: OutputData = {
-  time: new Date().getTime(),
-  blocks: mockData,
-}
-
-const EDITORJS_TOOLS = {
-  paragraph: {
-    class: Paragraph,
-    inlineToolbar: true,
-    config: {
-      placeholder: PLACEHOLDER_MSG,
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Usage" }],
     },
-    tunes: ['textAlign', 'textVariant', 'indentTune'],
-  },
-  header: {
-    class: Header,
-    inlineToolbar: true,
-    config: {
-      defaultLevel: 2,
-      placeholder: 'Heading...',
+    {
+      type: "codeBlock",
+      attrs: { language: null },
+      content: [
+        {
+          type: "text",
+          text: 'import { Editor } from "novel";\n\nexport default function App() {\n  return (\n     <Editor />\n  )\n}',
+        },
+      ],
     },
-    tunes: ['textAlign', 'textVariant', 'indentTune'],
-  },
-  list: {
-    class: NestedList,
-    inlineToolbar: true,
-    config: {
-      defaultStyle: 'unordered',
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Features" }],
     },
-    tunes: [],
-  },
-  embed: {
-    class: Embed,
-  },
-  linkTool: {
-    class: LinkTool,
-    config: {
-      endpoint: '/api/editor/link-embed',
+    {
+      type: "orderedList",
+      attrs: { tight: true, start: 1 },
+      content: [
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [{ type: "text", text: "Slash menu & bubble menu" }],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "AI autocomplete (type " },
+                { type: "text", marks: [{ type: "code" }], text: "++" },
+                {
+                  type: "text",
+                  text: " to activate, or select from slash menu)",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Image uploads (drag & drop / copy & paste, or select from slash menu) ",
+                },
+              ],
+            },
+          ],
+        },
+      ],
     },
-  },
-  underline: Underline,
-  strikethrough: Strikethrough,
-  link: {
-    class: LinkAutocomplete,
-    config: {
-      endpoint: '/api/editor/link-autocomplete',
-      queryParam: 'url',
+    {
+      type: "image",
+      attrs: {
+        src: "https://public.blob.vercel-storage.com/pJrjXbdONOnAeZAZ/banner-2wQk82qTwyVgvlhTW21GIkWgqPGD2C.png",
+        alt: "banner.png",
+        title: "banner.png",
+        width: null,
+        height: null,
+      },
     },
-  },
-  simpleImage: {
-    class: SimpleImage,
-    tunes: ['textAlign', 'indentTune'],
-  },
-
-  delimiter: Delimiter,
-  Math: {
-    class: EJLaTeX,
-    shortcut: 'CMD+SHIFT+M',
-    tunes: ['textAlign', 'textVariant', 'indentTune'],
-  },
-
-  // aiText: {
-  //   // if you do not use TypeScript you need to remove "as unknown as ToolConstructable" construction
-  //   class: AIText as unknown as ToolConstructable,
-  //   config: {
-  //     openaiKey: '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',
-  //   },
-  // },
-  textVariant: TextVariantTune,
-  indentTune: IndentTune,
-  textAlign: TextAlignment,
-}
-
-export const EDITORJS_CONFIG: EditorConfig = {
-  autofocus: true,
-  data: DEFAULT_INITIAL_DATA,
-  tools: EDITORJS_TOOLS,
-}
+    { type: "horizontalRule" },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Learn more" }],
+    },
+    {
+      type: "taskList",
+      content: [
+        {
+          type: "taskItem",
+          attrs: { checked: false },
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Star us on " },
+                {
+                  type: "text",
+                  marks: [
+                    {
+                      type: "link",
+                      attrs: {
+                        href: "https://github.com/steven-tey/novel",
+                        target: "_blank",
+                      },
+                    },
+                  ],
+                  text: "GitHub",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "taskItem",
+          attrs: { checked: false },
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Install the " },
+                {
+                  type: "text",
+                  marks: [
+                    {
+                      type: "link",
+                      attrs: {
+                        href: "https://www.npmjs.com/package/novel",
+                        target: "_blank",
+                      },
+                    },
+                  ],
+                  text: "NPM package",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "taskItem",
+          attrs: { checked: false },
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [
+                    {
+                      type: "link",
+                      attrs: {
+                        href: "https://vercel.com/templates/next.js/novel",
+                        target: "_blank",
+                      },
+                    },
+                  ],
+                  text: "Deploy your own",
+                },
+                { type: "text", text: " to Vercel" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
