@@ -3,14 +3,14 @@ import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/typography'
 import Editor from './editor-wrapper'
 
-export function NotesComponent() {
+export default function NotesComponent() {
   return (
     <div id='notes' className='flex flex-col flex-1 h-screen overflow-hidden'>
-      <div className='py-8 px-16'>
+      <div className='py-12 px-16'>
         <Typography variant='h1'>Notes</Typography>
       </div>
       <Separator />
-      <div className='py-8 px-16 overflow-auto'>
+      <div className='py-12 px-16 overflow-auto'>
         <Editor />
       </div>
     </div>
