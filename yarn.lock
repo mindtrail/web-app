@@ -2410,10 +2410,31 @@
     "@typescript-eslint/types" "6.21.0"
     eslint-visitor-keys "^3.4.1"
 
+"@upstash/core-analytics@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@upstash/core-analytics/-/core-analytics-0.0.7.tgz#ef50b8d44a32fcd6cf6bc6d7bf50870266b308d7"
+  integrity sha512-lC2j5efqb1haX/fpTGaPUx1rue1WUkOZBVHDzCB7eMIVsRdFFp4xiHtyH/G9omiR1zj39fU5SCTWFiKJH3KOpw==
+  dependencies:
+    "@upstash/redis" "^1.28.3"
+
+"@upstash/ratelimit@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@upstash/ratelimit/-/ratelimit-1.0.1.tgz#4dcbd5955f903511b2537e218d4d5258878ec63d"
+  integrity sha512-G9LZ7idhlkuYknbUngCB3qzd7QnkK1xDkFG5jRtEJZuOUS5UKJ0UTKbhalCtp39eX2wu2Ubv8W7HCeaJQOWM0A==
+  dependencies:
+    "@upstash/core-analytics" "^0.0.7"
+
 "@upstash/redis@1.24.3":
   version "1.24.3"
   resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.24.3.tgz#0247250f7e26b6923e6ce4f348ce08f7bbdc6222"
   integrity sha512-gw6d4IA1biB4eye5ESaXc0zOlVQI94aptsBvVcTghYWu1kRmOrJFoMFEDCa8p5uzluyYAOFCuY2GWLR6O4ZoIw==
+  dependencies:
+    crypto-js "^4.2.0"
+
+"@upstash/redis@^1.28.3":
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.29.0.tgz#b1f456765fec4929a7fc547238afc5f3cda92683"
+  integrity sha512-kbO5fgMAeUzErnA/SOtaSbAa0dguYhhBT4MZHJ1O8gVl4iK754aC9+rIYY5hsp4nlxeCGfnIDkWpof991c9jjA==
   dependencies:
     crypto-js "^4.2.0"
 
@@ -8101,6 +8122,11 @@ ts-interface-checker@^0.1.9:
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz#784fd3d679722bc103b1b4b8030bcddb5db2a699"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
+
+ts-pattern@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-5.1.0.tgz#a478d108683dda6c4be359103c11294b44b36d49"
+  integrity sha512-sULbgZDTXrcr6WMeuR8gPb+dvNN/fNpxE8GHfosFHPJRPuxHVNtGcEiiNuQa6nxu40/dY6xYdTJmc7MG3w8B5g==
 
 ts-type@>=2:
   version "3.0.1"
