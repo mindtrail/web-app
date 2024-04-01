@@ -1,24 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
-import { EditorRoot, EditorContent, type JSONContent, EditorInstance } from 'novel'
+import { EditorRoot, EditorContent, JSONContent, EditorInstance } from 'novel'
+import { EditorEvents } from '@tiptap/core'
 import { handleImageDrop, handleImagePaste } from 'novel/plugins'
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
 import { EditorProps } from '@tiptap/pm/view'
 
-import { Separator } from '@/components/ui/separator'
-
-import { NodeSelector } from './selectors/node-selector'
-import { LinkSelector } from './selectors/link-selector'
-import { ColorSelector } from './selectors/color-selector'
-import { TextButtons } from './selectors/text-buttons'
-import { GenerativeMenuSwitch } from './generative/generative-menu-switch'
+// import { GenerativeMenuSwitch } from './inlineToolbar'
+import { slashCommand, SuggestionMenuCommand } from './slash-command'
 
 import { defaultEditorContent } from './utils'
 import { defaultExtensions } from './extensions'
-import { slashCommand, SuggestionMenuCommand } from './slash-command'
 import { uploadFn } from './image-upload'
 
 const extensions = [...defaultExtensions, slashCommand]
@@ -26,18 +21,9 @@ const extensions = [...defaultExtensions, slashCommand]
 export default function EditorWrapper() {
   const [content, setContent] = useState<JSONContent>(defaultEditorContent)
 
-  const [openNode, setOpenNode] = useState(false)
-  const [openColor, setOpenColor] = useState(false)
-  const [openLink, setOpenLink] = useState(false)
   const [openAI, setOpenAI] = useState(false)
 
   // console.log(content)
-
-  const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
-    const json = editor.getJSON()
-    window.localStorage.setItem('novel-content', JSON.stringify(json))
-  }, 500)
-
   useEffect(() => {
     const content = window.localStorage.getItem('novel-content')
 
@@ -47,6 +33,18 @@ export default function EditorWrapper() {
       setContent(defaultEditorContent)
     }
   }, [])
+
+  const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
+    const json = editor.getJSON()
+    window.localStorage.setItem('novel-content', JSON.stringify(json))
+  }, 500)
+
+  const onUpdate = useCallback(
+    ({ editor }: EditorEvents['update']) => {
+      debouncedUpdates(editor)
+    },
+    [debouncedUpdates],
+  )
 
   if (!content) return null
 
@@ -71,21 +69,10 @@ export default function EditorWrapper() {
           initialContent={content}
           extensions={extensions}
           editorProps={editorProps}
-          onUpdate={({ editor }) => debouncedUpdates(editor)}
+          onUpdate={onUpdate}
           slotAfter={<ImageResizer />}
         >
           <SuggestionMenuCommand />
-          <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
-            <Separator orientation='vertical' />
-            <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-            <Separator orientation='vertical' />
-
-            <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-            <Separator orientation='vertical' />
-            <TextButtons />
-            <Separator orientation='vertical' />
-            <ColorSelector open={openColor} onOpenChange={setOpenColor} />
-          </GenerativeMenuSwitch>
         </EditorContent>
       </EditorRoot>
     </div>
