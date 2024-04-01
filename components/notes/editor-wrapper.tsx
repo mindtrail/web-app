@@ -9,7 +9,7 @@ import { handleImageDrop, handleImagePaste } from 'novel/plugins'
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
 import { EditorProps } from '@tiptap/pm/view'
 
-// import { GenerativeMenuSwitch } from './inlineToolbar'
+import { InlineToolbar } from './inlineToolbar'
 import { slashCommand, SuggestionMenuCommand } from './slash-command'
 
 import { defaultEditorContent } from './utils'
@@ -72,6 +72,7 @@ export default function EditorWrapper() {
           onUpdate={onUpdate}
           slotAfter={<ImageResizer />}
         >
+          <InlineToolbar />
           <SuggestionMenuCommand />
         </EditorContent>
       </EditorRoot>
