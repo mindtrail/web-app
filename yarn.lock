@@ -6107,10 +6107,10 @@ normalize-range@^0.1.2:
   resolved "https://registry.yarnpkg.com/normalize-range/-/normalize-range-0.1.2.tgz#2d10c06bdfd312ea9777695a4d28439456b75942"
   integrity sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==
 
-novel@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/novel/-/novel-0.3.0.tgz#eb77f0a4c7d1f2dd6ba28cc3523bd2d406a719b9"
-  integrity sha512-pyw8i0Xz1r328Ei+pP/A/BNAAU8yBRHQxgXrW6K9Qjfz+4vVKiJWADvv7qlLEsU+l4ZPspuEIhyZW64Od79aQw==
+novel@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/novel/-/novel-0.3.1.tgz#5a215092072a1b9358f98686b3a7adf046f3fe5c"
+  integrity sha512-om5ETtpo23BvKbN6wynSkSEwsJCWIEJjuBPYPk9jy9ktVqNUJjvVGGtCeah7Gr1L7Iy3Jtif1cMFokqsyzZQPw==
   dependencies:
     "@radix-ui/react-slot" "^1.0.2"
     "@tiptap/core" "^2.1.7"
@@ -6135,7 +6135,7 @@ novel@^0.3.0:
     react-moveable "^0.56.0"
     tippy.js "^6.3.7"
     tiptap-extension-auto-joiner "^0.1.1"
-    tiptap-extension-global-drag-handle "^0.1.2"
+    tiptap-extension-global-drag-handle "^0.1.6"
     tiptap-markdown "^0.8.9"
     tunnel-rat "^0.1.2"
 
@@ -7972,10 +7972,10 @@ tiptap-extension-auto-joiner@^0.1.1:
   resolved "https://registry.yarnpkg.com/tiptap-extension-auto-joiner/-/tiptap-extension-auto-joiner-0.1.1.tgz#060afbeeaa62d9c2ab0409982884452f0a8ed003"
   integrity sha512-n38N7qWUL3Iz6XdwxZLacSuE1itIAp6lzcVUYgi0K/d/eLydgFl07ZixBJ6XHCDESjw4wrRgRQQE9nvMGvn3QA==
 
-tiptap-extension-global-drag-handle@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/tiptap-extension-global-drag-handle/-/tiptap-extension-global-drag-handle-0.1.2.tgz#e2d917a744504e1cc5662a82b29d39641e5150d2"
-  integrity sha512-QrLIyVEbCKFFyz8RSaa4TjBbYKrmZ+Fl69GkgH2nrj8EE7pOkQkYXqaS7ommfnGMiZspcuwdp9n73oJ29wDKpA==
+tiptap-extension-global-drag-handle@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/tiptap-extension-global-drag-handle/-/tiptap-extension-global-drag-handle-0.1.6.tgz#397366ea3f86b26c31835e997dca7c0572890391"
+  integrity sha512-kjRFd/glJGTHEglHPNWtML1iINuEBG4eWvWbNIuuXE2LbylFXYHKVgLvZgxilqXSBH/o+lKDEp7/iL3lKvnxGw==
 
 tiptap-markdown@^0.8.9:
   version "0.8.10"

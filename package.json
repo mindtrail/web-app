@@ -72,7 +72,7 @@
     "next-auth": "^4.24.4",
     "next-themes": "^0.3.0",
     "nodemailer": "^6.9.7",
-    "novel": "^0.3.0",
+    "novel": "^0.3.1",
     "openai": "^4.29.2",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "3.4.120",
