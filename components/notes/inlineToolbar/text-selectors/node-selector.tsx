@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+import { EditorBubbleItem, EditorInstance, useEditor } from 'novel'
 import {
   Check,
   ChevronDown,
@@ -11,9 +13,7 @@ import {
   CheckSquare,
   type LucideIcon,
 } from 'lucide-react'
-import { EditorBubbleItem, EditorInstance, useEditor } from 'novel'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components//ui/popover'
 import { Button } from '@/components//ui/button'
 import { PopoverSelector } from '../popover-selector'
 
@@ -94,39 +94,45 @@ interface NodeSelectorProps {
 
 export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
   const { editor } = useEditor()
-  if (!editor) return null
 
-  const activeItem = items.filter((item) => item.isActive(editor)).pop() ?? {
+  const activeItem = items.filter((item) => editor && item.isActive(editor)).pop() ?? {
     name: 'Multiple',
   }
 
-  const NodeSelectorContent = () =>
-    items.map((item, index) => (
-      <EditorBubbleItem
-        key={index}
-        onSelect={(editor) => {
-          item.command(editor)
-          onOpenChange(false)
-        }}
-        className='flex cursor-pointer items-center justify-between rounded-sm px-2 py-1 text-sm hover:bg-accent'
-      >
-        <div className='flex items-center space-x-2'>
-          <div className='rounded-sm border p-1'>
-            <item.icon className='h-3 w-3' />
+  const NodeSelectorContent = useCallback(
+    () =>
+      items.map((item, index) => (
+        <EditorBubbleItem
+          key={index}
+          onSelect={(editor) => {
+            item.command(editor)
+            onOpenChange(false)
+          }}
+          className='flex cursor-pointer items-center justify-between rounded-sm px-2 py-1 text-sm hover:bg-accent'
+        >
+          <div className='flex items-center space-x-2'>
+            <div className='rounded-sm border p-1'>
+              <item.icon className='h-3 w-3' />
+            </div>
+            <span>{item.name}</span>
           </div>
-          <span>{item.name}</span>
-        </div>
-        {activeItem.name === item.name && <Check className='h-4 w-4' />}
-      </EditorBubbleItem>
-    ))
-
-  const NodeSelectorTrigger = () => (
-    // className='gap-2 rounded-none border-none hover:bg-accent focus:ring-0'
-    <Button size='sm' variant='ghost' className='gap-2'>
-      <span className='whitespace-nowrap text-sm'>{activeItem.name}</span>
-      <ChevronDown className='h-4 w-4' />
-    </Button>
+          {activeItem.name === item.name && <Check className='h-4 w-4' />}
+        </EditorBubbleItem>
+      )),
+    [onOpenChange, activeItem.name],
   )
+
+  const NodeSelectorTrigger = useCallback(
+    () => (
+      <Button size='sm' variant='ghost' className='gap-2'>
+        <span className='whitespace-nowrap text-sm'>{activeItem.name}</span>
+        <ChevronDown className='h-4 w-4' />
+      </Button>
+    ),
+    [activeItem.name],
+  )
+
+  if (!editor) return null
 
   return (
     <PopoverSelector
