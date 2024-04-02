@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 import { getTextFormattingOpts } from './constants'
 
-export const TextButtons = () => {
+export const TextFormatSelector = () => {
   const { editor } = useEditor()
   if (!editor) return null
 

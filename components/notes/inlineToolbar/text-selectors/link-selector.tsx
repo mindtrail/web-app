@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useEditor } from 'novel'
 import { Check, Trash } from 'lucide-react'
 
