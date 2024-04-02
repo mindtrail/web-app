@@ -1,8 +1,10 @@
+import { useCallback } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
-import { EditorBubbleItem, useEditor } from 'novel'
+import { EditorBubbleItem, useEditor, EditorInstance } from 'novel'
+import { Editor } from '@tiptap/core'
 
-import { PopoverTrigger, Popover, PopoverContent } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
+import { PopoverSelector } from '../popover-selector'
 
 export interface BubbleColorMenuItem {
   name: string
@@ -93,40 +95,38 @@ interface ColorSelectorProps {
 }
 
 export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
-  const { editor } = useEditor()
+  let { editor } = useEditor()
 
-  if (!editor) return null
+  const ColorSelectorTrigger = useCallback(() => {
+    if (!editor) return
 
-  const activeColorItem = TEXT_COLORS.find(({ color }) =>
-    editor.isActive('textStyle', { color }),
-  )
+    const activeHighlightItem = HIGHLIGHT_COLORS.find(({ color }) =>
+      editor?.isActive('highlight', { color }),
+    )
 
-  const activeHighlightItem = HIGHLIGHT_COLORS.find(({ color }) =>
-    editor.isActive('highlight', { color }),
-  )
+    const activeColorItem = TEXT_COLORS.find(({ color }) =>
+      editor?.isActive('textStyle', { color }),
+    )
 
-  return (
-    <Popover modal={true} open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <Button size='sm' className='gap-2 rounded-none' variant='ghost'>
-          <span
-            className='rounded-sm px-1'
-            style={{
-              color: activeColorItem?.color,
-              backgroundColor: activeHighlightItem?.color,
-            }}
-          >
-            A
-          </span>
-          <ChevronDown className='h-4 w-4' />
-        </Button>
-      </PopoverTrigger>
+    return (
+      <Button size='sm' className='gap-2 rounded-none' variant='ghost'>
+        <span
+          className='rounded-sm px-1'
+          style={{
+            color: activeColorItem?.color,
+            backgroundColor: activeHighlightItem?.color,
+          }}
+        >
+          A
+        </span>
+        <ChevronDown className='h-4 w-4' />
+      </Button>
+    )
+  }, [editor])
 
-      <PopoverContent
-        sideOffset={5}
-        className='my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border p-1 shadow-xl '
-        align='start'
-      >
+  const ColorSelectorContent = useCallback(
+    () => (
+      <>
         <div className='flex flex-col'>
           <div className='my-1 px-2 text-sm font-semibold text-muted-foreground'>
             Color
@@ -135,10 +135,10 @@ export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
             <EditorBubbleItem
               key={index}
               onSelect={() => {
-                editor.commands.unsetColor()
+                editor?.commands.unsetColor()
                 name !== 'Default' &&
                   editor
-                    .chain()
+                    ?.chain()
                     .focus()
                     .setColor(color || '')
                     .run()
@@ -165,8 +165,8 @@ export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
             <EditorBubbleItem
               key={index}
               onSelect={() => {
-                editor.commands.unsetHighlight()
-                name !== 'Default' && editor.commands.setHighlight({ color })
+                editor?.commands.unsetHighlight()
+                name !== 'Default' && editor?.commands.setHighlight({ color })
               }}
               className='flex cursor-pointer items-center justify-between px-2 py-1 text-sm hover:bg-accent'
             >
@@ -179,11 +179,27 @@ export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
                 </div>
                 <span>{name}</span>
               </div>
-              {editor.isActive('highlight', { color }) && <Check className='h-4 w-4' />}
+              {editor?.isActive('highlight', { color }) && <Check className='h-4 w-4' />}
             </EditorBubbleItem>
           ))}
         </div>
-      </PopoverContent>
-    </Popover>
+      </>
+    ),
+    [editor],
+  )
+
+  return (
+    <PopoverSelector
+      renderTrigger={ColorSelectorTrigger}
+      renderContent={ColorSelectorContent}
+      contentProps={{
+        className:
+          'my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border p-1 shadow-xl ',
+        align: 'start',
+        sideOffset: 5,
+      }}
+      isOpen={open}
+      onOpenChange={onOpenChange}
+    />
   )
 }

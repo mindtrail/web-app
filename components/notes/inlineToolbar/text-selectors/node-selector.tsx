@@ -95,9 +95,8 @@ interface NodeSelectorProps {
 export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
   const { editor } = useEditor()
 
-  const activeItem = items.filter((item) => editor && item.isActive(editor)).pop() ?? {
-    name: 'Multiple',
-  }
+  const activeItem =
+    items.filter((item) => editor && item.isActive(editor))?.pop()?.name ?? 'Multiple'
 
   const NodeSelectorContent = useCallback(
     () =>
@@ -116,20 +115,20 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
             </div>
             <span>{item.name}</span>
           </div>
-          {activeItem.name === item.name && <Check className='h-4 w-4' />}
+          {activeItem === item.name && <Check className='h-4 w-4' />}
         </EditorBubbleItem>
       )),
-    [onOpenChange, activeItem.name],
+    [onOpenChange, activeItem],
   )
 
   const NodeSelectorTrigger = useCallback(
     () => (
       <Button size='sm' variant='ghost' className='gap-2'>
-        <span className='whitespace-nowrap text-sm'>{activeItem.name}</span>
+        <span className='whitespace-nowrap text-sm'>{activeItem}</span>
         <ChevronDown className='h-4 w-4' />
       </Button>
     ),
-    [activeItem.name],
+    [activeItem],
   )
 
   if (!editor) return null
