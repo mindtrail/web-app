@@ -13,7 +13,7 @@ import { AISelector } from './generative/ai-selector'
 import { NodeSelector } from './text-selectors/node-selector'
 import { LinkSelector } from './text-selectors/link-selector'
 import { ColorSelector } from './text-selectors/color-selector'
-import { TextButtons } from './text-selectors/text-buttons'
+import { TextFormatSelector } from './text-selectors/text-format-selector'
 
 interface InlineToolbarProps {
   children?: ReactNode
@@ -21,60 +21,38 @@ interface InlineToolbarProps {
 export const InlineToolbar = (props: InlineToolbarProps) => {
   const { children } = props
   const { editor } = useEditor()
-  // const toolbarRef = useRef<HTMLDivElement>(null)
 
-  const [openNode, setOpenNode] = useState(false)
-  const [openColor, setOpenColor] = useState(false)
-  const [openLink, setOpenLink] = useState(false)
-  const [openAIEditor, setOpenAIEditor] = useState(false)
+  const [isAIEditorOpen, setIsAIEditorOpen] = useState(false)
 
   useEffect(() => {
     if (!open && editor) {
       removeAIHighlight(editor)
     }
-  }, [openAIEditor, editor])
+  }, [isAIEditorOpen, editor])
 
   if (!editor) return null
+
+  console.log(isAIEditorOpen)
 
   return (
     <EditorBubble
       tippyOptions={{
         // appendTo: document.body, // @TODO: check the warning when removing this from Tippy.js
-        placement: openAIEditor ? 'bottom-start' : 'top', //  :
+        placement: isAIEditorOpen ? 'bottom' : 'top', //  :
         onHidden: () => {
-          setOpenAIEditor(false)
           editor.chain().unsetHighlight().run()
         },
       }}
-      className={`flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl ${openAIEditor && 'opacity-0'}`}
+      className={`flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl ${isAIEditorOpen && 'opacity-0'}`}
     >
-      <Popover modal={true} open={openAIEditor} onOpenChange={setOpenAIEditor}>
-        <PopoverTrigger
-          asChild
-          className='gap-2 rounded-none border-none hover:bg-accent focus:ring-0'
-        >
-          <Button
-            className={`gap-1 rounded-none text-purple-500`}
-            variant='ghost'
-            onClick={() => setOpenAIEditor(true)}
-            size='sm'
-          >
-            <MagicIcon className='h-5 w-5' />
-            Ask AI
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent sideOffset={-35} align='start' className='w-48 p-1'>
-          <AISelector onOpenChange={setOpenAIEditor} />
-        </PopoverContent>
-      </Popover>
-
+      <AISelector isOpen={isAIEditorOpen} onOpenChange={setIsAIEditorOpen} />
       <Separator orientation='vertical' />
       <NodeSelector />
       <Separator orientation='vertical' />
 
       <LinkSelector />
       <Separator orientation='vertical' />
-      <TextButtons />
+      <TextFormatSelector />
       <Separator orientation='vertical' />
       <ColorSelector />
       {children}

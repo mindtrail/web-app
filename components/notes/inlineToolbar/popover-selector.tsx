@@ -18,6 +18,7 @@ export const PopoverSelector = (props: PopoverSelectorProps) => {
     onOpenChange: externalOnOpenChange,
   } = props
 
+  console.log(222, externalIsOpen)
   const [isOpen, setIsOpen] = useState(externalIsOpen)
   const onOpenChange = externalOnOpenChange || setIsOpen
 
