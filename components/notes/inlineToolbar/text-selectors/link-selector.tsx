@@ -1,9 +1,9 @@
-import {  useEffect, useRef, useCallback, useState } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { useEditor } from 'novel'
 import { Check, Trash } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { Button} from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 import { PopoverSelector } from '../popover-selector'
@@ -12,45 +12,13 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
   const { editor } = useEditor()
   const [url, setUrl] = useState('')
 
-  const handleUrlChange = (e) => {
-    setUrl(e.target.value)
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!isValidUrl(url)) {
-      alert('Please enter a valid URL')
-      return
-    }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-    onOpenChange(false)
-  }
-
-  const LinkSelectorContent = useCallback(
-    () => (
-      <form onSubmit={handleSubmit} className="p-4">
-        <Input
-          autoFocus
-          placeholder="Paste or type a link..."
-          value={url}
-          onChange={handleUrlChange}
-          className="mb-2"
-        />
-        <Button type="submit" variant="primary" className="w-full">
-          Apply
-        </Button>
-      </form>
-    ),
-    [url, handleSubmit],
-  )
-
   const LinkSelectorTrigger = useCallback(
     () => (
       <Button size='sm' variant='ghost' className='gap-2 rounded-none border-none'>
         <p className='text-base'>↗</p>
         <p
           className={cn('underline decoration-stone-400 underline-offset-4', {
-            'text-blue-500': editor.isActive('link'),
+            'text-blue-500': editor?.isActive('link'),
           })}
         >
           Link
@@ -60,6 +28,37 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
     [editor],
   )
 
+  const LinkSelectorContent = useCallback(() => {
+    const handleUrlChange = (e: any) => {
+      setUrl(e.target.value)
+    }
+
+    const handleSubmit = (e: any) => {
+      e.preventDefault()
+      if (!isValidUrl(url)) {
+        alert('Please enter a valid URL')
+        return
+      }
+      editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+      onOpenChange(false)
+    }
+
+    return (
+      <form onSubmit={handleSubmit} className='p-4'>
+        <Input
+          autoFocus
+          placeholder='Paste or type a link...'
+          value={url}
+          onChange={handleUrlChange}
+          className='mb-2'
+        />
+        <Button type='submit' variant='primary' className='w-full'>
+          Apply
+        </Button>
+      </form>
+    )
+  }, [url])
+
   if (!editor) return null
 
   return (
@@ -67,12 +66,9 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
       renderTrigger={LinkSelectorTrigger}
       renderContent={LinkSelectorContent}
       contentProps={{ className: 'w-60 p-0', sideOffset: 10, align: 'start' }}
-      open={open}
-      onOpenChange={onOpenChange}
     />
   )
 }
-
 
 export function isValidUrl(url: string) {
   try {
@@ -97,7 +93,7 @@ interface LinkSelectorProps {
   onOpenChange: (open: boolean) => void
 }
 
-export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
+export const LinkSelector2 = ({ open, onOpenChange }: LinkSelectorProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { editor } = useEditor()
 
@@ -109,18 +105,6 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
 
   return (
     <Popover modal={true} open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <Button size='sm' variant='ghost' className='gap-2 rounded-none border-none'>
-          <p className='text-base'>↗</p>
-          <p
-            className={cn('underline decoration-stone-400 underline-offset-4', {
-              'text-blue-500': editor.isActive('link'),
-            })}
-          >
-            Link
-          </p>
-        </Button>
-      </PopoverTrigger>
       <PopoverContent align='start' className='w-60 p-0' sideOffset={10}>
         <form
           onSubmit={(e) => {
