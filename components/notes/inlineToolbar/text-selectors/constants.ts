@@ -1,4 +1,4 @@
-import { EditorInstance } from 'novel'
+import { EditorInstance, useEditor } from 'novel'
 import {
   Heading1,
   Heading2,
@@ -9,6 +9,11 @@ import {
   Code,
   CheckSquare,
   type LucideIcon,
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  StrikethroughIcon,
+  CodeIcon,
 } from 'lucide-react'
 
 export type SelectorItem = {
@@ -16,6 +21,41 @@ export type SelectorItem = {
   icon: LucideIcon
   command: (editor: EditorInstance) => void
   isActive: (editor: EditorInstance) => boolean
+}
+
+export const getTextFormattingOpts = (): SelectorItem[] => {
+  return [
+    {
+      name: 'bold',
+      isActive: (editor) => editor.isActive('bold'),
+      command: (editor) => editor.chain().focus().toggleBold().run(),
+      icon: BoldIcon,
+    },
+    {
+      name: 'italic',
+      isActive: (editor) => editor.isActive('italic'),
+      command: (editor) => editor.chain().focus().toggleItalic().run(),
+      icon: ItalicIcon,
+    },
+    {
+      name: 'underline',
+      isActive: (editor) => editor.isActive('underline'),
+      command: (editor) => editor.chain().focus().toggleUnderline().run(),
+      icon: UnderlineIcon,
+    },
+    {
+      name: 'strike',
+      isActive: (editor) => editor.isActive('strike'),
+      command: (editor) => editor.chain().focus().toggleStrike().run(),
+      icon: StrikethroughIcon,
+    },
+    {
+      name: 'code',
+      isActive: (editor) => editor.isActive('code'),
+      command: (editor) => editor.chain().focus().toggleCode().run(),
+      icon: CodeIcon,
+    },
+  ]
 }
 
 export const NODE_TYPES: SelectorItem[] = [
