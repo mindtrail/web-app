@@ -3,7 +3,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 
 interface PopoverSelectorProps {
   renderTrigger: () => React.ReactNode
-  renderContent: () => React.ReactNode
+  renderContent: (closeModal: () => void) => React.ReactNode
   contentProps: any
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
@@ -24,7 +24,9 @@ export const PopoverSelector = (props: PopoverSelectorProps) => {
   return (
     <Popover modal={true} open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{renderTrigger()}</PopoverTrigger>
-      <PopoverContent {...contentProps}>{renderContent()}</PopoverContent>
+      <PopoverContent {...contentProps}>
+        {renderContent(() => setIsOpen(false))}
+      </PopoverContent>
     </Popover>
   )
 }
