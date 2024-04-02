@@ -69,14 +69,14 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
       </Popover>
 
       <Separator orientation='vertical' />
-      <NodeSelector open={openNode} onOpenChange={setOpenNode} />
+      <NodeSelector />
       <Separator orientation='vertical' />
 
-      <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+      <LinkSelector />
       <Separator orientation='vertical' />
       <TextButtons />
       <Separator orientation='vertical' />
-      <ColorSelector open={openColor} onOpenChange={setOpenColor} />
+      <ColorSelector />
       {children}
     </EditorBubble>
   )
