@@ -5,15 +5,24 @@ interface PopoverSelectorProps {
   renderTrigger: () => React.ReactNode
   renderContent: () => React.ReactNode
   contentProps: any
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
 }
-// props: { open: () => void; close: () => void }
 
 export const PopoverSelector = (props: PopoverSelectorProps) => {
-  const { renderTrigger, renderContent, contentProps } = props
-  const [open, setOpen] = useState(false)
+  const {
+    renderTrigger,
+    renderContent,
+    contentProps,
+    isOpen: externalIsOpen = false,
+    onOpenChange: externalOnOpenChange,
+  } = props
+
+  const [isOpen, setIsOpen] = useState(externalIsOpen)
+  const onOpenChange = externalOnOpenChange || setIsOpen
 
   return (
-    <Popover modal={true} open={open} onOpenChange={setOpen}>
+    <Popover modal={true} open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{renderTrigger()}</PopoverTrigger>
       <PopoverContent {...contentProps}>{renderContent()}</PopoverContent>
     </Popover>
