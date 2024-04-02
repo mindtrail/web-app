@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, ReactNode } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import { EditorBubble, useEditor } from 'novel'
 import { removeAIHighlight } from 'novel/extensions'
 
@@ -9,11 +9,11 @@ import { MagicIcon } from '@/components/ui/icons/custom'
 import { Separator } from '@/components/ui/separator'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components//ui/popover'
 
-import { AISelector } from '../generative/ai-selector'
-import { NodeSelector } from './selectors/node-selector'
-import { LinkSelector } from './selectors/link-selector'
-import { ColorSelector } from './selectors/color-selector'
-import { TextButtons } from './selectors/text-buttons'
+import { AISelector } from './generative/ai-selector'
+import { NodeSelector } from './text-selectors/node-selector'
+import { LinkSelector } from './text-selectors/link-selector'
+import { ColorSelector } from './text-selectors/color-selector'
+import { TextButtons } from './text-selectors/text-buttons'
 
 interface InlineToolbarProps {
   children?: ReactNode
