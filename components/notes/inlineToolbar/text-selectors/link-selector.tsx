@@ -1,9 +1,78 @@
-import { cn } from '@/lib/utils'
+import {  useEffect, useRef, useCallback, useState } from 'react'
 import { useEditor } from 'novel'
 import { Check, Trash } from 'lucide-react'
-import { useEffect, useRef } from 'react'
-import { Button } from '@/components/ui/button'
-import { PopoverContent, Popover, PopoverTrigger } from '@/components/ui/popover'
+
+import { cn } from '@/lib/utils'
+import { Button} from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+
+import { PopoverSelector } from '../popover-selector'
+
+export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
+  const { editor } = useEditor()
+  const [url, setUrl] = useState('')
+
+  const handleUrlChange = (e) => {
+    setUrl(e.target.value)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!isValidUrl(url)) {
+      alert('Please enter a valid URL')
+      return
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    onOpenChange(false)
+  }
+
+  const LinkSelectorContent = useCallback(
+    () => (
+      <form onSubmit={handleSubmit} className="p-4">
+        <Input
+          autoFocus
+          placeholder="Paste or type a link..."
+          value={url}
+          onChange={handleUrlChange}
+          className="mb-2"
+        />
+        <Button type="submit" variant="primary" className="w-full">
+          Apply
+        </Button>
+      </form>
+    ),
+    [url, handleSubmit],
+  )
+
+  const LinkSelectorTrigger = useCallback(
+    () => (
+      <Button size='sm' variant='ghost' className='gap-2 rounded-none border-none'>
+        <p className='text-base'>↗</p>
+        <p
+          className={cn('underline decoration-stone-400 underline-offset-4', {
+            'text-blue-500': editor.isActive('link'),
+          })}
+        >
+          Link
+        </p>
+      </Button>
+    ),
+    [editor],
+  )
+
+  if (!editor) return null
+
+  return (
+    <PopoverSelector
+      renderTrigger={LinkSelectorTrigger}
+      renderContent={LinkSelectorContent}
+      contentProps={{ className: 'w-60 p-0', sideOffset: 10, align: 'start' }}
+      open={open}
+      onOpenChange={onOpenChange}
+    />
+  )
+}
+
 
 export function isValidUrl(url: string) {
   try {
