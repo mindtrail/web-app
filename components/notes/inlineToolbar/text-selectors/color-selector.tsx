@@ -1,100 +1,13 @@
 import { useCallback } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
-import { EditorBubbleItem, useEditor, EditorInstance } from 'novel'
-import { Editor } from '@tiptap/core'
+import { EditorBubbleItem, useEditor } from 'novel'
 
 import { Button } from '@/components/ui/button'
+
 import { PopoverSelector } from '../popover-selector'
+import { HIGHLIGHT_COLORS, TEXT_COLORS } from './constants'
 
-export interface BubbleColorMenuItem {
-  name: string
-  color: string
-}
-
-const TEXT_COLORS: BubbleColorMenuItem[] = [
-  {
-    name: 'Default',
-    color: 'var(--novel-black)',
-  },
-  {
-    name: 'Purple',
-    color: '#9333EA',
-  },
-  {
-    name: 'Red',
-    color: '#E00000',
-  },
-  {
-    name: 'Yellow',
-    color: '#EAB308',
-  },
-  {
-    name: 'Blue',
-    color: '#2563EB',
-  },
-  {
-    name: 'Green',
-    color: '#008A00',
-  },
-  {
-    name: 'Orange',
-    color: '#FFA500',
-  },
-  {
-    name: 'Pink',
-    color: '#BA4081',
-  },
-  {
-    name: 'Gray',
-    color: '#A8A29E',
-  },
-]
-
-const HIGHLIGHT_COLORS: BubbleColorMenuItem[] = [
-  {
-    name: 'Default',
-    color: 'var(--novel-highlight-default)',
-  },
-  {
-    name: 'Purple',
-    color: 'var(--novel-highlight-purple)',
-  },
-  {
-    name: 'Red',
-    color: 'var(--novel-highlight-red)',
-  },
-  {
-    name: 'Yellow',
-    color: 'var(--novel-highlight-yellow)',
-  },
-  {
-    name: 'Blue',
-    color: 'var(--novel-highlight-blue)',
-  },
-  {
-    name: 'Green',
-    color: 'var(--novel-highlight-green)',
-  },
-  {
-    name: 'Orange',
-    color: 'var(--novel-highlight-orange)',
-  },
-  {
-    name: 'Pink',
-    color: 'var(--novel-highlight-pink)',
-  },
-  {
-    name: 'Gray',
-    color: 'var(--novel-highlight-gray)',
-  },
-]
-
-interface ColorSelectorProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
+export const ColorSelector = () => {
   let { editor } = useEditor()
 
   const ColorSelectorTrigger = useCallback(() => {
@@ -195,11 +108,7 @@ export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
       contentProps={{
         className:
           'my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border p-1 shadow-xl ',
-        align: 'start',
-        sideOffset: 5,
       }}
-      isOpen={open}
-      onOpenChange={onOpenChange}
     />
   )
 }

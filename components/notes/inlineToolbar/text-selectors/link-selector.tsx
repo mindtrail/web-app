@@ -83,7 +83,7 @@ export const LinkSelector = () => {
     <PopoverSelector
       renderTrigger={LinkSelectorTrigger}
       renderContent={LinkSelectorContent}
-      contentProps={{ className: 'w-60 p-0', sideOffset: 10, align: 'start' }}
+      contentProps={{ className: 'w-60 p-0' }}
     />
   )
 }
