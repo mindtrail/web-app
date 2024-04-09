@@ -29,14 +29,12 @@ export function Search({ userId }: HistoryLookupProps) {
   console.log(searchQuery)
 
   const handleSearch = async (event: MouseEvent | KeyboardEvent) => {
-    console.log(111)
     event.preventDefault()
     setProcessing(true)
 
     const result = await fetch(`/api/history?searchQuery=${searchQuery}`)
     const websites = await result.json()
 
-    console.log(2222, websites)
     setFoundWebsite(websites)
     setProcessing(false)
     setSearchPerfromed(true)

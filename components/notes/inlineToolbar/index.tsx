@@ -7,7 +7,6 @@ import { removeAIHighlight } from 'novel/extensions'
 import { Button } from '@/components/ui/button'
 import { MagicIcon } from '@/components/ui/icons/custom'
 import { Separator } from '@/components/ui/separator'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components//ui/popover'
 
 import { AISelector } from './generative/ai-selector'
 import { NodeSelector } from './text-selectors/node-selector'
@@ -25,18 +24,12 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
   const [isAIEditorOpen, setIsAIEditorOpen] = useState(false)
 
   useEffect(() => {
-    if (!open && editor) {
+    if (!isAIEditorOpen && editor) {
       removeAIHighlight(editor)
     }
   }, [isAIEditorOpen, editor])
 
   if (!editor) return null
-
-  console.log(isAIEditorOpen)
-
-  // if (isAIEditorOpen) {
-  // return
-  // }
 
   return (
     <EditorBubble
