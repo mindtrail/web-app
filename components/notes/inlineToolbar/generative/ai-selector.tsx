@@ -52,7 +52,6 @@ export function AISelector({ isOpen, onOpenChange }: AISelectorProps) {
     ),
     [],
   )
-  console.log(111, isOpen)
 
   const hasCompletion = completion.length > 0
 

@@ -47,8 +47,9 @@ export const NodeSelector = () => {
     [activeItem],
   )
 
-  if (!editor) return null
-
+  if (!editor) {
+    return null
+  }
   return (
     <PopoverSelector
       renderTrigger={NodeSelectorTrigger}
