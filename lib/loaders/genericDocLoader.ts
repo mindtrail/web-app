@@ -27,7 +27,7 @@ export const getChunksFromDoc = async ({
       : await getChunksFromLocalFile(file as File)
 
   const bulkTextSplitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 3000, // average page length
+    chunkSize: 3000, // (600) average page length
     chunkOverlap: 0,
     separators: ['\n\n'], // only split by new paragraphs
   })

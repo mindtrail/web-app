@@ -34,6 +34,10 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
 
   console.log(isAIEditorOpen)
 
+  if (isAIEditorOpen) {
+    return <AISelector isOpen={isAIEditorOpen} onOpenChange={setIsAIEditorOpen} />
+  }
+
   return (
     <EditorBubble
       tippyOptions={{
@@ -45,15 +49,18 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
       }}
       className={`flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl ${isAIEditorOpen && 'opacity-0'}`}
     >
-      <AISelector isOpen={isAIEditorOpen} onOpenChange={setIsAIEditorOpen} />
-      <Separator orientation='vertical' />
+      <Button className={`gap-1 rounded-none text-purple-500`} variant='ghost' size='sm'>
+        <MagicIcon className='h-5 w-5' />
+        Ask AI
+      </Button>
+      <Separator orientation='horizontal' className='w-2' />
       <NodeSelector />
-      <Separator orientation='vertical' />
+      <Separator orientation='horizontal' className='w-2' />
 
       <LinkSelector />
-      <Separator orientation='vertical' />
+      <Separator orientation='horizontal' className='w-2' />
       <TextFormatSelector />
-      <Separator orientation='vertical' />
+      <Separator orientation='horizontal' className='w-2' />
       <ColorSelector />
       {children}
     </EditorBubble>
