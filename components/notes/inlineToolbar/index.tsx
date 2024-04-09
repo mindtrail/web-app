@@ -34,9 +34,9 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
 
   console.log(isAIEditorOpen)
 
-  if (isAIEditorOpen) {
-    return <AISelector isOpen={isAIEditorOpen} onOpenChange={setIsAIEditorOpen} />
-  }
+  // if (isAIEditorOpen) {
+  // return
+  // }
 
   return (
     <EditorBubble
@@ -44,25 +44,38 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
         // appendTo: document.body, // @TODO: check the warning when removing this from Tippy.js
         placement: isAIEditorOpen ? 'bottom' : 'top', //  :
         onHidden: () => {
+          setIsAIEditorOpen(false)
           editor.chain().unsetHighlight().run()
         },
       }}
-      className={`flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl ${isAIEditorOpen && 'opacity-0'}`}
+      className={`flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl`}
     >
-      <Button className={`gap-1 rounded-none text-purple-500`} variant='ghost' size='sm'>
-        <MagicIcon className='h-5 w-5' />
-        Ask AI
-      </Button>
-      <Separator orientation='horizontal' className='w-2' />
-      <NodeSelector />
-      <Separator orientation='horizontal' className='w-2' />
+      {isAIEditorOpen ? (
+        <AISelector onOpenChange={setIsAIEditorOpen} />
+      ) : (
+        <>
+          <Button
+            className={`gap-1 rounded-none text-purple-500`}
+            onClick={() => setIsAIEditorOpen(true)}
+            variant='ghost'
+            size='sm'
+          >
+            <MagicIcon className='h-5 w-5' />
+            Ask AI
+          </Button>
 
-      <LinkSelector />
-      <Separator orientation='horizontal' className='w-2' />
-      <TextFormatSelector />
-      <Separator orientation='horizontal' className='w-2' />
-      <ColorSelector />
-      {children}
+          <Separator orientation='horizontal' className='w-2' />
+          <NodeSelector />
+          <Separator orientation='horizontal' className='w-2' />
+
+          <LinkSelector />
+          <Separator orientation='horizontal' className='w-2' />
+          <TextFormatSelector />
+          <Separator orientation='horizontal' className='w-2' />
+          <ColorSelector />
+          {children}
+        </>
+      )}
     </EditorBubble>
   )
 }
