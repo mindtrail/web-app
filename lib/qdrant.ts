@@ -76,23 +76,46 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   return result
 }
 
-export const searchSimilarText = async (message: string): Promise<Document[]> => {
-  const vectorStore = new QdrantVectorStore(new OpenAIEmbeddings(), {
-    ...QDRANT_ARGS,
-    collectionName: QDRANT_COLLECTION,
+export const searchSimilarTextPlain = async (message: string): Promise<Document[]> => {
+  const client = new QdrantClient({
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
   })
 
-  const result = await vectorStore.similaritySearchWithScore(message, 10)
+  console.time('embed')
+  const res = await fetch('https://api.openai.com/v1/embeddings', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      model: 'text-embedding-ada-002',
+      input: message,
+    }),
+  })
 
-  const NR_OF_SOURCES = 3
+  console.timeEnd('embed')
 
-  return result
-    .filter(([_doc, score], index) => {
-      return score > SIMILARITY_THRESHOLD
-    })
-    .sort(([_docA, scoreA], [_docB, scoreB]) => scoreB - scoreA)
-    .splice(0, NR_OF_SOURCES)
-    .map(([doc]) => doc)
+  const json = await res.json()
+  const embedding = json?.data[0]?.embedding
+
+  console.time('Qdrant Client ---- :::')
+  const collection = await client.search(QDRANT_COLLECTION, {
+    vector: embedding,
+    limit: 10,
+  })
+  console.timeEnd('Qdrant Client ---- :::')
+
+  // console.log(collection)
+
+  // return result
+  // .filter(([_doc, score], index) => {
+  // return score > SIMILARITY_THRESHOLD
+  // })
+  // .sort(([_docA, scoreA], [_docB, scoreB]) => scoreB - scoreA)
+  // .splice(0, NR_OF_SOURCES)
+  // .map(([doc]) => doc)
 }
 
 export const getCollections = async () => {

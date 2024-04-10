@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/qdrant-langchain'
+import { searchSimilarTextPlain } from '@/lib/qdrant'
 import { getDataSourceListByIdsDbOp } from '@/lib/db/dataSource'
 
 export async function GET(req: Request) {
@@ -20,7 +21,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const dataSourceList = await searchSimilarText(searchQuery)
+    const dataSourceList = await searchSimilarTextPlain(searchQuery)
 
     if (!dataSourceList?.length) {
       return Response.json([])
