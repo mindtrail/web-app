@@ -2,6 +2,8 @@ import '@/styles/globals.css'
 import '@/styles/prosemirror.css'
 
 import { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { Providers } from '@/context/providers'
 import { Toaster } from '@/components/ui/toaster'
@@ -12,10 +14,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import Loading from '@/app/loading'
-import { Suspense } from 'react'
 
-import Image from 'next/image'
-
+//import Image from 'next/image'
 // export const dynamic = 'force-dynamic'
 
 export const viewport: Viewport = {

@@ -51,6 +51,7 @@
     "@upstash/ratelimit": "^1.0.1",
     "@vercel/analytics": "^1.1.1",
     "@vercel/kv": "^0.2.4",
+    "@vercel/speed-insights": "^1.0.10",
     "@yaireo/tagify": "^4.17.9",
     "ai": "^3.0.2",
     "body-scroll-lock": "4.0.0-beta.0",
