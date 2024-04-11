@@ -3,10 +3,12 @@ import * as lancedb from '@lancedb/lancedb'
 import { getNanoId } from '@/lib/utils'
 let dbInstance: lancedb.Connection | null = null
 
+const DEFAULT_TABLE = 'first-table'
+
 async function getDBInstance() {
   if (!dbInstance) {
     try {
-      dbInstance = await lancedb.connect('data/sample-lancedb')
+      dbInstance = await lancedb.connect('/tmp/lancedb')
     } catch (e) {
       console.error(e)
     } finally {
@@ -21,14 +23,18 @@ export async function initiDB() {
   if (!db) return
 
   try {
-    if ((await db.tableNames()).includes('test_table')) {
+    if ((await db.tableNames()).includes(DEFAULT_TABLE)) {
       return
     }
 
-    await db.createTable('test_table', [
-      { id: 1, vector: [0.1, 1.0], item: 'foo', price: 10.0 },
-      { id: 2, vector: [3.9, 0.5], item: 'bar', price: 20.0 },
-    ])
+    const newData = Array.from({ length: 1000 }, (_, i) => ({
+      id: getNanoId(),
+      vector: Array.from({ length: 1536 }, () => Math.random()),
+      item: 'bar' + i,
+      price: Math.random() * 100,
+    }))
+
+    const table = await db.createTable(DEFAULT_TABLE, newData)
   } catch (e) {
     console.error(e)
   }
@@ -38,18 +44,18 @@ export async function searchVector() {
   const db = await getDBInstance()
   if (!db) return null
 
-  const table = await db.openTable('test_table2')
+  const table = await db.openTable(DEFAULT_TABLE)
 
   const index = Math.floor(Math.random() * 4) // 0 to 3
   const results = await table
     .vectorSearch(STORED_VECTORS[index].vector)
     .bypassVectorIndex()
-    .select(['id'])
-    .limit(1)
+    // .select(['id'])
+    .limit(2)
     .toArray()
 
-  // console.log(111, results)
-  // console.log(222, await table.countRows())
+  console.log(111, results)
+  console.log(222, await table.countRows())
 }
 
 export async function searchVectorANN() {
