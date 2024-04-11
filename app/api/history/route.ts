@@ -21,6 +21,16 @@ export async function GET(req: Request) {
     return new Response('No message provided', { status: 400 })
   }
 
+  // var a = {
+  //   'vercel-build':
+  //     "sed -i 's/nativeLib = require(`@lancedb\\/vectordb-\\${currentTarget()}`);/nativeLib = require(`@lancedb\\/vectordb-linux-x64-gnu`);/' node_modules/vectordb/native.js && next build",
+  // }
+
+  // var b = {
+  //   'vercel-build':
+  //     "sed -i 's/nativeLib = require(`@lancedb\\/lancedb-\\${currentTarget()}`);/nativeLib = require(`@lancedb\\/lancedb-linux-x64-gnu`);/' node_modules/@lancedb/lancedb/native.js && next build",
+  // }
+
   try {
     const dataSourceList = await searchSimilarText(searchQuery)
 
