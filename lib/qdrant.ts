@@ -76,7 +76,7 @@ export const createAndStoreVectors = async (props: CreateAndStoreVectors) => {
   return result
 }
 
-export const searchSimilarTextPlain = async (message: string): Promise<Document[]> => {
+export const searchSimilarTextPlain = async (message: string) => {
   const client = new QdrantClient({
     url: process.env.QDRANT_URL,
     apiKey: process.env.QDRANT_API_KEY,
