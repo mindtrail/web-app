@@ -34,7 +34,7 @@ export async function GET(req: Request) {
   try {
     const dataSourceList = await searchSimilarText(searchQuery)
 
-    // Lance.initiDB()
+    Lance.initiDB()
     // console.time('lance')
     // await Lance.searchVector()
     // await Lance.insertVector()
