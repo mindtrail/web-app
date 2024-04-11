@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[] | any) {
 
 export const getNanoId = customAlphabet(
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-  10,
+  16,
 ) // 10
 
 export function formatDate(input: string | number | Date, format?: string): string {

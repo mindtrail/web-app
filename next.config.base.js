@@ -31,6 +31,7 @@ const nextConfig = {
       })
     }
 
+    config.externals.push('@lancedb/lancedb')
     config.resolve.alias.canvas = false
 
     return config

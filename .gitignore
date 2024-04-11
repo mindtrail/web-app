@@ -67,3 +67,5 @@ firebase-debug.log
 ui-debug.log
 
 .cors-config.json
+
+data/

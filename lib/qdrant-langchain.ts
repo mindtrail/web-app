@@ -59,9 +59,9 @@ export const searchSimilarText = async (
     collectionName: QDRANT_COLLECTION,
   })
 
-  console.time('search')
+  // console.time('search')
   const allChunks = await vectorStore.similaritySearchWithScore(message, 10)
-  console.timeEnd('search')
+  // console.timeEnd('search')
 
   const docs = allChunks
     .filter(([_, similarityScore]) => similarityScore > SIMILARITY_THRESHOLD)
