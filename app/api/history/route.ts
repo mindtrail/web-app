@@ -2,7 +2,8 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { searchSimilarText } from '@/lib/qdrant-langchain'
-import { searchSimilarTextPlain } from '@/lib/qdrant'
+// import { searchSimilarTextPlain } from '@/lib/qdrant'
+import * as Lance from '@/lib/lancedb'
 import { getDataSourceListByIdsDbOp } from '@/lib/db/dataSource'
 
 export async function GET(req: Request) {
@@ -21,7 +22,18 @@ export async function GET(req: Request) {
   }
 
   try {
-    const dataSourceList = await searchSimilarTextPlain(searchQuery)
+    const dataSourceList = await searchSimilarText(searchQuery)
+
+    // Lance.initiDB()
+    // console.time('lance')
+    // await Lance.searchVector()
+    // await Lance.insertVector()
+    // await Lance.buildIndex()
+    // console.timeEnd('lance')
+
+    console.time('lance ANN')
+    await Lance.searchVectorANN()
+    console.timeEnd('lance ANN')
 
     if (!dataSourceList?.length) {
       return Response.json([])
