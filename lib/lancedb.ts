@@ -86,7 +86,7 @@ export async function insertVector() {
   const table = await db.openTable(DEFAULT_TABLE)
   console.time('insert')
 
-  const newData = Array.from({ length: 100000 }, (_, i) => ({
+  const newData = Array.from({ length: 10000 }, (_, i) => ({
     id: getNanoId(),
     vector: Array.from({ length: 1536 }, () => Math.random()),
     item: 'bar' + i,
