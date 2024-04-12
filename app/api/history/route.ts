@@ -34,16 +34,16 @@ export async function GET(req: Request) {
   try {
     const dataSourceList = await searchSimilarText(searchQuery)
 
-    Lance.initiDB()
+    console.time('lance:')
     // console.time('lance')
     // await Lance.searchVector()
-    // await Lance.insertVector()
+    await Lance.insertVector()
     // await Lance.buildIndex()
     // console.timeEnd('lance')
 
-    console.time('lance ANN')
-    await Lance.searchVectorANN()
-    console.timeEnd('lance ANN')
+    // await Lance.initiDB()
+    // await Lance.searchVectorANN()
+    console.timeEnd('lance:')
 
     if (!dataSourceList?.length) {
       return Response.json([])

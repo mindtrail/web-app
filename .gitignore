@@ -69,3 +69,5 @@ ui-debug.log
 .cors-config.json
 
 data/
+
+credentials/
