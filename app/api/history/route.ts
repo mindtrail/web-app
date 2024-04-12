@@ -47,6 +47,11 @@ export async function GET(req: Request) {
       case 'search':
         console.log('search')
         await Lance.searchVector()
+        break
+      case 'searchANN':
+        console.log('searchANN')
+        await Lance.searchVectorANN()
+        break
       default:
         break
     }
