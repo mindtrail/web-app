@@ -11,6 +11,7 @@ async function getDBInstance() {
       // dbInstance = await lancedb.connect('gs://mindtrail-lancedb/dev')
       // dbInstance = await lancedb.connect('data/lancedb')
       dbInstance = await lancedb.connect('/tmp/lancedb-test')
+      // dbInstance = await lancedb.connect("s3://bucket/path");
     } catch (e) {
       console.error(e)
     }
@@ -18,7 +19,7 @@ async function getDBInstance() {
   return dbInstance
 }
 
-export async function initiDB() {
+export async function initDB() {
   const db = await getDBInstance()
   if (!db) return
 

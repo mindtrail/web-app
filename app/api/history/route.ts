@@ -21,11 +21,6 @@ export async function GET(req: Request) {
     return new Response('No message provided', { status: 400 })
   }
 
-  // var a = {
-  //   'vercel-build':
-  //     "sed -i 's/nativeLib = require(`@lancedb\\/vectordb-\\${currentTarget()}`);/nativeLib = require(`@lancedb\\/vectordb-linux-x64-gnu`);/' node_modules/vectordb/native.js && next build",
-  // }
-
   // var b = {
   //   'vercel-build':
   //     "sed -i 's/nativeLib = require(`@lancedb\\/lancedb-\\${currentTarget()}`);/nativeLib = require(`@lancedb\\/lancedb-linux-x64-gnu`);/' node_modules/@lancedb/lancedb/native.js && next build",
@@ -35,13 +30,26 @@ export async function GET(req: Request) {
     const dataSourceList = await searchSimilarText(searchQuery)
 
     console.time('lance:')
-    // console.time('lance')
-    // await Lance.searchVector()
-    await Lance.insertVector()
-    // await Lance.buildIndex()
-    // console.timeEnd('lance')
 
-    // await Lance.initiDB()
+    switch (searchQuery) {
+      case 'init':
+        console.log('init')
+        await Lance.initDB()
+        break
+      case 'insert':
+        console.log('insert')
+        await Lance.insertVector()
+        break
+      case 'index':
+        console.log('index')
+        await Lance.buildIndex()
+        break
+      case 'search':
+        console.log('search')
+        await Lance.searchVector()
+      default:
+        break
+    }
     // await Lance.searchVectorANN()
     console.timeEnd('lance:')
 
