@@ -103,7 +103,7 @@ export async function buildIndex() {
   const db = await getDBInstance()
   if (!db) return null
 
-  const table = await db.openTable('test_table2')
+  const table = await db.openTable(DEFAULT_TABLE)
 
   await table.createIndex('vector', {
     config: lancedb.Index.ivfPq({
