@@ -51,12 +51,12 @@ export async function searchVector() {
   const results = await table
     .vectorSearch(STORED_VECTORS[index].vector)
     .bypassVectorIndex()
-    // .select(['id'])
-    .limit(2)
+    .select(['id'])
+    .limit(10)
     .toArray()
 
   console.log(111, results)
-  console.log(222, await table.countRows())
+  // console.log(222, await table.countRows())
 }
 
 export async function searchVectorANN() {
@@ -75,7 +75,7 @@ export async function searchVectorANN() {
     .limit(10)
     .toArray()
 
-  // console.log(111, results)
+  console.log(222, results)
   // console.log(222, await table.countRows())
 }
 
