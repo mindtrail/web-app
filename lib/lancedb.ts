@@ -8,11 +8,11 @@ const DEFAULT_TABLE = 'first-table'
 async function getDBInstance() {
   if (!dbInstance) {
     try {
-      dbInstance = await lancedb.connect('/tmp/lancedb')
+      // dbInstance = await lancedb.connect('gs://mindtrail-lancedb/dev')
+      // dbInstance = await lancedb.connect('data/lancedb')
+      dbInstance = await lancedb.connect('/tmp/lancedb-test')
     } catch (e) {
       console.error(e)
-    } finally {
-      return dbInstance
     }
   }
   return dbInstance
@@ -62,7 +62,7 @@ export async function searchVectorANN() {
   const db = await getDBInstance()
   if (!db) return null
 
-  const table = await db.openTable('test_table2')
+  const table = await db.openTable(DEFAULT_TABLE)
 
   const index = Math.floor(Math.random() * 4) // 0 to 3
   const results = await table
@@ -82,10 +82,10 @@ export async function insertVector() {
   const db = await getDBInstance()
   if (!db) return null
 
-  const table = await db.openTable('test_table2')
+  const table = await db.openTable(DEFAULT_TABLE)
   console.time('insert')
 
-  const newData = Array.from({ length: 100000 }, (_, i) => ({
+  const newData = Array.from({ length: 1000 }, (_, i) => ({
     id: getNanoId(),
     vector: Array.from({ length: 1536 }, () => Math.random()),
     item: 'bar' + i,
