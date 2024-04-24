@@ -15,6 +15,15 @@ import { authOptions } from '@/lib/authOptions'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import Loading from '@/app/loading'
 
+import { Inter } from 'next/font/google'
+
+// If loading a variable font, you don't need to specify the font weight
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
+
 //import Image from 'next/image'
 // export const dynamic = 'force-dynamic'
 
@@ -60,9 +69,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   //   )
   // }
   const user = session?.user
+
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className='flex min-h-screen'>
+      <body className={`flex min-h-screen ${inter.variable} font-sans`}>
         <Providers>
           <LeftSidebar user={user} />
           <main className='flex flex-1 overflow-auto'>
