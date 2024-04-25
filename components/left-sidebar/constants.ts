@@ -6,6 +6,8 @@ import {
   NotesIcon,
 } from '@/components/ui/icons/next-icons'
 
+import { RouteIcon } from 'lucide-react'
+
 import { ENTITY_TYPE } from '@/lib/constants'
 
 export const APP_NAME = 'Mind Trail'
@@ -17,6 +19,7 @@ export const TOP_SIDEBAR_ITEMS: SidebarNavItem[] = [
 
 export const OTHER_SIDEBAR_ITEMS: SidebarNavItem[] = [
   { name: 'Notes', url: '/notes', icon: NotesIcon },
+  { name: 'Flows', url: '/flows', icon: RouteIcon },
 ]
 
 export const SIDEBAR_FOLDERS: Record<string, NestedSidebarItem> = {
