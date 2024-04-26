@@ -24,18 +24,8 @@ const CustomNode = ({ data, xPos, yPos }: NodeProps) => {
         </div>
       </div>
 
-      <Handle
-        type='source'
-        position={Position.Bottom}
-        id='a'
-        style={sourceHandleStyleA}
-      />
-      <Handle
-        type='source'
-        position={Position.Bottom}
-        id='b'
-        style={sourceHandleStyleB}
-      />
+      <Handle type='source' position={Position.Left} id='a' style={sourceHandleStyleA} />
+      <Handle type='source' position={Position.Right} id='b' style={sourceHandleStyleB} />
     </>
   )
 }

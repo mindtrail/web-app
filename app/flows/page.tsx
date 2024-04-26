@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/authOptions'
 import { getUserPreferencesDbOp } from '@/lib/db/preferences'
-import { FlowComponent } from '@/components/flow'
+import { FlowWithProvider } from '@/components/flow'
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = (await getServerSession(authOptions)) as ExtendedSession
@@ -36,5 +36,5 @@ export default async function AllItems() {
     return <div>Error loading history.</div>
   }
 
-  return <FlowComponent />
+  return <FlowWithProvider />
 }
