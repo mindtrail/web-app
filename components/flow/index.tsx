@@ -26,9 +26,9 @@ import { getNewNodeId, initialNodes, initialEdges } from './utils'
 const nodeTypes = {
   custom: CustomNode,
 }
-// const edgeTypes = {
-//   customEdge: CustomEdge,
-// }
+const edgeTypes = {
+  'custom-edge': CustomEdge,
+}
 
 const defaultEdgeOptions = {
   animated: true,
@@ -104,6 +104,7 @@ export function FlowComponent() {
         onConnectStart={onConnectStart}
         onConnectEnd={onConnectEnd}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         connectionLineType={ConnectionLineType.SmoothStep}
         selectionMode={SelectionMode.Partial}

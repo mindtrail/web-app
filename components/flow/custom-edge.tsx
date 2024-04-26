@@ -1,5 +1,13 @@
-import { memo } from 'react'
-import { getBezierPath, EdgeText, useReactFlow } from 'reactflow'
+import { memo, useCallback } from 'react'
+import {
+  BaseEdge,
+  EdgeLabelRenderer,
+  EdgeText,
+  getBezierPath,
+  useReactFlow,
+} from 'reactflow'
+
+import { Button } from '@/components/ui/button'
 
 const foreignObjectSize = 40
 
@@ -16,7 +24,7 @@ interface ButtonEdgeProps {
   markerEnd: any
 }
 
-function ButtonEdge(props: ButtonEdgeProps) {
+function ButtonEdge1(props: ButtonEdgeProps) {
   const {
     id,
     sourceX,
@@ -58,17 +66,7 @@ function ButtonEdge(props: ButtonEdgeProps) {
         d={edgePath}
         markerEnd={markerEnd}
       />
-      {data && data?.label && (
-        <EdgeText
-          x={sourceX + 10}
-          y={sourceY + 10}
-          label={data.label}
-          labelStyle={{ fill: 'black' }}
-          labelBgStyle={{ fill: 'transparent' }}
-          labelBgPadding={[2, 4]}
-          labelBgBorderRadius={2}
-        />
-      )}
+
       <foreignObject
         width={foreignObjectSize}
         height={foreignObjectSize}
@@ -83,6 +81,36 @@ function ButtonEdge(props: ButtonEdgeProps) {
           </button>
         </div>
       </foreignObject>
+    </>
+  )
+}
+
+function ButtonEdge({ id, sourceX, sourceY, targetX, targetY, data }: ButtonEdgeProps) {
+  const { setEdges } = useReactFlow()
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+  })
+
+  return (
+    <>
+      <BaseEdge id={id} path={edgePath} />
+      <EdgeLabelRenderer>
+        <Button
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            pointerEvents: 'all',
+          }}
+          variant='ghost'
+          size='sm'
+          onClick={() => setEdges((es) => es.filter((e) => e.id !== id))}
+        >
+          x
+        </Button>
+      </EdgeLabelRenderer>
     </>
   )
 }

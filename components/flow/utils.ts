@@ -32,8 +32,8 @@ export const initialNodes: Node[] = [
 ]
 
 export const initialEdges: Edge[] = [
-  { id: 'e1-2', source: '1', target: '2', type: 'customEdge' },
-  { id: 'e1-3', source: '1', target: '3', type: 'customEdge' },
+  { id: 'e1-2', source: '1', target: '2', type: 'custom-edge' },
+  { id: 'e1-3', source: '1', target: '3', type: 'custom-edge' },
 ]
 
 let id = 5
