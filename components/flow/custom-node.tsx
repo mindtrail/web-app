@@ -7,7 +7,7 @@ const sourceHandleStyleB: CSSProperties = {
   left: 'auto',
 }
 
-const CustomNode = ({ data, xPos, yPos }: NodeProps) => {
+function NewNode({ data, xPos, yPos }: NodeProps) {
   return (
     <>
       <NodeResizer />
@@ -15,12 +15,6 @@ const CustomNode = ({ data, xPos, yPos }: NodeProps) => {
       <div>
         <div>
           Label: <strong>{data.label}</strong>
-        </div>
-        <div>
-          Position:{' '}
-          <strong>
-            {xPos.toFixed(2)},{yPos.toFixed(2)}
-          </strong>
         </div>
       </div>
 
@@ -30,4 +24,4 @@ const CustomNode = ({ data, xPos, yPos }: NodeProps) => {
   )
 }
 
-export default memo(CustomNode)
+export const CustomNode = memo(NewNode)
