@@ -230,7 +230,7 @@ export function CollectionForm(props: FormProps) {
                           {...getRootProps()}
                           className={`flex flex-col w-full h-28 rounded-xl justify-center
                         border items-center gap-4 text-neutral-600
-                        select-none cursor-default transition .25s ease-in-out
+                        select-none cursor-default transition duration-300 ease-in-out
                         ${dropzoneInteractionClasses}`}
                         >
                           <input {...getInputProps()} />

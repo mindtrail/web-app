@@ -3,7 +3,6 @@ import 'reactflow/dist/style.css'
 
 import { useCallback, useRef } from 'react'
 import ReactFlow, {
-  Node,
   useNodesState,
   useEdgesState,
   addEdge,

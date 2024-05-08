@@ -13,13 +13,11 @@ function NewNode({ data, xPos, yPos }: NodeProps) {
       <NodeResizer />
       <Handle type='target' position={Position.Top} />
       <div>
-        <div>
-          Label: <strong>{data.label}</strong>
-        </div>
+        <strong>{data.label}</strong>
       </div>
 
-      <Handle type='source' position={Position.Left} id='a' style={sourceHandleStyleA} />
-      <Handle type='source' position={Position.Right} id='b' style={sourceHandleStyleB} />
+      {/* <Handle type='source' position={Position.Left} id='a' style={sourceHandleStyleA} /> */}
+      {/* <Handle type='source' position={Position.Right} id='b' style={sourceHandleStyleB} /> */}
     </>
   )
 }

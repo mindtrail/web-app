@@ -28,16 +28,16 @@ export function FirstColHeader<TData>({ table, resourceType }: FirstColHeadProps
         aria-label='Select all'
       />
 
-      <Typography className='group-hover/saved-item:hidden'>
-        {getTableHeaders(resourceType).displayName}
-      </Typography>
-
       <label
         htmlFor='select-all'
         className='hidden cursor-pointer group-hover/saved-item:flex'
       >
         <Typography>Select All</Typography>
       </label>
+
+      <Typography className='group-hover/saved-item:hidden'>
+        {getTableHeaders(resourceType).displayName}
+      </Typography>
     </div>
   )
 }
