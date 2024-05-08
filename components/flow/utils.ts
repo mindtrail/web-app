@@ -22,13 +22,13 @@ export const initialNodes: Node[] = [
     // sourcePosition: Position.Right,
     // targetPosition: Position.Left,
   },
-  {
-    id: '4',
-    data: { label: 'Node 4' },
-    position: { x: 400, y: 200 },
-    type: 'custom',
-    className: 'border p-4 w-32 rounded',
-  },
+  // {
+  //   id: '4',
+  //   data: { label: 'Node 4' },
+  //   position: { x: 400, y: 200 },
+  //   type: 'custom',
+  //   className: 'border p-4 w-32 rounded',
+  // },
 ]
 
 export const initialEdges: Edge[] = [

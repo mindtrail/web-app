@@ -8,6 +8,7 @@ import ReactFlow, {
   addEdge,
   Connection,
   Edge,
+  Node,
   ConnectionLineType,
   useReactFlow,
   ReactFlowProvider,
@@ -38,13 +39,66 @@ const defaultEdgeOptions = {
 
 export function FlowComponent() {
   const connectingNodeId = useRef<string | null>(null)
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+  const [nodes, setNodes, onNodesChange] = useNodesState([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
-  const [flows, setFlows] = useState<any[]>([])
+  const [flows, setFlows] = useState<Flow[]>([])
 
   const { screenToFlowPosition } = useReactFlow()
 
+  useEffect(() => {
+    const fetchFlows = async () => {
+      const res = await getFlows()
+      const data = (res.data as Flow[]) || []
+
+      setFlows(data)
+    }
+    fetchFlows()
+    return onFlowsChange(fetchFlows)
+  }, [])
+
+  useEffect(() => {
+    if (flows.length === 0) return
+
+    const firstFlow = flows[0]
+    const { events } = firstFlow
+
+    // console.log('flows changed', flows, events)
+
+    if (!events || events.length === 0) return
+
+    const newNodes: Node[] = []
+    const newEdges: Edge[] = []
+    let lastNodeId: string | null = null
+    let yPos = 0
+
+    events.forEach((event: FlowEvent, index: number) => {
+      const nodeId = `event-${index}`
+      newNodes.push({
+        id: nodeId,
+        data: { label: `${index + 1}: ${event.event_name}` },
+        position: { x: 100, y: yPos },
+      })
+
+      if (lastNodeId) {
+        newEdges.push({
+          id: `e${lastNodeId}-${nodeId}`,
+          source: lastNodeId,
+          target: nodeId,
+          type: 'custom-edge',
+        })
+      }
+
+      lastNodeId = nodeId
+      yPos += 100
+    })
+    console.log(newNodes, newEdges)
+
+    setNodes((currentNodes) => [...currentNodes, ...newNodes])
+    setEdges((currentEdges) => [...currentEdges, ...newEdges])
+  }, [flows, setEdges, setNodes])
+
+  // Reactflow functions
   const onConnect = useCallback(
     (params: Connection | Edge) => {
       // reset the start node on connections
@@ -53,18 +107,6 @@ export function FlowComponent() {
     },
     [setEdges],
   )
-
-  useEffect(() => {
-    const fetchFlows = async () => {
-      const res = await getFlows()
-      console.log(res)
-      const data = res.data || []
-
-      setFlows(data)
-    }
-    fetchFlows()
-    return onFlowsChange(fetchFlows)
-  }, [])
 
   const onConnectStart = useCallback<OnConnectStart>((_, { nodeId }) => {
     connectingNodeId.current = nodeId
