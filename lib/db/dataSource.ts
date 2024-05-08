@@ -1,5 +1,5 @@
 import { DataSource, DataSourceType } from '@prisma/client'
-import prisma from '@/lib/db/connection'
+import { prisma } from '@/lib/db/connection'
 import { Document } from 'langchain/document'
 
 import { getURLDisplayName } from '@/lib/utils'

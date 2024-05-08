@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/lib/db/connection'
+import { prisma } from '@/lib/db/connection'
 
 export const getUserPreferencesDbOp = async (userId: string) => {
   const userPreferences = await prisma.userPreferences.findUnique({

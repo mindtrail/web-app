@@ -1,4 +1,4 @@
-import prisma from '@/lib/db/connection'
+import { prisma } from '@/lib/db/connection'
 import { EarlyAccessStatus } from '@prisma/client'
 
 export const createEarlyAccessDbOp = async (email: string) => {

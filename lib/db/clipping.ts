@@ -1,4 +1,4 @@
-import prisma from '@/lib/db/connection'
+import { prisma } from '@/lib/db/connection'
 
 export async function getClippingList(userId: string, groupByDataSource: boolean) {
   if (groupByDataSource) {

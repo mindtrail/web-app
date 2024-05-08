@@ -1,7 +1,7 @@
 'use client'
 import 'reactflow/dist/style.css'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useState, useEffect, useRef } from 'react'
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -17,6 +17,8 @@ import ReactFlow, {
   type OnConnectStart,
   type OnConnectEnd,
 } from 'reactflow'
+
+import { getFlows, onFlowsChange, deleteFlow, updateFlow } from '@/lib/db/flows'
 
 import { CustomNode } from './custom-node'
 import { CustomEdge } from './custom-edge'
@@ -39,6 +41,8 @@ export function FlowComponent() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
+  const [flows, setFlows] = useState<any[]>([])
+
   const { screenToFlowPosition } = useReactFlow()
 
   const onConnect = useCallback(
@@ -49,6 +53,18 @@ export function FlowComponent() {
     },
     [setEdges],
   )
+
+  useEffect(() => {
+    const fetchFlows = async () => {
+      const res = await getFlows()
+      console.log(res)
+      const data = res.data || []
+
+      setFlows(data)
+    }
+    fetchFlows()
+    return onFlowsChange(fetchFlows)
+  }, [])
 
   const onConnectStart = useCallback<OnConnectStart>((_, { nodeId }) => {
     connectingNodeId.current = nodeId

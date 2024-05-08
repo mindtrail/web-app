@@ -1,4 +1,4 @@
-import prisma from '@/lib/db/connection'
+import { prisma } from '@/lib/db/connection'
 import { DataSourceTag, Tag, DataSource } from '@prisma/client'
 
 type TagsPayload = {

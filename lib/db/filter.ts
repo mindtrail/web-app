@@ -1,4 +1,4 @@
-import prisma from '@/lib/db/connection'
+import { prisma } from '@/lib/db/connection'
 // import { getDataSourceListByIds } from './dataSource'
 // import { Filter, DataSource } from '@prisma/client'
 

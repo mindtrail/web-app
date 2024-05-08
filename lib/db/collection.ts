@@ -1,4 +1,4 @@
-import prisma from '@/lib/db/connection'
+import { prisma } from '@/lib/db/connection'
 import { CollectionDataSource, Collection, DataSource } from '@prisma/client'
 
 type CollectionListProps = {
