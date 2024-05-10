@@ -60,42 +60,43 @@ export function FlowComponent() {
   useEffect(() => {
     if (flows.length === 0) return
 
-    const firstFlow = flows[0]
-    const { events } = firstFlow
-
-    // console.log('flows changed', flows, events)
-
-    if (!events || events.length === 0) return
-
     const newNodes: Node[] = []
     const newEdges: Edge[] = []
-    let lastNodeId: string | null = null
-    let yPos = 0
 
-    events.forEach((event: FlowEvent, index: number) => {
-      const nodeId = `event-${index}`
-      newNodes.push({
-        id: nodeId,
-        data: { label: `${index + 1}: ${event.event_name}` },
-        position: { x: 100, y: yPos },
-      })
+    let xPos = 0
+    flows.forEach((flow: Flow) => {
+      const { events } = flow
+      if (!events?.length) return
 
-      if (lastNodeId) {
-        newEdges.push({
-          id: `e${lastNodeId}-${nodeId}`,
-          source: lastNodeId,
-          target: nodeId,
-          type: 'custom-edge',
+      let lastNodeId: string | null = null
+      let yPos = 0
+      xPos += 250
+
+      events.forEach((event: FlowEvent, index: number) => {
+        const nodeId = `ev-${event.id}`
+
+        newNodes.push({
+          id: nodeId,
+          data: { label: `${index + 1}: ${event.event_name}` },
+          position: { x: xPos, y: yPos },
         })
-      }
 
-      lastNodeId = nodeId
-      yPos += 100
+        if (lastNodeId) {
+          newEdges.push({
+            id: `edge-${lastNodeId}-${nodeId}`,
+            source: lastNodeId,
+            target: nodeId,
+            type: 'custom-edge',
+          })
+        }
+
+        lastNodeId = nodeId
+        yPos += 100
+      })
     })
-    console.log(newNodes, newEdges)
 
-    setNodes((currentNodes) => [...currentNodes, ...newNodes])
-    setEdges((currentEdges) => [...currentEdges, ...newEdges])
+    setNodes(() => [...newNodes])
+    setEdges(() => [...newEdges])
   }, [flows, setEdges, setNodes])
 
   // Reactflow functions

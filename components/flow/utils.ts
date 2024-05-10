@@ -38,3 +38,10 @@ export const initialEdges: Edge[] = [
 
 let id = 5
 export const getNewNodeId = () => `${id++}`
+
+export const buildNode = (data: Node) => {
+  return {
+    id: getNewNodeId(),
+    data,
+  }
+}
