@@ -35,7 +35,7 @@ export function LeftSidebar({ user }: SidebarNavProps) {
       >
         <div className='h-14 border-b flex items-center justify-center'>
           <Link href='/' className='flex gap-4 w-full px-4 py-2 self-center items-center'>
-            <Image width={30} height={30} src='/icon-2.png' alt='Mind Trail' />
+            <Image width={30} height={30} src='/icon-2.png' alt='EZ RPA' />
             {APP_NAME}
           </Link>
         </div>

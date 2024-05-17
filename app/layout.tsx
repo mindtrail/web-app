@@ -33,8 +33,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'Mind Trail',
-    template: `Mind Trail - %s`,
+    default: 'EZ RPA',
+    template: `EZ RPA - %s`,
   },
   description: 'AI assitant to emember and structures everything you see online',
   icons: {

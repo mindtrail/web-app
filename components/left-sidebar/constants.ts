@@ -10,7 +10,7 @@ import { RouteIcon } from 'lucide-react'
 
 import { ENTITY_TYPE } from '@/lib/constants'
 
-export const APP_NAME = 'Mind Trail'
+export const APP_NAME = 'EZ RPA'
 
 export const TOP_SIDEBAR_ITEMS: SidebarNavItem[] = [
   { name: 'All Items', url: '/all-items', icon: IconAllData },
