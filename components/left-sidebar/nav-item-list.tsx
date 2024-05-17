@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
@@ -8,12 +7,13 @@ const SIDEBAR_BTN = cn(buttonVariants({ variant: 'sidebar' }))
 const ACTIVE_BTN = cn(buttonVariants({ variant: 'sidebarActive' }))
 
 interface NavItemListProps {
-  setActiveNestedSidebar: (value?: any) => void
   list: SidebarNavItem[]
+  pathname: string
+  setActiveNestedSidebar: (value?: any) => void
 }
 
-export function NavItemList({ setActiveNestedSidebar, list = [] }: NavItemListProps) {
-  const pathname = usePathname()
+export function NavItemList(props: NavItemListProps) {
+  const { list, pathname, setActiveNestedSidebar } = props
 
   if (!list?.length) {
     return null

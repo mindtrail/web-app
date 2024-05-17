@@ -30,7 +30,7 @@ export function FoldersList(props: FoldersListProps) {
   const handleFolderClick = useCallback(
     (item: any) => {
       if (item?.name === activeNestedSidebar?.name) {
-        return setActiveNestedSidebar()
+        return setActiveNestedSidebar(null)
       }
 
       setActiveNestedSidebar(item)
