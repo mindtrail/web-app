@@ -20,8 +20,8 @@ export async function Header() {
     >
       <div className='flex w-full px-4 md:px-0 items-center justify-between'>
         <Link href='/' className='flex w-40 items-center gap-4'>
-          <Image width={32} height={32} src='/icon-2.png' alt='EZ RPA' />
-          EZ RPA
+          <Image width={32} height={32} src='/icon-2.png' alt='EZ Process Automation' />
+          EZ Process Automation
         </Link>
 
         {/* {user && <Link href='/folder'>Knowledge Bases</Link>} */}

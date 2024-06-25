@@ -33,8 +33,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'EZ RPA',
-    template: `EZ RPA - %s`,
+    default: 'EZ Process Automation',
+    template: `EZ Process Automation - %s`,
   },
   description: 'AI assitant to emember and structures everything you see online',
   icons: {
