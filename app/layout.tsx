@@ -64,7 +64,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang='en' suppressHydrationWarning>
       <body className='flex min-h-screen'>
         <Providers>
-          <LeftSidebar user={user} />
+          {/* <LeftSidebar user={user} /> */}
           <main className='flex flex-1 overflow-auto'>
             <Suspense fallback={<Loading />}>{children}</Suspense>
             {/* <Separator orientation='vertical' /> */}
