@@ -43,7 +43,7 @@ const onUpload = (file: File) => {
   })
 }
 
-export const uploadFn = createImageUpload({
+export const handleImageUpload = createImageUpload({
   onUpload,
   validateFn: (file: File) => {
     if (!file.type.includes('image/')) {
