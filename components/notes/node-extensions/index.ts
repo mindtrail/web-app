@@ -9,9 +9,13 @@ import {
   StarterKit,
   Placeholder,
   AIHighlight,
+  GlobalDragHandle,
 } from 'novel/extensions'
 
 import { cx } from 'class-variance-authority'
+
+import { Generation } from './generation'
+import { handleImageUpload } from './image-upload'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -113,7 +117,7 @@ const starterKit = StarterKit.configure({
   gapcursor: false,
 })
 
-export const defaultExtensions = [
+const editorExtensions = [
   starterKit,
   placeholder,
   tiptapLink,
@@ -122,4 +126,7 @@ export const defaultExtensions = [
   taskItem,
   horizontalRule,
   aiHighlight,
+  GlobalDragHandle,
 ]
+
+export { editorExtensions, handleImageUpload }

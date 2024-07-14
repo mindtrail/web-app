@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 import { createSuggestionItems } from 'novel/extensions'
-import { uploadFn } from '../image-upload'
+import { handleImageUpload } from '../node-extensions'
 
 export const defaultSuggestionItems = createSuggestionItems([
   {
@@ -22,7 +22,9 @@ export const defaultSuggestionItems = createSuggestionItems([
     icon: <MessageSquarePlus size={18} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).run()
-      window.open('/feedback', '_blank')
+      const subject = encodeURIComponent('Feedback')
+      const body = encodeURIComponent('I have some feedback:')
+      window.location.href = `mailto:dan.pausan@gmail.com?subject=${subject}&body=${body}`
     },
   },
   {
@@ -125,7 +127,7 @@ export const defaultSuggestionItems = createSuggestionItems([
         if (input.files?.length) {
           const file = input.files[0]
           const pos = editor.view.state.selection.from
-          uploadFn(file, editor.view, pos)
+          handleImageUpload(file, editor.view, pos)
         }
       }
       input.click()

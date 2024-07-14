@@ -9,14 +9,12 @@ import { handleImageDrop, handleImagePaste } from 'novel/plugins'
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
 import { EditorProps } from '@tiptap/pm/view'
 
-import { InlineToolbar } from './inlineToolbar'
+import { InlineToolbar } from './inline-toolbar'
 import { slashCommand, SuggestionMenuCommand } from './slash-command'
-
+import { editorExtensions, handleImageUpload } from './node-extensions'
 import { defaultEditorContent } from './utils'
-import { defaultExtensions } from './extensions'
-import { uploadFn } from './image-upload'
 
-const extensions = [...defaultExtensions, slashCommand]
+const extensions = [...editorExtensions, slashCommand]
 
 export default function EditorWrapper() {
   const [content, setContent] = useState<JSONContent>(defaultEditorContent)
@@ -48,9 +46,9 @@ export default function EditorWrapper() {
     handleDOMEvents: {
       keydown: (_view, event) => handleCommandNavigation(event),
     },
-    handlePaste: (view, event) => handleImagePaste(view, event, uploadFn),
+    handlePaste: (view, event) => handleImagePaste(view, event, handleImageUpload),
     handleDrop: (view, event, _slice, moved) =>
-      handleImageDrop(view, event, moved, uploadFn),
+      handleImageDrop(view, event, moved, handleImageUpload),
     attributes: {
       class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
     },

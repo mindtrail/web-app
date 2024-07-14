@@ -1985,6 +1985,13 @@
   dependencies:
     tslib "^2.4.0"
 
+"@swc/helpers@^0.5.3":
+  version "0.5.12"
+  resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.12.tgz#37aaca95284019eb5d2207101249435659709f4b"
+  integrity sha512-KMZNXiGibsW9kvZAO1Pam2JPTDBm+KSHMMHWdsyI/1DbIZjT2A6Gy3hblVXUMEDvUAKq+e0vL0X0o54owWji7g==
+  dependencies:
+    tslib "^2.4.0"
+
 "@tailwindcss/typography@^0.5.10":
   version "0.5.10"
   resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.10.tgz#2abde4c6d5c797ab49cf47610830a301de4c1e0a"
@@ -2033,6 +2040,16 @@
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-bullet-list/-/extension-bullet-list-2.2.4.tgz#1763ae7686bc3f209c1662d571e738280d190ff8"
   integrity sha512-z/MPmW8bhRougMuorl6MAQBXeK4rhlP+jBWlNwT+CT8h5IkXqPnDbM1sZeagp2nYfVV6Yc4RWpzimqHHtGnYTA==
+
+"@tiptap/extension-character-count@^2.3.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-character-count/-/extension-character-count-2.5.0.tgz#7bcf781ab6a5ec397e7d9629cc899639ad5093dd"
+  integrity sha512-kx16DJN9UZIJYLaEZ/Qg7Fh+O5+wEkmn1EJjjYXaWsqB7eR32dw7GbhoBtlleS6r++XoGOnaFzXkax1ja1M65w==
+
+"@tiptap/extension-code-block-lowlight@^2.2.6":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-code-block-lowlight/-/extension-code-block-lowlight-2.5.0.tgz#d301fba3ea0c9c30f721d5205ca8e874e5b50f91"
+  integrity sha512-klk0otE7iVOWsztExAiLZNitF8fmD1p17YaIQ9N5eTMpwG7Uburr4/Uz0Q2cTglRm9Ps6AyokloayLezkjvMug==
 
 "@tiptap/extension-code-block@^2.2.4":
   version "2.2.4"
@@ -2162,6 +2179,11 @@
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-underline/-/extension-underline-2.2.4.tgz#7be1a616e16452dd17a9c6fd03e40636bc676972"
   integrity sha512-jCHgIJMwtXlGHVy/j3L8/QvglHCikkHJw7YS5yf8E/8HlPh1tZfVy/IxdgacDOpUN30X+UPJZQDdVKymafgwdA==
+
+"@tiptap/extension-youtube@^2.4.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-youtube/-/extension-youtube-2.5.0.tgz#c3d5d0a505991c49fe6b529ba75abb2879c4a2c0"
+  integrity sha512-hYSX5VT+f34ZWYdM6iveUJ2/iPtRSBUHPXEPS0K0n1DJMJ4f2t4eMNjO0gdIhkgcYeet288gRGMFwsQ3RqqKcQ==
 
 "@tiptap/pm@^2.1.7":
   version "2.2.4"
@@ -3211,7 +3233,7 @@ class-variance-authority@^0.7.0:
   dependencies:
     clsx "2.0.0"
 
-client-only@0.0.1:
+client-only@0.0.1, client-only@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/client-only/-/client-only-0.0.1.tgz#38bba5d403c41ab150bff64a95c85013cf73bca1"
   integrity sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==
@@ -6356,13 +6378,15 @@ normalize-range@^0.1.2:
   resolved "https://registry.yarnpkg.com/normalize-range/-/normalize-range-0.1.2.tgz#2d10c06bdfd312ea9777695a4d28439456b75942"
   integrity sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==
 
-novel@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/novel/-/novel-0.3.1.tgz#5a215092072a1b9358f98686b3a7adf046f3fe5c"
-  integrity sha512-om5ETtpo23BvKbN6wynSkSEwsJCWIEJjuBPYPk9jy9ktVqNUJjvVGGtCeah7Gr1L7Iy3Jtif1cMFokqsyzZQPw==
+novel@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/novel/-/novel-0.4.3.tgz#9a7ae14e447f1e798dfca7dffe00238508fb86d9"
+  integrity sha512-3a4Zt3GvpklMqpMZJlGJDwNRt188t8p/WYwDNdn3nKmQGM6U8Maq04ZL3MRVNm9K9OgAEIf1Dax0ki5wBWm15w==
   dependencies:
     "@radix-ui/react-slot" "^1.0.2"
     "@tiptap/core" "^2.1.7"
+    "@tiptap/extension-character-count" "^2.3.0"
+    "@tiptap/extension-code-block-lowlight" "^2.2.6"
     "@tiptap/extension-color" "^2.1.7"
     "@tiptap/extension-highlight" "^2.1.7"
     "@tiptap/extension-horizontal-rule" "^2.1.7"
@@ -6373,6 +6397,7 @@ novel@^0.3.1:
     "@tiptap/extension-task-list" "^2.1.7"
     "@tiptap/extension-text-style" "^2.1.7"
     "@tiptap/extension-underline" "^2.1.7"
+    "@tiptap/extension-youtube" "^2.4.0"
     "@tiptap/pm" "^2.1.7"
     "@tiptap/react" "^2.1.7"
     "@tiptap/starter-kit" "^2.1.7"
@@ -6382,9 +6407,9 @@ novel@^0.3.1:
     jotai "^2.6.4"
     react-markdown "^8.0.7"
     react-moveable "^0.56.0"
+    react-tweet "^3.2.1"
     tippy.js "^6.3.7"
-    tiptap-extension-auto-joiner "^0.1.1"
-    tiptap-extension-global-drag-handle "^0.1.6"
+    tiptap-extension-global-drag-handle "^0.1.7"
     tiptap-markdown "^0.8.9"
     tunnel-rat "^0.1.2"
 
@@ -7368,6 +7393,15 @@ react-transition-group@^4.3.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
+react-tweet@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-tweet/-/react-tweet-3.2.1.tgz#000d9bf2b2ce919fdec0e14241f05631e8917143"
+  integrity sha512-dktP3RMuwRB4pnSDocKpSsW5Hq1IXRW6fONkHhxT5EBIXsKZzdQuI70qtub1XN2dtZdkJWWxfBm/Q+kN+vRYFA==
+  dependencies:
+    "@swc/helpers" "^0.5.3"
+    clsx "^2.0.0"
+    swr "^2.2.4"
+
 react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
@@ -8063,6 +8097,14 @@ swr@2.2.0:
   dependencies:
     use-sync-external-store "^1.2.0"
 
+swr@^2.2.4:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-2.2.5.tgz#063eea0e9939f947227d5ca760cc53696f46446b"
+  integrity sha512-QtxqyclFeAsxEUeZIYmsaQ0UjimSq1RZ9Un7I68/0ClKK/U3LoyQunwkQfJZr2fc22DfIXLNDc2wFyTEikCUpg==
+  dependencies:
+    client-only "^0.0.1"
+    use-sync-external-store "^1.2.0"
+
 swrev@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/swrev/-/swrev-4.0.0.tgz#83da6983c7ef9d71ac984a9b169fc197cbf18ff8"
@@ -8234,15 +8276,10 @@ tippy.js@^6.3.7:
   dependencies:
     "@popperjs/core" "^2.9.0"
 
-tiptap-extension-auto-joiner@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/tiptap-extension-auto-joiner/-/tiptap-extension-auto-joiner-0.1.1.tgz#060afbeeaa62d9c2ab0409982884452f0a8ed003"
-  integrity sha512-n38N7qWUL3Iz6XdwxZLacSuE1itIAp6lzcVUYgi0K/d/eLydgFl07ZixBJ6XHCDESjw4wrRgRQQE9nvMGvn3QA==
-
-tiptap-extension-global-drag-handle@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/tiptap-extension-global-drag-handle/-/tiptap-extension-global-drag-handle-0.1.6.tgz#397366ea3f86b26c31835e997dca7c0572890391"
-  integrity sha512-kjRFd/glJGTHEglHPNWtML1iINuEBG4eWvWbNIuuXE2LbylFXYHKVgLvZgxilqXSBH/o+lKDEp7/iL3lKvnxGw==
+tiptap-extension-global-drag-handle@^0.1.7:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/tiptap-extension-global-drag-handle/-/tiptap-extension-global-drag-handle-0.1.10.tgz#f0eb2d064a6a42859cae3ba370e7bc5423dfed68"
+  integrity sha512-Bt6nzlQWp+Jw8ljvwO7dWqIgs2LupIzC6ar8SlXkfJ6MSGZ3+YMORrooSdbSysMlv2Zk1ypJc/kw/n9yGJMMEg==
 
 tiptap-markdown@^0.8.9:
   version "0.8.10"
