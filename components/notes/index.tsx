@@ -7,7 +7,7 @@ export function NotesComponent() {
   return (
     <div id='notes' className='flex flex-col flex-1 h-screen overflow-hidden'>
       <div className='py-8 px-16'>
-        <Typography variant='h1'>Automatic API Connector</Typography>
+        <Typography variant='h1'>No code - Notebook</Typography>
       </div>
       <Separator />
       <div className='py-8 px-16 overflow-auto'>

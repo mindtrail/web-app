@@ -127,6 +127,7 @@ const editorExtensions = [
   horizontalRule,
   aiHighlight,
   GlobalDragHandle,
+  Generation,
 ]
 
 export { editorExtensions, handleImageUpload }

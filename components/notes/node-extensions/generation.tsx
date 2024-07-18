@@ -1,19 +1,22 @@
 import { mergeAttributes, Node } from '@tiptap/core'
-import { ReactNodeViewRenderer } from '@tiptap/react'
-import { Star } from 'lucide-react'
+import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
+import { StarsIcon } from 'lucide-react'
 
 const GenerationComponent = ({ node }: { node: any }) => {
   return (
-    <span className='inline-flex items-center rounded bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800'>
-      <Star className='mr-1 h-4 w-4' />
-      {node.attrs.name}
-    </span>
+    <NodeViewWrapper as='span'>
+      <span className='inline-flex items-center rounded bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800'>
+        <StarsIcon className='mr-1 h-4 w-4' />
+        {node.attrs.name}
+        test 1234
+      </span>
+    </NodeViewWrapper>
   )
 }
 
 export const Generation = Node.create({
   name: 'generation',
-  group: 'inline',
+  group: '',
   inline: true,
   selectable: false,
   atom: true,
