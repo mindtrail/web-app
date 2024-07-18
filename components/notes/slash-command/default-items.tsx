@@ -10,6 +10,7 @@ import {
   MessageSquarePlus,
   Text,
   TextQuote,
+  StarsIcon,
 } from 'lucide-react'
 
 import { createSuggestionItems } from 'novel/extensions'
@@ -131,6 +132,29 @@ export const defaultSuggestionItems = createSuggestionItems([
         }
       }
       input.click()
+    },
+  },
+  {
+    title: 'Insert Generation',
+    description: 'Add a generation tag',
+    searchTerms: ['generation', 'tag', 'label'],
+    icon: <StarsIcon size={18} />,
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContent([
+          {
+            type: 'generation',
+            attrs: { name: 'Gen 1' },
+          },
+          {
+            type: 'text',
+            text: ' ',
+          },
+        ])
+        .run()
     },
   },
 ])
