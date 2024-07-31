@@ -16,18 +16,31 @@ import {
 import { createSuggestionItems } from 'novel/extensions'
 import { handleImageUpload } from '../node-extensions'
 
-export const defaultSuggestionItems = createSuggestionItems([
+export const suggestionItems = createSuggestionItems([
   {
-    title: 'Send Feedback',
-    description: 'Let us know how we can improve.',
-    icon: <MessageSquarePlus size={18} />,
+    title: 'Insert Generation',
+    description: 'Add a generation tag',
+    searchTerms: ['generation', 'tag', 'label'],
+    icon: <StarsIcon size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).run()
-      const subject = encodeURIComponent('Feedback')
-      const body = encodeURIComponent('I have some feedback:')
-      window.location.href = `mailto:dan.pausan@gmail.com?subject=${subject}&body=${body}`
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContent([
+          {
+            type: 'generation',
+            attrs: { name: 'Gen 1' },
+          },
+          {
+            type: 'text',
+            text: ' ',
+          },
+        ])
+        .run()
     },
   },
+
   {
     title: 'Text',
     description: 'Just start typing with plain text.',
@@ -135,26 +148,14 @@ export const defaultSuggestionItems = createSuggestionItems([
     },
   },
   {
-    title: 'Insert Generation',
-    description: 'Add a generation tag',
-    searchTerms: ['generation', 'tag', 'label'],
-    icon: <StarsIcon size={18} />,
+    title: 'Send Feedback',
+    description: 'Let us know how we can improve.',
+    icon: <MessageSquarePlus size={18} />,
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent([
-          {
-            type: 'generation',
-            attrs: { name: 'Gen 1' },
-          },
-          {
-            type: 'text',
-            text: ' ',
-          },
-        ])
-        .run()
+      editor.chain().focus().deleteRange(range).run()
+      const subject = encodeURIComponent('Feedback')
+      const body = encodeURIComponent('I have some feedback:')
+      window.location.href = `mailto:dan.pausan@gmail.com?subject=${subject}&body=${body}`
     },
   },
 ])

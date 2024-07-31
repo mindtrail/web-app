@@ -1,25 +1,59 @@
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
-import { StarsIcon } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
+import { useState } from 'react'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Typography } from '@/components/typography'
 
 const GenerationComponent = ({ node }: { node: any }) => {
+  const [prompt, setPrompt] = useState(node.attrs.name || '')
+
   return (
-    <NodeViewWrapper as='span'>
-      <span className='inline-flex items-center rounded bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800'>
-        <StarsIcon className='mr-1 h-4 w-4' />
-        {node.attrs.name}
-        test 1234
-      </span>
+    <NodeViewWrapper className='my-4'>
+      <div className='flex flex-col px-4 py-2 gap-2 rounded-lg border border-gray-300 bg-white shadow-sm'>
+        <Label className='flex items-center'>
+          <Sparkles className='mr-2 h-4 w-4' />
+          <Typography variant='small-semi'>AI Generation</Typography>
+        </Label>
+        <Textarea
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder='Enter prompt here.'
+          className='flex-grow rounded-l-lg px-4 py-2 focus:outline-none'
+        />
+        <div className='flex items-center justify-between'>
+          <Button
+            className='flex items-center'
+            variant='outline'
+            onClick={() => {
+              // Handle generation logic here
+              console.log('Generating text for:', prompt)
+            }}
+          >
+            Preview
+          </Button>
+          <Button
+            className='flex items-center'
+            variant='outline'
+            onClick={() => {
+              // Handle generation logic here
+              console.log('Generating text for:', prompt)
+            }}
+          >
+            Configure
+          </Button>
+        </div>
+      </div>
     </NodeViewWrapper>
   )
 }
 
 export const Generation = Node.create({
   name: 'generation',
-  group: '',
-  inline: true,
+  group: 'block',
   selectable: false,
-  atom: true,
 
   addAttributes() {
     return {
@@ -32,13 +66,13 @@ export const Generation = Node.create({
   parseHTML() {
     return [
       {
-        tag: 'span[data-type="generation"]',
+        tag: 'div[data-type="generation"]',
       },
     ]
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['span', mergeAttributes(HTMLAttributes, { 'data-type': 'generation' }), 0]
+    return ['div', mergeAttributes(HTMLAttributes, { 'data-type': 'generation' }), 0]
   },
 
   addNodeView() {
