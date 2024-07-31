@@ -18,9 +18,9 @@ import { handleImageUpload } from '../node-extensions'
 
 export const suggestionItems = createSuggestionItems([
   {
-    title: 'Insert Generation',
+    title: 'AI Generation',
     description: 'Add a generation tag',
-    searchTerms: ['generation', 'tag', 'label'],
+    searchTerms: ['generation', 'AI'],
     icon: <StarsIcon size={18} />,
     command: ({ editor, range }) => {
       editor
@@ -30,7 +30,7 @@ export const suggestionItems = createSuggestionItems([
         .insertContent([
           {
             type: 'generation',
-            attrs: { name: 'Gen 1' },
+            // attrs: { name: 'Gen 1' },
           },
           {
             type: 'text',

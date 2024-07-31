@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, ReactNode } from 'react'
+import { useState } from 'react'
 import { useCompletion } from 'ai/react'
 import { ArrowUp } from 'lucide-react'
 import { toast } from 'sonner'
