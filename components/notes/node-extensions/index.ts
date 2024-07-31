@@ -93,7 +93,7 @@ const starterKit = StarterKit.configure({
   },
   blockquote: {
     HTMLAttributes: {
-      class: cx('border-l-4 border-primary'),
+      class: cx('border-l-2 border-secondary'),
     },
   },
   codeBlock: {
