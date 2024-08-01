@@ -109,7 +109,6 @@ const starterKit = StarterKit.configure({
       spellcheck: 'false',
     },
   },
-  horizontalRule: false,
   dropcursor: {
     color: '#DBEAFE',
     width: 4,
