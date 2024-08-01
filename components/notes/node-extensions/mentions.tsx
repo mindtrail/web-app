@@ -7,7 +7,7 @@ import tippy from 'tippy.js'
 import MentionList from './mention-list'
 
 const mentionStyles = {
-  class: 'rounded-md px-1.5 py-0.5 bg-violet-50 text-violet-800 cursor-default',
+  class: 'rounded-md px-2 py-1 bg-violet-50 text-violet-800 cursor-default',
 }
 
 export const Mention = MentionExtension.configure({
@@ -20,7 +20,7 @@ export const Mention = MentionExtension.configure({
     return [
       'span',
       mergeAttributes(options.HTMLAttributes, mentionStyles),
-      `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`,
+      `${options.suggestion.char} ${node.attrs.label ?? node.attrs.id}`,
     ]
   },
   // deleteTriggerWithBackspace: true,
