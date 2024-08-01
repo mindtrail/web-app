@@ -52,10 +52,15 @@ export default forwardRef((props: MentionListProps, ref: any) => {
   }))
 
   return (
-    <div className='items'>
+    <div
+      className='flex flex-col min-w-32 bg-white border rounded-lg shadow
+      overflow-auto p-1.5 relative'
+    >
       {props.items.map((item, index) => (
         <button
-          className={`item ${index === selectedIndex ? 'is-selected' : ''}`}
+          className={`w-full text-start hover:bg-muted px-2 py-1 rounded-md
+              ${index === selectedIndex ? 'bg-muted' : ''}
+          `}
           key={index}
           onClick={() => selectItem(index)}
         >
