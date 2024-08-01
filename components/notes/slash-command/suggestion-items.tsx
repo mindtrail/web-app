@@ -11,6 +11,7 @@ import {
   Text,
   TextQuote,
   StarsIcon,
+  MinusIcon,
 } from 'lucide-react'
 
 import { createSuggestionItems } from 'novel/extensions'
@@ -27,16 +28,7 @@ export const suggestionItems = createSuggestionItems([
         .chain()
         .focus()
         .deleteRange(range)
-        .insertContent([
-          {
-            type: 'generation',
-            // attrs: { name: 'Gen 1' },
-          },
-          {
-            type: 'text',
-            text: ' ',
-          },
-        ])
+
         .run()
     },
   },
@@ -156,6 +148,14 @@ export const suggestionItems = createSuggestionItems([
       const subject = encodeURIComponent('Feedback')
       const body = encodeURIComponent('I have some feedback:')
       window.location.href = `mailto:dan.pausan@gmail.com?subject=${subject}&body=${body}`
+    },
+  },
+  {
+    title: 'Horizontal Rule',
+    description: 'Add a horizontal rule.',
+    icon: <MinusIcon size={18} />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setHorizontalRule().run()
     },
   },
 ])

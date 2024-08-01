@@ -1,5 +1,5 @@
 import { mergeAttributes, Node } from '@tiptap/core'
-import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
+import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewContent } from '@tiptap/react'
 import { SparklesIcon, SettingsIcon, CirclePlayIcon, TerminalIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Typography } from '@/components/typography'
 
 const GenerationComponent = ({ node }: { node: any }) => {
+  console.log(node)
   const [prompt, setPrompt] = useState(node.attrs.name || '')
   const [result, setResult] = useState('')
 
@@ -32,7 +33,9 @@ const GenerationComponent = ({ node }: { node: any }) => {
 
           <Label htmlFor='generation-prompt' className='flex items-center'>
             <SparklesIcon className='mr-2 h-4 w-4' />
-            <Typography variant='small-semi'>AI Generation</Typography>
+            <Typography variant='small-semi' className='select-none'>
+              AI Generation
+            </Typography>
           </Label>
 
           <Button
@@ -67,6 +70,7 @@ const GenerationComponent = ({ node }: { node: any }) => {
           </div>
         )}
       </div>
+      <NodeViewContent className='hidden' />
     </NodeViewWrapper>
   )
 }
@@ -74,7 +78,9 @@ const GenerationComponent = ({ node }: { node: any }) => {
 export const Generation = Node.create({
   name: 'generation',
   group: 'block',
-  selectable: false,
+  draggable: true,
+  selectable: true,
+
 
   addAttributes() {
     return {
