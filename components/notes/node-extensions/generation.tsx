@@ -1,14 +1,15 @@
+import { useState } from 'react'
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewContent } from '@tiptap/react'
 import { SparklesIcon, SettingsIcon, CirclePlayIcon, TerminalIcon } from 'lucide-react'
-import { useState } from 'react'
+
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Typography } from '@/components/typography'
 
 const GenerationComponent = ({ node }: { node: any }) => {
-  console.log(node)
+
   const [prompt, setPrompt] = useState(node.attrs.name || '')
   const [result, setResult] = useState('')
 

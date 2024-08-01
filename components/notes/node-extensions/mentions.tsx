@@ -1,64 +1,90 @@
-// import { Mention } from '@tiptap/extension-mention'
-// import { ReactRenderer } from '@tiptap/react'
-// import tippy from 'tippy.js'
+import { Mention as MentionExtension } from '@tiptap/extension-mention'
+import { ReactRenderer } from '@tiptap/react'
+import { mergeAttributes } from '@tiptap/react'
+import tippy from 'tippy.js'
 
-// // You'll need to create this component
-// import MentionList from './MentionList'
+// You'll need to create this component
+import MentionList from './mention-list'
 
-// export const Connect = Mention.configure({
-//   HTMLAttributes: {
-//     class: 'mention',
-//   },
-//   suggestion: {
-//     items: ({ query }) => {
-//       // This is where you'd fetch your list of connections
-//       return [
-//         'Web',
-//         'https://tiptap.dev/docs/editor/extensions/nodes/mention',
-//         // ... other connections
-//       ].filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5)
-//     },
-//     render: () => {
-//       let component
-//       let popup
+const mentionStyles = {
+  class: 'rounded-md px-1.5 py-0.5 bg-violet-50 text-violet-800 cursor-default',
+}
 
-//       return {
-//         onStart: props => {
-//           component = new ReactRenderer(MentionList, {
-//             props,
-//             editor: props.editor,
-//           })
+export const Mention = MentionExtension.configure({
+  HTMLAttributes: {
+    class: 'mention bg-primary',
+  },
+  renderHTML({ options, node }) {
+    console.log('options', options)
+    console.log('node', node)
+    return [
+      'span',
+      mergeAttributes(options.HTMLAttributes, mentionStyles),
+      `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`,
+    ]
+  },
+  // deleteTriggerWithBackspace: true,
+  suggestion: {
+    items: ({ query }: { query: string }) => {
+      // This is where you'd fetch your list of connections
+      return [
+        'Alin',
+        'Alex',
+        'Andrei',
+        'Cristian',
+        'Doru',
+        'Eugen',
+        'Ionut',
+        'Mihai',
+        'Radu',
+        'Valeriu',
+        // ... other connections
+      ]
+        .filter((item) => item.toLowerCase().startsWith(query.toLowerCase()))
+        .slice(0, 5)
+    },
+    render: () => {
+      let component: ReactRenderer
+      let popup: any
 
-//           popup = tippy('body', {
-//             getReferenceClientRect: props.clientRect,
-//             appendTo: () => document.body,
-//             content: component.element,
-//             showOnCreate: true,
-//             interactive: true,
-//             trigger: 'manual',
-//             placement: 'bottom-start',
-//           })
-//         },
-//         onUpdate(props) {
-//           component.updateProps(props)
+      return {
+        onStart: (props: any) => {
+          component = new ReactRenderer(MentionList, {
+            props,
+            editor: props.editor,
+          })
 
-//           popup[0].setProps({
-//             getReferenceClientRect: props.clientRect,
-//           })
-//         },
-//         onKeyDown(props) {
-//           if (props.event.key === 'Escape') {
-//             popup[0].hide()
-//             return true
-//           }
+          popup = tippy('body', {
+            getReferenceClientRect: props.clientRect,
+            appendTo: () => document.body,
+            content: component.element,
+            showOnCreate: true,
+            interactive: true,
+            trigger: 'manual',
+            placement: 'bottom-start',
+            theme: 'light',
+          })
+        },
+        onUpdate(props: any) {
+          component.updateProps(props)
 
-//           return component.ref?.onKeyDown(props)
-//         },
-//         onExit() {
-//           popup[0].destroy()
-//           component.destroy()
-//         },
-//       }
-//     },
-//   },
-// })
+          popup[0].setProps({
+            getReferenceClientRect: props.clientRect,
+          })
+        },
+        onKeyDown(props: any) {
+          if (props.event.key === 'Escape') {
+            popup[0].hide()
+            return true
+          }
+
+          return (component.ref as any)?.onKeyDown(props)
+        },
+        onExit() {
+          popup[0].destroy()
+          component.destroy()
+        },
+      }
+    },
+  },
+})

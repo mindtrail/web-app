@@ -49,6 +49,7 @@
     "@sotaproject/strikethrough": "^1.0.1",
     "@tanstack/react-table": "^8.11.2",
     "@tiptap/extension-mention": "^2.5.8",
+    "@tiptap/suggestion": "^2.5.8",
     "@upstash/ratelimit": "^1.0.1",
     "@vercel/analytics": "^1.1.1",
     "@vercel/kv": "^0.2.4",
