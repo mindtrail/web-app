@@ -14,8 +14,9 @@ import {
 
 import { cx } from 'class-variance-authority'
 
-import { Generation } from './generation'
 import { handleImageUpload } from './image-upload'
+import { Generation } from './generation'
+import { Mention } from './mentions'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -127,6 +128,7 @@ const editorExtensions = [
   aiHighlight,
   GlobalDragHandle,
   Generation,
+  Mention,
 ]
 
 export { editorExtensions, handleImageUpload }
