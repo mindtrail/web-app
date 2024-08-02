@@ -14,8 +14,9 @@ import {
 
 import { cx } from 'class-variance-authority'
 
-import { Generation } from './generation'
 import { handleImageUpload } from './image-upload'
+import { Generation } from './generation'
+import { Mention } from './mentions'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -93,7 +94,7 @@ const starterKit = StarterKit.configure({
   },
   blockquote: {
     HTMLAttributes: {
-      class: cx('border-l-4 border-primary'),
+      class: cx('border-l-2 border-secondary'),
     },
   },
   codeBlock: {
@@ -109,7 +110,6 @@ const starterKit = StarterKit.configure({
       spellcheck: 'false',
     },
   },
-  horizontalRule: false,
   dropcursor: {
     color: '#DBEAFE',
     width: 4,
@@ -128,6 +128,7 @@ const editorExtensions = [
   aiHighlight,
   GlobalDragHandle,
   Generation,
+  Mention,
 ]
 
 export { editorExtensions, handleImageUpload }

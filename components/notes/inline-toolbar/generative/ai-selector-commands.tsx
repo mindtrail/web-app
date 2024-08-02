@@ -59,13 +59,13 @@ export const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
             key={option.value}
             value={option.value}
           >
-            <option.icon className='h-4 w-4 text-purple-500' />
+            <option.icon className='h-4 w-4' />
             {option.label}
           </CommandItem>
         ))}
       </CommandGroup>
       <CommandSeparator />
-      <CommandGroup heading='Use AI to do more'>
+      <CommandGroup heading='More actions'>
         <CommandItem
           onSelect={() => {
             const text = getPrevText(editor, 5000)
@@ -74,7 +74,7 @@ export const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
           value='continue'
           className='gap-2 px-4'
         >
-          <StepForward className='h-4 w-4 text-purple-500' />
+          <StepForward className='h-4 w-4' />
           Continue writing
         </CommandItem>
       </CommandGroup>

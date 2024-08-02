@@ -6,24 +6,22 @@ import {
 } from 'novel'
 
 import { Command, renderItems } from 'novel/extensions'
-import { defaultSuggestionItems } from './default-items'
+import { suggestionItems } from './suggestion-items'
 
-export const suggestionItems = [...defaultSuggestionItems]
-
-export const slashCommand = Command.configure({
+const slashCommand = Command.configure({
   suggestion: {
     items: () => suggestionItems,
     render: renderItems,
   },
 })
 
-export const SuggestionMenuCommand = () => (
+const SuggestionMenuCommand = () => (
   <EditorCommand className='z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all'>
     <EditorCommandEmpty className='px-2 text-muted-foreground'>
       No results
     </EditorCommandEmpty>
     <EditorCommandList>
-      {suggestionItems.map((item, key) => (
+      {suggestionItems.map((item) => (
         <EditorCommandItem
           key={item.title}
           value={item.title}
@@ -42,3 +40,5 @@ export const SuggestionMenuCommand = () => (
     </EditorCommandList>
   </EditorCommand>
 )
+
+export { SuggestionMenuCommand, slashCommand }
