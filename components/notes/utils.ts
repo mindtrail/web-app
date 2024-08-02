@@ -10,5 +10,8 @@ export const defaultEditorContent = {
         },
       ],
     },
+    {
+      type: 'generation',
+    },
   ],
 }

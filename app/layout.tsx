@@ -60,6 +60,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   //   )
   // }
   const user = session?.user
+
   return (
     <html lang='en' suppressHydrationWarning>
       <body className='flex min-h-screen'>

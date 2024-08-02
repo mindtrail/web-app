@@ -11,28 +11,33 @@ import {
   Text,
   TextQuote,
   StarsIcon,
+  MinusIcon,
 } from 'lucide-react'
 
 import { createSuggestionItems } from 'novel/extensions'
 import { handleImageUpload } from '../node-extensions'
 
-export const defaultSuggestionItems = createSuggestionItems([
+export const suggestionItems = createSuggestionItems([
   {
-    title: 'Send Feedback',
-    description: 'Let us know how we can improve.',
-    icon: <MessageSquarePlus size={18} />,
+    title: 'AI Generation',
+    description: 'Add a generation tag',
+    searchTerms: ['generation', 'AI'],
+    icon: <StarsIcon size={20} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).run()
-      const subject = encodeURIComponent('Feedback')
-      const body = encodeURIComponent('I have some feedback:')
-      window.location.href = `mailto:dan.pausan@gmail.com?subject=${subject}&body=${body}`
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+
+        .run()
     },
   },
+
   {
     title: 'Text',
     description: 'Just start typing with plain text.',
     searchTerms: ['p', 'paragraph'],
-    icon: <Text size={18} />,
+    icon: <Text size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleNode('paragraph', 'paragraph').run()
     },
@@ -41,7 +46,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'To-do List',
     description: 'Track tasks with a to-do list.',
     searchTerms: ['todo', 'task', 'list', 'check', 'checkbox'],
-    icon: <CheckSquare size={18} />,
+    icon: <CheckSquare size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleTaskList().run()
     },
@@ -50,7 +55,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Heading 1',
     description: 'Big section heading.',
     searchTerms: ['title', 'big', 'large'],
-    icon: <Heading1 size={18} />,
+    icon: <Heading1 size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run()
     },
@@ -59,7 +64,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Heading 2',
     description: 'Medium section heading.',
     searchTerms: ['subtitle', 'medium'],
-    icon: <Heading2 size={18} />,
+    icon: <Heading2 size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run()
     },
@@ -68,7 +73,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Heading 3',
     description: 'Small section heading.',
     searchTerms: ['subtitle', 'small'],
-    icon: <Heading3 size={18} />,
+    icon: <Heading3 size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).setNode('heading', { level: 3 }).run()
     },
@@ -77,7 +82,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Bullet List',
     description: 'Create a simple bullet list.',
     searchTerms: ['unordered', 'point'],
-    icon: <List size={18} />,
+    icon: <List size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleBulletList().run()
     },
@@ -86,7 +91,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Numbered List',
     description: 'Create a list with numbering.',
     searchTerms: ['ordered'],
-    icon: <ListOrdered size={18} />,
+    icon: <ListOrdered size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleOrderedList().run()
     },
@@ -95,7 +100,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Quote',
     description: 'Capture a quote.',
     searchTerms: ['blockquote'],
-    icon: <TextQuote size={18} />,
+    icon: <TextQuote size={20} />,
     command: ({ editor, range }) =>
       editor
         .chain()
@@ -109,7 +114,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Code',
     description: 'Capture a code snippet.',
     searchTerms: ['codeblock'],
-    icon: <Code size={18} />,
+    icon: <Code size={20} />,
     command: ({ editor, range }) =>
       editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
   },
@@ -117,7 +122,7 @@ export const defaultSuggestionItems = createSuggestionItems([
     title: 'Image',
     description: 'Upload an image from your computer.',
     searchTerms: ['photo', 'picture', 'media'],
-    icon: <ImageIcon size={18} />,
+    icon: <ImageIcon size={20} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).run()
       // upload image
@@ -135,26 +140,22 @@ export const defaultSuggestionItems = createSuggestionItems([
     },
   },
   {
-    title: 'Insert Generation',
-    description: 'Add a generation tag',
-    searchTerms: ['generation', 'tag', 'label'],
-    icon: <StarsIcon size={18} />,
+    title: 'Send Feedback',
+    description: 'Let us know how we can improve.',
+    icon: <MessageSquarePlus size={20} />,
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertContent([
-          {
-            type: 'generation',
-            attrs: { name: 'Gen 1' },
-          },
-          {
-            type: 'text',
-            text: ' ',
-          },
-        ])
-        .run()
+      editor.chain().focus().deleteRange(range).run()
+      const subject = encodeURIComponent('Feedback')
+      const body = encodeURIComponent('I have some feedback:')
+      window.location.href = `mailto:dan.pausan@gmail.com?subject=${subject}&body=${body}`
+    },
+  },
+  {
+    title: 'Horizontal Rule',
+    description: 'Add a horizontal rule.',
+    icon: <MinusIcon size={20} />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setHorizontalRule().run()
     },
   },
 ])
