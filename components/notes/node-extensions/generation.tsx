@@ -1,7 +1,13 @@
 import { useState, useCallback } from 'react'
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewContent } from '@tiptap/react'
-import { SparklesIcon, SettingsIcon, CirclePlayIcon, TerminalIcon } from 'lucide-react'
+import {
+  SparklesIcon,
+  SettingsIcon,
+  CirclePlayIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from 'lucide-react'
 import { useCompletion } from 'ai/react'
 import { toast } from 'sonner'
 import Markdown from 'react-markdown'
@@ -14,6 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 
 const GenerationComponent = ({ node }: { node: any }) => {
   const [prompt, setPrompt] = useState(node.attrs.name || '')
+  const [isExpanded, setIsExpanded] = useState(true)
 
   const { completion, complete, isLoading } = useCompletion({
     api: '/api/generate',
@@ -95,19 +102,29 @@ const GenerationComponent = ({ node }: { node: any }) => {
         />
 
         {completion && (
-          <div className='flex flex-col mt-6 gap-4'>
-            <div className='flex gap-2 px-2'>
-              <TerminalIcon className='h-4 w-4' />
+          <div className='flex flex-col mt-2 gap-4'>
+            <Button
+              variant='ghost'
+              className='self-start flex gap-2 px-2'
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronDownIcon className='h-4 w-4' />
+              ) : (
+                <ChevronRightIcon className='h-4 w-4' />
+              )}
               <Typography variant='small-semi'>Result</Typography>
-            </div>
+            </Button>
 
-            <div className='flex max-h-[200px]'>
-              <ScrollArea>
-                <div className='prose p-2 px-4 prose-sm'>
-                  <Markdown>{completion}</Markdown>
-                </div>
-              </ScrollArea>
-            </div>
+            {isExpanded && (
+              <div className='flex max-h-[200px]'>
+                <ScrollArea>
+                  <div className='prose p-2 px-4 prose-sm'>
+                    <Markdown>{completion}</Markdown>
+                  </div>
+                </ScrollArea>
+              </div>
+            )}
           </div>
         )}
       </div>
