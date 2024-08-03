@@ -4,13 +4,13 @@ import { mergeAttributes } from '@tiptap/react'
 import tippy from 'tippy.js'
 
 // You'll need to create this component
-import MentionList from './mentions/mentions-dropdown'
+import MentionList from './mentions-dropdown'
 
 const mentionStyles = {
   class: 'rounded-md px-2 py-1 bg-violet-50 text-violet-800 cursor-default',
 }
 
-export const Mention = MentionExtension.configure({
+export const PeopleMention = MentionExtension.configure({
   HTMLAttributes: {
     class: 'mention bg-primary',
   },
