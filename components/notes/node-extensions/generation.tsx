@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewContent } from '@tiptap/react'
 import { SparklesIcon, SettingsIcon, CirclePlayIcon, TerminalIcon } from 'lucide-react'
@@ -35,6 +35,18 @@ const GenerationComponent = ({ node }: { node: any }) => {
     })
   }
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (prompt?.length < 5) return
+
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault()
+        handleGenerate()
+      }
+    },
+    [handleGenerate],
+  )
+
   return (
     <NodeViewWrapper className='my-4'>
       <div
@@ -46,7 +58,7 @@ const GenerationComponent = ({ node }: { node: any }) => {
             variant='ghost'
             className='flex items-center gap-2'
             size='icon'
-            disabled={!prompt || isLoading}
+            disabled={prompt?.length < 5 || isLoading}
             onClick={handleGenerate}
           >
             <CirclePlayIcon
@@ -77,6 +89,7 @@ const GenerationComponent = ({ node }: { node: any }) => {
           autoFocus
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder='Enter prompt here.'
           className='!min-h-[60px]'
         />
