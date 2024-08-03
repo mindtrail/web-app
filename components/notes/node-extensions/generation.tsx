@@ -2,16 +2,38 @@ import { useState } from 'react'
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewContent } from '@tiptap/react'
 import { SparklesIcon, SettingsIcon, CirclePlayIcon, TerminalIcon } from 'lucide-react'
+import { useCompletion } from 'ai/react'
+import { toast } from 'sonner'
+import Markdown from 'react-markdown'
 
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Typography } from '@/components/typography'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const GenerationComponent = ({ node }: { node: any }) => {
-
   const [prompt, setPrompt] = useState(node.attrs.name || '')
-  const [result, setResult] = useState('')
+
+  const { completion, complete, isLoading } = useCompletion({
+    api: '/api/generate',
+    onResponse: (response) => {
+      if (response.status === 429) {
+        toast.error('You have reached your request limit for the day.')
+        return
+      }
+    },
+    onError: (e) => {
+      toast.error(e.message)
+    },
+  })
+
+  const handleGenerate = () => {
+    if (!prompt) return
+    complete(prompt, {
+      body: { option: 'zap', command: 'Generate text based on this prompt' },
+    })
+  }
 
   return (
     <NodeViewWrapper className='my-4'>
@@ -24,11 +46,11 @@ const GenerationComponent = ({ node }: { node: any }) => {
             variant='ghost'
             className='flex items-center gap-2'
             size='icon'
-            disabled={!prompt}
-            onClick={() => setResult('Result of generation... ')}
+            disabled={!prompt || isLoading}
+            onClick={handleGenerate}
           >
             <CirclePlayIcon
-              className={`h-5 w-5 ${prompt && !result ? 'text-primary' : ''}`}
+              className={`h-5 w-5 ${prompt && !isLoading ? 'text-primary' : ''}`}
             />
           </Button>
 
@@ -43,8 +65,8 @@ const GenerationComponent = ({ node }: { node: any }) => {
             variant='ghost'
             size='icon'
             onClick={() => {
-              // Handle generation logic here
-              console.log('Generating text for:', prompt)
+              // Handle settings logic here
+              console.log('Opening settings')
             }}
           >
             <SettingsIcon className='h-5 w-5' />
@@ -59,15 +81,20 @@ const GenerationComponent = ({ node }: { node: any }) => {
           className='!min-h-[60px]'
         />
 
-        {result && (
+        {completion && (
           <div className='flex flex-col mt-6 gap-4'>
             <div className='flex gap-2 px-2'>
               <TerminalIcon className='h-4 w-4' />
               <Typography variant='small-semi'>Result</Typography>
             </div>
-            <Typography variant='small' className='p-4 bg-secondary rounded-lg'>
-              {result}
-            </Typography>
+
+            <div className='flex max-h-[200px]'>
+              <ScrollArea>
+                <div className='prose p-2 px-4 prose-sm'>
+                  <Markdown>{completion}</Markdown>
+                </div>
+              </ScrollArea>
+            </div>
           </div>
         )}
       </div>
@@ -81,7 +108,6 @@ export const Generation = Node.create({
   group: 'block',
   draggable: true,
   selectable: true,
-
 
   addAttributes() {
     return {
