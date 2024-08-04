@@ -12,6 +12,7 @@ import {
   GlobalDragHandle,
 } from 'novel/extensions'
 
+import AutoJoiner from 'tiptap-extension-auto-joiner'
 import { cx } from 'class-variance-authority'
 
 import { handleImageUpload } from './image-upload'
@@ -131,6 +132,7 @@ const editorExtensions = [
   Generation,
   IntegrationMention,
   UserMention,
+  AutoJoiner,
 ]
 
 export { editorExtensions, handleImageUpload }
