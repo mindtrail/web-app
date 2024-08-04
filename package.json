@@ -110,6 +110,7 @@
     "sonner": "^1.4.41",
     "srt-parser-2": "^1.2.3",
     "stream": "^0.0.2",
+    "tiptap-extension-auto-joiner": "^0.1.3",
     "ts-pattern": "^5.1.0",
     "use-debounce": "^10.0.0",
     "utf-8-validate": "^6.0.3",

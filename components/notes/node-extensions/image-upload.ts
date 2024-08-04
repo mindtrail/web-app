@@ -2,7 +2,8 @@ import { createImageUpload } from 'novel/plugins'
 import { toast } from 'sonner'
 
 const onUpload = (file: File) => {
-  const promise = fetch('/api/upload', {
+  console.log(2222, file)
+  const uploadFileCall = fetch('/api/upload', {
     method: 'POST',
     headers: {
       'content-type': file?.type || 'application/octet-stream',
@@ -13,11 +14,11 @@ const onUpload = (file: File) => {
 
   return new Promise((resolve) => {
     toast.promise(
-      promise.then(async (res) => {
+      uploadFileCall.then(async (res) => {
         // Successfully uploaded image
         if (res.status === 200) {
           const { url } = (await res.json()) as any
-          console.log(url, res)
+
           // preload the image
           let image = new Image()
           image.src = url
