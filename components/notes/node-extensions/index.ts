@@ -115,6 +115,7 @@ const starterKit = StarterKit.configure({
     width: 4,
   },
   gapcursor: false,
+  horizontalRule: false,
 })
 
 const editorExtensions = [
