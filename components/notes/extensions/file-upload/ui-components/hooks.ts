@@ -1,6 +1,6 @@
 import { DragEvent, useCallback, useEffect, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
-import { API } from '@/lib/api'
+import { toast } from 'sonner'
+import { API } from '@/lib/api/mock'
 
 export const useUploader = ({ onUpload }: { onUpload: (url: string) => void }) => {
   const [loading, setLoading] = useState(false)
@@ -74,13 +74,13 @@ export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) =>
         }
       }
 
-      if (files.some(file => file.type.indexOf('image') === -1)) {
+      if (files.some((file) => file.type.indexOf('image') === -1)) {
         return
       }
 
       e.preventDefault()
 
-      const filteredFiles = files.filter(f => f.type.indexOf('image') !== -1)
+      const filteredFiles = files.filter((f) => f.type.indexOf('image') !== -1)
 
       const file = filteredFiles.length > 0 ? filteredFiles[0] : undefined
 
