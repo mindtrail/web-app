@@ -11,7 +11,7 @@ import { EditorProps } from '@tiptap/pm/view'
 
 import { InlineToolbar } from './inline-toolbar'
 import { slashCommand, SuggestionMenuCommand } from './slash-command'
-import { editorExtensions, handleImageUpload } from './node-extensions'
+import { editorExtensions, handleImageUpload } from './extensions'
 import { defaultEditorContent } from './utils'
 
 const extensions = [...editorExtensions, slashCommand]
