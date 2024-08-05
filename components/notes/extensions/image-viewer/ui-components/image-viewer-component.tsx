@@ -3,7 +3,7 @@ import { Node } from '@tiptap/pm/model'
 import { Editor, NodeViewWrapper } from '@tiptap/react'
 import { useCallback, useRef } from 'react'
 
-interface ImageBlockViewProps {
+interface ImageViewerComponentProps {
   editor: Editor
   getPos: () => number
   node: Node & {
@@ -14,7 +14,7 @@ interface ImageBlockViewProps {
   updateAttributes: (attrs: Record<string, string>) => void
 }
 
-export const ImageBlockView = (props: ImageBlockViewProps) => {
+export const ImageViewerComponent = (props: ImageViewerComponentProps) => {
   const { editor, getPos, node } = props
   const imageWrapperRef = useRef<HTMLDivElement>(null)
   const { src } = node.attrs
@@ -33,11 +33,9 @@ export const ImageBlockView = (props: ImageBlockViewProps) => {
     <NodeViewWrapper>
       <div className={wrapperClassName} style={{ width: node.attrs.width }}>
         <div contentEditable={false} ref={imageWrapperRef}>
-          <img className="block" src={src} alt="" onClick={onClick} />
+          <img className='block' src={src} alt='' onClick={onClick} />
         </div>
       </div>
     </NodeViewWrapper>
   )
 }
-
-export default ImageBlockView

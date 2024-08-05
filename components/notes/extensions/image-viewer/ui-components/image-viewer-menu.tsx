@@ -3,13 +3,14 @@ import React, { useCallback, useRef } from 'react'
 import { Instance, sticky } from 'tippy.js'
 import { v4 as uuid } from 'uuid'
 
-import { Toolbar } from '@/components/ui/Toolbar'
-import { Icon } from '@/components/ui/Icon'
-import { ImageBlockWidth } from './image-viewer-width'
-import { MenuProps } from '@/components/menus/types'
-import { getRenderContainer } from '@/lib/utils'
+import { Toolbar } from '@/components/ui/editor/Toolbar'
+import { Icon } from '@/components/ui/editor/Icon'
+import { MenuProps } from '@/components/ui/editor/menus/types'
+import { getRenderContainer } from '@/lib/editor/getRenderContainer'
 
-export const ImageBlockMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
+import { ImageViewerWidth } from './image-viewer-width'
+
+export const ImageViewerMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
   const menuRef = useRef<HTMLDivElement>(null)
   const tippyInstance = useRef<Instance | null>(null)
 
@@ -107,7 +108,7 @@ export const ImageBlockMenu = ({ editor, appendTo }: MenuProps): JSX.Element => 
           <Icon name='AlignHorizontalDistributeEnd' />
         </Toolbar.Button>
         <Toolbar.Divider />
-        <ImageBlockWidth
+        <ImageViewerWidth
           onChange={onWidthChange}
           value={parseInt(editor.getAttributes('imageViewer').width)}
         />
@@ -116,4 +117,4 @@ export const ImageBlockMenu = ({ editor, appendTo }: MenuProps): JSX.Element => 
   )
 }
 
-export default ImageBlockMenu
+export default ImageViewerMenu

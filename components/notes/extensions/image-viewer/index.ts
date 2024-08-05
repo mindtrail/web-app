@@ -2,7 +2,7 @@ import { ReactNodeViewRenderer } from '@tiptap/react'
 import { mergeAttributes, Range } from '@tiptap/core'
 import { Image } from '@tiptap/extension-image'
 
-import { ImageBlockView } from './ui-components/image-viewer-main'
+import { ImageViewerComponent } from './ui-components/image-viewer-component'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -101,7 +101,7 @@ export const ImageViewer = Image.extend({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(ImageBlockView)
+    return ReactNodeViewRenderer(ImageViewerComponent)
   },
 })
 
