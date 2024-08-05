@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 
 import { createSuggestionItems } from 'novel/extensions'
-import { handleImageUpload } from '../node-extensions'
+import { handleImageUpload } from '../extensions'
 
 export const suggestionItems = createSuggestionItems([
   {
