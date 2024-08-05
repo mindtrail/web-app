@@ -8,7 +8,7 @@ import { Icon } from '@/components/ui/editor/Icon'
 import { MenuProps } from '@/components/ui/editor/menus/types'
 import { getRenderContainer } from '@/lib/editor/getRenderContainer'
 
-import { ImageViewerWidth } from './image-viewer-width'
+import { ImageViewerWidth } from './width'
 
 export const ImageViewerMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
   const menuRef = useRef<HTMLDivElement>(null)
