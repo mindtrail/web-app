@@ -1,55 +1,26 @@
-import { BubbleMenu as BaseBubbleMenu } from '@tiptap/react'
-import React, { useCallback, useRef } from 'react'
-import { Instance, sticky } from 'tippy.js'
-import { v4 as uuid } from 'uuid'
+import React, { useCallback } from 'react'
+import { EditorBubble, useEditor } from 'novel'
+import { AlignLeftIcon, AlignCenterIcon, AlignRightIcon } from 'lucide-react'
 
-import { Toolbar } from '@/components/ui/editor/Toolbar'
-import { Icon } from '@/components/ui/editor/Icon'
-import { MenuProps } from '@/components/ui/editor/menus/types'
-import { getRenderContainer } from '@/lib/editor/getRenderContainer'
-
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import { ImageViewerWidth } from './width'
 
-export const ImageViewerMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
-  const menuRef = useRef<HTMLDivElement>(null)
-  const tippyInstance = useRef<Instance | null>(null)
+export const ImageViewerMenu = () => {
+  const { editor } = useEditor()
 
-  const getReferenceClientRect = useCallback(() => {
-    const renderContainer = getRenderContainer(editor, 'node-imageViewer')
-    const rect =
-      renderContainer?.getBoundingClientRect() || new DOMRect(-1000, -1000, 0, 0)
-
-    return rect
-  }, [editor])
-
-  const shouldShow = useCallback(() => {
-    const isActive = editor.isActive('imageViewer')
-
-    return isActive
-  }, [editor])
+  if (!editor) return null
 
   const onAlignImageLeft = useCallback(() => {
-    editor
-      .chain()
-      .focus(undefined, { scrollIntoView: false })
-      .setImageViewerAlign('left')
-      .run()
+    editor.chain().setImageViewerAlign('left').run()
   }, [editor])
 
   const onAlignImageCenter = useCallback(() => {
-    editor
-      .chain()
-      .focus(undefined, { scrollIntoView: false })
-      .setImageViewerAlign('center')
-      .run()
+    editor.chain().setImageViewerAlign('center').run()
   }, [editor])
 
   const onAlignImageRight = useCallback(() => {
-    editor
-      .chain()
-      .focus(undefined, { scrollIntoView: false })
-      .setImageViewerAlign('right')
-      .run()
+    editor.chain().setImageViewerAlign('right').run()
   }, [editor])
 
   const onWidthChange = useCallback(
@@ -64,56 +35,45 @@ export const ImageViewerMenu = ({ editor, appendTo }: MenuProps): JSX.Element =>
   )
 
   return (
-    <BaseBubbleMenu
-      editor={editor}
-      pluginKey={`imageViewerMenu-${uuid()}`}
-      shouldShow={shouldShow}
-      updateDelay={0}
+    <EditorBubble
       tippyOptions={{
-        offset: [0, 8],
-        popperOptions: {
-          modifiers: [{ name: 'flip', enabled: false }],
+        placement: 'top',
+        onHidden: () => {
+          editor.chain().unsetHighlight().run()
         },
-        getReferenceClientRect,
-        onCreate: (instance: Instance) => {
-          tippyInstance.current = instance
-        },
-        appendTo: () => {
-          return appendTo?.current
-        },
-        plugins: [sticky],
-        sticky: 'popper',
       }}
+      className='flex w-fit items-center overflow-hidden rounded-md border border-muted bg-background shadow-xl'
     >
-      <Toolbar.Wrapper shouldShowContent={shouldShow()} ref={menuRef}>
-        <Toolbar.Button
-          tooltip='Align image left'
-          active={editor.isActive('imageViewer', { align: 'left' })}
-          onClick={onAlignImageLeft}
-        >
-          <Icon name='AlignHorizontalDistributeStart' />
-        </Toolbar.Button>
-        <Toolbar.Button
-          tooltip='Align image center'
-          active={editor.isActive('imageViewer', { align: 'center' })}
-          onClick={onAlignImageCenter}
-        >
-          <Icon name='AlignHorizontalDistributeCenter' />
-        </Toolbar.Button>
-        <Toolbar.Button
-          tooltip='Align image right'
-          active={editor.isActive('imageViewer', { align: 'right' })}
-          onClick={onAlignImageRight}
-        >
-          <Icon name='AlignHorizontalDistributeEnd' />
-        </Toolbar.Button>
-        <Toolbar.Divider />
-        <ImageViewerWidth
-          onChange={onWidthChange}
-          value={parseInt(editor.getAttributes('imageViewer').width)}
-        />
-      </Toolbar.Wrapper>
-    </BaseBubbleMenu>
+      <Button
+        onClick={onAlignImageLeft}
+        variant='ghost'
+        className={`rounded-none ${editor.isActive('imageViewer', { align: 'left' }) ? 'bg-muted' : ''}`}
+      >
+        <AlignLeftIcon className='h-4 w-4' />
+      </Button>
+      <Separator orientation='vertical' className='h-4' />
+      <Button
+        onClick={onAlignImageCenter}
+        variant='ghost'
+        className={`rounded-none ${editor.isActive('imageViewer', { align: 'center' }) ? 'bg-muted' : ''}`}
+      >
+        <AlignCenterIcon className='h-4 w-4' />
+      </Button>
+      <Separator orientation='vertical' className='h-4' />
+      <Button
+        onClick={onAlignImageRight}
+        variant='ghost'
+        className={`rounded-none ${editor.isActive('imageViewer', { align: 'right' }) ? 'bg-muted' : ''}`}
+      >
+        <AlignRightIcon className='h-4 w-4' />
+      </Button>
+
+      <Separator orientation='vertical' className='h-4' />
+      <ImageViewerWidth
+        onChange={onWidthChange}
+        value={parseInt(editor.getAttributes('imageViewer').width || 0)}
+      />
+    </EditorBubble>
   )
 }
 
