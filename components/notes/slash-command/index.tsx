@@ -10,6 +10,7 @@ import { suggestionItems } from './suggestion-items'
 
 const slashCommand = Command.configure({
   suggestion: {
+    startOfLine: true,
     items: () => suggestionItems,
     render: renderItems,
   },
