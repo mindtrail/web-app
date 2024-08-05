@@ -1,14 +1,14 @@
 import { Editor, NodeViewWrapper } from '@tiptap/react'
 import { useCallback } from 'react'
 
-import { ImageUploader } from './ImageUploader'
+import { UploadArea } from './upload-area'
 
-interface ImageUploadComponentProps {
+interface FileUploadComponentProps {
   getPos: () => number
   editor: Editor
 }
 
-export const ImageUploadComponent = ({ getPos, editor }: ImageUploadComponentProps) => {
+export const FileUploadComponent = ({ getPos, editor }: FileUploadComponentProps) => {
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
@@ -26,7 +26,7 @@ export const ImageUploadComponent = ({ getPos, editor }: ImageUploadComponentPro
   return (
     <NodeViewWrapper>
       <div className='p-0 m-0' data-drag-handle>
-        <ImageUploader onUpload={onUpload} />
+        <UploadArea onUpload={onUpload} />
       </div>
     </NodeViewWrapper>
   )
