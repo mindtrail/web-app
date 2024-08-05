@@ -2,7 +2,6 @@ import { UploadImagesPlugin } from 'novel/plugins'
 import {
   TiptapImage,
   TiptapLink,
-  // UpdatedImage,
   TaskList,
   TaskItem,
   HorizontalRule,
@@ -18,6 +17,7 @@ import { cx } from 'class-variance-authority'
 import { handleImageUpload } from './image-upload'
 import { Generation } from './generation'
 import { IntegrationMention, UserMention } from './mention'
+import { ImageViewer } from './image-viewer'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -132,6 +132,7 @@ const editorExtensions = [
   Generation,
   IntegrationMention,
   UserMention,
+  ImageViewer,
   AutoJoiner,
 ]
 

@@ -1,5 +1,5 @@
 import { Node, ReactNodeViewRenderer } from '@tiptap/react'
-import { ImageUpload as ImageUploadComponent } from './view/ImageUpload'
+import { ImageUploadComponent } from './view/image-upload-component'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -11,27 +11,16 @@ declare module '@tiptap/core' {
 
 export const ImageUpload = Node.create({
   name: 'imageUpload',
-
   isolating: true,
-
   defining: true,
-
   group: 'block',
-
   draggable: true,
-
   selectable: true,
-
   inline: false,
 
   parseHTML() {
-    return [
-      {
-        tag: `div[data-type="${this.name}"]`,
-      },
-    ]
+    return [{ tag: `div[data-type="${this.name}"]` }]
   },
-
   renderHTML() {
     return ['div', { 'data-type': this.name }]
   },
