@@ -2,20 +2,20 @@ import { cn } from '@/lib/utils'
 import React from 'react'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'ghost'
-export type ButtonSize = 'medium' | 'small' | 'icon' | 'iconSmall'
+export type size = 'medium' | 'small' | 'icon' | 'iconSmall'
 
 export type ButtonProps = {
   variant?: ButtonVariant
   active?: boolean
   activeClassname?: string
-  buttonSize?: ButtonSize
+  size?: size
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       active,
-      buttonSize = 'medium',
+      size = 'medium',
       children,
       disabled,
       variant = 'primary',
@@ -68,10 +68,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             ),
         ),
 
-      buttonSize === 'medium' && 'py-2 px-3',
-      buttonSize === 'small' && 'py-1 px-2',
-      buttonSize === 'icon' && 'w-8 h-8',
-      buttonSize === 'iconSmall' && 'w-6 h-6',
+      size === 'medium' && 'py-2 px-3',
+      size === 'small' && 'py-1 px-2',
+      size === 'icon' && 'w-8 h-8',
+      size === 'iconSmall' && 'w-6 h-6',
 
       className,
     )

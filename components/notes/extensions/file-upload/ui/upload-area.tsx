@@ -1,9 +1,11 @@
+import { ChangeEvent, useCallback } from 'react'
+
 import { Spinner } from '@/components/ui/editor/Spinner'
-import { useDropZone, useFileUpload, useUploader } from './hooks'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/editor/Icon'
 import { cn } from '@/lib/utils'
-import { ChangeEvent, useCallback } from 'react'
+
+import { useDropZone, useFileUpload, useUploader } from './hooks'
 
 export const UploadArea = ({ onUpload }: { onUpload: (url: string) => void }) => {
   const { loading, uploadFile } = useUploader({ onUpload })
@@ -20,14 +22,14 @@ export const UploadArea = ({ onUpload }: { onUpload: (url: string) => void }) =>
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center p-8 rounded-lg min-h-[10rem] bg-opacity-80'>
+      <div className='flex items-center justify-center p-8 rounded-lg min-h-[10rem] bg-opacity-80 border'>
         <Spinner className='text-neutral-500' size={1.5} />
       </div>
     )
   }
 
   const wrapperClass = cn(
-    'flex flex-col items-center justify-center px-8 py-10 rounded-lg bg-opacity-80',
+    'flex flex-col items-center justify-center px-8 py-10 rounded-lg bg-opacity-80 border',
     draggedInside && 'bg-neutral-100',
   )
 

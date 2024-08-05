@@ -58,7 +58,7 @@ export type ToolbarButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   activeClassname?: string
   tooltip?: string
   tooltipShortcut?: string[]
-  buttonSize?: ButtonProps['buttonSize']
+  size?: ButtonProps['size']
   variant?: ButtonProps['variant']
 }
 
@@ -66,7 +66,7 @@ const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
   (
     {
       children,
-      buttonSize = 'icon',
+      size = 'icon',
       variant = 'ghost',
       className,
       tooltip,
@@ -83,7 +83,7 @@ const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
         activeClassname={activeClassname}
         className={buttonClass}
         variant={variant}
-        buttonSize={buttonSize}
+        size={size}
         ref={ref}
         {...rest}
       >

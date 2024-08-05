@@ -29,8 +29,8 @@ export const FileUpload = Node.create({
     return {
       setFileUpload:
         () =>
-        ({ commands }) =>
-          commands.insertContent(`<div data-type="${this.name}"></div>`),
+        ({ chain }) =>
+          chain().insertContent({ type: this.name }).run(),
     }
   },
 

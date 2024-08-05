@@ -36,7 +36,7 @@ export default function EditorWrapper() {
   const onUpdate = useCallback(
     ({ editor }: EditorEvents['update']) => {
       // debouncedUpdates(editor)
-      console.log(editor.getJSON(), editor)
+      console.log(editor.getJSON())
     },
     [debouncedUpdates],
   )
