@@ -1,4 +1,4 @@
-import { UploadImagesPlugin } from 'novel/plugins'
+// import { UploadImagesPlugin } from 'novel/plugins'
 import {
   TiptapImage,
   TiptapLink,
@@ -18,6 +18,8 @@ import { handleImageUpload } from './image-upload'
 import { Generation } from './generation'
 import { IntegrationMention, UserMention } from './mention'
 import { ImageViewer } from './image-viewer'
+import { FileUpload } from './file-upload'
+import { FileViewer } from './file-viewer'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -38,20 +40,20 @@ const tiptapLink = TiptapLink.configure({
   },
 })
 
-const tiptapImage = TiptapImage.extend({
-  addProseMirrorPlugins() {
-    return [
-      UploadImagesPlugin({
-        imageClass: cx('opacity-40 rounded-lg border border-stone-200'),
-      }),
-    ]
-  },
-}).configure({
-  allowBase64: true,
-  HTMLAttributes: {
-    class: cx('rounded-lg border border-muted'),
-  },
-})
+// const tiptapImage = TiptapImage.extend({
+//   addProseMirrorPlugins() {
+//     return [
+//       UploadImagesPlugin({
+//         imageClass: cx('opacity-40 rounded-lg border border-stone-200'),
+//       }),
+//     ]
+//   },
+// }).configure({
+//   allowBase64: true,
+//   HTMLAttributes: {
+//     class: cx('rounded-lg border border-muted'),
+//   },
+// })
 
 // const updatedImage = UpdatedImage.configure({
 //   HTMLAttributes: {
@@ -123,7 +125,7 @@ const editorExtensions = [
   starterKit,
   placeholder,
   tiptapLink,
-  tiptapImage,
+  // tiptapImage,
   taskList,
   taskItem,
   horizontalRule,
@@ -133,6 +135,8 @@ const editorExtensions = [
   IntegrationMention,
   UserMention,
   ImageViewer,
+  FileUpload,
+  FileViewer,
   AutoJoiner,
 ]
 

@@ -1,7 +1,7 @@
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import { mergeAttributes } from '@tiptap/core'
 import { Node } from '@tiptap/core'
-import { FileViewerComponent } from './components/FileViewerComponent'
+import { FileViewerComponent } from './ui'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
