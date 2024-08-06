@@ -4,6 +4,7 @@ import { IconSpinner } from '@/components/ui/icons/next-icons'
 import { Icon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { Typography } from '@/components/typography'
 
 import { useDropZone, useFileUpload, useUploader } from './hooks'
 
@@ -29,7 +30,7 @@ export const UploadArea = ({ onUpload }: { onUpload: (url: string) => void }) =>
   }
 
   const wrapperClass = cn(
-    'flex flex-col items-center justify-center px-8 py-10 rounded-lg bg-opacity-80',
+    'flex flex-col items-center justify-center px-8 py-8 rounded-lg bg-opacity-80 gap-4',
     draggedInside && 'bg-neutral-100',
   )
 
@@ -41,28 +42,29 @@ export const UploadArea = ({ onUpload }: { onUpload: (url: string) => void }) =>
       onDragLeave={onDragLeave}
       contentEditable={false}
     >
-      <Icon
-        name='Image'
-        className='w-12 h-12 mb-4 text-black dark:text-white opacity-20'
-      />
-      <div className='flex flex-col items-center justify-center gap-2'>
-        <div className='text-sm font-medium text-center text-neutral-400 dark:text-neutral-500'>
-          {draggedInside ? 'Drop image here' : 'Drag and drop or'}
-        </div>
-        <div>
-          <Button
-            disabled={draggedInside}
-            onClick={handleUploadClick}
-            size='sm'
-            className='flex gap-2'
-          >
-            <Icon name='Upload' />
-            Upload Image/File
-          </Button>
-        </div>
+      <div className='flex flex-col items-center justify-center gap-1'>
+        <Icon
+          name='CloudUpload'
+          className='w-10 h-10 text-black dark:text-white opacity-20'
+        />
+
+        <Typography variant='small-semi' className='text-muted-foreground'>
+          {draggedInside ? 'Drop File here' : 'Drag and drop File here'}
+        </Typography>
       </div>
+
+      {!draggedInside ? <Typography variant='small-strong'>OR</Typography> : null}
+
+      <Button
+        disabled={draggedInside}
+        onClick={handleUploadClick}
+        size='sm'
+        className='flex gap-2'
+      >
+        Browse Files
+      </Button>
       <input
-        className='w-0 h-0 overflow-hidden opacity-0'
+        className='w-0 h-0 overflow-hidden opacity-0 absolute'
         ref={ref}
         type='file'
         accept='.jpg,.jpeg,.png,.webp,.gif'
