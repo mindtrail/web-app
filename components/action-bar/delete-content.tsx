@@ -80,7 +80,7 @@ export const DeleteContent = (props: DeleteContentProps) => {
       </span>
       <span>
         It will <strong>permanently delete:</strong>
-      </span>{' '}
+      </span>
     </>
   )
 

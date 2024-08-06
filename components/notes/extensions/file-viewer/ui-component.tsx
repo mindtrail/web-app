@@ -17,22 +17,20 @@ export const FileViewerComponent = ({ node }: FileViewerComponentProps) => {
 
   return (
     <NodeViewWrapper>
-      <div className='file-viewer'>
-        {isImage ? (
-          <img src={src} alt={filename} className='max-w-full h-auto' />
-        ) : (
-          <div className='flex items-center p-4 bg-gray-100 rounded'>
-            <div className='mr-4'>
-              {/* You can add file type icons here based on fileType */}
-              📄
-            </div>
-            <div>
-              <div className='font-bold'>{filename}</div>
-              <div className='text-sm text-gray-500'>{fileType}</div>
-            </div>
+      {isImage ? (
+        <img src={src} alt={filename} className='max-w-full h-auto' />
+      ) : (
+        <div className='flex items-center p-4 bg-gray-100 rounded'>
+          <div className='mr-4'>
+            {/* You can add file type icons here based on fileType */}
+            📄
           </div>
-        )}
-      </div>
+          <div>
+            <div className='font-bold'>{filename}</div>
+            <div className='text-sm text-gray-500'>{fileType}</div>
+          </div>
+        </div>
+      )}
     </NodeViewWrapper>
   )
 }
