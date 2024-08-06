@@ -15,7 +15,7 @@ import { cx } from 'class-variance-authority'
 import AutoJoiner from 'tiptap-extension-auto-joiner'
 
 import { handleImageUpload } from './novel-image-upload/image-upload'
-import { Generation } from './generation'
+import { Generation } from './generation/generation-ext'
 import { IntegrationMention, UserMention } from './mention'
 import { ImageViewer } from './image-viewer/image-viewer-ext'
 import { FileUpload } from './file-upload/file-upload-ext'
