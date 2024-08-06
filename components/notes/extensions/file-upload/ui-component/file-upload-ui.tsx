@@ -9,12 +9,12 @@ import { Typography } from '@/components/typography'
 
 import { useDropZone, useFileUpload, useUploader } from './hooks'
 
-interface FileUploadUIComponentProps {
+interface FileUploadUIProps {
   getPos: () => number
   editor: Editor
 }
 
-export const FileUploadUIComponent = ({ getPos, editor }: FileUploadUIComponentProps) => {
+export const FileUploadUIComponent = ({ getPos, editor }: FileUploadUIProps) => {
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
