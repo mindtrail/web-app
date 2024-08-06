@@ -11,8 +11,8 @@ import {
   GlobalDragHandle,
 } from 'novel/extensions'
 
-import AutoJoiner from 'tiptap-extension-auto-joiner'
 import { cx } from 'class-variance-authority'
+import AutoJoiner from 'tiptap-extension-auto-joiner'
 
 import { handleImageUpload } from './novel-image-upload/image-upload'
 import { Generation } from './generation'
