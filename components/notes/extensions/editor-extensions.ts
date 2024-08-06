@@ -20,6 +20,7 @@ import { IntegrationMention, UserMention } from './mention'
 import { ImageViewer } from './image-viewer/image-viewer-ext'
 import { FileUpload } from './file-upload/file-upload-ext'
 import { FileViewer } from './file-viewer/file-viewer-ext'
+import { URLImport } from './url-import/url-import-ext'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -134,10 +135,11 @@ const editorExtensions = [
   Generation,
   IntegrationMention,
   UserMention,
+  AutoJoiner,
   ImageViewer,
   FileUpload,
   FileViewer,
-  AutoJoiner,
+  URLImport,
 ]
 
 export { editorExtensions, handleImageUpload }

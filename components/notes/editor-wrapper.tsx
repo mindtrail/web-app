@@ -12,7 +12,7 @@ import { EditorProps } from '@tiptap/pm/view'
 import { ImageViewerMenu } from './extensions/image-viewer/menu/image-viewer-menu'
 import { InlineToolbar } from './inline-toolbar'
 import { slashCommand, SuggestionMenuCommand } from './slash-command'
-import { editorExtensions, handleImageUpload } from './extensions'
+import { editorExtensions, handleImageUpload } from './extensions/editor-extensions'
 import { defaultEditorContent } from './utils'
 
 const extensions = [...editorExtensions, slashCommand]
