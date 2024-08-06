@@ -49,7 +49,7 @@ export const ImageViewerMenu = () => {
           onClick={onAlignImageLeft}
           variant='ghost'
           size='icon'
-          className={`${imageAttrs.align === 'left' ? 'bg-muted' : ''}`}
+          className={`${imageAttrs?.align === 'left' ? 'bg-muted' : ''}`}
         >
           <AlignHorizontalJustifyStartIcon className='h-4 w-4' />
         </Button>
@@ -57,7 +57,7 @@ export const ImageViewerMenu = () => {
           onClick={onAlignImageCenter}
           variant='ghost'
           size='icon'
-          className={`${imageAttrs.align === 'center' ? 'bg-muted' : ''}`}
+          className={`${imageAttrs?.align === 'center' ? 'bg-muted' : ''}`}
         >
           <AlignHorizontalJustifyCenterIcon className='h-4 w-4' />
         </Button>
@@ -65,7 +65,7 @@ export const ImageViewerMenu = () => {
           onClick={onAlignImageRight}
           variant='ghost'
           size='icon'
-          className={`${imageAttrs.align === 'right' ? 'bg-muted' : ''}`}
+          className={`${imageAttrs?.align === 'right' ? 'bg-muted' : ''}`}
         >
           <AlignHorizontalJustifyEndIcon className='h-4 w-4' />
         </Button>
@@ -73,7 +73,7 @@ export const ImageViewerMenu = () => {
 
       <ImageViewerWidth
         onChange={onWidthChange}
-        value={parseInt(editor.getAttributes('imageViewer').width || 0)}
+        value={parseInt(imageAttrs?.width || 0)}
       />
     </EditorBubble>
   )
