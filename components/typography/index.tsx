@@ -12,6 +12,7 @@ type TypographyProps = {
     | 'strong'
     | 'small'
     | 'small-semi'
+    | 'small-strong'
     | 'text-lg'
     | 'text-lg-semi'
 } & React.HTMLAttributes<HTMLElement>
@@ -26,6 +27,7 @@ const HTMLTagMap = {
   strong: 'strong',
   small: 'span', // Note: 'small' is a valid HTML element, but might not suit your design system if custom styling is expected
   'small-semi': 'span', // Assuming 'small-semi' should be rendered in a 'span'
+  'small-strong': 'span', // Assuming 'small-semi' should be rendered in a 'span'
   'text-lg': 'span', // Assuming 'text-lg' should be rendered in a 'span'; adjust as needed
   'text-lg-semi': 'span', // Assuming 'text-lg' should be rendered in a 'span'; adjust as needed
 }
@@ -39,6 +41,7 @@ const TEXT_STYLES = {
   p: 'leading-none',
   small: 'text-sm leading-none',
   'small-semi': 'text-sm font-medium leading-none',
+  'small-strong': 'text-sm font-semibold leading-none',
   'text-lg': 'text-lg',
   'text-lg-semi': 'text-lg font-semibold',
   strong: 'font-semibold',
