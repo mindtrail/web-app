@@ -18,7 +18,7 @@ import { handleImageUpload } from './novel-image-upload/image-upload'
 import { Generation } from './generation'
 import { IntegrationMention, UserMention } from './mention'
 import { ImageViewer } from './image-viewer'
-import { FileUpload } from './file-upload'
+import { FileUpload } from './file-upload/extension'
 import { FileViewer } from './file-viewer'
 
 const aiHighlight = AIHighlight
