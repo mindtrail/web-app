@@ -11,13 +11,9 @@ import { ImageViewerWidth } from './width'
 
 export const ImageViewerMenu = () => {
   const { editor } = useEditor()
-
   if (!editor) return null
 
-  const shouldShow = useCallback(() => {
-    console.log(1111, editor.isActive('imageViewer'), editor)
-    return editor.isActive('imageViewer')
-  }, [editor])
+  const shouldShow = useCallback(() => editor.isActive('imageViewer'), [editor])
 
   const onAlignImageLeft = useCallback(() => {
     editor.chain().setImageViewerAlign('left').run()
@@ -41,6 +37,7 @@ export const ImageViewerMenu = () => {
     },
     [editor],
   )
+  const imageAttrs = editor.getAttributes('imageViewer')
 
   return (
     <EditorBubble
@@ -52,7 +49,7 @@ export const ImageViewerMenu = () => {
           onClick={onAlignImageLeft}
           variant='ghost'
           size='icon'
-          className={`${editor.isActive('imageViewer', { align: 'left' }) ? 'bg-muted' : ''}`}
+          className={`${imageAttrs.align === 'left' ? 'bg-muted' : ''}`}
         >
           <AlignHorizontalJustifyStartIcon className='h-4 w-4' />
         </Button>
@@ -60,7 +57,7 @@ export const ImageViewerMenu = () => {
           onClick={onAlignImageCenter}
           variant='ghost'
           size='icon'
-          className={`${editor.isActive('imageViewer', { align: 'center' }) ? 'bg-muted' : ''}`}
+          className={`${imageAttrs.align === 'center' ? 'bg-muted' : ''}`}
         >
           <AlignHorizontalJustifyCenterIcon className='h-4 w-4' />
         </Button>
@@ -68,7 +65,7 @@ export const ImageViewerMenu = () => {
           onClick={onAlignImageRight}
           variant='ghost'
           size='icon'
-          className={`${editor.isActive('imageViewer', { align: 'right' }) ? 'bg-muted' : ''}`}
+          className={`${imageAttrs.align === 'right' ? 'bg-muted' : ''}`}
         >
           <AlignHorizontalJustifyEndIcon className='h-4 w-4' />
         </Button>
