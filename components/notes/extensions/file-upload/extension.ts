@@ -1,5 +1,5 @@
 import { Node, ReactNodeViewRenderer } from '@tiptap/react'
-import { FileUploadComponent } from './ui-components'
+import { FileUploadComponent } from './ui-component'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
