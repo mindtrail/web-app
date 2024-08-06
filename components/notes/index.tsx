@@ -12,6 +12,7 @@ export function NotesComponent() {
           variant='small'
           className='rounded-md px-1.5 py-0.5 bg-violet-50 text-violet-800'
         >
+
           No code - Notebook
         </Typography> */}
       </div>
