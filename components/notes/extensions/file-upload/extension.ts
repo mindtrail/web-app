@@ -1,5 +1,5 @@
 import { Node, ReactNodeViewRenderer } from '@tiptap/react'
-import { FileUploadComponent } from './ui-component'
+import { FileUploadUIComponent } from './ui-component/file-upload-ui'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -35,7 +35,7 @@ export const FileUpload = Node.create({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(FileUploadComponent)
+    return ReactNodeViewRenderer(FileUploadUIComponent)
   },
 })
 

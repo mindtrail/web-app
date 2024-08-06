@@ -1,7 +1,7 @@
 import { Node } from '@tiptap/pm/model'
 import { NodeViewWrapper } from '@tiptap/react'
 
-interface FileViewerComponentProps {
+interface FileViewerUIComponentProps {
   node: Node & {
     attrs: {
       src: string
@@ -12,7 +12,7 @@ interface FileViewerComponentProps {
   }
 }
 
-export const FileViewerComponent = ({ node }: FileViewerComponentProps) => {
+export const FileViewerUIComponent = ({ node }: FileViewerUIComponentProps) => {
   const { src, filename, fileType, isImage } = node.attrs
 
   return (
