@@ -5,6 +5,7 @@ import { GenerationComponent } from './generation-ui'
 
 export const Generation = Node.create({
   name: 'generation',
+  
   group: 'block',
   draggable: true,
   selectable: true,
