@@ -10,7 +10,6 @@ declare module '@tiptap/core' {
         src: string
         filename: string
         fileType: string
-        isImage: boolean
       }) => ReturnType
     }
   }
@@ -33,9 +32,6 @@ export const FileViewer = Node.create({
       },
       fileType: {
         default: '',
-      },
-      isImage: {
-        default: false,
       },
     }
   },

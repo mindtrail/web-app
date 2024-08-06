@@ -64,7 +64,7 @@ export const ImageViewer = Image.extend({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)]
+    return ['div', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)]
   },
 
   addCommands() {
