@@ -14,22 +14,8 @@ interface FileUploadUIProps {
   editor: Editor
 }
 
-export const FileUploadUIComponent = ({ getPos, editor }: FileUploadUIProps) => {
-  const onUpload = useCallback(
-    (url: string) => {
-      if (url) {
-        editor
-          .chain()
-          .setImageViewer({ src: url })
-          .deleteRange({ from: getPos(), to: getPos() })
-          .focus()
-          .run()
-      }
-    },
-    [getPos, editor],
-  )
-
-  const { loading, uploadFile } = useUploader({ onUpload })
+export const FileUploadUIComponent = (props: FileUploadUIProps) => {
+  const { loading, uploadFile } = useUploader(props)
   const { handleUploadClick, ref } = useFileUpload()
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     uploader: uploadFile,
