@@ -5,10 +5,10 @@ import { GenerationComponent } from './generation-ui'
 
 export const Generation = Node.create({
   name: 'generation',
-  content: 'inline*',
   group: 'block',
   draggable: true,
   selectable: true,
+  // content: 'inline*',
 
   addAttributes() {
     return { genResult: { default: '' } }

@@ -90,7 +90,6 @@ export const GenerationComponent = ({ node }: { node: any }) => {
             <SettingsIcon className='h-5 w-5' />
           </Button>
         </div>
-        <div className='content is-editable'>content to be edited</div>
         <Textarea
           id='generation-prompt'
           autoFocus
@@ -128,7 +127,7 @@ export const GenerationComponent = ({ node }: { node: any }) => {
           </div>
         )}
       </div>
-      <NodeViewContent className='content is-editable' />
+      {/* <NodeViewContent className='content is-editable' /> */}
     </NodeViewWrapper>
   )
 }
