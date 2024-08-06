@@ -21,7 +21,7 @@ export const ImageViewerWidth = memo(
     )
 
     return (
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center gap-2 px-2'>
         <input
           className='h-2 bg-neutral-200 border-0 rounded appearance-none fill-neutral-300'
           type='range'
@@ -32,7 +32,7 @@ export const ImageViewerWidth = memo(
           value={currentValue}
         />
         <span className='text-xs font-semibold text-neutral-500 select-none'>
-          {value}%
+          {value} %
         </span>
       </div>
     )

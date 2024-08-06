@@ -50,7 +50,12 @@ export const UploadArea = ({ onUpload }: { onUpload: (url: string) => void }) =>
           {draggedInside ? 'Drop image here' : 'Drag and drop or'}
         </div>
         <div>
-          <Button disabled={draggedInside} onClick={handleUploadClick} size='sm'>
+          <Button
+            disabled={draggedInside}
+            onClick={handleUploadClick}
+            size='sm'
+            className='flex gap-2'
+          >
             <Icon name='Upload' />
             Upload Image/File
           </Button>
