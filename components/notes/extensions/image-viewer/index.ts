@@ -2,7 +2,7 @@ import { ReactNodeViewRenderer } from '@tiptap/react'
 import { mergeAttributes, Range } from '@tiptap/core'
 import { Image } from '@tiptap/extension-image'
 
-import { ImageViewerComponent } from './ui'
+import { ImageViewerComponent } from './ui-components'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
