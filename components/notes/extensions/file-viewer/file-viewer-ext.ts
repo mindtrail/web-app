@@ -8,7 +8,7 @@ declare module '@tiptap/core' {
     fileViewer: {
       setFileViewer: (attributes: {
         src: string
-        filename: string
+        fileName: string
         fileType: string
       }) => ReturnType
     }
@@ -21,13 +21,14 @@ export const FileViewer = Node.create({
   group: 'block',
   defining: true,
   isolating: true,
+  selectable: false,
 
   addAttributes() {
     return {
       src: {
         default: '',
       },
-      filename: {
+      fileName: {
         default: '',
       },
       fileType: {

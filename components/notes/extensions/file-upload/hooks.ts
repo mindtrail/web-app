@@ -8,31 +8,43 @@ interface FileUploadUIProps {
   editor: Editor
 }
 
+const IMAGE_CONTENT_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/bmp',
+  'image/webp',
+]
+
 export const useUploader = ({ getPos, editor }: FileUploadUIProps) => {
   const [loading, setLoading] = useState(false)
 
-  const uploadFile = useCallback(async (_file?: File) => {
+  const uploadFile = useCallback(async (file?: File) => {
     setLoading(true)
-    try {
-      const url = await API.uploadImage()
 
-      // If image is uploaded, set the image viewer node
-      if (url) {
+    const { type: fileType = '', name: fileName = '' } = file || {}
+    try {
+      if (IMAGE_CONTENT_TYPES.includes(fileType)) {
+        const url = await API.uploadImage()
+
+        // If image is uploaded, set the image viewer node
+        if (url) {
+          editor
+            .chain()
+            .setImageViewer({ src: url })
+            .deleteRange({ from: getPos(), to: getPos() })
+            .focus()
+            .run()
+        }
+      } else {
+        // If other file type is uploaded, set the file viewer node
         editor
           .chain()
-          .setImageViewer({ src: url })
+          .setFileViewer({ src: fileName, fileName, fileType })
           .deleteRange({ from: getPos(), to: getPos() })
           .focus()
           .run()
       }
-
-      // If other file type is uploaded, set the file viewer node
-      editor
-        .chain()
-        .setFileViewer({ src: url, filename: 'file', fileType: 'text' })
-        .deleteRange({ from: getPos(), to: getPos() })
-        .focus()
-        .run()
     } catch (errPayload: any) {
       const error = errPayload?.response?.data?.error || 'Something went wrong'
       toast.error(error)

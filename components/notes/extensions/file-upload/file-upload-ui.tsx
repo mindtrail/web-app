@@ -76,7 +76,7 @@ export const FileUploadUIComponent = (props: FileUploadUIProps) => {
           className='w-0 h-0 overflow-hidden opacity-0 absolute'
           ref={ref}
           type='file'
-          accept='.jpg,.jpeg,.png,.webp,.gif'
+          accept='.jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.csv,.zip,.rar,.7z,.tar,.gz,.bz2,.zst,.xz,.zst,.zstd,.zstd,.js,.json'
           onChange={onFileChange}
         />
       </div>

@@ -1,36 +1,31 @@
 import { Node } from '@tiptap/pm/model'
 import { NodeViewWrapper } from '@tiptap/react'
 
+import { Icon } from '@/components/ui/icons'
+
 interface FileViewerUIProps {
   node: Node & {
     attrs: {
       src: string
-      filename: string
+      fileName: string
       fileType: string
-      isImage: boolean
     }
   }
 }
 
 export const FileViewerUIComponent = ({ node }: FileViewerUIProps) => {
-  const { src, filename, fileType, isImage } = node.attrs
+  const { src, fileName, fileType } = node.attrs
 
   return (
     <NodeViewWrapper>
-      {isImage ? (
-        <img src={src} alt={filename} className='max-w-full h-auto' />
-      ) : (
-        <div className='flex items-center p-4 bg-gray-100 rounded'>
-          <div className='mr-4'>
-            {/* You can add file type icons here based on fileType */}
-            📄
-          </div>
-          <div>
-            <div className='font-bold'>{filename}</div>
-            <div className='text-sm text-gray-500'>{fileType}</div>
-          </div>
+      <div className='flex items-center p-4 gap-4 bg-gray-100 rounded select-none'>
+        {/* You can add file type icons here based on fileType */}
+        <Icon name='FileText' className='w-8 h-8' />
+        <div>
+          <div className='font-bold'>{fileName}</div>
+          <div className='text-sm text-gray-500'>{fileType}</div>
         </div>
-      )}
+      </div>
     </NodeViewWrapper>
   )
 }
