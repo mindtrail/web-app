@@ -17,9 +17,9 @@ import AutoJoiner from 'tiptap-extension-auto-joiner'
 import { handleImageUpload } from './novel-image-upload/image-upload'
 import { Generation } from './generation'
 import { IntegrationMention, UserMention } from './mention'
-import { ImageViewer } from './image-viewer'
-import { FileUpload } from './file-upload'
-import { FileViewer } from './file-viewer'
+import { ImageViewer } from './image-viewer/image-viewer-ext'
+import { FileUpload } from './file-upload/file-upload-ext'
+import { FileViewer } from './file-viewer/file-viewer-ext'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
