@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { ImageViewerWidth } from './width'
+import { ImageViewerWidth } from './width-slider'
 
 export const ImageViewerMenu = () => {
   const { editor } = useEditor()
