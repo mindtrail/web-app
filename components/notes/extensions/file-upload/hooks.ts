@@ -1,25 +1,44 @@
 import { DragEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { API } from '@/lib/api/mock'
+import { Editor } from '@tiptap/react'
 
-export const useUploader = ({ onUpload }: { onUpload: (url: string) => void }) => {
+interface FileUploadUIProps {
+  getPos: () => number
+  editor: Editor
+}
+
+export const useUploader = ({ getPos, editor }: FileUploadUIProps) => {
   const [loading, setLoading] = useState(false)
 
-  const uploadFile = useCallback(
-    async (_file?: File) => {
-      setLoading(true)
-      try {
-        const url = await API.uploadImage()
+  const uploadFile = useCallback(async (_file?: File) => {
+    setLoading(true)
+    try {
+      const url = await API.uploadImage()
 
-        onUpload(url)
-      } catch (errPayload: any) {
-        const error = errPayload?.response?.data?.error || 'Something went wrong'
-        toast.error(error)
+      // If image is uploaded, set the image viewer node
+      if (url) {
+        editor
+          .chain()
+          .setImageViewer({ src: url })
+          .deleteRange({ from: getPos(), to: getPos() })
+          .focus()
+          .run()
       }
-      setLoading(false)
-    },
-    [onUpload],
-  )
+
+      // If other file type is uploaded, set the file viewer node
+      editor
+        .chain()
+        .setFileViewer({ src: url, filename: 'file', fileType: 'text' })
+        .deleteRange({ from: getPos(), to: getPos() })
+        .focus()
+        .run()
+    } catch (errPayload: any) {
+      const error = errPayload?.response?.data?.error || 'Something went wrong'
+      toast.error(error)
+    }
+    setLoading(false)
+  }, [])
 
   return { loading, uploadFile }
 }
