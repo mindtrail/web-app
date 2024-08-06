@@ -1,6 +1,6 @@
 // import { UploadImagesPlugin } from 'novel/plugins'
 import {
-  TiptapImage,
+  // TiptapImage,
   TiptapLink,
   TaskList,
   TaskItem,
