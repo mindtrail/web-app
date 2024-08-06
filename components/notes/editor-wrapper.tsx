@@ -9,7 +9,7 @@ import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
 import { EditorEvents } from '@tiptap/core'
 import { EditorProps } from '@tiptap/pm/view'
 
-import { ImageViewerMenu } from './extensions/image-viewer/ui/menu'
+import { ImageViewerMenu } from './extensions/image-viewer/ui-components/menu'
 import { InlineToolbar } from './inline-toolbar'
 import { slashCommand, SuggestionMenuCommand } from './slash-command'
 import { editorExtensions, handleImageUpload } from './extensions'
