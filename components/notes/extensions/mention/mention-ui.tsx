@@ -22,9 +22,9 @@ export const MentionsDropdown = forwardRef((props: MentionListProps, ref: any) =
       (item) => item.toLowerCase() === props.text.toLowerCase(),
     )
     setSelectedIndex(index)
-    setTimeout(() => {
-      selectItem(index)
-    }, 100)
+    // setTimeout(() => {
+    //   selectItem(index)
+    // }, 100)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.items])
 

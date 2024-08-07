@@ -91,13 +91,7 @@ export const IntegrationMention = (char: string) =>
           .chain()
           .focus()
           .insertContentAt(
-            {
-              from: range.from,
-              to:
-                range.to -
-                ({ slack: 1, hubspot: 2, notion: 2, salesforce: 4, calendly: 3 }[char] ??
-                  0),
-            },
+            range,
             [
               {
                 type: `integrationMention-${char}`,
