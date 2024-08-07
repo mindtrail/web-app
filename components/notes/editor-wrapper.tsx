@@ -10,6 +10,8 @@ import { EditorEvents } from '@tiptap/core'
 import { EditorProps } from '@tiptap/pm/view'
 
 import { ImageViewerMenu } from './extensions/image-viewer/menu/image-viewer-menu'
+import { TableColumnMenu, TableRowMenu } from './extensions/table/menus'
+
 import { InlineToolbar } from './inline-toolbar'
 import { slashCommand, SuggestionMenuCommand } from './slash-command'
 import { editorExtensions, handleImageUpload } from './extensions/extensions'
@@ -72,6 +74,9 @@ export default function EditorWrapper() {
           <SuggestionMenuCommand />
           <InlineToolbar />
           <ImageViewerMenu />
+          <TableRowMenu />
+          <TableColumnMenu appendTo={menuContainerRef} />
+
         </EditorContent>
       </EditorRoot>
     </div>

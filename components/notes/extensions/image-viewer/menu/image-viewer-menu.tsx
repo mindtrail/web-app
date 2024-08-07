@@ -42,6 +42,7 @@ export const ImageViewerMenu = () => {
   return (
     <EditorBubble
       shouldShow={shouldShow}
+      pluginKey='imageViewerMenu'
       className='flex w-fit items-center overflow-hidden rounded-md border border-muted bg-background shadow-xl px-2 py-1 gap-2'
     >
       <div className='flex'>

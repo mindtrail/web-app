@@ -4,6 +4,7 @@ import { useEffect, useState, ReactNode } from 'react'
 import { SparklesIcon } from 'lucide-react'
 import { EditorBubble, useEditor } from 'novel'
 import { removeAIHighlight } from 'novel/extensions'
+import { isNodeSelection } from '@tiptap/react'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -17,9 +18,35 @@ import { TextFormatSelector } from './text-selectors/text-format-selector'
 interface InlineToolbarProps {
   children?: ReactNode
 }
+
 export const InlineToolbar = (props: InlineToolbarProps) => {
   const { children } = props
   const { editor } = useEditor()
+  if (!editor) return null
+
+  const shouldShow = ({ editor, state }: ShouldShowProps) => {
+    if (!state || !editor) return false
+
+    const { selection } = state
+    const { empty } = selection
+
+    // don't show bubble menu if:
+    // - the editor is not editable
+    // - the selected node is an image, image viewer, table
+    // - the selection is empty
+    // - the selection is a node selection (for drag handles)
+    if (
+      !editor.isEditable ||
+      editor.isActive('image') ||
+      editor.isActive('imageViewer') ||
+      editor.isActive('table') ||
+      empty ||
+      isNodeSelection(selection)
+    ) {
+      return false
+    }
+    return true
+  }
 
   const [isAIEditorOpen, setIsAIEditorOpen] = useState(false)
 
@@ -33,6 +60,8 @@ export const InlineToolbar = (props: InlineToolbarProps) => {
 
   return (
     <EditorBubble
+      shouldShow={shouldShow}
+      pluginKey='inlineToolbar'
       tippyOptions={{
         // appendTo: document.body, // @TODO: check the warning when removing this from Tippy.js
         placement: isAIEditorOpen ? 'bottom' : 'top', //  :

@@ -1,12 +1,16 @@
 import { BubbleMenu as BaseBubbleMenu } from '@tiptap/react'
 import React, { useCallback } from 'react'
-import * as PopoverMenu from '@/components/ui/tiptap/PopoverMenu'
+import { EditorBubble, useEditor } from 'novel'
 
+import * as PopoverMenu from '@/components/ui/tiptap/PopoverMenu'
 import { Toolbar } from '@/components/ui/tiptap/Toolbar'
 import { isRowGripSelected } from './utils'
 import { Icon } from '@/components/ui/tiptap/Icon'
 
-export const TableRowMenu = React.memo(({ editor, appendTo }: MenuProps): JSX.Element => {
+export const TableRowMenu = React.memo(({ appendTo }: MenuProps): JSX.Element => {
+  const { editor } = useEditor()
+  if (!editor) return null
+
   const shouldShow = useCallback(
     ({ view, state, from }: ShouldShowProps) => {
       if (!state || !from) {
@@ -31,8 +35,8 @@ export const TableRowMenu = React.memo(({ editor, appendTo }: MenuProps): JSX.El
   }, [editor])
 
   return (
-    <BaseBubbleMenu
-      editor={editor}
+    <EditorBubble
+      shouldShow={shouldShow}
       pluginKey='tableRowMenu'
       updateDelay={0}
       tippyOptions={{
@@ -45,7 +49,6 @@ export const TableRowMenu = React.memo(({ editor, appendTo }: MenuProps): JSX.El
           modifiers: [{ name: 'flip', enabled: false }],
         },
       }}
-      shouldShow={shouldShow}
     >
       <Toolbar.Wrapper isVertical>
         <PopoverMenu.Item
