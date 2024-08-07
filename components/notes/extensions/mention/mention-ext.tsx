@@ -8,13 +8,14 @@ import { MentionsDropdown } from './mention-ui'
 import { integrations, actions } from '@/lib/hooks/use-integrations'
 
 function getIntegrationMentions(integrations: string[], editor: any) {
+  integrations = integrations.map(
+    (integration) => `${integration.toLowerCase()}${integration}`,
+  )
   // Get @integration mentions that match the list of integrations + the query
-  const regex = new RegExp(`@(${integrations.join('|')})`, 'i')
+  const regex = new RegExp(`${integrations.join('|')}`, 'i')
+  console.log(editor.getText(), regex)
   let mentions =
-    editor.getText().match(new RegExp(regex.source + '(?![^@]*@)', 'gi')) || []
-
-  // Remove the @ from the mentions
-  mentions = mentions.map((mention: string) => mention.replace('@', ''))
+    editor.getText().match(new RegExp(regex.source, 'gi')) || []
 
   return {
     mentions,
@@ -66,48 +67,58 @@ const createMentionPopup = () => {
   }
 }
 
-export const IntegrationMention = Mention.extend({
-  name: 'integrationMention',
-}).configure({
-  HTMLAttributes: {
-    class: 'mention integration-mention',
-  },
-  renderHTML({ node, options }) {
-    return [
-      'span',
-      mergeAttributes(options.HTMLAttributes, {
-        class: 'rounded-md px-2 py-1 bg-violet-50 text-violet-800 cursor-default',
-      }),
-      `${node.attrs.label ?? node.attrs.id}`,
-    ]
-  },
-  suggestion: {
-    char: '@',
-    pluginKey: new PluginKey('integrationMention'),
-    command: ({ editor, range, props }) => {
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(range, [
-          {
-            type: 'integrationMention',
-            attrs: props,
-          },
-          {
-            type: 'text',
-            text: ' ',
-          },
-        ])
-        .run()
+export const IntegrationMention = (char: string) =>
+  Mention.extend({
+    name: `integrationMention-${char}`,
+  }).configure({
+    HTMLAttributes: {
+      class: 'mention integration-mention',
     },
-    items: ({ query }) => {
-      return integrations
-        .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 5)
+    renderHTML({ node, options }) {
+      return [
+        'span',
+        mergeAttributes(options.HTMLAttributes, {
+          class: 'rounded-md px-2 py-1 bg-violet-50 text-violet-800 cursor-default',
+        }),
+        `${node.attrs.label ?? node.attrs.id}`,
+      ]
     },
-    render: createMentionPopup,
-  },
-})
+    suggestion: {
+      char,
+      pluginKey: new PluginKey(`integrationMention-${char}`),
+      command: ({ editor, range, props }) => {
+        editor
+          .chain()
+          .focus()
+          .insertContentAt(
+            {
+              from: range.from,
+              to:
+                range.to -
+                ({ slack: 1, hubspot: 2, notion: 2, salesforce: 4, calendly: 3 }[char] ??
+                  0),
+            },
+            [
+              {
+                type: `integrationMention-${char}`,
+                attrs: props,
+              },
+              {
+                type: 'text',
+                text: ' ',
+              },
+            ],
+          )
+          .run()
+      },
+      items: ({ query }) => {
+        return integrations
+          .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
+          .slice(0, 5)
+      },
+      render: createMentionPopup,
+    },
+  })
 
 export const IntegrationActionMention = Mention.extend({
   name: 'integrationActionMention',

@@ -23,20 +23,10 @@ export function useIntegrations(keyword: string) {
   return { renderMarketplace, components: componentsRes.data }
 }
 
-export const integrations = [
-  'Hubspot',
-  'Salesforce',
-  'Slack',
-  'Notion',
-  'Calendly',
-  'Google Sheets',
-  'Google Calendar',
-  'Google Drive',
-  'Gmail',
-]
+export const integrations = ['Hubspot', 'Salesforce', 'Slack', 'Notion', 'Calendly']
 
 export const actions = {
-  Hubspot: [
+  hubspotHubspot: [
     {
       label: 'List Deals',
     },
@@ -230,7 +220,7 @@ export const actions = {
       label: 'Object Selection',
     },
   ],
-  Salesforce: [
+  salesSalesforce: [
     {
       label: 'Salesforce Query',
     },
@@ -472,7 +462,7 @@ export const actions = {
       label: 'Record Type Fields',
     },
   ],
-  Slack: [
+  slackSlack: [
     {
       label: 'Post Message',
     },
@@ -620,7 +610,7 @@ export const actions = {
       label: 'Select Worksheet',
     },
   ],
-  Notion: [
+  notionNotion: [
     {
       label: 'Create Database',
     },
@@ -658,7 +648,7 @@ export const actions = {
       label: 'List Users',
     },
   ],
-  Calendly: [
+  calendlyCalendly: [
     {
       label: 'List User Availability Schedules',
     },

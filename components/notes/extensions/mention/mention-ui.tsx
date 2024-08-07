@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 type MentionListProps = {
   items: string[]
+  text: string
   command: ({ id }: { id: string }) => void
 }
 
@@ -16,7 +17,16 @@ export const MentionsDropdown = forwardRef((props: MentionListProps, ref: any) =
     }
   }
 
-  useEffect(() => setSelectedIndex(0), [props.items])
+  useEffect(() => {
+    const index = props.items.findIndex(
+      (item) => item.toLowerCase() === props.text.toLowerCase(),
+    )
+    setSelectedIndex(index)
+    setTimeout(() => {
+      selectItem(index)
+    }, 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.items])
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: React.KeyboardEvent<HTMLDivElement> }) => {
