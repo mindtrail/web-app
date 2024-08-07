@@ -16,11 +16,11 @@ import AutoJoiner from 'tiptap-extension-auto-joiner'
 
 import { handleImageUpload } from './novel-image-upload/image-upload'
 import { Generation } from './generation/generation-ext'
-import { IntegrationMention, UserMention } from './mention'
 import { ImageViewer } from './image-viewer/image-viewer-ext'
 import { FileUpload } from './file-upload/file-upload-ext'
 import { FileViewer } from './file-viewer/file-viewer-ext'
 import { URLImport } from './url-import/url-import-ext'
+import { IntegrationActionMention, IntegrationMention } from './mention/mention-ext'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -133,8 +133,8 @@ const editorExtensions = [
   aiHighlight,
   GlobalDragHandle,
   Generation,
+  IntegrationActionMention,
   IntegrationMention,
-  UserMention,
   AutoJoiner,
   ImageViewer,
   FileUpload,

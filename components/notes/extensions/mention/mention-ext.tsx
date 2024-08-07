@@ -1,10 +1,26 @@
 import { Mention } from '@tiptap/extension-mention'
-import { ReactRenderer } from '@tiptap/react'
+import { ReactRenderer, ReactNodeViewRenderer } from '@tiptap/react'
 import { mergeAttributes } from '@tiptap/react'
 import tippy from 'tippy.js'
 import { PluginKey } from 'prosemirror-state'
 
-import MentionList from './mentions-dropdown'
+import { MentionsDropdown } from './mention-ui'
+import { integrations, actions } from '@/lib/hooks/use-integrations'
+
+function getIntegrationMentions(integrations: string[], editor: any) {
+  // Get @integration mentions that match the list of integrations + the query
+  const regex = new RegExp(`@(${integrations.join('|')})`, 'i')
+  let mentions =
+    editor.getText().match(new RegExp(regex.source + '(?![^@]*@)', 'gi')) || []
+
+  // Remove the @ from the mentions
+  mentions = mentions.map((mention: string) => mention.replace('@', ''))
+
+  return {
+    mentions,
+    lastMention: mentions[mentions.length - 1],
+  }
+}
 
 const createMentionPopup = () => {
   let component: ReactRenderer
@@ -12,7 +28,7 @@ const createMentionPopup = () => {
 
   return {
     onStart: (props: any) => {
-      component = new ReactRenderer(MentionList, {
+      component = new ReactRenderer(MentionsDropdown, {
         props,
         editor: props.editor,
       })
@@ -50,11 +66,11 @@ const createMentionPopup = () => {
   }
 }
 
-export const UserMention = Mention.extend({
-  name: 'userMention',
+export const IntegrationMention = Mention.extend({
+  name: 'integrationMention',
 }).configure({
   HTMLAttributes: {
-    class: 'mention user-mention',
+    class: 'mention integration-mention',
   },
   renderHTML({ node, options }) {
     return [
@@ -67,61 +83,6 @@ export const UserMention = Mention.extend({
   },
   suggestion: {
     char: '@',
-    pluginKey: new PluginKey('userMention'),
-    command: ({ editor, range, props }) => {
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(range, [
-          {
-            type: 'userMention',
-            attrs: props,
-          },
-          {
-            type: 'text',
-            text: ' ',
-          },
-        ])
-        .run()
-    },
-    items: ({ query }) => {
-      const people = [
-        'Alin',
-        'Alex',
-        'Andrei',
-        'Cristian',
-        'Doru',
-        'Eugen',
-        'Ionut',
-        'Mihai',
-        'Radu',
-        'Valeriu',
-      ]
-      return people
-        .filter((item) => item.toLowerCase().startsWith(query.toLowerCase()))
-        .slice(0, 5)
-    },
-    render: createMentionPopup,
-  },
-})
-
-export const IntegrationMention = Mention.extend({
-  name: 'integrationMention',
-}).configure({
-  HTMLAttributes: {
-    class: 'mention integration-mention',
-  },
-  renderHTML({ node, options }) {
-    return [
-      'span',
-      mergeAttributes(options.HTMLAttributes, {
-        class: 'rounded-md px-2 py-1 bg-blue-50 text-blue-800 cursor-default',
-      }),
-      `${node.attrs.label ?? node.attrs.id}`,
-    ]
-  },
-  suggestion: {
-    char: '#',
     pluginKey: new PluginKey('integrationMention'),
     command: ({ editor, range, props }) => {
       editor
@@ -140,21 +101,57 @@ export const IntegrationMention = Mention.extend({
         .run()
     },
     items: ({ query }) => {
-      const integrations = [
-        'Hubspot',
-        'Salesforce',
-        'Zapier',
-        'Slack',
-        'Trello',
-        'Asana',
-        'Jira',
-        'GitHub',
-        'GitLab',
-        'Notion',
-      ]
       return integrations
-        .filter((item) => item.toLowerCase().startsWith(query.toLowerCase()))
+        .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
         .slice(0, 5)
+    },
+    render: createMentionPopup,
+  },
+})
+
+export const IntegrationActionMention = Mention.extend({
+  name: 'integrationActionMention',
+}).configure({
+  HTMLAttributes: {
+    class: 'mention integration-action-mention',
+  },
+  renderHTML({ node, options }) {
+    return [
+      'span',
+      mergeAttributes(options.HTMLAttributes, {
+        class: 'rounded-md px-2 py-1 bg-blue-50 text-blue-800 cursor-default',
+      }),
+      `${node.attrs.label ?? node.attrs.id}`,
+    ]
+  },
+  suggestion: {
+    char: '#',
+    pluginKey: new PluginKey('integrationActionMention'),
+    command: ({ editor, range, props }) => {
+      editor
+        .chain()
+        .focus()
+        .insertContentAt(range, [
+          {
+            type: 'integrationActionMention',
+            attrs: props,
+          },
+          {
+            type: 'text',
+            text: ' ',
+          },
+        ])
+        .run()
+    },
+    items: ({ query, editor }) => {
+      const { lastMention } = getIntegrationMentions(integrations, editor)
+      if (!lastMention) return []
+
+      return actions[lastMention as keyof typeof actions]
+        .filter((item) => item.label.toLowerCase().includes(query.toLowerCase()))
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .slice(0, 5)
+        .map((item) => item.label)
     },
     render: createMentionPopup,
   },
