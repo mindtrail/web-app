@@ -1,8 +1,7 @@
-import { UploadImagesPlugin } from 'novel/plugins'
+// import { UploadImagesPlugin } from 'novel/plugins'
 import {
-  TiptapImage,
+  // TiptapImage,
   TiptapLink,
-  // UpdatedImage,
   TaskList,
   TaskItem,
   HorizontalRule,
@@ -12,12 +11,16 @@ import {
   GlobalDragHandle,
 } from 'novel/extensions'
 
-import AutoJoiner from 'tiptap-extension-auto-joiner'
 import { cx } from 'class-variance-authority'
+import AutoJoiner from 'tiptap-extension-auto-joiner'
 
-import { handleImageUpload } from './image-upload'
-import { Generation } from './generation'
-import { IntegrationActionMention, IntegrationMention } from './mention'
+import { handleImageUpload } from './novel-image-upload/image-upload'
+import { Generation } from './generation/generation-ext'
+import { ImageViewer } from './image-viewer/image-viewer-ext'
+import { FileUpload } from './file-upload/file-upload-ext'
+import { FileViewer } from './file-viewer/file-viewer-ext'
+import { URLImport } from './url-import/url-import-ext'
+import { IntegrationActionMention, IntegrationMention } from './mention/mention-ext'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -38,20 +41,20 @@ const tiptapLink = TiptapLink.configure({
   },
 })
 
-const tiptapImage = TiptapImage.extend({
-  addProseMirrorPlugins() {
-    return [
-      UploadImagesPlugin({
-        imageClass: cx('opacity-40 rounded-lg border border-stone-200'),
-      }),
-    ]
-  },
-}).configure({
-  allowBase64: true,
-  HTMLAttributes: {
-    class: cx('rounded-lg border border-muted'),
-  },
-})
+// const tiptapImage = TiptapImage.extend({
+//   addProseMirrorPlugins() {
+//     return [
+//       UploadImagesPlugin({
+//         imageClass: cx('opacity-40 rounded-lg border border-stone-200'),
+//       }),
+//     ]
+//   },
+// }).configure({
+//   allowBase64: true,
+//   HTMLAttributes: {
+//     class: cx('rounded-lg border border-muted'),
+//   },
+// })
 
 // const updatedImage = UpdatedImage.configure({
 //   HTMLAttributes: {
@@ -123,7 +126,7 @@ const editorExtensions = [
   starterKit,
   placeholder,
   tiptapLink,
-  tiptapImage,
+  // tiptapImage,
   taskList,
   taskItem,
   horizontalRule,
@@ -133,6 +136,10 @@ const editorExtensions = [
   IntegrationActionMention,
   IntegrationMention,
   AutoJoiner,
+  ImageViewer,
+  FileUpload,
+  FileViewer,
+  URLImport,
 ]
 
 export { editorExtensions, handleImageUpload }

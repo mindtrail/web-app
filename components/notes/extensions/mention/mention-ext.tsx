@@ -1,10 +1,10 @@
 import { Mention } from '@tiptap/extension-mention'
-import { ReactRenderer } from '@tiptap/react'
+import { ReactRenderer, ReactNodeViewRenderer } from '@tiptap/react'
 import { mergeAttributes } from '@tiptap/react'
 import tippy from 'tippy.js'
 import { PluginKey } from 'prosemirror-state'
 
-import MentionList from './mentions-dropdown'
+import { MentionsDropdown } from './mention-ui'
 import { integrations, actions } from '@/lib/hooks/use-integrations'
 
 function getIntegrationMentions(integrations: string[], editor: any) {
@@ -28,7 +28,7 @@ const createMentionPopup = () => {
 
   return {
     onStart: (props: any) => {
-      component = new ReactRenderer(MentionList, {
+      component = new ReactRenderer(MentionsDropdown, {
         props,
         editor: props.editor,
       })

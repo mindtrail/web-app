@@ -1,22 +1,25 @@
 'use client'
 
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
 import { EditorRoot, EditorContent, JSONContent, EditorInstance } from 'novel'
-import { EditorEvents } from '@tiptap/core'
 import { handleImageDrop, handleImagePaste } from 'novel/plugins'
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
+import { EditorEvents } from '@tiptap/core'
 import { EditorProps } from '@tiptap/pm/view'
 
+import { ImageViewerMenu } from './extensions/image-viewer/menu/image-viewer-menu'
 import { InlineToolbar } from './inline-toolbar'
 import { slashCommand, SuggestionMenuCommand } from './slash-command'
-import { editorExtensions, handleImageUpload } from './node-extensions'
+import { editorExtensions, handleImageUpload } from './extensions/editor-extensions'
 import { defaultEditorContent } from './utils'
 
 const extensions = [...editorExtensions, slashCommand]
 
 export default function EditorWrapper() {
+  const menuContainerRef = useRef(null)
+
   const [content, setContent] = useState<JSONContent>(defaultEditorContent)
 
   // useEffect(() => {
@@ -36,7 +39,7 @@ export default function EditorWrapper() {
   const onUpdate = useCallback(
     ({ editor }: EditorEvents['update']) => {
       // debouncedUpdates(editor)
-      console.log(editor.getJSON(), editor)
+      // console.log(editor.getJSON())
     },
     [debouncedUpdates],
   )
@@ -56,7 +59,7 @@ export default function EditorWrapper() {
   }
 
   return (
-    <div className='relative w-full max-w-screen-lg'>
+    <div className='relative w-full max-w-screen-lg' ref={menuContainerRef}>
       <EditorRoot>
         <EditorContent
           className='relative min-h-[500px] w-full max-w-screen-lg border-muted bg-background
@@ -65,10 +68,10 @@ export default function EditorWrapper() {
           extensions={extensions}
           editorProps={editorProps}
           onUpdate={onUpdate}
-          slotAfter={<ImageResizer />}
         >
           <SuggestionMenuCommand />
           <InlineToolbar />
+          <ImageViewerMenu />
         </EditorContent>
       </EditorRoot>
     </div>

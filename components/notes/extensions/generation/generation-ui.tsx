@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react'
-import { mergeAttributes, Node } from '@tiptap/core'
-import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewContent } from '@tiptap/react'
+import { NodeViewWrapper, NodeViewContent } from '@tiptap/react'
 import {
   SparklesIcon,
   SettingsIcon,
@@ -18,7 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Typography } from '@/components/typography'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-const GenerationComponent = ({ node }: { node: any }) => {
+export const GenerationComponent = ({ node }: { node: any }) => {
   const [prompt, setPrompt] = useState(node.attrs.name || '')
   const [isExpanded, setIsExpanded] = useState(true)
 
@@ -128,38 +127,7 @@ const GenerationComponent = ({ node }: { node: any }) => {
           </div>
         )}
       </div>
-      <NodeViewContent className='hidden' />
+      {/* <NodeViewContent className='content is-editable' /> */}
     </NodeViewWrapper>
   )
 }
-
-export const Generation = Node.create({
-  name: 'generation',
-  group: 'block',
-  draggable: true,
-  selectable: true,
-
-  addAttributes() {
-    return {
-      name: {
-        default: '',
-      },
-    }
-  },
-
-  parseHTML() {
-    return [
-      {
-        tag: 'div[data-type="generation"]',
-      },
-    ]
-  },
-
-  renderHTML({ HTMLAttributes }) {
-    return ['div', mergeAttributes(HTMLAttributes, { 'data-type': 'generation' }), 0]
-  },
-
-  addNodeView() {
-    return ReactNodeViewRenderer(GenerationComponent)
-  },
-})

@@ -5,7 +5,7 @@ type MentionListProps = {
   command: ({ id }: { id: string }) => void
 }
 
-const MentionsDropdown = forwardRef((props: MentionListProps, ref: any) => {
+export const MentionsDropdown = forwardRef((props: MentionListProps, ref: any) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const selectItem = (index: number) => {
@@ -60,5 +60,3 @@ const MentionsDropdown = forwardRef((props: MentionListProps, ref: any) => {
 })
 
 MentionsDropdown.displayName = 'MentionsDropdown'
-
-export default MentionsDropdown

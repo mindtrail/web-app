@@ -128,6 +128,12 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
   box-shadow: none;
 }
 
+.ProseMirror:not(.dragging) .ProseMirror-selectednode.node-fileUpload {
+  outline: 1px dashed var(--border) !important;
+  border-radius: 1rem !important;
+  background-color: rgb(249 250 251) !important;
+}
+
 .drag-handle {
   position: fixed;
   opacity: 1;

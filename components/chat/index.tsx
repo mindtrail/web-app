@@ -99,7 +99,7 @@ export function Chat(props: ChatProps) {
               </a>
               on the OpenAI website. This is only necessary for preview environments so
               that the open source community can test the app. The token will be saved to
-              your browser&apos;s local storage under the name{' '}
+              your browser&apos;s local storage under the name
               <code className='font-mono'>ai-token</code>.
             </DialogDescription>
           </DialogHeader>

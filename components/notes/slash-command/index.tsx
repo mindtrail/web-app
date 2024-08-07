@@ -6,7 +6,7 @@ import {
 } from 'novel'
 
 import { Command, renderItems } from 'novel/extensions'
-import { suggestionItems } from './suggestion-items'
+import { suggestionItems } from './slash-command-items'
 
 const slashCommand = Command.configure({
   suggestion: {
