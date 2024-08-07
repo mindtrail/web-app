@@ -12,11 +12,12 @@ import {
   GlobalDragHandle,
 } from 'novel/extensions'
 
+import AutoJoiner from 'tiptap-extension-auto-joiner'
 import { cx } from 'class-variance-authority'
 
 import { handleImageUpload } from './image-upload'
 import { Generation } from './generation'
-import { Mention } from './mentions'
+import { IntegrationMention, UserMention } from './mention'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -115,6 +116,7 @@ const starterKit = StarterKit.configure({
     width: 4,
   },
   gapcursor: false,
+  horizontalRule: false,
 })
 
 const editorExtensions = [
@@ -128,7 +130,9 @@ const editorExtensions = [
   aiHighlight,
   GlobalDragHandle,
   Generation,
-  Mention,
+  IntegrationMention,
+  UserMention,
+  AutoJoiner,
 ]
 
 export { editorExtensions, handleImageUpload }

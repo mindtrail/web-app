@@ -19,14 +19,14 @@ const extensions = [...editorExtensions, slashCommand]
 export default function EditorWrapper() {
   const [content, setContent] = useState<JSONContent>(defaultEditorContent)
 
-  useEffect(() => {
-    const content = window.localStorage.getItem('novel-content')
-    if (content) {
-      return setContent(JSON.parse(content))
-    }
+  // useEffect(() => {
+  //   const content = window.localStorage.getItem('novel-content')
+  //   if (content) {
+  //     return setContent(JSON.parse(content))
+  //   }
 
-    setContent(defaultEditorContent)
-  }, [])
+  //   setContent(defaultEditorContent)
+  // }, [])
 
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
     const json = editor.getJSON()
@@ -35,7 +35,8 @@ export default function EditorWrapper() {
 
   const onUpdate = useCallback(
     ({ editor }: EditorEvents['update']) => {
-      debouncedUpdates(editor)
+      // debouncedUpdates(editor)
+      console.log(editor.getJSON(), editor)
     },
     [debouncedUpdates],
   )

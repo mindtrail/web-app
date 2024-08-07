@@ -13,5 +13,14 @@ export const defaultEditorContent = {
     {
       type: 'generation',
     },
+    {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: 'Run your flow like you say cheese ',
+        },
+      ],
+    },
   ],
 }
