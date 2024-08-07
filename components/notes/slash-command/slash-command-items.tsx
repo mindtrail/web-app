@@ -21,6 +21,15 @@ export const suggestionItems = createSuggestionItems([
     },
   },
   {
+    title: 'Table',
+    description: 'Insert a table',
+    icon: <Icon name='Table' />,
+    // shouldBeHidden: editor => editor.isActive('columns'),
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3 }).run()
+    },
+  },
+  {
     title: 'Text',
     description: 'Just start typing with plain text.',
     searchTerms: ['p', 'paragraph'],

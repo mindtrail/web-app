@@ -21,6 +21,7 @@ import { FileUpload } from './file-upload/file-upload-ext'
 import { FileViewer } from './file-viewer/file-viewer-ext'
 import { URLImport } from './url-import/url-import-ext'
 import { IntegrationActionMention, IntegrationMention } from './mention/mention-ext'
+import { Table, TableCell, TableHeader, TableRow } from './table'
 
 const aiHighlight = AIHighlight
 const placeholder = Placeholder.configure({
@@ -139,6 +140,10 @@ const editorExtensions = [
   FileUpload,
   FileViewer,
   URLImport,
+  Table,
+  TableCell,
+  TableHeader,
+  TableRow,
 ]
 
 export { editorExtensions, handleImageUpload }

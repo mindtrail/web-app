@@ -1,6 +1,6 @@
-import { mergeAttributes, Node } from '@tiptap/core'
 import { Plugin } from '@tiptap/pm/state'
 import { Decoration, DecorationSet } from '@tiptap/pm/view'
+import TiptapTableCell from '@tiptap/extension-table-cell'
 
 import { getCellsInColumn, isRowSelected, selectRow } from './utils'
 
@@ -8,34 +8,12 @@ export interface TableCellOptions {
   HTMLAttributes: Record<string, any>
 }
 
-export const TableCell = Node.create<TableCellOptions>({
-  name: 'tableCell',
-
-  content: 'block+', // TODO: Do not allow table in table
-
-  tableRole: 'cell',
-
-  isolating: true,
-
-  addOptions() {
-    return {
-      HTMLAttributes: {},
-    }
-  },
-
-  parseHTML() {
-    return [{ tag: 'td' }]
-  },
-
-  renderHTML({ HTMLAttributes }) {
-    return ['td', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0]
-  },
-
+export const TableCell = TiptapTableCell.extend({
   addAttributes() {
     return {
       colspan: {
         default: 1,
-        parseHTML: element => {
+        parseHTML: (element) => {
           const colspan = element.getAttribute('colspan')
           const value = colspan ? parseInt(colspan, 10) : 1
 
@@ -44,7 +22,7 @@ export const TableCell = Node.create<TableCellOptions>({
       },
       rowspan: {
         default: 1,
-        parseHTML: element => {
+        parseHTML: (element) => {
           const rowspan = element.getAttribute('rowspan')
           const value = rowspan ? parseInt(rowspan, 10) : 1
 
@@ -53,7 +31,7 @@ export const TableCell = Node.create<TableCellOptions>({
       },
       colwidth: {
         default: null,
-        parseHTML: element => {
+        parseHTML: (element) => {
           const colwidth = element.getAttribute('colwidth')
           const value = colwidth ? [parseInt(colwidth, 10)] : null
 
@@ -72,7 +50,7 @@ export const TableCell = Node.create<TableCellOptions>({
     return [
       new Plugin({
         props: {
-          decorations: state => {
+          decorations: (state) => {
             if (!isEditable) {
               return DecorationSet.empty
             }
@@ -103,7 +81,7 @@ export const TableCell = Node.create<TableCellOptions>({
                     const grip = document.createElement('a')
 
                     grip.className = className
-                    grip.addEventListener('mousedown', event => {
+                    grip.addEventListener('mousedown', (event) => {
                       event.preventDefault()
                       event.stopImmediatePropagation()
 
