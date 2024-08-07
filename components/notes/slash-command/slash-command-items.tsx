@@ -8,17 +8,12 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['generation', 'AI'],
     icon: <Icon name='Sparkles' />,
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-
-        .run()
+      editor.chain().focus().deleteRange(range).run()
     },
   },
   {
-    title: 'URL',
-    description: 'Add a URL to scrape',
+    title: 'Website Import',
+    description: 'Import website content',
     searchTerms: ['url', 'scrape', 'web'],
     icon: <Icon name='Globe' />,
     command: ({ editor, range }) => {

@@ -28,7 +28,7 @@ export const URLImportUI = ({ node, updateAttributes }: URLImportUIProps) => {
   return (
     <NodeViewWrapper>
       <div className='flex flex-col space-y-2 p-4 border rounded-md'>
-        <label className='font-medium'>URL to Scrape</label>
+        <label className='font-medium'>Website URL</label>
         <div className='flex space-x-2'>
           <Input
             type='text'
